@@ -1,0 +1,20 @@
+{
+  "par_298535af": {"first_seen": "2026-01-26T20:50:00", "address": "Stellingmolen", "favorite": true},
+  "par_75ea9590": {"first_seen": "2026-01-26T20:50:00", "address": "Bilderdijkstraat", "favorite": true},
+  "par_0dce380d": {"first_seen": "2026-01-26T20:50:00", "address": "Goudsteeg", "rejected": true},
+  "par_89c289fc": {"first_seen": "2026-01-26T20:50:00", "address": "Diezerkade", "rejected": true},
+  "par_b75d0196": {"first_seen": "2026-01-26T20:50:00", "address": "Hoogstraat", "rejected": true},
+  "par_65568d19": {"first_seen": "2026-01-26T20:50:00", "address": "Molenweg 175", "rejected": true},
+  "par_0d9e0389": {"first_seen": "2026-01-26T20:50:00", "address": "Droogmakerijstraat", "rejected": true},
+  "par_a3cf48ee": {"first_seen": "2026-01-26T20:50:00", "address": "Terborchstraat", "rejected": true},
+  "par_4a57a737": {"first_seen": "2026-01-26T20:50:00", "address": "Terborchstraat", "rejected": true},
+  "par_e13fe01a": {"first_seen": "2026-01-26T20:50:00", "address": "Assendorperstraat", "rejected": true},
+  "par_b49933d4": {"first_seen": "2026-01-26T20:50:00", "address": "Thomas a Kempisstraat", "rejected": true},
+  "funda_43295886": {"first_seen": "2026-01-26T21:05:00", "address": "Samuel Hirschstraat 2", "rejected": true},
+  "funda_89598044": {"first_seen": "2026-01-26T21:05:00", "address": "Stockholmstraat 6-b", "rejected": true},
+  "funda_89653939": {"first_seen": "2026-01-26T21:05:00", "address": "Hoogstraat 15", "rejected": true},
+  "funda_89641005": {"first_seen": "2026-01-26T21:05:00", "address": "Assendorperstraat 55-A", "rejected": true},
+  "funda_89673633": {"first_seen": "2026-01-26T21:05:00", "address": "Bitterstraat 65", "rejected": true},
+  "funda_89628873": {"first_seen": "2026-01-26T21:05:00", "address": "Vechtstraat 55", "rejected": true},
+  "funda_43203283": {"first_seen": "2026-01-26T21:05:00", "address": "Kerkstraat 11", "rejected": true}
+}
