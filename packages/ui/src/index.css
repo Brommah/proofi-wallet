@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #FFFFFF;
+  color: #0A0A0A;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Transitions for screen changes */
+.screen-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.screen-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}

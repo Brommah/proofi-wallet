@@ -1,0 +1,32 @@
+{
+  "name": "@proofi/sdk",
+  "version": "0.1.0",
+  "description": "Proofi Wallet embed SDK — integrate Proofi wallet into any web app",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs && npm run build:types",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:types": "tsc -p tsconfig.types.json",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@proofi/comm": "workspace:*",
+    "eventemitter3": "^5.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "sideEffects": false,
+  "license": "MIT"
+}
