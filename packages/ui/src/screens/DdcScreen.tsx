@@ -18,6 +18,7 @@ interface StoredItem {
   cid: string;
   cdnUrl: string;
   type: 'memo' | 'credential';
+  credentialType?: string;
 }
 
 interface DdcStatus {
@@ -43,6 +44,26 @@ export function DdcScreen() {
       .then((r) => r.json())
       .then((d) => { if (d.ok) setStatus(d); })
       .catch(() => setStatus(null));
+  }, []);
+
+  // Load existing memos/credentials on mount
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+    
+    fetch(`${API_URL}/ddc/list`, { headers: authHeaders() })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && d.items) {
+          setStoredItems(d.items.map((item: any) => ({
+            cid: item.cid,
+            cdnUrl: item.cdnUrl,
+            type: item.type,
+            credentialType: item.credentialType,
+          })));
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const handleStoreMemo = async () => {
@@ -236,6 +257,9 @@ export function DdcScreen() {
               <div key={i} className="rounded-lg bg-gray-900 border border-gray-800 px-3 py-2">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs">{item.type === 'memo' ? '📝' : '🎓'}</span>
+                  {item.credentialType && (
+                    <span className="text-xs text-purple-400">{item.credentialType}</span>
+                  )}
                   <p className="text-xs text-gray-400 font-mono truncate flex-1">{item.cid}</p>
                 </div>
                 <a
