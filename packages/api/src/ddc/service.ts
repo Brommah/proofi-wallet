@@ -290,21 +290,28 @@ export interface WalletIndex {
 export async function readWalletIndex(walletAddress: string): Promise<WalletIndex> {
   await initDdc();
   const indexName = getIndexName(walletAddress);
+  console.log(`📋 [readWalletIndex] Looking for index: ${indexName}`);
   
   try {
     // Try to resolve CNS name to CID
+    console.log(`📋 [readWalletIndex] Resolving CNS name...`);
     const cid = await ddcClient.resolveName(BUCKET_ID, indexName);
+    console.log(`📋 [readWalletIndex] CNS resolved to CID: ${cid}`);
+    
     if (!cid) {
+      console.log(`📋 [readWalletIndex] No CID found, returning empty index`);
       return createEmptyIndex(walletAddress);
     }
     
     // Read the index content
+    console.log(`📋 [readWalletIndex] Reading index content from DDC...`);
     const content = await ddcRead(cid.toString());
     const index = JSON.parse(content) as WalletIndex;
+    console.log(`📋 [readWalletIndex] Index loaded: ${index.entries.length} entries`);
     return index;
   } catch (e: any) {
     // Index doesn't exist yet
-    console.log(`📋 No index found for ${walletAddress}, returning empty index`);
+    console.log(`📋 [readWalletIndex] Error (probably not found): ${e.message}`);
     return createEmptyIndex(walletAddress);
   }
 }
@@ -328,8 +335,12 @@ export async function addToWalletIndex(
 ): Promise<void> {
   await initDdc();
   
+  const indexName = getIndexName(walletAddress);
+  console.log(`📋 [addToWalletIndex] Adding to index: ${indexName}`);
+  
   // Read current index
   const index = await readWalletIndex(walletAddress);
+  console.log(`📋 [addToWalletIndex] Current index has ${index.entries.length} entries`);
   
   // Add new entry
   index.entries.unshift({
@@ -339,7 +350,6 @@ export async function addToWalletIndex(
   index.updatedAt = new Date().toISOString();
   
   // Store updated index with CNS name (this updates the name pointer!)
-  const indexName = getIndexName(walletAddress);
   const indexContent = JSON.stringify(index, null, 2);
   
   const ddcTags = [
@@ -350,7 +360,7 @@ export async function addToWalletIndex(
   const file = new DdcFile(Buffer.from(indexContent), { tags: ddcTags });
   
   // Store with name option - this creates/updates the CNS record
-  await ddcClient.store(BUCKET_ID, file, { name: indexName } as any);
-  
-  console.log(`📋 Index updated for ${walletAddress}: ${index.entries.length} entries`);
+  console.log(`📋 [addToWalletIndex] Storing index with CNS name: ${indexName}`);
+  const result = await ddcClient.store(BUCKET_ID, file, { name: indexName } as any);
+  console.log(`📋 [addToWalletIndex] Stored! CID: ${result.cid}, ${index.entries.length} entries total`);
 }
