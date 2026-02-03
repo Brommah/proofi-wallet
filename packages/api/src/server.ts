@@ -6,7 +6,8 @@ import { OtpService } from './otp/service.js';
 import { createEmailSender } from './otp/email.js';
 import { SqliteAppStore } from './apps/store.js';
 import { SqliteUserStore } from './users/store.js';
-// SqliteMemoStore removed - using fully decentralized DDC index instead!
+// SqliteMemoStore kept for migration only - all NEW data goes to DDC index
+import { SqliteMemoStore } from './memos/store.js';
 import { JwtService } from './jwt/service.js';
 import { generateDerivationSalt, deriveUserSeed, seedToHex } from './keys/derive.js';
 import {
@@ -19,6 +20,7 @@ import {
   getIssuerAddress,
   getBucketId,
   readWalletIndex,
+  addToWalletIndex,
 } from './ddc/service.js';
 
 const app = new Hono();
@@ -35,8 +37,8 @@ const appStore = new SqliteAppStore();
 // SQLite-backed for persistence across server restarts
 const userStore = new SqliteUserStore();
 
-// ── Memo index: now stored on DDC (fully decentralized!) ────────────
-// No more SQLite - see readWalletIndex() in ddc/service.ts
+// ── Memo index: legacy SQLite (for migration) + DDC (new data) ──────
+const legacyMemoStore = new SqliteMemoStore();
 
 // Seed a dev app
 if (env.NODE_ENV === 'development') {
@@ -299,6 +301,56 @@ app.get('/ddc/list/:walletAddress', async (c) => {
   } catch (e: any) {
     console.error(`❌ Failed to read wallet index: ${e.message}`);
     return c.json({ error: e.message || 'Failed to list items' }, 500);
+  }
+});
+
+// ── Migration: SQLite → DDC index (one-time use) ────────────────────
+
+// Migrate old memos from SQLite to DDC index
+app.post('/ddc/migrate', async (c) => {
+  const auth = await getAuth(c);
+  if (!auth) return c.json({ error: 'Authorization required' }, 401);
+
+  if (!auth.walletAddress || auth.walletAddress.startsWith('pending:')) {
+    return c.json({ error: 'Wallet address required' }, 400);
+  }
+
+  try {
+    // Read legacy items from SQLite
+    const legacyItems = legacyMemoStore.listByWallet(auth.walletAddress);
+    
+    if (legacyItems.length === 0) {
+      return c.json({ ok: true, migrated: 0, message: 'No legacy items to migrate' });
+    }
+
+    // Read current DDC index
+    const currentIndex = await readWalletIndex(auth.walletAddress);
+    const existingCids = new Set(currentIndex.entries.map(e => e.cid));
+
+    // Add each legacy item to DDC index (skip duplicates)
+    let migrated = 0;
+    for (const item of legacyItems) {
+      if (!existingCids.has(item.cid)) {
+        await addToWalletIndex(auth.walletAddress, {
+          cid: item.cid,
+          cdnUrl: item.cdnUrl,
+          type: item.type,
+          credentialType: item.credentialType,
+        });
+        migrated++;
+        console.log(`📦 Migrated ${item.type} ${item.cid} for ${auth.walletAddress}`);
+      }
+    }
+
+    return c.json({ 
+      ok: true, 
+      migrated, 
+      total: legacyItems.length,
+      message: `Migrated ${migrated} items to DDC index`,
+    });
+  } catch (e: any) {
+    console.error(`❌ Migration error: ${e.message}`);
+    return c.json({ error: e.message || 'Migration failed' }, 500);
   }
 });
 

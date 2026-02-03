@@ -37,6 +37,8 @@ export function DdcScreen() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [tab, setTab] = useState<'memo' | 'credential'>('memo');
+  const [migrating, setMigrating] = useState(false);
+  const [migrateResult, setMigrateResult] = useState<string | null>(null);
 
   // Check DDC status on mount
   useEffect(() => {
@@ -86,6 +88,30 @@ export function DdcScreen() {
       setError(e.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMigrate = async () => {
+    setMigrating(true);
+    setMigrateResult(null);
+    try {
+      const res = await fetch(`${API_URL}/ddc/migrate`, {
+        method: 'POST',
+        headers: authHeaders(),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setMigrateResult(`✅ Migrated ${data.migrated} items to DDC!`);
+      // Reload items
+      const listRes = await fetch(`${API_URL}/ddc/list`, { headers: authHeaders() });
+      const listData = await listRes.json();
+      if (listData.ok && listData.items) {
+        setStoredItems(listData.items);
+      }
+    } catch (e: any) {
+      setMigrateResult(`❌ Migration failed: ${e.message}`);
+    } finally {
+      setMigrating(false);
     }
   };
 
@@ -249,10 +275,37 @@ export function DdcScreen() {
           </div>
         )}
 
+        {/* Migration from legacy SQLite */}
+        {migrateResult && (
+          <div className={`mb-4 rounded-lg px-3 py-2 text-xs text-center ${
+            migrateResult.startsWith('✅') 
+              ? 'bg-green-500/10 border border-green-500/20 text-green-400'
+              : 'bg-red-500/10 border border-red-500/20 text-red-400'
+          }`}>
+            {migrateResult}
+          </div>
+        )}
+
+        {storedItems.length === 0 && (
+          <div className="rounded-2xl bg-yellow-500/10 border border-yellow-500/20 p-4 mb-4">
+            <p className="text-xs text-yellow-400 mb-3">
+              📦 Have old memos from before? Click to migrate them to DDC.
+            </p>
+            <button
+              onClick={handleMigrate}
+              disabled={migrating}
+              className="w-full py-2 px-3 rounded-lg bg-yellow-500/20 text-yellow-400 text-xs font-medium 
+                         hover:bg-yellow-500/30 disabled:opacity-50 transition-colors"
+            >
+              {migrating ? 'Migrating...' : 'Migrate Legacy Data to DDC'}
+            </button>
+          </div>
+        )}
+
         {/* Stored Items */}
         {storedItems.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs text-gray-500">Stored on DDC</p>
+            <p className="text-xs text-gray-500">Stored on DDC ({storedItems.length} items)</p>
             {storedItems.map((item, i) => (
               <div key={i} className="rounded-lg bg-gray-900 border border-gray-800 px-3 py-2">
                 <div className="flex items-center gap-2 mb-1">
