@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Button } from '../components/Button';
+import { PinUnlockModal } from '../components/PinUnlockModal';
 import { useWalletStore } from '../stores/walletStore';
 import { u8aToHex } from '@polkadot/util';
+import { Keyring } from '@polkadot/keyring';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3847';
 
 /**
  * Signature-based auth headers (fully decentralized).
  * Signs: `proofi:{timestamp}:{address}`
+ * Creates signing keypair on-demand from secretKey (zustand doesn't preserve _polkadotPair)
  */
 function authHeaders(): Record<string, string> {
   const { address, keypair } = useWalletStore.getState();
   
-  if (!address || !keypair || !(keypair as any)._polkadotPair) {
-    // Fallback to JWT for backwards compat (will be removed)
+  if (!address || !keypair || !keypair.secretKey) {
+    console.warn('[authHeaders] No wallet keypair available');
     const token = localStorage.getItem('proofi_token') || '';
     return {
       'Content-Type': 'application/json',
@@ -21,16 +24,30 @@ function authHeaders(): Record<string, string> {
     };
   }
 
-  const timestamp = Date.now();
-  const message = `proofi:${timestamp}:${address}`;
-  const messageBytes = new TextEncoder().encode(message);
-  const sigBytes = (keypair as any)._polkadotPair.sign(messageBytes);
-  const signature = u8aToHex(sigBytes);
+  try {
+    // Create signing keypair on-demand from secretKey
+    const keyring = new Keyring({ type: 'sr25519', ss58Format: 54 });
+    const signingPair = keyring.addFromSeed(keypair.secretKey.slice(0, 32));
+    
+    const timestamp = Date.now();
+    const message = `proofi:${timestamp}:${address}`;
+    const messageBytes = new TextEncoder().encode(message);
+    const sigBytes = signingPair.sign(messageBytes);
+    const signature = u8aToHex(sigBytes);
 
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Signature ${address}:${timestamp}:${signature}`,
-  };
+    console.log('[authHeaders] ✅ Signature auth for', address);
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Signature ${address}:${timestamp}:${signature}`,
+    };
+  } catch (e) {
+    console.error('[authHeaders] Signing failed:', e);
+    const token = localStorage.getItem('proofi_token') || '';
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+  }
 }
 
 interface StoredItem {
@@ -58,6 +75,33 @@ export function DdcScreen() {
   const [tab, setTab] = useState<'memo' | 'credential'>('memo');
   const [migrating, setMigrating] = useState(false);
   const [migrateResult, setMigrateResult] = useState<string | null>(null);
+  const [showPinUnlock, setShowPinUnlock] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+
+  // Check if wallet needs unlock
+  const needsUnlock = () => {
+    const { keypair } = useWalletStore.getState();
+    const hasEncryptedSeed = !!localStorage.getItem('proofi_encrypted_seed');
+    return !keypair?.secretKey && hasEncryptedSeed;
+  };
+
+  // Wrapper to check unlock before actions
+  const withUnlock = (action: () => void) => {
+    if (needsUnlock()) {
+      setPendingAction(() => action);
+      setShowPinUnlock(true);
+    } else {
+      action();
+    }
+  };
+
+  const handleUnlocked = () => {
+    setShowPinUnlock(false);
+    if (pendingAction) {
+      pendingAction();
+      setPendingAction(null);
+    }
+  };
 
   // Check DDC status on mount
   useEffect(() => {
@@ -235,7 +279,7 @@ export function DdcScreen() {
                            focus:outline-none transition-colors resize-none"
               />
             </div>
-            <Button onClick={handleStoreMemo} loading={loading} fullWidth disabled={!memo.trim()}>
+            <Button onClick={() => withUnlock(handleStoreMemo)} loading={loading} fullWidth disabled={!memo.trim()}>
               Store on DDC
             </Button>
           </div>
@@ -276,7 +320,7 @@ export function DdcScreen() {
                            focus:outline-none transition-colors resize-none font-mono"
               />
             </div>
-            <Button onClick={handleStoreCredential} loading={loading} fullWidth disabled={!credData.trim()}>
+            <Button onClick={() => withUnlock(handleStoreCredential)} loading={loading} fullWidth disabled={!credData.trim()}>
               Issue Credential
             </Button>
           </div>
@@ -311,7 +355,7 @@ export function DdcScreen() {
               📦 Have old memos from before? Click to migrate them to DDC.
             </p>
             <button
-              onClick={handleMigrate}
+              onClick={() => withUnlock(handleMigrate)}
               disabled={migrating}
               className="w-full py-2 px-3 rounded-lg bg-yellow-500/20 text-yellow-400 text-xs font-medium 
                          hover:bg-yellow-500/30 disabled:opacity-50 transition-colors"
@@ -347,6 +391,16 @@ export function DdcScreen() {
           </div>
         )}
       </div>
+
+      {/* PIN Unlock Modal */}
+      <PinUnlockModal
+        isOpen={showPinUnlock}
+        onClose={() => {
+          setShowPinUnlock(false);
+          setPendingAction(null);
+        }}
+        onUnlocked={handleUnlocked}
+      />
     </div>
   );
 }
