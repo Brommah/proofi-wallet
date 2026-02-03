@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useWalletStore } from './walletStore';
 
 export type RequestType = 'sign' | 'connect';
 export type SignCategory = 'credential' | 'transaction';
@@ -45,6 +46,17 @@ export const useRequestStore = create<RequestState>()((set, get) => ({
       { type: 'PROOFI_REQUEST_APPROVED', requestId: req.id, requestType: req.type },
       '*',
     );
+    // For connect requests, also send PROOFI_CONNECTED with the wallet address
+    // so the SDK knows to stop polling and resolve the connection
+    if (req.type === 'connect') {
+      const address = useWalletStore.getState().address;
+      if (address) {
+        window.parent.postMessage(
+          { type: 'PROOFI_CONNECTED', address },
+          '*',
+        );
+      }
+    }
     set({ pendingRequest: null });
   },
 
