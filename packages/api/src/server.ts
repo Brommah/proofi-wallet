@@ -10,6 +10,7 @@ import { SqliteUserStore } from './users/store.js';
 import { SqliteMemoStore } from './memos/store.js';
 import { JwtService } from './jwt/service.js';
 import { generateDerivationSalt, deriveUserSeed, seedToHex } from './keys/derive.js';
+import { verifySignatureAuth } from './auth/signature.js';
 import {
   initDdc,
   storeCredential,
@@ -148,26 +149,52 @@ app.post('/auth/derive', async (c) => {
 
 // ── Helper: extract auth ────────────────────────────────────────────
 
+/**
+ * Decentralized auth: supports wallet signature (primary) and JWT (legacy fallback).
+ * 
+ * Signature auth (preferred): Authorization: Signature {address}:{timestamp}:{signature}
+ * JWT auth (legacy): Authorization: Bearer {token}
+ */
 async function getAuth(c: any): Promise<{ email: string; walletAddress: string } | null> {
   const authHeader = c.req.header('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) return null;
-  try {
-    const payload = await jwtService.verify(authHeader.slice(7));
-    const email = (payload.sub || (payload as any).email) as string;
-    if (!email) return null;
+  if (!authHeader) return null;
 
-    // v2: Look up stored address (client-derived, never server-derived)
-    const walletAddress = userStore.getAddress(email);
-    if (!walletAddress) {
-      // Fallback: user hasn't registered an address yet
-      // Use email as identity placeholder (credentials still work, just no wallet address)
-      return { email, walletAddress: `pending:${email}` };
+  // ── Primary: Wallet Signature Auth (fully decentralized) ──
+  if (authHeader.startsWith('Signature ')) {
+    const result = await verifySignatureAuth(authHeader);
+    if (!result.valid) {
+      console.log(`❌ Signature auth failed: ${result.error}`);
+      return null;
     }
-
-    return { email, walletAddress };
-  } catch {
-    return null;
+    
+    // Look up email for this address (optional — address is the identity)
+    const email = userStore.getEmailByAddress(result.address) || `wallet:${result.address}`;
+    console.log(`✅ Signature auth: ${result.address}`);
+    return { email, walletAddress: result.address };
   }
+
+  // ── Fallback: JWT Auth (legacy, for migration) ──
+  if (authHeader.startsWith('Bearer ')) {
+    try {
+      const payload = await jwtService.verify(authHeader.slice(7));
+      const email = (payload.sub || (payload as any).email) as string;
+      if (!email) return null;
+
+      // v2: Look up stored address (client-derived, never server-derived)
+      const walletAddress = userStore.getAddress(email);
+      if (!walletAddress) {
+        // Fallback: user hasn't registered an address yet
+        // Use email as identity placeholder (credentials still work, just no wallet address)
+        return { email, walletAddress: `pending:${email}` };
+      }
+
+      return { email, walletAddress };
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
 }
 
 // ── DDC Routes (powered by cere-wallet.json) ────────────────────────

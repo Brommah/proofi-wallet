@@ -1,16 +1,35 @@
 import { useState, useEffect } from 'react';
 import { Button } from '../components/Button';
+import { useWalletStore } from '../stores/walletStore';
+import { u8aToHex } from '@polkadot/util';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3847';
 
-function getToken() {
-  return localStorage.getItem('proofi_token') || '';
-}
+/**
+ * Signature-based auth headers (fully decentralized).
+ * Signs: `proofi:{timestamp}:{address}`
+ */
+function authHeaders(): Record<string, string> {
+  const { address, keypair } = useWalletStore.getState();
+  
+  if (!address || !keypair || !(keypair as any)._polkadotPair) {
+    // Fallback to JWT for backwards compat (will be removed)
+    const token = localStorage.getItem('proofi_token') || '';
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+  }
 
-function authHeaders() {
+  const timestamp = Date.now();
+  const message = `proofi:${timestamp}:${address}`;
+  const messageBytes = new TextEncoder().encode(message);
+  const sigBytes = (keypair as any)._polkadotPair.sign(messageBytes);
+  const signature = u8aToHex(sigBytes);
+
   return {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${getToken()}`,
+    'Authorization': `Signature ${address}:${timestamp}:${signature}`,
   };
 }
 

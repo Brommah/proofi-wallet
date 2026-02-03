@@ -16,6 +16,7 @@ export interface UserStore {
   setAddress(email: string, address: string): UserRecord;
   getAddress(email: string): string | null;
   getByAddress(address: string): UserRecord | null;
+  getEmailByAddress(address: string): string | null;
   list(): UserRecord[];
 }
 
@@ -74,6 +75,11 @@ export class SqliteUserStore implements UserStore {
     return row ? toUserRecord(row) : null;
   }
 
+  getEmailByAddress(address: string): string | null {
+    const record = this.getByAddress(address);
+    return record?.email ?? null;
+  }
+
   list(): UserRecord[] {
     const rows = this.db.prepare(
       'SELECT * FROM users ORDER BY created_at DESC'
@@ -123,6 +129,11 @@ export class MemoryUserStore implements UserStore {
       if (record.address === address) return record;
     }
     return null;
+  }
+
+  getEmailByAddress(address: string): string | null {
+    const record = this.getByAddress(address);
+    return record?.email ?? null;
   }
 
   list(): UserRecord[] {
