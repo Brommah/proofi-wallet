@@ -11,6 +11,8 @@ interface AuthState {
   otpSent: boolean;
   otpVerified: boolean;  // v2: true after OTP, waiting for PIN
   derivationSalt: string | null;  // v2: received after OTP verify
+  hasExistingWallet: boolean;  // v2: true if user already has a registered address
+  existingAddress: string | null;  // v2: the user's registered address (if any)
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -156,6 +158,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   otpSent: false,
   otpVerified: false,
   derivationSalt: null,
+  hasExistingWallet: false,
+  existingAddress: null,
   token: null,
   loading: false,
   error: null,
@@ -197,9 +201,12 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       localStorage.setItem('proofi_email', data.email);
 
       // v2: Now waiting for PIN to derive key
+      // Store hasAddress so PinScreen can show restore vs create flow
       set({ 
         otpVerified: true,
         derivationSalt: data.derivationSalt,
+        hasExistingWallet: !!data.hasAddress,
+        existingAddress: data.address || null,
         token: data.token,
         loading: false,
       });
@@ -220,10 +227,18 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   /**
    * v2: Create wallet from PIN + derivation salt.
    * Called after OTP verification.
+   * 
+   * For new users: creates a new wallet and registers the address.
+   * For existing users: verifies PIN unlocks the correct wallet.
    */
   setupPin: async (pin: string) => {
-    const { derivationSalt, token, email } = get();
-    console.log('[setupPin] Starting...', { hasDerivationSalt: !!derivationSalt, hasToken: !!token });
+    const { derivationSalt, token, email, hasExistingWallet, existingAddress } = get();
+    console.log('[setupPin] Starting...', { 
+      hasDerivationSalt: !!derivationSalt, 
+      hasToken: !!token, 
+      hasExistingWallet, 
+      existingAddress 
+    });
     
     if (!derivationSalt || !token) {
       console.error('[setupPin] Missing derivationSalt or token');
@@ -243,6 +258,21 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       const keypair = await deriveKeypairFromSeed(seed);
       console.log('[setupPin] Keypair created:', keypair.address);
       
+      // For existing users: verify the derived address matches stored address
+      if (hasExistingWallet && existingAddress) {
+        if (keypair.address !== existingAddress) {
+          console.error('[setupPin] ❌ Address mismatch! Wrong PIN.');
+          console.log('[setupPin] Expected:', existingAddress);
+          console.log('[setupPin] Got:', keypair.address);
+          set({ 
+            error: 'Wrong PIN. The PIN you entered doesn\'t match your wallet.', 
+            loading: false 
+          });
+          return;
+        }
+        console.log('[setupPin] ✅ Address verified, PIN correct!');
+      }
+      
       // Store encrypted seed for session restore
       console.log('[setupPin] Encrypting seed...');
       const encryptedSeed = await encryptSeed(seed, pin);
@@ -250,6 +280,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       localStorage.setItem('proofi_address', keypair.address);
 
       // Register address with server (server only sees public address)
+      // For existing users this is idempotent
       console.log('[setupPin] Registering address with server...');
       const res = await fetch(`${API_URL}/auth/register-address`, {
         method: 'POST',
@@ -265,7 +296,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       useWalletStore.getState().connect(keypair.address, keypair);
 
       set({ isAuthenticated: true, loading: false });
-      console.log('[setupPin] ✅ Wallet created successfully!');
+      console.log('[setupPin] ✅ Wallet', hasExistingWallet ? 'restored' : 'created', 'successfully!');
       window.parent.postMessage(
         { type: 'PROOFI_AUTHENTICATED', email, address: keypair.address },
         '*',
@@ -314,6 +345,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       otpSent: false, 
       otpVerified: false,
       derivationSalt: null,
+      hasExistingWallet: false,
+      existingAddress: null,
       token: null,
     });
     window.parent.postMessage({ type: 'PROOFI_LOGGED_OUT' }, '*');
