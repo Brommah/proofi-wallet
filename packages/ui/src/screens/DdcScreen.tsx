@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PinUnlockModal } from '../components/PinUnlockModal';
 import { useWalletStore } from '../stores/walletStore';
 import { u8aToHex } from '@polkadot/util';
@@ -109,9 +109,13 @@ export function DdcScreen() {
       .catch(() => setStatus(null));
   }, []);
 
-  const loadItems = () => {
-    const { address, keypair } = useWalletStore.getState();
-    if (!address || !keypair) return;
+  // Subscribe to wallet store so we re-render when keypair changes
+  const address = useWalletStore((s) => s.address);
+  const keypair = useWalletStore((s) => s.keypair);
+
+  const loadItems = useCallback(() => {
+    const { address: addr, keypair: kp } = useWalletStore.getState();
+    if (!addr || !kp) return;
     
     fetch(`${API_URL}/ddc/list`, { headers: authHeaders() })
       .then((r) => r.json())
@@ -121,22 +125,28 @@ export function DdcScreen() {
         }
       })
       .catch(() => {});
-  };
+  }, []);
 
-  // Load on mount
-  useEffect(() => { loadItems(); }, []);
+  // Load when keypair becomes available (after PIN entry)
+  useEffect(() => {
+    if (address && keypair) {
+      loadItems();
+    }
+  }, [address, keypair, loadItems]);
 
   // Auto-reload when page regains focus (e.g. switching back from game tab)
   useEffect(() => {
     const onFocus = () => loadItems();
-    window.addEventListener('focus', onFocus);
-    document.addEventListener('visibilitychange', () => {
+    const onVisibility = () => {
       if (document.visibilityState === 'visible') loadItems();
-    });
+    };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
     return () => {
       window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, []);
+  }, [loadItems]);
 
   const handleStoreMemo = async () => {
     if (!memo.trim()) return;
