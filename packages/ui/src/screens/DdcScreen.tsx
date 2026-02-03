@@ -109,7 +109,7 @@ export function DdcScreen() {
       .catch(() => setStatus(null));
   }, []);
 
-  useEffect(() => {
+  const loadItems = () => {
     const { address, keypair } = useWalletStore.getState();
     if (!address || !keypair) return;
     
@@ -121,6 +121,21 @@ export function DdcScreen() {
         }
       })
       .catch(() => {});
+  };
+
+  // Load on mount
+  useEffect(() => { loadItems(); }, []);
+
+  // Auto-reload when page regains focus (e.g. switching back from game tab)
+  useEffect(() => {
+    const onFocus = () => loadItems();
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') loadItems();
+    });
+    return () => {
+      window.removeEventListener('focus', onFocus);
+    };
   }, []);
 
   const handleStoreMemo = async () => {
@@ -182,12 +197,23 @@ export function DdcScreen() {
       <div className="px-6 pt-8 pb-6 border-b border-[#1A1A1A]">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-display text-display-md text-white">DATA VAULT</h1>
-          {status && (
-            <div className="flex items-center gap-2">
-              <div className="status-dot online" />
-              <span className="text-mono text-xs text-[#00FF88]">LIVE</span>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={loadItems}
+              className="text-[#4A4A4A] hover:text-[#00E5FF] transition-colors p-1"
+              title="Refresh"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.183" />
+              </svg>
+            </button>
+            {status && (
+              <div className="flex items-center gap-2">
+                <div className="status-dot online" />
+                <span className="text-mono text-xs text-[#00FF88]">LIVE</span>
+              </div>
+            )}
+          </div>
         </div>
         
         {status && (
