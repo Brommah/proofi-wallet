@@ -94,9 +94,20 @@ export async function initDdc(): Promise<void> {
 
 // ── Low-level DDC ops ──
 
+// DDC tag values max 32 chars - truncate if needed
+function truncateTag(value: string, maxLen = 32): string {
+  if (value.length <= maxLen) return value;
+  // For addresses/hashes, keep start and end
+  if (value.length > 40) {
+    const half = Math.floor((maxLen - 2) / 2);
+    return value.slice(0, half) + '..' + value.slice(-half);
+  }
+  return value.slice(0, maxLen);
+}
+
 export async function ddcStore(content: string, tags: { key: string; value: string }[] = []): Promise<string> {
   await initDdc();
-  const ddcTags = tags.map(t => new Tag(t.key, t.value));
+  const ddcTags = tags.map(t => new Tag(truncateTag(t.key), truncateTag(t.value)));
   const file = new DdcFile(Buffer.from(content), { tags: ddcTags });
   const result = await ddcClient.store(BUCKET_ID, file);
   return result.cid.toString();

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWalletStore } from '../stores/walletStore';
 import { KeyringManager } from '@proofi/core';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 interface PinUnlockModalProps {
   isOpen: boolean;
@@ -48,6 +49,9 @@ async function decryptSeed(encrypted: string, pin: string): Promise<string> {
  * Derive keypair from seed hex.
  */
 async function deriveKeypairFromSeed(seedHex: string) {
+  // Ensure WASM crypto is ready
+  await cryptoWaitReady();
+  
   const mgr = new KeyringManager();
   mgr.ss58Prefix = 54; // Cere network
   await mgr.init();

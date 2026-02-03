@@ -4,6 +4,7 @@ import { PinUnlockModal } from '../components/PinUnlockModal';
 import { useWalletStore } from '../stores/walletStore';
 import { u8aToHex } from '@polkadot/util';
 import { Keyring } from '@polkadot/keyring';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3847';
 
@@ -15,8 +16,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3847';
 function authHeaders(): Record<string, string> {
   const { address, keypair } = useWalletStore.getState();
   
-  if (!address || !keypair || !keypair.secretKey) {
-    console.warn('[authHeaders] No wallet keypair available');
+  if (!address || !keypair || !keypair.secretKey || !cryptoReady) {
+    console.warn('[authHeaders] No wallet keypair available or crypto not ready');
     const token = localStorage.getItem('proofi_token') || '';
     return {
       'Content-Type': 'application/json',
@@ -63,6 +64,10 @@ interface DdcStatus {
   bucket: string;
 }
 
+// Global crypto ready state
+let cryptoReady = false;
+cryptoWaitReady().then(() => { cryptoReady = true; });
+
 export function DdcScreen() {
   const [status, setStatus] = useState<DdcStatus | null>(null);
   const [memo, setMemo] = useState('');
@@ -77,6 +82,11 @@ export function DdcScreen() {
   const [migrateResult, setMigrateResult] = useState<string | null>(null);
   const [showPinUnlock, setShowPinUnlock] = useState(false);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+
+  // Ensure crypto is ready on mount
+  useEffect(() => {
+    cryptoWaitReady().then(() => { cryptoReady = true; });
+  }, []);
 
   // Check if wallet needs unlock
   const needsUnlock = () => {
