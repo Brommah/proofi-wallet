@@ -276,7 +276,9 @@ export function getBucketId(): string {
  * Get the CNS name for a wallet's index.
  */
 function getIndexName(walletAddress: string): string {
-  return `proofi-index-${walletAddress}`;
+  // CNS names have max 32 chars - use short hash of address
+  const hash = walletAddress.slice(-16); // Last 16 chars of address
+  return `pi-${hash}`; // "pi-" prefix + 16 chars = 19 chars total
 }
 
 export interface IndexEntry {
@@ -365,7 +367,7 @@ export async function addToWalletIndex(
   
   const ddcTags = [
     new Tag('type', 'proofi-index'),
-    new Tag('wallet', walletAddress),
+    new Tag('wallet', truncateTag(walletAddress)),
     new Tag('version', '1'),
   ];
   const file = new DdcFile(Buffer.from(indexContent), { tags: ddcTags });
