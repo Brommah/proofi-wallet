@@ -6,7 +6,7 @@ import { OtpService } from './otp/service.js';
 import { createEmailSender } from './otp/email.js';
 import { SqliteAppStore } from './apps/store.js';
 import { SqliteUserStore } from './users/store.js';
-import { SqliteMemoStore } from './memos/store.js';
+// SqliteMemoStore removed - using fully decentralized DDC index instead!
 import { JwtService } from './jwt/service.js';
 import { generateDerivationSalt, deriveUserSeed, seedToHex } from './keys/derive.js';
 import {
@@ -18,6 +18,7 @@ import {
   ddcStore,
   getIssuerAddress,
   getBucketId,
+  readWalletIndex,
 } from './ddc/service.js';
 
 const app = new Hono();
@@ -34,8 +35,8 @@ const appStore = new SqliteAppStore();
 // SQLite-backed for persistence across server restarts
 const userStore = new SqliteUserStore();
 
-// ── Memo index store (track user memos/credentials) ─────────────────
-const memoStore = new SqliteMemoStore();
+// ── Memo index: now stored on DDC (fully decentralized!) ────────────
+// No more SQLite - see readWalletIndex() in ddc/service.ts
 
 // Seed a dev app
 if (env.NODE_ENV === 'development') {
@@ -185,7 +186,7 @@ app.get('/ddc/status', async (c) => {
   }
 });
 
-// Store a memo on DDC
+// Store a memo on DDC (fully decentralized - index stored on DDC!)
 app.post('/ddc/memo', async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
@@ -199,11 +200,9 @@ app.post('/ddc/memo', async (c) => {
   }
 
   try {
+    // storeMemo now also updates the decentralized index on DDC
     const result = await ddcStoreMemo(auth.email, auth.walletAddress, memo);
     console.log(`📝 Memo stored for ${auth.email} (${auth.walletAddress}): ${result.cid}`);
-    
-    // Index the memo for listing
-    memoStore.add(auth.email, auth.walletAddress, result.cid, result.cdnUrl, 'memo');
     
     return c.json({ ok: true, ...result });
   } catch (e: any) {
@@ -212,7 +211,7 @@ app.post('/ddc/memo', async (c) => {
   }
 });
 
-// Store a credential on DDC
+// Store a credential on DDC (fully decentralized - index stored on DDC!)
 app.post('/ddc/credential', async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
@@ -227,11 +226,9 @@ app.post('/ddc/credential', async (c) => {
   }
 
   try {
+    // storeCredential now also updates the decentralized index on DDC
     const result = await storeCredential(auth.email, auth.walletAddress, claimType, claimData);
     console.log(`🎓 Credential stored for ${auth.email}: ${result.cid}`);
-    
-    // Index the credential for listing
-    memoStore.add(auth.email, auth.walletAddress, result.cid, result.cdnUrl, 'credential', claimType);
     
     return c.json({ ok: true, ...result });
   } catch (e: any) {
@@ -262,47 +259,45 @@ app.get('/ddc/verify/:cid', async (c) => {
   }
 });
 
-// List user's memos and credentials from DDC
+// List user's memos and credentials from DDC (fully decentralized!)
 app.get('/ddc/list', async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
 
+  // Skip pending users without wallet address
+  if (!auth.walletAddress || auth.walletAddress.startsWith('pending:')) {
+    return c.json({ ok: true, count: 0, items: [] });
+  }
+
   try {
-    const items = memoStore.listByEmail(auth.email);
+    // Read index directly from DDC - no database!
+    const index = await readWalletIndex(auth.walletAddress);
     return c.json({ 
       ok: true, 
-      count: items.length,
-      items: items.map(item => ({
-        cid: item.cid,
-        cdnUrl: item.cdnUrl,
-        type: item.type,
-        credentialType: item.credentialType,
-        createdAt: item.createdAt,
-      })),
+      count: index.entries.length,
+      items: index.entries,
     });
   } catch (e: any) {
+    console.error(`❌ Failed to read wallet index: ${e.message}`);
     return c.json({ error: e.message || 'Failed to list items' }, 500);
   }
 });
 
 // List memos/credentials by wallet address (public endpoint for verification)
+// Fully decentralized - reads directly from DDC!
 app.get('/ddc/list/:walletAddress', async (c) => {
   const { walletAddress } = c.req.param();
   try {
-    const items = memoStore.listByWallet(walletAddress);
+    // Read index directly from DDC - no database!
+    const index = await readWalletIndex(walletAddress);
     return c.json({ 
       ok: true, 
       walletAddress,
-      count: items.length,
-      items: items.map(item => ({
-        cid: item.cid,
-        cdnUrl: item.cdnUrl,
-        type: item.type,
-        credentialType: item.credentialType,
-        createdAt: item.createdAt,
-      })),
+      count: index.entries.length,
+      items: index.entries,
     });
   } catch (e: any) {
+    console.error(`❌ Failed to read wallet index: ${e.message}`);
     return c.json({ error: e.message || 'Failed to list items' }, 500);
   }
 });

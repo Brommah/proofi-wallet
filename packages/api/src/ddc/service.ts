@@ -172,10 +172,20 @@ export async function storeCredential(
     { key: 'issuer', value: ISSUER_ADDRESS },
   ]);
 
+  const cdnUrl = `https://cdn.ddc-dragon.com/${BUCKET_ID}/${cid}`;
+
+  // Add to decentralized index (no database!)
+  await addToWalletIndex(userWalletAddress, {
+    cid,
+    cdnUrl,
+    type: 'credential',
+    credentialType: claimType,
+  });
+
   return {
     cid,
     credential,
-    cdnUrl: `https://cdn.ddc-dragon.com/${BUCKET_ID}/${cid}`,
+    cdnUrl,
   };
 }
 
@@ -208,6 +218,7 @@ export async function readCredential(cid: string): Promise<{ credential: any; ve
 
 /**
  * Store a simple memo on DDC (not a credential, just text).
+ * Also adds to the wallet's decentralized index.
  */
 export async function storeMemo(
   userEmail: string,
@@ -228,10 +239,16 @@ export async function storeMemo(
     { key: 'wallet', value: walletAddress },
   ]);
 
-  return {
+  const cdnUrl = `https://cdn.ddc-dragon.com/${BUCKET_ID}/${cid}`;
+
+  // Add to decentralized index (no database!)
+  await addToWalletIndex(walletAddress, {
     cid,
-    cdnUrl: `https://cdn.ddc-dragon.com/${BUCKET_ID}/${cid}`,
-  };
+    cdnUrl,
+    type: 'memo',
+  });
+
+  return { cid, cdnUrl };
 }
 
 export function getIssuerAddress(): string {
@@ -240,4 +257,100 @@ export function getIssuerAddress(): string {
 
 export function getBucketId(): string {
   return BUCKET_ID.toString();
+}
+
+// ── Decentralized Index (no database!) ──
+
+/**
+ * Get the CNS name for a wallet's index.
+ */
+function getIndexName(walletAddress: string): string {
+  return `proofi-index-${walletAddress}`;
+}
+
+export interface IndexEntry {
+  cid: string;
+  cdnUrl: string;
+  type: 'memo' | 'credential';
+  credentialType?: string;
+  createdAt: string;
+}
+
+export interface WalletIndex {
+  version: 1;
+  wallet: string;
+  entries: IndexEntry[];
+  updatedAt: string;
+}
+
+/**
+ * Read a wallet's index from DDC.
+ * Returns empty index if not found.
+ */
+export async function readWalletIndex(walletAddress: string): Promise<WalletIndex> {
+  await initDdc();
+  const indexName = getIndexName(walletAddress);
+  
+  try {
+    // Try to resolve CNS name to CID
+    const cid = await ddcClient.resolveName(BUCKET_ID, indexName);
+    if (!cid) {
+      return createEmptyIndex(walletAddress);
+    }
+    
+    // Read the index content
+    const content = await ddcRead(cid.toString());
+    const index = JSON.parse(content) as WalletIndex;
+    return index;
+  } catch (e: any) {
+    // Index doesn't exist yet
+    console.log(`📋 No index found for ${walletAddress}, returning empty index`);
+    return createEmptyIndex(walletAddress);
+  }
+}
+
+function createEmptyIndex(walletAddress: string): WalletIndex {
+  return {
+    version: 1,
+    wallet: walletAddress,
+    entries: [],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Add an entry to a wallet's index on DDC.
+ * This is fully decentralized - no database!
+ */
+export async function addToWalletIndex(
+  walletAddress: string,
+  entry: Omit<IndexEntry, 'createdAt'>,
+): Promise<void> {
+  await initDdc();
+  
+  // Read current index
+  const index = await readWalletIndex(walletAddress);
+  
+  // Add new entry
+  index.entries.unshift({
+    ...entry,
+    createdAt: new Date().toISOString(),
+  });
+  index.updatedAt = new Date().toISOString();
+  
+  // Store updated index with CNS name (this updates the name pointer!)
+  const indexName = getIndexName(walletAddress);
+  const indexContent = JSON.stringify(index, null, 2);
+  
+  const ddcTags = [
+    new Tag('type', 'proofi-index'),
+    new Tag('wallet', walletAddress),
+    new Tag('version', '1'),
+  ];
+  const file = new DdcFile(Buffer.from(indexContent), { tags: ddcTags });
+  
+  // Store with name option - this creates/updates the CNS record
+  await ddcClient.store(BUCKET_ID, file, { name: indexName } as any);
+  
+  console.log(`📋 Index updated for ${walletAddress}: ${index.entries.length} entries`);
 }
