@@ -296,14 +296,49 @@ export interface WalletIndex {
   updatedAt: string;
 }
 
+// ── In-memory index cache + write locks ──
+// Prevents CNS eventual consistency from causing lost writes
+const indexCache = new Map<string, WalletIndex>();
+const indexLocks = new Map<string, Promise<void>>();
+
+async function withIndexLock(walletAddress: string, fn: () => Promise<void>): Promise<void> {
+  // Wait for any existing operation on this wallet to finish
+  const existing = indexLocks.get(walletAddress);
+  if (existing) {
+    await existing;
+  }
+  
+  let resolve: () => void;
+  const lock = new Promise<void>((r) => { resolve = r; });
+  indexLocks.set(walletAddress, lock);
+  
+  try {
+    await fn();
+  } finally {
+    resolve!();
+    if (indexLocks.get(walletAddress) === lock) {
+      indexLocks.delete(walletAddress);
+    }
+  }
+}
+
 /**
  * Read a wallet's index from DDC.
+ * Uses in-memory cache to avoid CNS eventual consistency issues.
  * Returns empty index if not found.
  */
 export async function readWalletIndex(walletAddress: string): Promise<WalletIndex> {
   await initDdc();
   const indexName = getIndexName(walletAddress);
   console.log(`📋 [readWalletIndex] Looking for index: ${indexName}`);
+  
+  // Check in-memory cache first (avoids stale CNS reads)
+  const cached = indexCache.get(walletAddress);
+  if (cached) {
+    console.log(`📋 [readWalletIndex] Using cached index: ${cached.entries.length} entries`);
+    // Return a deep copy so mutations don't affect cache
+    return JSON.parse(JSON.stringify(cached));
+  }
   
   try {
     // Try to resolve CNS name to CID
@@ -321,6 +356,10 @@ export async function readWalletIndex(walletAddress: string): Promise<WalletInde
     const content = await ddcRead(cid.toString());
     const index = JSON.parse(content) as WalletIndex;
     console.log(`📋 [readWalletIndex] Index loaded: ${index.entries.length} entries`);
+    
+    // Cache it
+    indexCache.set(walletAddress, JSON.parse(JSON.stringify(index)));
+    
     return index;
   } catch (e: any) {
     // Index doesn't exist yet
@@ -340,6 +379,7 @@ function createEmptyIndex(walletAddress: string): WalletIndex {
 
 /**
  * Add an entry to a wallet's index on DDC.
+ * Uses write lock to prevent concurrent modifications losing data.
  * This is fully decentralized - no database!
  */
 export async function addToWalletIndex(
@@ -348,32 +388,37 @@ export async function addToWalletIndex(
 ): Promise<void> {
   await initDdc();
   
-  const indexName = getIndexName(walletAddress);
-  console.log(`📋 [addToWalletIndex] Adding to index: ${indexName}`);
-  
-  // Read current index
-  const index = await readWalletIndex(walletAddress);
-  console.log(`📋 [addToWalletIndex] Current index has ${index.entries.length} entries`);
-  
-  // Add new entry
-  index.entries.unshift({
-    ...entry,
-    createdAt: new Date().toISOString(),
+  await withIndexLock(walletAddress, async () => {
+    const indexName = getIndexName(walletAddress);
+    console.log(`📋 [addToWalletIndex] Adding to index: ${indexName}`);
+    
+    // Read current index (uses cache if available)
+    const index = await readWalletIndex(walletAddress);
+    console.log(`📋 [addToWalletIndex] Current index has ${index.entries.length} entries`);
+    
+    // Add new entry
+    index.entries.unshift({
+      ...entry,
+      createdAt: new Date().toISOString(),
+    });
+    index.updatedAt = new Date().toISOString();
+    
+    // Store updated index with CNS name (this updates the name pointer!)
+    const indexContent = JSON.stringify(index, null, 2);
+    
+    const ddcTags = [
+      new Tag('type', 'proofi-index'),
+      new Tag('wallet', truncateTag(walletAddress)),
+      new Tag('version', '1'),
+    ];
+    const file = new DdcFile(Buffer.from(indexContent), { tags: ddcTags });
+    
+    // Store with name option - this creates/updates the CNS record
+    console.log(`📋 [addToWalletIndex] Storing index with CNS name: ${indexName}`);
+    const result = await ddcClient.store(BUCKET_ID, file, { name: indexName } as any);
+    console.log(`📋 [addToWalletIndex] Stored! CID: ${result.cid}, ${index.entries.length} entries total`);
+    
+    // Update cache with the latest version
+    indexCache.set(walletAddress, JSON.parse(JSON.stringify(index)));
   });
-  index.updatedAt = new Date().toISOString();
-  
-  // Store updated index with CNS name (this updates the name pointer!)
-  const indexContent = JSON.stringify(index, null, 2);
-  
-  const ddcTags = [
-    new Tag('type', 'proofi-index'),
-    new Tag('wallet', truncateTag(walletAddress)),
-    new Tag('version', '1'),
-  ];
-  const file = new DdcFile(Buffer.from(indexContent), { tags: ddcTags });
-  
-  // Store with name option - this creates/updates the CNS record
-  console.log(`📋 [addToWalletIndex] Storing index with CNS name: ${indexName}`);
-  const result = await ddcClient.store(BUCKET_ID, file, { name: indexName } as any);
-  console.log(`📋 [addToWalletIndex] Stored! CID: ${result.cid}, ${index.entries.length} entries total`);
 }
