@@ -69,8 +69,8 @@ export function DdcScreen() {
 
   // Load existing memos/credentials on mount
   useEffect(() => {
-    const token = getToken();
-    if (!token) return;
+    const { address, keypair } = useWalletStore.getState();
+    if (!address || !keypair) return;
     
     fetch(`${API_URL}/ddc/list`, { headers: authHeaders() })
       .then((r) => r.json())
