@@ -11,9 +11,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@polkadot/api": "^16.5.4",
     "@proofi/comm": "workspace:*",
     "@proofi/core": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
+    "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.1.18",
