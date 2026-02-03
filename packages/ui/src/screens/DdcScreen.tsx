@@ -313,23 +313,37 @@ export function DdcScreen() {
                   href={item.cdnUrl}
                   target="_blank"
                   rel="noopener"
-                  className="block p-4 border border-[#2A2A2A] hover:border-[#00E5FF] transition-colors group"
+                  className={`block p-4 border transition-colors group ${
+                    item.credentialType === 'GameAchievement'
+                      ? 'border-[#FFE100]/30 hover:border-[#FFE100] bg-[#FFE100]/5'
+                      : 'border-[#2A2A2A] hover:border-[#00E5FF]'
+                  }`}
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <span className={`text-xs px-2 py-0.5 ${
-                      item.type === 'memo' 
-                        ? 'bg-[#2A2A2A] text-[#8A8A8A]' 
-                        : 'bg-[#00E5FF]/10 text-[#00E5FF]'
-                    }`}>
-                      {item.type === 'memo' ? 'MEMO' : item.credentialType?.toUpperCase() || 'CREDENTIAL'}
-                    </span>
+                    {item.credentialType === 'GameAchievement' ? (
+                      <span className="text-xs px-2 py-0.5 bg-[#FFE100]/10 text-[#FFE100]">
+                        🎮 ACHIEVEMENT
+                      </span>
+                    ) : (
+                      <span className={`text-xs px-2 py-0.5 ${
+                        item.type === 'memo' 
+                          ? 'bg-[#2A2A2A] text-[#8A8A8A]' 
+                          : 'bg-[#00E5FF]/10 text-[#00E5FF]'
+                      }`}>
+                        {item.type === 'memo' ? 'MEMO' : item.credentialType?.toUpperCase() || 'CREDENTIAL'}
+                      </span>
+                    )}
                     {item.createdAt && (
                       <span className="text-mono text-xs text-[#4A4A4A]">
                         {new Date(item.createdAt).toLocaleTimeString()}
                       </span>
                     )}
                   </div>
-                  <div className="text-mono text-xs text-[#8A8A8A] truncate group-hover:text-[#00E5FF] transition-colors">
+                  <div className={`text-mono text-xs truncate transition-colors ${
+                    item.credentialType === 'GameAchievement'
+                      ? 'text-[#FFE100]/60 group-hover:text-[#FFE100]'
+                      : 'text-[#8A8A8A] group-hover:text-[#00E5FF]'
+                  }`}>
                     {item.cid}
                   </div>
                 </a>

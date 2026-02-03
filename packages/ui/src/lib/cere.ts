@@ -1,13 +1,18 @@
 /**
  * CERE Network Token Functions
- * Mainnet RPC: wss://rpc.mainnet.cere.network
+ * Mainnet RPC: wss://rpc.mainnet.cere.network/ws
+ * Archive RPC: wss://archive.mainnet.cere.network/ws
  */
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { Keyring } from '@polkadot/keyring';
 import { formatBalance } from '@polkadot/util';
 
-const CERE_RPC = 'wss://rpc.mainnet.cere.network';
+// Primary and fallback RPC endpoints (archive is more stable)
+const CERE_RPC_ENDPOINTS = [
+  'wss://archive.mainnet.cere.network/ws',
+  'wss://rpc.mainnet.cere.network/ws',
+];
 const CERE_DECIMALS = 10;
 const CERE_SYMBOL = 'CERE';
 
@@ -15,28 +20,47 @@ let api: ApiPromise | null = null;
 let connecting = false;
 
 /**
- * Get or create API connection to Cere mainnet
+ * Get or create API connection to Cere mainnet (with fallback)
  */
 export async function getApi(): Promise<ApiPromise> {
   if (api && api.isConnected) return api;
   
   if (connecting) {
-    // Wait for existing connection attempt
-    while (connecting) {
+    let waited = 0;
+    while (connecting && waited < 15000) {
       await new Promise(r => setTimeout(r, 100));
+      waited += 100;
     }
     if (api && api.isConnected) return api;
   }
 
   connecting = true;
-  try {
-    const provider = new WsProvider(CERE_RPC);
-    api = await ApiPromise.create({ provider });
-    console.log('[CERE] Connected to mainnet');
-    return api;
-  } finally {
-    connecting = false;
+  
+  for (const endpoint of CERE_RPC_ENDPOINTS) {
+    try {
+      console.log('[CERE] Trying:', endpoint);
+      const provider = new WsProvider(endpoint, 3000);
+      
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 12000)
+      );
+      
+      api = await Promise.race([
+        ApiPromise.create({ provider }),
+        timeoutPromise
+      ]);
+      
+      console.log('[CERE] Connected via:', endpoint);
+      connecting = false;
+      return api;
+    } catch (err) {
+      console.warn('[CERE] Failed:', endpoint, err);
+      // Try next endpoint
+    }
   }
+  
+  connecting = false;
+  throw new Error('All Cere RPC endpoints failed');
 }
 
 /**

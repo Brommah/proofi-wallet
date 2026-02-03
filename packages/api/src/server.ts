@@ -453,6 +453,74 @@ app.get('/ddc/backup/:email', async (c) => {
   }
 });
 
+// ── Game Achievement Routes ──────────────────────────────────────────
+
+// Store a game achievement on DDC
+app.post('/game/achievement', async (c) => {
+  const auth = await getAuth(c);
+  if (!auth) return c.json({ error: 'Authorization required' }, 401);
+
+  const { game, score, achievement, data } = await c.req.json<{
+    game: string;
+    score?: number;
+    achievement?: string;
+    data?: any;
+  }>();
+
+  if (!game) return c.json({ error: 'game name required' }, 400);
+
+  if (!auth.walletAddress || auth.walletAddress.startsWith('pending:')) {
+    return c.json({ error: 'Wallet address not registered. Please complete wallet setup.' }, 400);
+  }
+
+  try {
+    const claimData = {
+      game,
+      score: score ?? 0,
+      achievement: achievement ?? 'score',
+      timestamp: new Date().toISOString(),
+      ...(data || {}),
+    };
+
+    const result = await storeCredential(
+      auth.email,
+      auth.walletAddress,
+      'GameAchievement',
+      claimData,
+    );
+    console.log(`🎮 Achievement stored for ${auth.email}: ${game} - ${achievement || 'score'} (${score})`);
+
+    return c.json({ ok: true, ...result });
+  } catch (e: any) {
+    console.error(`❌ Game achievement error: ${e.message}`);
+    return c.json({ error: e.message || 'Failed to store achievement' }, 500);
+  }
+});
+
+// Get achievements for a specific game (public endpoint)
+app.get('/game/achievements/:walletAddress', async (c) => {
+  const { walletAddress } = c.req.param();
+  const game = c.req.query('game');
+
+  try {
+    const index = await readWalletIndex(walletAddress);
+    let achievements = index.entries.filter(
+      (e) => e.type === 'credential' && e.credentialType === 'GameAchievement',
+    );
+
+    // If game filter provided, we'd need to read each credential to filter
+    // For now, return all game achievements
+    return c.json({
+      ok: true,
+      walletAddress,
+      count: achievements.length,
+      achievements,
+    });
+  } catch (e: any) {
+    return c.json({ error: e.message || 'Failed to fetch achievements' }, 500);
+  }
+});
+
 // App registration
 app.get('/apps/:appId', (c) => {
   const record = appStore.get(c.req.param('appId'));
