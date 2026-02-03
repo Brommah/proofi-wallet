@@ -15,9 +15,22 @@
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -b --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "typescript": "workspace:*"
+    "@types/node": "^22.15.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@polkadot/keyring": "^14.0.1",
+    "@polkadot/types": "^16.5.4",
+    "@polkadot/util": "^14.0.1",
+    "@polkadot/util-crypto": "^14.0.1",
+    "ethers": "^6.16.0",
+    "json-rpc-engine": "^6.1.0",
+    "tweetnacl": "^1.0.3"
   }
 }

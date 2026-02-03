@@ -1,113 +1,202 @@
 import { useState } from 'react';
-import { useAuthStore } from '../stores';
+import { useAuthStore } from '../stores/authStore';
+import { OtpInput } from '../components/OtpInput';
+import { Button } from '../components/Button';
 
 export function LoginScreen() {
-  const { otpSent, loading, error, sendOtp, verifyOtp, clearError, email } =
-    useAuthStore();
-  const [emailInput, setEmailInput] = useState('');
-  const [codeInput, setCodeInput] = useState('');
+  const [email, setEmail] = useState('');
+  const { 
+    otpSent, 
+    sendOtp, 
+    verifyOtp, 
+    loading, 
+    error, 
+    clearError 
+  } = useAuthStore();
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (emailInput.includes('@')) sendOtp(emailInput);
+    clearError();
+    await sendOtp(email);
   };
 
-  const handleVerify = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (codeInput.length === 6) verifyOtp(codeInput);
+  const handleVerifyOtp = async (code: string) => {
+    clearError();
+    await verifyOtp(code);
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-bg p-4">
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="font-heading text-3xl font-bold tracking-tight text-text">
-            Proof<span className="text-accent">i</span>
+    <div className="flex flex-col min-h-full">
+      {/* Header with gradient */}
+      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 px-6 pt-12 pb-16 relative overflow-hidden">
+        {/* Background effects */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-400/10 rounded-full blur-3xl" />
+        </div>
+        
+        <div className="relative z-10 text-center">
+          {/* Logo */}
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur border border-white/30 mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            </svg>
+          </div>
+          
+          <h1 className="text-2xl font-display font-bold text-white mb-2">
+            Proofi Wallet
           </h1>
-          <p className="text-text-dim text-sm mt-1 font-sans">
-            Verified credentials. No middleman.
+          <p className="text-white/70 text-sm">
+            Self-custodial credentials, verified on-chain
           </p>
         </div>
+      </div>
 
-        {/* Card */}
-        <div className="border border-border bg-bg p-7">
+      {/* Main content */}
+      <div className="flex-1 px-6 -mt-8 relative z-10">
+        <div className="rounded-2xl bg-gray-900 border border-gray-800 p-6 shadow-xl">
           {!otpSent ? (
-            <form onSubmit={handleSendOtp}>
-              <label className="block font-heading text-[11px] font-bold uppercase tracking-[2.5px] text-text-dim mb-3">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={emailInput}
-                onChange={(e) => {
-                  setEmailInput(e.target.value);
-                  clearError();
-                }}
-                placeholder="you@example.com"
-                className="w-full border border-border bg-bg px-4 py-3 font-mono text-[13px] text-text placeholder:text-text-muted focus:border-accent focus:outline-none transition-colors duration-150"
-                autoFocus
-                disabled={loading}
-              />
-              {error && (
-                <p className="text-danger text-sm mt-2">{error}</p>
-              )}
-              <button
-                type="submit"
-                disabled={loading || !emailInput.includes('@')}
-                className="w-full mt-4 px-8 py-4 bg-accent text-white border-2 border-accent font-heading text-sm font-bold uppercase tracking-[1px] hover:bg-accent-hover hover:border-accent-hover transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Sending…' : 'Continue'}
-              </button>
-            </form>
+            <>
+              <div className="text-center mb-6">
+                <h2 className="text-lg font-medium text-white mb-1">
+                  Sign In or Create Account
+                </h2>
+                <p className="text-xs text-gray-500">
+                  Enter your email to get started
+                </p>
+              </div>
+
+              <form onSubmit={handleSendOtp} className="space-y-4">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                    autoFocus
+                    disabled={loading}
+                    required
+                  />
+                </div>
+
+                {error && (
+                  <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3">
+                    <p className="text-xs text-red-400">{error}</p>
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  fullWidth
+                  disabled={!email || loading}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Sending...
+                    </span>
+                  ) : (
+                    'Continue with Email'
+                  )}
+                </Button>
+              </form>
+            </>
           ) : (
-            <form onSubmit={handleVerify}>
-              <p className="text-text-dim text-sm mb-4">
-                We sent a 6-digit code to{' '}
-                <span className="font-mono text-text text-[13px]">{email}</span>
-              </p>
-              <label className="block font-heading text-[11px] font-bold uppercase tracking-[2.5px] text-text-dim mb-3">
-                Verification Code
-              </label>
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                value={codeInput}
-                onChange={(e) => {
-                  setCodeInput(e.target.value.replace(/\D/g, ''));
-                  clearError();
-                }}
-                placeholder="000000"
-                className="w-full border border-border bg-bg px-4 py-3 font-mono text-[13px] text-text text-center tracking-[8px] placeholder:text-text-muted focus:border-accent focus:outline-none transition-colors duration-150"
-                autoFocus
-                disabled={loading}
-              />
-              {error && (
-                <p className="text-danger text-sm mt-2">{error}</p>
-              )}
-              <button
-                type="submit"
-                disabled={loading || codeInput.length !== 6}
-                className="w-full mt-4 px-8 py-4 bg-accent text-white border-2 border-accent font-heading text-sm font-bold uppercase tracking-[1px] hover:bg-accent-hover hover:border-accent-hover transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Verifying…' : 'Verify'}
-              </button>
-              <button
-                type="button"
-                onClick={() => useAuthStore.setState({ otpSent: false, error: null })}
-                className="w-full mt-2 py-2 text-text-dim text-sm underline hover:text-text transition-colors duration-150"
-              >
-                Use different email
-              </button>
-            </form>
+            <>
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-3">
+                  <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                </div>
+                <h2 className="text-lg font-medium text-white mb-1">
+                  Check your email
+                </h2>
+                <p className="text-xs text-gray-500">
+                  We sent a code to <span className="text-gray-300">{email}</span>
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <OtpInput 
+                  length={6} 
+                  onComplete={handleVerifyOtp}
+                  disabled={loading}
+                />
+
+                {error && (
+                  <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3">
+                    <p className="text-xs text-red-400">{error}</p>
+                  </div>
+                )}
+
+                {loading && (
+                  <div className="flex items-center justify-center gap-2 text-blue-400 text-sm">
+                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Verifying...
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => useAuthStore.setState({ otpSent: false, error: null })}
+                  className="w-full text-sm text-gray-500 hover:text-gray-300 transition-colors"
+                >
+                  ← Use different email
+                </button>
+              </div>
+            </>
           )}
         </div>
 
-        {/* Footer */}
-        <p className="text-center text-text-muted text-[11px] mt-6 font-heading uppercase tracking-[1.5px]">
-          Powered by Proof<span className="text-accent">i</span>
+        {/* Features list */}
+        <div className="mt-8 space-y-3">
+          <Feature 
+            icon="🔐" 
+            title="Self-Custodial" 
+            description="Your keys never leave your device"
+          />
+          <Feature 
+            icon="⚡" 
+            title="No Seed Phrases" 
+            description="Sign in with email, secure with PIN"
+          />
+          <Feature 
+            icon="🔗" 
+            title="On-Chain Verified" 
+            description="Credentials stored on Cere DDC"
+          />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-6 text-center">
+        <p className="text-xs text-gray-600">
+          By continuing, you agree to our Terms of Service
         </p>
+      </div>
+    </div>
+  );
+}
+
+function Feature({ icon, title, description }: { icon: string; title: string; description: string }) {
+  return (
+    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-900/50 border border-gray-800/50">
+      <span className="text-lg">{icon}</span>
+      <div>
+        <p className="text-sm text-white font-medium">{title}</p>
+        <p className="text-xs text-gray-500">{description}</p>
       </div>
     </div>
   );

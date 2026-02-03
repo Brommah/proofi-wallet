@@ -18,10 +18,17 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@proofi/sdk": "workspace:*",
-    "@polkadot/extension-inject": "^0.56.0"
+    "@proofi/sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "@polkadot/extension-inject": ">=0.50.0",
+    "@polkadot/types": ">=10.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@polkadot/extension-inject": { "optional": true },
+    "@polkadot/types": { "optional": true }
   },
   "devDependencies": {
-    "typescript": "workspace:*"
+    "typescript": "^5.7.0"
   }
 }

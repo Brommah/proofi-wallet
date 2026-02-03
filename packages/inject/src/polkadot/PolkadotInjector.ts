@@ -1,14 +1,18 @@
-import type { ProofiWallet, WalletConnectOptions, WalletAccount } from '@proofi/sdk';
-import { injectExtension } from '@polkadot/extension-inject';
-import type { Injected, InjectedAccount, InjectedAccounts } from '@polkadot/extension-inject/types';
-import type { SignerPayloadRaw, SignerResult, Signer, SignerPayloadJSON } from '@polkadot/types/types';
+import type { ProofiWallet } from '@proofi/sdk';
+import type {
+  Injected,
+  InjectedAccount,
+  InjectedAccounts,
+  SignerPayloadRaw,
+  SignerResult,
+  Signer,
+  SignerPayloadJSON,
+} from './types.js';
 
 export type PolkadotInjectorOptions = {
   name?: string;
   version?: string;
   autoConnect?: boolean;
-  waitReady?: boolean;
-  connectOptions?: WalletConnectOptions;
 };
 
 export class PolkadotInjector {
@@ -16,72 +20,67 @@ export class PolkadotInjector {
   private version: string;
   private injected: boolean = false;
   private shouldConnect: boolean;
-  private shouldWait: boolean;
-  private connectOptions?: WalletConnectOptions;
 
   constructor(
     readonly wallet: ProofiWallet,
-    { name, version, autoConnect = false, waitReady = true, connectOptions }: PolkadotInjectorOptions = {},
+    { name, version, autoConnect = false }: PolkadotInjectorOptions = {},
   ) {
     this.name = name || 'Proofi Wallet';
     this.version = version || '0.0.1';
     this.shouldConnect = autoConnect;
-    this.shouldWait = waitReady;
-    this.connectOptions = connectOptions;
   }
 
   get isInjected() {
     return this.injected;
   }
 
-  private waitReady = () => this.wallet.isReady.then(() => true);
-  private filterAccounts = (accounts: WalletAccount[]) => {
-    return accounts.filter((account: WalletAccount) => account.type === 'ed25519') as InjectedAccount[];
+  readonly getAccounts = async (): Promise<InjectedAccount[]> => {
+    if (!this.wallet.isConnected || !this.wallet.address) return [];
+    return [{
+      address: this.wallet.address,
+      name: 'Proofi Wallet',
+      type: 'ed25519' as const,
+    }];
   };
 
-  readonly getAccounts = async () => {
-    const allAccounts = await this.wallet.provider.request({
-      method: 'wallet_accounts',
-    });
+  readonly subscribeAccounts = (onReceive: (accounts: InjectedAccount[]) => void): (() => void) => {
+    const handler = () => {
+      void this.getAccounts().then(onReceive);
+    };
 
-    return this.filterAccounts(allAccounts);
-  };
+    this.wallet.on('accountChanged', handler);
+    this.wallet.on('connected', handler);
+    this.wallet.on('disconnected', handler);
 
-  readonly subscribeAccounts = (onReceive: (accounts: InjectedAccount[]) => void) => {
-    return this.wallet.subscribe('accounts-update', (accounts: WalletAccount[]) =>
-      onReceive(this.filterAccounts(accounts)),
-    );
+    // Emit current state immediately
+    void this.getAccounts().then(onReceive);
+
+    return () => {
+      this.wallet.off('accountChanged', handler);
+      this.wallet.off('connected', handler);
+      this.wallet.off('disconnected', handler);
+    };
   };
 
   readonly signRaw = async (raw: SignerPayloadRaw): Promise<SignerResult> => {
-    const signature = await this.wallet.provider.request({
-      method: 'ed25519_signRaw',
-      params: [raw.address, raw.data],
-    });
-
+    const signer = this.wallet.getSigner();
+    const signature = await signer.signMessage(raw.data);
     return { id: 0, signature };
   };
 
   readonly signPayload = async (payload: SignerPayloadJSON): Promise<SignerResult> => {
-    const signature = await this.wallet.provider.request({
-      method: 'ed25519_signPayload',
-      params: [payload],
+    const signer = this.wallet.getSigner();
+    const result = await signer.signPayload({
+      data: payload.method,
+      type: 'payload',
+      ...payload,
     });
-
-    return { id: 0, signature };
+    return result;
   };
 
   readonly enable = async (): Promise<Injected> => {
-    if (this.shouldWait) {
-      await this.waitReady();
-    }
-
-    const { permissions } = this.connectOptions || {};
-
     if (this.shouldConnect && this.wallet.status === 'ready') {
-      await this.wallet.connect(this.connectOptions);
-    } else if (this.wallet.status === 'connected' && permissions) {
-      await this.wallet.requestPermissions(permissions).catch(console.warn);
+      await this.wallet.connect();
     }
 
     const accounts: InjectedAccounts = {
@@ -97,12 +96,24 @@ export class PolkadotInjector {
     return { accounts, signer };
   };
 
-  inject() {
-    injectExtension(this.enable, {
-      version: this.version,
-      name: this.name,
-    });
-
-    this.injected = true;
+  /**
+   * Injects the wallet into the global `window.injectedWeb3` object.
+   * Requires @polkadot/extension-inject as a peer dependency.
+   */
+  async inject() {
+    try {
+      const { injectExtension } = await import('@polkadot/extension-inject');
+      // Cast needed because our minimal type stubs use `string` for `type`
+      // whereas @polkadot/extension-inject expects `KeypairType`
+      injectExtension(
+        ((_origin: string) => this.enable()) as unknown as (origin: string) => Promise<import('@polkadot/extension-inject/types').Injected>,
+        { version: this.version, name: this.name },
+      );
+      this.injected = true;
+    } catch {
+      console.warn(
+        '[@proofi/inject] @polkadot/extension-inject not available. Install it as a peer dependency to use inject().',
+      );
+    }
   }
 }

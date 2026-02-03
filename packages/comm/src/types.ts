@@ -1,56 +1,38 @@
-/**
- * Core message type for postMessage communication.
- * Used for RPC requests, responses, and event broadcasts.
- */
 export interface Message<T = unknown> {
-  /** Unique message identifier for correlating requests/responses */
-  id: string
-  /** Message direction */
-  type: 'request' | 'response' | 'event'
-  /** RPC method name or event name */
-  method: string
-  /** Request parameters */
-  params?: T
-  /** Response result */
-  result?: T
-  /** Error information for failed requests */
-  error?: MessageError
+  id: string;
+  type: 'request' | 'response' | 'event';
+  method: string;
+  params?: T;
+  result?: T;
+  error?: MessageError;
+  source: 'proofi-wallet';
 }
 
 export interface MessageError {
-  code: number
-  message: string
+  code: number;
+  message: string;
+  data?: unknown;
 }
 
-/** Standard error codes */
 export const ErrorCodes = {
   PARSE_ERROR: -32700,
   INVALID_REQUEST: -32600,
   METHOD_NOT_FOUND: -32601,
-  INVALID_PARAMS: -32602,
-  INTERNAL_ERROR: -32603,
+  USER_REJECTED: 4001,
+  UNAUTHORIZED: 4100,
   TIMEOUT: -32000,
-  UNKNOWN: -32099,
-} as const
+} as const;
 
-/** Wallet lifecycle events */
+export interface ChannelConfig {
+  targetOrigin: string;
+  targetWindow: Window;
+  timeout?: number; // default 30000ms
+}
+
 export type WalletEvent =
   | 'connected'
   | 'disconnected'
   | 'accountChanged'
-  | 'chainChanged'
-  | 'ready'
-  | 'error'
+  | 'chainChanged';
 
-/** Handler for wallet events */
-export type WalletEventHandler<T = unknown> = (data: T) => void
-
-/** Configuration for the message channel */
-export interface ChannelConfig {
-  /** Target window (e.g., iframe contentWindow) */
-  target: Window
-  /** Expected origin for security validation */
-  targetOrigin: string
-  /** Timeout for RPC requests in ms (default: 30000) */
-  timeout?: number
-}
+export type WalletEventHandler = (data: unknown) => void;

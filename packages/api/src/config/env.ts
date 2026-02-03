@@ -1,22 +1,38 @@
-/** Environment configuration with defaults for development */
+function getEnv(key: string, fallback: string): string {
+  return process.env[key] ?? fallback;
+}
+
+function getEnvInt(key: string, fallback: number): number {
+  const v = process.env[key];
+  return v ? parseInt(v, 10) : fallback;
+}
+
 export const env = {
-  get PORT() { return +(process.env.PORT || '3100'); },
-  get NODE_ENV() { return process.env.NODE_ENV || 'development'; },
-  get JWT_AUDIENCE() { return process.env.JWT_AUDIENCE || 'proofi.id'; },
-  get JWT_EXPIRY() { return process.env.JWT_EXPIRY || '1h'; },
-  get JWT_REFRESH_EXPIRY() { return process.env.JWT_REFRESH_EXPIRY || '7d'; },
-  get OTP_LENGTH() { return +(process.env.OTP_LENGTH || '6'); },
-  get OTP_TTL_SECONDS() { return +(process.env.OTP_TTL_SECONDS || '300'); },
-  get OTP_RESEND_SECONDS() { return +(process.env.OTP_RESEND_SECONDS || '60'); },
-  get SMTP_HOST() { return process.env.SMTP_HOST || ''; },
-  get SMTP_PORT() { return +(process.env.SMTP_PORT || '587'); },
-  get SMTP_USER() { return process.env.SMTP_USER || ''; },
-  get SMTP_PASS() { return process.env.SMTP_PASS || ''; },
-  get SMTP_FROM() { return process.env.SMTP_FROM || 'noreply@proofi.id'; },
-  get RESEND_API_KEY() { return process.env.RESEND_API_KEY || ''; },
-  get REDIS_URL() { return process.env.REDIS_URL || ''; },
-  // Web3Auth (optional)
-  get WEB3AUTH_VERIFIER() { return process.env.WEB3AUTH_VERIFIER || ''; },
-  get WEB3AUTH_NETWORK() { return process.env.WEB3AUTH_NETWORK || 'sapphire_mainnet'; },
-  get WEB3AUTH_CLIENT_ID() { return process.env.WEB3AUTH_CLIENT_ID || ''; },
+  NODE_ENV: getEnv('NODE_ENV', 'development'),
+  PORT: getEnvInt('PORT', 3847),
+
+  // JWT
+  JWT_SECRET: getEnv('PROOFI_JWT_SECRET', 'dev-secret-change-me'),
+  JWT_ISSUER: getEnv('JWT_ISSUER', 'https://auth.proofi.com'),
+  JWT_AUDIENCE: getEnv('JWT_AUDIENCE', 'https://wallet.proofi.com'),
+  JWT_EXPIRY_SECONDS: getEnvInt('JWT_EXPIRY_SECONDS', 3600),
+
+  // OTP
+  OTP_LENGTH: getEnvInt('OTP_LENGTH', 6),
+  OTP_TTL_SECONDS: getEnvInt('OTP_TTL_SECONDS', 300),
+  OTP_RESEND_SECONDS: getEnvInt('OTP_RESEND_SECONDS', 60),
+
+  // SMTP (optional — falls back to console sender)
+  SMTP_HOST: process.env.SMTP_HOST ?? '',
+  SMTP_PORT: getEnvInt('SMTP_PORT', 587),
+  SMTP_USER: process.env.SMTP_USER ?? '',
+  SMTP_PASS: process.env.SMTP_PASS ?? '',
+  SMTP_FROM: getEnv('SMTP_FROM', 'martijn.broersma@gmail.com'),
+
+  // Key derivation
+  MASTER_SECRET: getEnv('PROOFI_MASTER_SECRET', 'dev-master-secret-change-in-production'),
+
+  // CORS
+  CORS_ORIGINS: getEnv('CORS_ORIGINS', 'http://localhost:5173,http://localhost:5174,http://localhost:3000,http://localhost:8080'),
+  ALLOWED_ORIGINS: getEnv('ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:5174,http://localhost:3000,http://localhost:8080'),
 } as const;

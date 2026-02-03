@@ -1,1 +1,2 @@
-export * from './PolkadotInjector';
+export * from './PolkadotInjector.js';
+export type * from './types.js';

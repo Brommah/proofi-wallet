@@ -10,7 +10,7 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { HDNodeWallet, Wallet as EthersWallet } from 'ethers';
 import nacl from 'tweetnacl';
 
-import type { KeyPairData, KeyType, SigningPurpose } from '../types.js';
+import type { KeyPairData, KeyPairInternal, KeyType, SigningPurpose } from '../types';
 
 /** Options for deriving a keypair from mnemonic */
 export interface DeriveOptions {
@@ -49,11 +49,11 @@ export interface ImportKeyOptions {
  * ```
  */
 export class KeyringManager {
-  private pairs = new Map<string, KeyPairData>();
+  private pairs = new Map<string, KeyPairInternal>();
   private mnemonic: string | null = null;
-  private seed: Uint8Array | null = null;
+  private _seed: Uint8Array | null = null;
   private ready = false;
-  private deriveCounter = 0;
+  private deriveCounter: Record<KeyType, number> = { ed25519: 0, sr25519: 0, secp256k1: 0 };
 
   /** SS58 prefix used for Substrate address encoding */
   public ss58Prefix = 42;
@@ -82,12 +82,12 @@ export class KeyringManager {
     return mnemonicGenerate(12);
   }
 
-  /** Set the master mnemonic (clears any existing seed) */
+  /** Set the master mnemonic (resets derive counters) */
   setMnemonic(mnemonic: string): void {
     this.ensureReady();
     this.mnemonic = mnemonic;
-    this.seed = mnemonicToMiniSecret(mnemonic);
-    this.deriveCounter = 0;
+    this._seed = mnemonicToMiniSecret(mnemonic);
+    this.deriveCounter = { ed25519: 0, sr25519: 0, secp256k1: 0 };
   }
 
   /** Get the current mnemonic (if set) */
@@ -103,13 +103,10 @@ export class KeyringManager {
    */
   derive(options: DeriveOptions): KeyPairData {
     this.ensureReady();
-
-    if (!this.seed || !this.mnemonic) {
+    if (!this._seed || !this.mnemonic) {
       throw new Error('No mnemonic set — call setMnemonic() first');
     }
-
     const { type, label, purposes } = options;
-
     switch (type) {
       case 'ed25519':
       case 'sr25519':
@@ -130,25 +127,20 @@ export class KeyringManager {
     const keyring = new Keyring({ type, ss58Format: this.ss58Prefix });
     const suri = derivationPath
       ? `${this.mnemonic}${derivationPath}`
-      : `${this.mnemonic}//${this.deriveCounter++}`;
+      : `${this.mnemonic}//${this.deriveCounter[type]++}`;
 
     const pair = keyring.addFromUri(suri);
 
-    const data: KeyPairData = {
+    const data: KeyPairInternal = {
       id: pair.address,
       type,
       address: pair.address,
       publicKey: new Uint8Array(pair.publicKey),
-      secretKey: new Uint8Array(
-        // sr25519 pairs store the secret in the first 64 bytes of the keypair
-        type === 'sr25519' ? pair.encodePkcs8() : pair.encodePkcs8(),
-      ),
+      secretKey: new Uint8Array(64), // placeholder — signing goes through _polkadotPair
       label,
       purposes,
+      _polkadotPair: pair,
     };
-
-    // Store the raw polkadot pair so we can sign with it later
-    (data as any).__polkadotPair = pair;
 
     this.pairs.set(data.id, data);
     return data;
@@ -159,13 +151,14 @@ export class KeyringManager {
     label?: string,
     purposes?: SigningPurpose[],
   ): KeyPairData {
-    const path = derivationPath ?? `m/44'/60'/0'/0/${this.deriveCounter++}`;
+    const path = derivationPath ?? `m/44'/60'/0'/0/${this.deriveCounter.secp256k1++}`;
     const hdNode = HDNodeWallet.fromPhrase(this.mnemonic!, undefined, path);
+    const wallet = new EthersWallet(hdNode.privateKey);
 
     const secretKeyBytes = hexToU8a(hdNode.privateKey);
     const publicKeyBytes = hexToU8a(hdNode.publicKey);
 
-    const data: KeyPairData = {
+    const data: KeyPairInternal = {
       id: hdNode.address,
       type: 'secp256k1',
       address: hdNode.address,
@@ -173,10 +166,8 @@ export class KeyringManager {
       secretKey: secretKeyBytes,
       label,
       purposes,
+      _ethersWallet: wallet,
     };
-
-    // Store ethers wallet for signing
-    (data as any).__ethersWallet = new EthersWallet(hdNode.privateKey);
 
     this.pairs.set(data.id, data);
     return data;
@@ -189,7 +180,6 @@ export class KeyringManager {
    */
   importKey(options: ImportKeyOptions): KeyPairData {
     this.ensureReady();
-
     const { type, label, purposes } = options;
     const secretKey = typeof options.secretKey === 'string'
       ? hexToU8a(options.secretKey.startsWith('0x') ? options.secretKey : `0x${options.secretKey}`)
@@ -212,18 +202,18 @@ export class KeyringManager {
     label?: string,
     purposes?: SigningPurpose[],
   ): KeyPairData {
-    // tweetnacl expects 32-byte seed or 64-byte full key
+    // tweetnacl: 32-byte seed → full 64-byte keypair
     const naclPair = secretKey.length === 64
       ? { publicKey: secretKey.slice(32), secretKey }
       : nacl.sign.keyPair.fromSeed(secretKey);
 
     const keyring = new Keyring({ type: 'ed25519', ss58Format: this.ss58Prefix });
     const pair = keyring.addFromPair({
-      publicKey: naclPair.publicKey,
+      publicKey: new Uint8Array(naclPair.publicKey),
       secretKey: new Uint8Array(naclPair.secretKey),
     });
 
-    const data: KeyPairData = {
+    const data: KeyPairInternal = {
       id: pair.address,
       type: 'ed25519',
       address: pair.address,
@@ -231,9 +221,9 @@ export class KeyringManager {
       secretKey: new Uint8Array(naclPair.secretKey),
       label,
       purposes,
+      _polkadotPair: pair,
     };
 
-    (data as any).__polkadotPair = pair;
     this.pairs.set(data.id, data);
     return data;
   }
@@ -244,21 +234,21 @@ export class KeyringManager {
     purposes?: SigningPurpose[],
   ): KeyPairData {
     const keyring = new Keyring({ type: 'sr25519', ss58Format: this.ss58Prefix });
-    // For sr25519, we need to use the mini-secret (32 bytes) via URI
+    // For sr25519 we use the mini-secret (32 bytes) via a hex URI
     const hex = u8aToHex(secretKey);
     const pair = keyring.addFromUri(hex);
 
-    const data: KeyPairData = {
+    const data: KeyPairInternal = {
       id: pair.address,
       type: 'sr25519',
       address: pair.address,
       publicKey: new Uint8Array(pair.publicKey),
-      secretKey: secretKey,
+      secretKey,
       label,
       purposes,
+      _polkadotPair: pair,
     };
 
-    (data as any).__polkadotPair = pair;
     this.pairs.set(data.id, data);
     return data;
   }
@@ -271,17 +261,17 @@ export class KeyringManager {
     const hex = u8aToHex(secretKey);
     const wallet = new EthersWallet(hex);
 
-    const data: KeyPairData = {
+    const data: KeyPairInternal = {
       id: wallet.address,
       type: 'secp256k1',
       address: wallet.address,
       publicKey: hexToU8a(wallet.signingKey.compressedPublicKey),
-      secretKey: secretKey,
+      secretKey,
       label,
       purposes,
+      _ethersWallet: wallet,
     };
 
-    (data as any).__ethersWallet = wallet;
     this.pairs.set(data.id, data);
     return data;
   }
@@ -289,22 +279,22 @@ export class KeyringManager {
   // ── Queries ────────────────────────────────────────────────────────────────
 
   /** Get a keypair by id/address */
-  getPair(id: string): KeyPairData | undefined {
+  getPair(id: string): KeyPairInternal | undefined {
     return this.pairs.get(id);
   }
 
   /** Get all keypairs */
-  getAllPairs(): KeyPairData[] {
+  getAllPairs(): KeyPairInternal[] {
     return Array.from(this.pairs.values());
   }
 
   /** Get keypairs filtered by type */
-  getPairsByType(type: KeyType): KeyPairData[] {
+  getPairsByType(type: KeyType): KeyPairInternal[] {
     return this.getAllPairs().filter((p) => p.type === type);
   }
 
   /** Get keypairs filtered by purpose */
-  getPairsByPurpose(purpose: SigningPurpose): KeyPairData[] {
+  getPairsByPurpose(purpose: SigningPurpose): KeyPairInternal[] {
     return this.getAllPairs().filter((p) => p.purposes?.includes(purpose));
   }
 

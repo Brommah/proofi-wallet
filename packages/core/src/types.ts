@@ -48,6 +48,17 @@ export interface KeyPairData {
   purposes?: SigningPurpose[];
 }
 
+/**
+ * Internal extension of KeyPairData that may carry runtime-only objects.
+ * These are never serialised.
+ */
+export interface KeyPairInternal extends KeyPairData {
+  /** @internal Polkadot KeyringPair for Substrate signing */
+  _polkadotPair?: import('@polkadot/keyring/types').KeyringPair;
+  /** @internal Ethers Wallet for Ethereum signing */
+  _ethersWallet?: import('ethers').Wallet;
+}
+
 // ── Signer Interface ───────────────────────────────────────────────────────────
 
 /** Result of signing an extrinsic payload */

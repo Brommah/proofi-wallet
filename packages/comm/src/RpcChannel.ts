@@ -1,99 +1,150 @@
-import type { Message, MessageError, ChannelConfig } from './types'
-import { ErrorCodes } from './types'
-import { MessageChannel } from './MessageChannel'
+import { MessageChannel } from './MessageChannel';
+import type { ChannelConfig, Message, MessageError } from './types';
+import { ErrorCodes } from './types';
+import { generateId } from './utils';
 
-/** Handler for incoming RPC requests */
-export type RpcHandler<TParams = unknown, TResult = unknown> = (
-  params: TParams,
-) => TResult | Promise<TResult>
+export type RpcHandler = (method: string, params: unknown) => Promise<unknown>;
+
+interface PendingRequest {
+  resolve: (value: unknown) => void;
+  reject: (error: Error) => void;
+  timer: ReturnType<typeof setTimeout>;
+}
 
 /**
- * RPC layer on top of MessageChannel.
+ * JSON-RPC layer on top of MessageChannel.
  *
- * Allows registering method handlers (wallet side) and making
- * typed RPC calls (host side). Supports middleware patterns.
+ * SDK side (parent window):
+ *   const rpc = new RpcChannel({ targetOrigin: '*', targetWindow: iframe.contentWindow });
+ *   const address = await rpc.request('wallet_connect', { appId: 'my-app' });
+ *
+ * UI side (iframe):
+ *   const rpc = new RpcChannel({ targetOrigin: '*', targetWindow: window.parent });
+ *   rpc.onRequest(async (method, params) => { ... return result; });
  */
 export class RpcChannel {
-  private channel: MessageChannel
-  private handlers = new Map<string, RpcHandler>()
+  private channel: MessageChannel;
+  private handler: RpcHandler | null = null;
+  private pending = new Map<string, PendingRequest>();
+  private sentRequestIds = new Set<string>();
+  private timeout: number;
 
   constructor(config: ChannelConfig) {
-    this.channel = new MessageChannel(config)
-    this.channel.on('request', this.handleIncomingRequest.bind(this))
+    this.timeout = config.timeout ?? 30_000;
+    this.channel = new MessageChannel(config);
+    this.channel.onMessage((msg) => this.handleMessage(msg));
   }
 
-  /** Access the underlying message channel for event subscription */
-  get messages(): MessageChannel {
-    return this.channel
+  /** Register a handler for incoming RPC requests. */
+  onRequest(handler: RpcHandler): void {
+    this.handler = handler;
   }
 
-  /**
-   * Register a handler for an RPC method.
-   * Used on the wallet side to respond to SDK requests.
-   */
-  registerMethod<TParams = unknown, TResult = unknown>(
-    method: string,
-    handler: RpcHandler<TParams, TResult>,
-  ): void {
-    this.handlers.set(method, handler as RpcHandler)
+  /** Send an RPC request and wait for the response. */
+  async request<T = unknown>(method: string, params?: unknown): Promise<T> {
+    const id = generateId();
+    const msg: Message = {
+      id,
+      type: 'request',
+      method,
+      params,
+      source: 'proofi-wallet',
+    };
+
+    return new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(
+          Object.assign(new Error(`RPC timeout: ${method}`), {
+            code: ErrorCodes.TIMEOUT,
+          }),
+        );
+      }, this.timeout);
+
+      this.pending.set(id, {
+        resolve: (v) => {
+          clearTimeout(timer);
+          resolve(v as T);
+        },
+        reject: (e) => {
+          clearTimeout(timer);
+          reject(e);
+        },
+        timer,
+      });
+
+      this.sentRequestIds.add(id);
+      this.channel.send(msg);
+    });
   }
 
-  /**
-   * Remove a registered method handler.
-   */
-  unregisterMethod(method: string): void {
-    this.handlers.delete(method)
+  /** Send an event (fire-and-forget). */
+  emit(event: string, data?: unknown): void {
+    this.channel.sendEvent(event, data);
   }
 
-  /**
-   * Make an RPC call (request + wait for response).
-   */
-  async call<TParams = unknown, TResult = unknown>(
-    method: string,
-    params?: TParams,
-  ): Promise<TResult> {
-    return this.channel.request<TParams, TResult>(method, params)
+  /** Access the underlying MessageChannel (e.g. for WalletEventEmitter). */
+  get messageChannel(): MessageChannel {
+    return this.channel;
   }
 
-  /**
-   * Fire an event to the other side.
-   */
-  notify<T = unknown>(event: string, data?: T): void {
-    this.channel.sendEvent(event, data)
+  /** Tear down: destroy the channel and reject all pending requests. */
+  destroy(): void {
+    for (const [, pending] of this.pending) {
+      clearTimeout(pending.timer);
+      pending.reject(
+        Object.assign(new Error('RPC channel destroyed'), {
+          code: ErrorCodes.TIMEOUT,
+        }),
+      );
+    }
+    this.pending.clear();
+    this.handler = null;
+    this.channel.destroy();
   }
 
-  /**
-   * Clean up all resources.
-   */
-  dispose(): void {
-    this.handlers.clear()
-    this.channel.dispose()
-  }
+  // ── private ──
 
-  private async handleIncomingRequest(message: Message): Promise<void> {
-    const handler = this.handlers.get(message.method)
-
-    if (!handler) {
-      this.channel.respondError(message.id, message.method, {
-        code: ErrorCodes.METHOD_NOT_FOUND,
-        message: `Method "${message.method}" not found`,
-      })
-      return
+  private async handleMessage(msg: Message): Promise<void> {
+    if (msg.type === 'response') {
+      const pending = this.pending.get(msg.id);
+      if (pending) {
+        this.pending.delete(msg.id);
+        this.sentRequestIds.delete(msg.id);
+        if (msg.error) {
+          const err = Object.assign(new Error(msg.error.message), {
+            code: msg.error.code,
+            data: msg.error.data,
+          });
+          pending.reject(err);
+        } else {
+          pending.resolve(msg.result);
+        }
+      }
+      return;
     }
 
-    try {
-      const result = await handler(message.params)
-      this.channel.respond(message.id, message.method, result)
-    } catch (err) {
-      const error: MessageError =
-        typeof err === 'object' && err !== null && 'code' in err
-          ? (err as MessageError)
-          : {
-              code: ErrorCodes.INTERNAL_ERROR,
-              message: err instanceof Error ? err.message : 'Unknown error',
-            }
+    if (msg.type === 'request') {
+      // Skip requests we sent ourselves (relevant when both sides share a window in tests)
+      if (this.sentRequestIds.has(msg.id)) return;
+      if (!this.handler) {
+        this.channel.sendResponse(msg.id, msg.method, undefined, {
+          code: ErrorCodes.METHOD_NOT_FOUND,
+          message: `No request handler registered`,
+        });
+        return;
+      }
 
-      this.channel.respondError(message.id, message.method, error)
+      try {
+        const result = await this.handler(msg.method, msg.params);
+        this.channel.sendResponse(msg.id, msg.method, result);
+      } catch (err: unknown) {
+        const error: MessageError =
+          typeof err === 'object' && err !== null && 'code' in err
+            ? { code: (err as { code: number }).code, message: String((err as { message?: string }).message ?? err) }
+            : { code: -32603, message: err instanceof Error ? err.message : String(err) };
+        this.channel.sendResponse(msg.id, msg.method, undefined, error);
+      }
     }
   }
 }

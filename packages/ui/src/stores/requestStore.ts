@@ -31,7 +31,7 @@ interface RequestState {
   clear: () => void;
 }
 
-export const useRequestStore = create<RequestState>((set, get) => ({
+export const useRequestStore = create<RequestState>()((set, get) => ({
   pendingRequest: null,
 
   setRequest: (request: PendingRequest) => {

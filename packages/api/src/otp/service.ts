@@ -11,16 +11,15 @@ export class OtpService {
     private emailSender: EmailSender,
   ) {}
 
-  /** Send OTP to email. Returns true if sent, false if rate-limited. */
+  /** Send OTP to email. Rate-limited. */
   async send(email: string): Promise<{ sent: boolean; message: string }> {
     const normalized = email.toLowerCase().trim();
     const existing = await this.store.get(normalized);
 
-    // Rate limit: don't resend if recent OTP exists and hasn't expired
     if (existing && !existing.validated) {
       const elapsed = Date.now() - existing.issuedAt;
       if (elapsed < env.OTP_RESEND_SECONDS * 1000) {
-        return { sent: false, message: 'OTP already sent. Please wait before requesting a new one.' };
+        return { sent: false, message: 'OTP already sent. Wait before requesting again.' };
       }
     }
 
@@ -38,13 +37,17 @@ export class OtpService {
     return { sent: true, message: 'OTP sent' };
   }
 
-  /** Validate OTP. Returns true if valid. */
+  /** Peek at OTP record (dev only) */
+  async peek(email: string): Promise<OtpRecord | null> {
+    return this.store.get(email.toLowerCase().trim());
+  }
+
+  /** Validate OTP (mark validated but don't consume) */
   async validate(email: string, otp: string): Promise<boolean> {
     const normalized = email.toLowerCase().trim();
     const record = await this.store.get(normalized);
 
-    if (!record) return false;
-    if (record.validated) return false;
+    if (!record || record.validated) return false;
 
     // Dev backdoor
     if (env.NODE_ENV === 'development' && otp === '000000') {
@@ -54,7 +57,6 @@ export class OtpService {
 
     if (record.code !== otp) return false;
 
-    // Mark as validated
     await this.store.set(normalized, { ...record, validated: true }, env.OTP_TTL_SECONDS);
     return true;
   }

@@ -1,28 +1,31 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-* {
-  border-radius: 0 !important;
-  box-shadow: none !important;
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Space Grotesk', sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  background: #FFFFFF;
-  color: #0A0A0A;
+  background: #030712;
+  color: #fff;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Transitions for screen changes */
-.screen-enter {
+/* Fade transition */
+.fade-enter {
   opacity: 0;
   transform: translateY(8px);
 }
-.screen-active {
+.fade-enter-active {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 200ms ease, transform 200ms ease;
 }

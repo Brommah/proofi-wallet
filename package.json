@@ -8,8 +8,9 @@
     "node": ">=20"
   },
   "scripts": {
+    "dev": "concurrently -n api,ui -c blue,green \"pnpm --filter @proofi/api dev\" \"pnpm --filter @proofi/ui dev\"",
     "build": "pnpm -r --stream build",
-    "dev": "pnpm -r --parallel --stream dev",
+    "test": "pnpm -r --stream test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -18,11 +19,16 @@
     "typecheck": "pnpm -r --stream typecheck"
   },
   "devDependencies": {
-    "@types/node": "^22.15.0",
-    "eslint": "^9.20.0",
     "@eslint/js": "^9.20.0",
-    "typescript-eslint": "^8.25.0",
+    "@types/node": "^22.15.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.20.0",
     "prettier": "^3.5.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.25.0",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@cere-ddc-sdk/ddc-client": "^2.16.1"
   }
 }

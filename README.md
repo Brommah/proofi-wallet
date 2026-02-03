@@ -1,76 +1,111 @@
 # Proofi Wallet
 
-Credential signing engine with an embed-wallet SDK. Built as a clean-room replacement for the Cere wallet, focused on Proofi's specific needs: multi-keypair management, manifest-based key selection, and scoped signing.
+Self-custodial credential wallet — sign verifiable credentials with keys you own.
+
+## Quick Start
+
+```bash
+pnpm install
+pnpm dev
+```
+
+This starts:
+- **API server** → http://localhost:3847
+- **Wallet UI** → http://localhost:5173
+- **Demo page** → http://localhost:5173/demo.html
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Host App (e.g. Proofi dApp)                                │
-│  └─ @proofi/sdk (embed-wallet SDK)                          │
-│       └─ postMessage / JSON-RPC via @proofi/comm            │
-│            ↕                                                │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  @proofi/ui (wallet iframe — React + Vite)            │   │
-│  │  ├─ @proofi/core (key management & signing engine)    │   │
-│  │  └─ @proofi/comm (communication layer)                │   │
-│  └──────────────────────────────────────────────────────┘   │
-│                 ↕ HTTP                                       │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  @proofi/api (auth server)                            │   │
-│  │  ├─ OTP email auth                                    │   │
-│  │  ├─ Telegram auth (Mini App + Login Widget)           │   │
-│  │  └─ Web3Auth key retrieval                            │   │
-│  └──────────────────────────────────────────────────────┘   │
-│                                                              │
-│  @proofi/inject — Polkadot extension compatibility           │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│  Host App (e.g., proofi.ai)                     │
+│  ┌───────────────┐                              │
+│  │  @proofi/sdk   │ ◄── ProofiWallet, Signer    │
+│  └───────┬───────┘                              │
+│          │ postMessage (via @proofi/comm)        │
+│  ┌───────▼───────────────────────────────────┐  │
+│  │  Wallet iframe (@proofi/ui)               │  │
+│  │  ┌──────────────┐  ┌──────────────────┐   │  │
+│  │  │ @proofi/core  │  │ @proofi/inject   │   │  │
+│  │  │ KeyringManager│  │ Polkadot compat  │   │  │
+│  │  └──────────────┘  └──────────────────┘   │  │
+│  └───────┬───────────────────────────────────┘  │
+│          │ HTTP                                  │
+│  ┌───────▼───────┐                              │
+│  │  @proofi/api   │ ◄── OTP auth, JWT, apps     │
+│  └───────────────┘                              │
+└─────────────────────────────────────────────────┘
 ```
 
 ## Packages
 
 | Package | Description |
-|---|---|
-| `@proofi/core` | Key management & signing engine — multi-keypair, manifest-aware, scoped signing |
-| `@proofi/sdk` | Public SDK for host apps — init/connect/provider/signer lifecycle |
-| `@proofi/comm` | Communication layer — postMessage JSON-RPC transport |
-| `@proofi/ui` | Wallet UI — React + Vite, minimal (auth + sign confirmation + account view) |
-| `@proofi/api` | Auth API server — OTP, Telegram auth, JWT issuance |
-| `@proofi/inject` | Polkadot extension injection — makes wallet appear as a browser extension |
+|---------|-------------|
+| `@proofi/core` | Key management & signing (sr25519, ed25519, secp256k1) |
+| `@proofi/sdk` | Host app SDK — ProofiWallet, Signer, Provider |
+| `@proofi/comm` | postMessage communication layer (JSON-RPC) |
+| `@proofi/api` | Auth API server (Hono) — OTP, JWT, app registry |
+| `@proofi/ui` | Wallet UI (React + Vite) — runs in iframe |
+| `@proofi/inject` | Polkadot extension injection — makes Proofi appear as a browser extension |
 
-## Key Differences from Cere Wallet
-
-- **Multi-keypair** — not locked to a single Web3Auth master key
-- **Manifest-based key selection** — apps declare what signing capabilities they need
-- **Tag-query** — credential-specific key lookup
-- **No MobX god-object** — lightweight state management
-- **No MUI** — lean UI layer (Tailwind + headless components)
-- **Vite** — fast builds, no CRA/CRACO legacy
-- **No Torus dependency** in communication layer
-
-## Getting Started
+## Scripts
 
 ```bash
-# Install dependencies
-pnpm install
+pnpm dev        # Start API + UI in parallel
+pnpm build      # Build all packages
+pnpm test       # Run all tests
+pnpm lint       # Lint all packages
+pnpm typecheck  # TypeScript type checking
+pnpm clean      # Remove dist/ and caches
+```
 
-# Build all packages
-pnpm build
+## Development
 
-# Dev mode (all packages in watch mode)
-pnpm dev
+### Environment
 
-# Lint
-pnpm lint
+Copy `.env.example` to `.env` and adjust as needed:
 
-# Type check
-pnpm typecheck
+```bash
+cp .env.example .env
+```
+
+### Testing the wallet
+
+1. Run `pnpm dev`
+2. Open http://localhost:5173/demo.html
+3. Click "Connect Wallet" — this simulates a host app embedding the wallet
+4. Try signing messages and credentials
+
+### How the SDK works (for host apps)
+
+```typescript
+import { ProofiWallet } from '@proofi/sdk';
+
+const wallet = new ProofiWallet({
+  appId: 'my-app',
+  env: 'dev',
+});
+
+// Connect — opens wallet iframe
+await wallet.connect();
+
+// Get a signer
+const signer = wallet.getSigner();
+const signature = await signer.signMessage('Hello');
+
+// Disconnect
+await wallet.disconnect();
 ```
 
 ## Tech Stack
 
-- **Runtime:** Node 20+, TypeScript 5.x (strict)
-- **Build:** Vite 6, pnpm workspaces
-- **UI:** React 19
-- **Linting:** ESLint 9 (flat config) + Prettier
-- **API:** TBD (Hono / Fastify)
+- **Runtime:** Node.js 20+, pnpm workspaces
+- **API:** Hono (fast, lightweight, Web Standards)
+- **UI:** React 19 + Vite
+- **Crypto:** @polkadot/keyring, tweetnacl
+- **Auth:** OTP via email, JWT tokens
+- **Communication:** postMessage + JSON-RPC
+
+## License
+
+Private — Proofi B.V.

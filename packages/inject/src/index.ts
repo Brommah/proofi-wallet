@@ -1,6 +1,6 @@
-import type { ProofiWallet, WalletConnectOptions } from '@proofi/sdk';
+import type { ProofiWallet } from '@proofi/sdk';
 
-import { PolkadotInjector } from './polkadot';
+import { PolkadotInjector } from './polkadot/index.js';
 
 type InjectTarget = 'polkadot';
 
@@ -8,7 +8,6 @@ export type EnableOptions = {
   name?: string;
   target?: InjectTarget;
   autoConnect?: boolean;
-  connectOptions?: WalletConnectOptions;
 };
 
 export type InjectOptions = Omit<EnableOptions, 'target'> & {
@@ -31,6 +30,9 @@ export const enable = async (wallet: ProofiWallet, { target = 'polkadot', ...opt
  */
 export const inject = async (wallet: ProofiWallet, { targets = ['polkadot'], ...options }: InjectOptions = {}) => {
   if (targets.includes('polkadot')) {
-    new PolkadotInjector(wallet, options).inject();
+    await new PolkadotInjector(wallet, options).inject();
   }
 };
+
+export { PolkadotInjector } from './polkadot/index.js';
+export type { PolkadotInjectorOptions } from './polkadot/index.js';

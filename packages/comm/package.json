@@ -18,6 +18,9 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "typescript": "workspace:*"
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.4"
   }
 }

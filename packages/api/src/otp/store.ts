@@ -37,15 +37,16 @@ export class MemoryOtpStore implements OtpStore {
   }
 }
 
-// ── Redis adapter interface (production) ────────────────────────────
+// ── Redis adapter (production) ──────────────────────────────────────
 
 export class RedisOtpStore implements OtpStore {
   private prefix = 'proofi:otp:';
-  private client: any; // ioredis or redis client
 
-  constructor(redisClient: any) {
-    this.client = redisClient;
-  }
+  constructor(private client: {
+    get(key: string): Promise<string | null>;
+    set(key: string, value: string, mode: string, ttl: number): Promise<unknown>;
+    del(key: string): Promise<unknown>;
+  }) {}
 
   async get(email: string): Promise<OtpRecord | null> {
     const data = await this.client.get(this.prefix + email);

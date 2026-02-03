@@ -1,0 +1,10 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.secrets
+*.md
+.env
+.env.*
+packages/ui/node_modules
+packages/ui/dist

@@ -1,203 +1,103 @@
-import EventEmitter from 'eventemitter3'
-import type { Message, MessageError, ChannelConfig, WalletEvent } from './types'
-import { ErrorCodes } from './types'
-import { generateId, isProofiMessage } from './utils'
+import type { Message, ChannelConfig } from './types';
+import { isProofiMessage, generateId } from './utils';
 
-interface PendingRequest {
-  resolve: (result: unknown) => void
-  reject: (error: MessageError) => void
-  timer: ReturnType<typeof setTimeout>
-}
-
-type ChannelEvents = {
-  [K in WalletEvent]: (data: unknown) => void
-} & {
-  message: (msg: Message) => void
-  request: (msg: Message) => void
-}
+export type MessageHandler = (message: Message) => void;
 
 /**
- * Typed postMessage communication channel.
- *
- * Handles RPC request/response correlation, event dispatch,
- * and security (origin validation).
+ * Low-level postMessage wrapper.
+ * Sends and receives typed Proofi wallet messages between windows (e.g. parent ↔ iframe).
  */
-export class MessageChannel extends EventEmitter<ChannelEvents> {
-  private target: Window
-  private targetOrigin: string
-  private timeout: number
-  private pending = new Map<string, PendingRequest>()
-  private disposed = false
-  private boundHandler: (event: MessageEvent) => void
+export class MessageChannel {
+  private config: ChannelConfig;
+  private handlers = new Set<MessageHandler>();
+  private boundListener: (event: MessageEvent) => void;
+  private destroyed = false;
 
   constructor(config: ChannelConfig) {
-    super()
-    this.target = config.target
-    this.targetOrigin = config.targetOrigin
-    this.timeout = config.timeout ?? 30_000
-    this.boundHandler = this.handleMessage.bind(this)
-
-    window.addEventListener('message', this.boundHandler)
+    this.config = config;
+    this.boundListener = this.handleMessage.bind(this);
+    const win = typeof window !== 'undefined' ? window : (globalThis as unknown as Window);
+    win.addEventListener('message', this.boundListener as EventListener);
   }
 
-  /**
-   * Send an RPC request and wait for the response.
-   */
-  async request<TParams = unknown, TResult = unknown>(
-    method: string,
-    params?: TParams,
-  ): Promise<TResult> {
-    if (this.disposed) {
-      throw new Error('MessageChannel is disposed')
-    }
+  /** Send a fully-formed message to the target window. */
+  send(message: Message): void {
+    if (this.destroyed) return;
+    this.config.targetWindow.postMessage(message, this.config.targetOrigin);
+  }
 
-    const id = generateId()
-    const message: Message<TParams> = {
+  /** Send a request-type message (convenience). */
+  sendRequest<T = unknown>(method: string, params?: T): string {
+    const id = generateId();
+    this.send({
       id,
       type: 'request',
       method,
       params,
-    }
-
-    return new Promise<TResult>((resolve, reject) => {
-      const timer = setTimeout(() => {
-        this.pending.delete(id)
-        reject({
-          code: ErrorCodes.TIMEOUT,
-          message: `Request "${method}" timed out after ${this.timeout}ms`,
-        })
-      }, this.timeout)
-
-      this.pending.set(id, {
-        resolve: resolve as (result: unknown) => void,
-        reject,
-        timer,
-      })
-
-      this.postMessage(message)
-    })
+      source: 'proofi-wallet',
+    });
+    return id;
   }
 
-  /**
-   * Send a one-way event (no response expected).
-   */
-  sendEvent<T = unknown>(event: string, data?: T): void {
-    if (this.disposed) return
-
-    const message: Message<T> = {
-      id: generateId(),
-      type: 'event',
-      method: event,
-      params: data,
-    }
-
-    this.postMessage(message)
-  }
-
-  /**
-   * Send a response to an incoming request.
-   */
-  respond<T = unknown>(requestId: string, method: string, result: T): void {
-    if (this.disposed) return
-
-    const message: Message<T> = {
-      id: requestId,
+  /** Send a response-type message (convenience). */
+  sendResponse<T = unknown>(id: string, method: string, result?: T, error?: Message['error']): void {
+    this.send({
+      id,
       type: 'response',
       method,
       result,
-    }
-
-    this.postMessage(message)
-  }
-
-  /**
-   * Send an error response to an incoming request.
-   */
-  respondError(requestId: string, method: string, error: MessageError): void {
-    if (this.disposed) return
-
-    const message: Message = {
-      id: requestId,
-      type: 'response',
-      method,
       error,
-    }
-
-    this.postMessage(message)
+      source: 'proofi-wallet',
+    });
   }
 
-  /**
-   * Clean up: remove listeners and reject pending requests.
-   */
-  dispose(): void {
-    if (this.disposed) return
-    this.disposed = true
-
-    window.removeEventListener('message', this.boundHandler)
-
-    for (const [id, pending] of this.pending) {
-      clearTimeout(pending.timer)
-      pending.reject({
-        code: ErrorCodes.INTERNAL_ERROR,
-        message: 'Channel disposed',
-      })
-    }
-    this.pending.clear()
-    this.removeAllListeners()
+  /** Send an event-type message (convenience). */
+  sendEvent<T = unknown>(method: string, params?: T): void {
+    this.send({
+      id: generateId(),
+      type: 'event',
+      method,
+      params,
+      source: 'proofi-wallet',
+    });
   }
 
-  private postMessage(message: Message): void {
-    try {
-      this.target.postMessage(message, this.targetOrigin)
-    } catch (err) {
-      // Target window may be closed
-      console.warn('[proofi-comm] Failed to post message:', err)
-    }
+  /** Register a handler for incoming messages. */
+  onMessage(handler: MessageHandler): void {
+    this.handlers.add(handler);
   }
+
+  /** Remove a previously registered handler. */
+  offMessage(handler: MessageHandler): void {
+    this.handlers.delete(handler);
+  }
+
+  /** Get the configured timeout (default 30 000 ms). */
+  get timeout(): number {
+    return this.config.timeout ?? 30_000;
+  }
+
+  /** Tear down: remove the global listener and clear all handlers. */
+  destroy(): void {
+    this.destroyed = true;
+    const win = typeof window !== 'undefined' ? window : (globalThis as unknown as Window);
+    win.removeEventListener('message', this.boundListener as EventListener);
+    this.handlers.clear();
+  }
+
+  // ── private ──
 
   private handleMessage(event: MessageEvent): void {
-    // Origin validation
-    if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
-      return
+    // Origin check
+    if (this.config.targetOrigin !== '*' && event.origin !== this.config.targetOrigin) {
+      return;
     }
+    // Only accept Proofi wallet messages
+    if (!isProofiMessage(event.data)) return;
 
-    const data = event.data
-    if (!isProofiMessage(data)) return
-
-    const message = data as Message
-
-    this.emit('message', message)
-
-    switch (message.type) {
-      case 'response':
-        this.handleResponse(message)
-        break
-      case 'event':
-        this.handleEvent(message)
-        break
-      case 'request':
-        this.emit('request', message)
-        break
+    const message = event.data as Message;
+    for (const handler of this.handlers) {
+      handler(message);
     }
-  }
-
-  private handleResponse(message: Message): void {
-    const pending = this.pending.get(message.id)
-    if (!pending) return
-
-    clearTimeout(pending.timer)
-    this.pending.delete(message.id)
-
-    if (message.error) {
-      pending.reject(message.error)
-    } else {
-      pending.resolve(message.result)
-    }
-  }
-
-  private handleEvent(message: Message): void {
-    // Emit the specific event type
-    const event = message.method as WalletEvent
-    this.emit(event, message.params)
   }
 }
