@@ -12,7 +12,7 @@ import { DdcScreen } from './screens/DdcScreen';
 type Tab = 'wallet' | 'ddc';
 
 export function App() {
-  const [tab, setTab] = useState<Tab>('wallet');
+  const [tab, setTab] = useState<Tab>('ddc');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const otpVerified = useAuthStore((s) => s.otpVerified);
   const restoreSession = useAuthStore((s) => s.restoreSession);
@@ -20,12 +20,10 @@ export function App() {
   const setRequest = useRequestStore((s) => s.setRequest);
   const walletConnect = useWalletStore((s) => s.connect);
 
-  // Restore previous session on mount
   useEffect(() => {
     restoreSession();
   }, [restoreSession]);
 
-  // Listen for PostMessage from parent window
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       const { data } = event;
@@ -67,13 +65,9 @@ export function App() {
     return () => window.removeEventListener('message', handler);
   }, [setRequest, walletConnect]);
 
-  // Route to the right screen
   const screen = (() => {
-    // Not logged in yet
     if (!isAuthenticated && !otpVerified) return <LoginScreen />;
-    // OTP verified, need to set PIN
     if (otpVerified && !isAuthenticated) return <PinScreen />;
-    // Signed in, handle requests
     if (pendingRequest?.type === 'sign') return <SignScreen />;
     if (pendingRequest?.type === 'connect') return <ConnectScreen />;
     if (tab === 'ddc') return <DdcScreen />;
@@ -81,38 +75,62 @@ export function App() {
   })();
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col max-w-[400px] mx-auto">
+    <div className="min-h-screen bg-[#000] text-white flex flex-col max-w-[400px] mx-auto relative">
       {screen}
 
-      {/* Bottom navigation - only when authenticated */}
+      {/* Bottom Navigation - Brutal Style */}
       {isAuthenticated && !pendingRequest && (
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[400px] bg-gray-900 border-t border-gray-800">
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[400px] bg-[#0A0A0A] border-t border-[#1A1A1A]">
           <div className="flex">
-            <button
+            <NavItem 
+              active={tab === 'wallet'}
               onClick={() => setTab('wallet')}
-              className={`flex-1 py-3 text-xs font-medium text-center transition-colors ${
-                tab === 'wallet' ? 'text-blue-400 border-t-2 border-blue-400' : 'text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              <svg className="w-5 h-5 mx-auto mb-1" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 013 6v3" />
-              </svg>
-              Wallet
-            </button>
-            <button
+              label="WALLET"
+              icon={
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 013 6v3" />
+                </svg>
+              }
+            />
+            <NavItem 
+              active={tab === 'ddc'}
               onClick={() => setTab('ddc')}
-              className={`flex-1 py-3 text-xs font-medium text-center transition-colors ${
-                tab === 'ddc' ? 'text-purple-400 border-t-2 border-purple-400' : 'text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              <svg className="w-5 h-5 mx-auto mb-1" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75" />
-              </svg>
-              DDC
-            </button>
+              label="DATA VAULT"
+              icon={
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
+                </svg>
+              }
+            />
           </div>
-        </div>
+        </nav>
       )}
     </div>
+  );
+}
+
+function NavItem({ 
+  active, 
+  onClick, 
+  label, 
+  icon 
+}: { 
+  active: boolean; 
+  onClick: () => void; 
+  label: string; 
+  icon: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex-1 py-4 flex flex-col items-center gap-1 transition-all ${
+        active 
+          ? 'text-[#00E5FF] border-t-2 border-[#00E5FF] bg-[#00E5FF]/5' 
+          : 'text-[#4A4A4A] hover:text-[#8A8A8A] border-t-2 border-transparent'
+      }`}
+    >
+      {icon}
+      <span className="text-mono text-[10px] tracking-wider">{label}</span>
+    </button>
   );
 }

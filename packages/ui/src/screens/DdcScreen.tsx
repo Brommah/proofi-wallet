@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Button } from '../components/Button';
 import { PinUnlockModal } from '../components/PinUnlockModal';
 import { useWalletStore } from '../stores/walletStore';
 import { u8aToHex } from '@polkadot/util';
@@ -8,16 +7,17 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3847';
 
+// Global crypto ready state
+let cryptoReady = false;
+cryptoWaitReady().then(() => { cryptoReady = true; });
+
 /**
  * Signature-based auth headers (fully decentralized).
- * Signs: `proofi:{timestamp}:{address}`
- * Creates signing keypair on-demand from secretKey (zustand doesn't preserve _polkadotPair)
  */
 function authHeaders(): Record<string, string> {
   const { address, keypair } = useWalletStore.getState();
   
   if (!address || !keypair || !keypair.secretKey || !cryptoReady) {
-    console.warn('[authHeaders] No wallet keypair available or crypto not ready');
     const token = localStorage.getItem('proofi_token') || '';
     return {
       'Content-Type': 'application/json',
@@ -26,7 +26,6 @@ function authHeaders(): Record<string, string> {
   }
 
   try {
-    // Create signing keypair on-demand from secretKey
     const keyring = new Keyring({ type: 'sr25519', ss58Format: 54 });
     const signingPair = keyring.addFromSeed(keypair.secretKey.slice(0, 32));
     
@@ -36,13 +35,11 @@ function authHeaders(): Record<string, string> {
     const sigBytes = signingPair.sign(messageBytes);
     const signature = u8aToHex(sigBytes);
 
-    console.log('[authHeaders] ✅ Signature auth for', address);
     return {
       'Content-Type': 'application/json',
       'Authorization': `Signature ${address}:${timestamp}:${signature}`,
     };
   } catch (e) {
-    console.error('[authHeaders] Signing failed:', e);
     const token = localStorage.getItem('proofi_token') || '';
     return {
       'Content-Type': 'application/json',
@@ -56,6 +53,7 @@ interface StoredItem {
   cdnUrl: string;
   type: 'memo' | 'credential';
   credentialType?: string;
+  createdAt?: string;
 }
 
 interface DdcStatus {
@@ -63,10 +61,6 @@ interface DdcStatus {
   issuerWallet: string;
   bucket: string;
 }
-
-// Global crypto ready state
-let cryptoReady = false;
-cryptoWaitReady().then(() => { cryptoReady = true; });
 
 export function DdcScreen() {
   const [status, setStatus] = useState<DdcStatus | null>(null);
@@ -78,24 +72,19 @@ export function DdcScreen() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [tab, setTab] = useState<'memo' | 'credential'>('memo');
-  const [migrating, setMigrating] = useState(false);
-  const [migrateResult, setMigrateResult] = useState<string | null>(null);
   const [showPinUnlock, setShowPinUnlock] = useState(false);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
-  // Ensure crypto is ready on mount
   useEffect(() => {
     cryptoWaitReady().then(() => { cryptoReady = true; });
   }, []);
 
-  // Check if wallet needs unlock
   const needsUnlock = () => {
     const { keypair } = useWalletStore.getState();
     const hasEncryptedSeed = !!localStorage.getItem('proofi_encrypted_seed');
     return !keypair?.secretKey && hasEncryptedSeed;
   };
 
-  // Wrapper to check unlock before actions
   const withUnlock = (action: () => void) => {
     if (needsUnlock()) {
       setPendingAction(() => action);
@@ -113,7 +102,6 @@ export function DdcScreen() {
     }
   };
 
-  // Check DDC status on mount
   useEffect(() => {
     fetch(`${API_URL}/ddc/status`)
       .then((r) => r.json())
@@ -121,7 +109,6 @@ export function DdcScreen() {
       .catch(() => setStatus(null));
   }, []);
 
-  // Load existing memos/credentials on mount
   useEffect(() => {
     const { address, keypair } = useWalletStore.getState();
     if (!address || !keypair) return;
@@ -130,12 +117,7 @@ export function DdcScreen() {
       .then((r) => r.json())
       .then((d) => {
         if (d.ok && d.items) {
-          setStoredItems(d.items.map((item: any) => ({
-            cid: item.cid,
-            cdnUrl: item.cdnUrl,
-            type: item.type,
-            credentialType: item.credentialType,
-          })));
+          setStoredItems(d.items);
         }
       })
       .catch(() => {});
@@ -154,37 +136,13 @@ export function DdcScreen() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setStoredItems((prev) => [{ cid: data.cid, cdnUrl: data.cdnUrl, type: 'memo' }, ...prev]);
-      setSuccess(`✅ Memo stored on DDC! CID: ${data.cid}`);
+      setStoredItems((prev) => [{ cid: data.cid, cdnUrl: data.cdnUrl, type: 'memo', createdAt: new Date().toISOString() }, ...prev]);
+      setSuccess(`Stored on DDC`);
       setMemo('');
     } catch (e: any) {
       setError(e.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleMigrate = async () => {
-    setMigrating(true);
-    setMigrateResult(null);
-    try {
-      const res = await fetch(`${API_URL}/ddc/migrate`, {
-        method: 'POST',
-        headers: authHeaders(),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setMigrateResult(`✅ Migrated ${data.migrated} items to DDC!`);
-      // Reload items
-      const listRes = await fetch(`${API_URL}/ddc/list`, { headers: authHeaders() });
-      const listData = await listRes.json();
-      if (listData.ok && listData.items) {
-        setStoredItems(listData.items);
-      }
-    } catch (e: any) {
-      setMigrateResult(`❌ Migration failed: ${e.message}`);
-    } finally {
-      setMigrating(false);
     }
   };
 
@@ -208,8 +166,8 @@ export function DdcScreen() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setStoredItems((prev) => [{ cid: data.cid, cdnUrl: data.cdnUrl, type: 'credential' }, ...prev]);
-      setSuccess(`🎓 Credential stored on DDC! CID: ${data.cid}`);
+      setStoredItems((prev) => [{ cid: data.cid, cdnUrl: data.cdnUrl, type: 'credential', credentialType: credType, createdAt: new Date().toISOString() }, ...prev]);
+      setSuccess(`Credential issued`);
       setCredData('');
     } catch (e: any) {
       setError(e.message);
@@ -219,95 +177,83 @@ export function DdcScreen() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-full p-6 pb-20">
-      <div className="w-full max-w-sm">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 mb-3">
-            <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
-            </svg>
-          </div>
-          <h2 className="text-lg font-display font-bold text-white">DDC Storage</h2>
-          <p className="text-xs text-gray-500 mt-1">Powered by Cere Network</p>
-        </div>
-
-        {/* DDC Status */}
-        <div className="rounded-2xl bg-gray-900 border border-gray-800 p-4 mb-4">
-          {status ? (
+    <div className="min-h-full bg-[#000] pb-24">
+      {/* Header */}
+      <div className="px-6 pt-8 pb-6 border-b border-[#1A1A1A]">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-display text-display-md text-white">DATA VAULT</h1>
+          {status && (
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs text-green-400">Connected to DDC Mainnet</span>
-              <span className="text-xs text-gray-600 ml-auto">Bucket #{status.bucket}</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-yellow-400" />
-              <span className="text-xs text-yellow-400">DDC initializing...</span>
+              <div className="status-dot online" />
+              <span className="text-mono text-xs text-[#00FF88]">LIVE</span>
             </div>
           )}
         </div>
-
-        {/* Tab selector */}
-        <div className="flex gap-2 mb-4">
-          <button
-            onClick={() => setTab('memo')}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-colors ${
-              tab === 'memo'
-                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                : 'bg-gray-800 text-gray-500 border border-gray-700 hover:text-gray-300'
-            }`}
-          >
-            📝 Memo
-          </button>
-          <button
-            onClick={() => setTab('credential')}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-colors ${
-              tab === 'credential'
-                ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                : 'bg-gray-800 text-gray-500 border border-gray-700 hover:text-gray-300'
-            }`}
-          >
-            🎓 Credential
-          </button>
-        </div>
-
-        {/* Memo form */}
-        {tab === 'memo' && (
-          <div className="rounded-2xl bg-gray-900 border border-gray-800 p-5 space-y-4 mb-4">
+        
+        {status && (
+          <div className="flex gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                Store a memo on DDC
-              </label>
+              <div className="text-label mb-1">NETWORK</div>
+              <div className="text-mono text-sm text-white">CERE MAINNET</div>
+            </div>
+            <div>
+              <div className="text-label mb-1">BUCKET</div>
+              <div className="text-mono text-sm text-[#00E5FF]">#{status.bucket}</div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Tabs */}
+      <div className="px-6 py-4 flex gap-2">
+        <button
+          onClick={() => setTab('memo')}
+          className={`tab flex-1 rounded-none ${tab === 'memo' ? 'active' : ''}`}
+        >
+          MEMO
+        </button>
+        <button
+          onClick={() => setTab('credential')}
+          className={`tab flex-1 rounded-none ${tab === 'credential' ? 'active' : ''}`}
+        >
+          CREDENTIAL
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="px-6">
+        {/* Memo Form */}
+        {tab === 'memo' && (
+          <div className="space-y-4 fade-in">
+            <div>
+              <label className="text-label block mb-3">Store Data on DDC</label>
               <textarea
                 value={memo}
                 onChange={(e) => setMemo(e.target.value)}
-                placeholder="Type your memo here..."
-                rows={3}
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white
-                           placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50
-                           focus:outline-none transition-colors resize-none"
+                placeholder="Enter your memo..."
+                rows={4}
+                className="input-brutal w-full rounded-none resize-none"
               />
             </div>
-            <Button onClick={() => withUnlock(handleStoreMemo)} loading={loading} fullWidth disabled={!memo.trim()}>
-              Store on DDC
-            </Button>
+            <button
+              onClick={() => withUnlock(handleStoreMemo)}
+              disabled={!memo.trim() || loading}
+              className="btn-primary w-full rounded-none h-12"
+            >
+              {loading ? 'STORING...' : 'STORE ON DDC'}
+            </button>
           </div>
         )}
 
-        {/* Credential form */}
+        {/* Credential Form */}
         {tab === 'credential' && (
-          <div className="rounded-2xl bg-gray-900 border border-gray-800 p-5 space-y-4 mb-4">
+          <div className="space-y-4 fade-in">
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                Credential Type
-              </label>
+              <label className="text-label block mb-3">Credential Type</label>
               <select
                 value={credType}
                 onChange={(e) => setCredType(e.target.value)}
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white
-                           focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50
-                           focus:outline-none transition-colors"
+                className="input-brutal w-full rounded-none appearance-none cursor-pointer"
               >
                 <option value="ProofOfIdentity">Proof of Identity</option>
                 <option value="ProofOfOwnership">Proof of Ownership</option>
@@ -317,87 +263,85 @@ export function DdcScreen() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                Claim Data
-              </label>
+              <label className="text-label block mb-3">Claim Data</label>
               <textarea
                 value={credData}
                 onChange={(e) => setCredData(e.target.value)}
-                placeholder='{"name": "Mart", "role": "CEO"} or just text'
-                rows={3}
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white
-                           placeholder:text-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50
-                           focus:outline-none transition-colors resize-none font-mono"
+                placeholder='{"name": "...", "role": "..."}'
+                rows={4}
+                className="input-brutal w-full rounded-none resize-none text-mono"
               />
             </div>
-            <Button onClick={() => withUnlock(handleStoreCredential)} loading={loading} fullWidth disabled={!credData.trim()}>
-              Issue Credential
-            </Button>
-          </div>
-        )}
-
-        {/* Success / Error */}
-        {success && (
-          <div className="mb-4 rounded-lg bg-green-500/10 border border-green-500/20 px-3 py-2 text-xs text-green-400 text-center">
-            {success}
-          </div>
-        )}
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-xs text-red-400 text-center">
-            {error}
-          </div>
-        )}
-
-        {/* Migration from legacy SQLite */}
-        {migrateResult && (
-          <div className={`mb-4 rounded-lg px-3 py-2 text-xs text-center ${
-            migrateResult.startsWith('✅') 
-              ? 'bg-green-500/10 border border-green-500/20 text-green-400'
-              : 'bg-red-500/10 border border-red-500/20 text-red-400'
-          }`}>
-            {migrateResult}
-          </div>
-        )}
-
-        {storedItems.length === 0 && (
-          <div className="rounded-2xl bg-yellow-500/10 border border-yellow-500/20 p-4 mb-4">
-            <p className="text-xs text-yellow-400 mb-3">
-              📦 Have old memos from before? Click to migrate them to DDC.
-            </p>
             <button
-              onClick={() => withUnlock(handleMigrate)}
-              disabled={migrating}
-              className="w-full py-2 px-3 rounded-lg bg-yellow-500/20 text-yellow-400 text-xs font-medium 
-                         hover:bg-yellow-500/30 disabled:opacity-50 transition-colors"
+              onClick={() => withUnlock(handleStoreCredential)}
+              disabled={!credData.trim() || loading}
+              className="btn-primary w-full rounded-none h-12"
             >
-              {migrating ? 'Migrating...' : 'Migrate Legacy Data to DDC'}
+              {loading ? 'ISSUING...' : 'ISSUE CREDENTIAL'}
             </button>
+          </div>
+        )}
+
+        {/* Status Messages */}
+        {success && (
+          <div className="mt-4 p-4 bg-[#00FF88]/10 border-2 border-[#00FF88]/30">
+            <div className="flex items-center gap-2">
+              <span className="text-[#00FF88]">✓</span>
+              <span className="text-mono text-sm text-[#00FF88]">{success}</span>
+            </div>
+          </div>
+        )}
+        
+        {error && (
+          <div className="mt-4 p-4 bg-[#FF3366]/10 border-2 border-[#FF3366]/30">
+            <span className="text-mono text-sm text-[#FF3366]">{error}</span>
           </div>
         )}
 
         {/* Stored Items */}
         {storedItems.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-xs text-gray-500">Stored on DDC ({storedItems.length} items)</p>
-            {storedItems.map((item, i) => (
-              <div key={i} className="rounded-lg bg-gray-900 border border-gray-800 px-3 py-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs">{item.type === 'memo' ? '📝' : '🎓'}</span>
-                  {item.credentialType && (
-                    <span className="text-xs text-purple-400">{item.credentialType}</span>
-                  )}
-                  <p className="text-xs text-gray-400 font-mono truncate flex-1">{item.cid}</p>
-                </div>
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-display text-lg text-white">STORED</h2>
+              <span className="text-mono text-xs text-[#00E5FF]">{storedItems.length} ITEMS</span>
+            </div>
+            
+            <div className="space-y-2">
+              {storedItems.map((item, i) => (
                 <a
+                  key={i}
                   href={item.cdnUrl}
                   target="_blank"
                   rel="noopener"
-                  className="text-xs text-blue-400 hover:underline"
+                  className="block p-4 border border-[#2A2A2A] hover:border-[#00E5FF] transition-colors group"
                 >
-                  View on DDC →
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`text-xs px-2 py-0.5 ${
+                      item.type === 'memo' 
+                        ? 'bg-[#2A2A2A] text-[#8A8A8A]' 
+                        : 'bg-[#00E5FF]/10 text-[#00E5FF]'
+                    }`}>
+                      {item.type === 'memo' ? 'MEMO' : item.credentialType?.toUpperCase() || 'CREDENTIAL'}
+                    </span>
+                    {item.createdAt && (
+                      <span className="text-mono text-xs text-[#4A4A4A]">
+                        {new Date(item.createdAt).toLocaleTimeString()}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-mono text-xs text-[#8A8A8A] truncate group-hover:text-[#00E5FF] transition-colors">
+                    {item.cid}
+                  </div>
                 </a>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+        )}
+
+        {storedItems.length === 0 && (
+          <div className="mt-12 text-center">
+            <div className="text-display text-4xl text-[#1A1A1A] mb-2">∅</div>
+            <p className="text-body-sm text-[#4A4A4A]">No data stored yet</p>
           </div>
         )}
       </div>

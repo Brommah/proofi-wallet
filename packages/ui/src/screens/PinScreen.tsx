@@ -1,17 +1,14 @@
 import { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { Button } from '../components/Button';
 
 export function PinScreen() {
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
-  const [step, setStep] = useState<1 | 2>(1); // 1 = create/enter, 2 = confirm (create only)
+  const [step, setStep] = useState<1 | 2>(1);
   const [localError, setLocalError] = useState<string | null>(null);
   const { email, setupPin, loading, error, clearError, hasExistingWallet, existingAddress } = useAuthStore();
   
-  // For existing users, we don't need confirmation step
   const isRestoreFlow = hasExistingWallet;
-
   const currentPin = step === 1 ? pin : confirmPin;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,36 +21,28 @@ export function PinScreen() {
       return;
     }
 
-    // Restore flow: no confirmation needed, just verify PIN unlocks correct wallet
     if (isRestoreFlow) {
-      console.log('[PIN] Restoring wallet with PIN...');
       await setupPin(pin);
       return;
     }
 
-    // Create flow: need confirmation step
     if (step === 1) {
       setStep(2);
-      setConfirmPin(''); // Clear confirm field
-      return;
-    }
-
-    // Confirm step - check match and create wallet
-    if (pin !== confirmPin) {
-      setLocalError('PINs don\'t match. Try again.');
       setConfirmPin('');
       return;
     }
 
-    console.log('[PIN] Creating wallet with PIN...');
+    if (pin !== confirmPin) {
+      setLocalError('PINs don\'t match');
+      setConfirmPin('');
+      return;
+    }
+
     await setupPin(pin);
   };
 
   const handlePinChange = (value: string) => {
-    // Only allow digits, max 8 chars
     const cleaned = value.replace(/\D/g, '').slice(0, 8);
-    console.log('[PIN] Input changed:', cleaned.length, 'digits, step:', step);
-    
     if (step === 1) {
       setPin(cleaned);
     } else {
@@ -65,66 +54,52 @@ export function PinScreen() {
   const displayError = localError || error;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-full p-6">
-      <div className="w-full max-w-sm">
+    <div className="min-h-full flex flex-col justify-center px-6 py-12 bg-[#000]">
+      <div className="w-full max-w-sm mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className={`inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-3 ${
-            isRestoreFlow 
-              ? 'bg-green-500/10 border border-green-500/20' 
-              : 'bg-blue-500/10 border border-blue-500/20'
-          }`}>
-            <svg className={`w-6 h-6 ${isRestoreFlow ? 'text-green-400' : 'text-blue-400'}`} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-            </svg>
+        <div className="mb-10 fade-in">
+          <div className="text-label mb-4 text-[#00E5FF]">
+            {isRestoreFlow ? 'Welcome Back' : step === 1 ? 'Step 2 of 2' : 'Confirm'}
           </div>
-          <h2 className="text-lg font-display font-bold text-white">
+          <h1 className="text-display text-display-lg text-white mb-3">
             {isRestoreFlow 
-              ? 'Welcome Back!' 
+              ? 'UNLOCK' 
               : step === 1 
-                ? 'Create Your PIN' 
-                : 'Confirm Your PIN'
+                ? 'CREATE PIN' 
+                : 'CONFIRM PIN'
             }
-          </h2>
-          <p className="text-xs text-gray-500 mt-1">
+          </h1>
+          <p className="text-body text-[#8A8A8A]">
             {isRestoreFlow 
-              ? 'Enter your PIN to unlock your wallet.'
+              ? 'Enter your PIN to access your wallet'
               : step === 1 
-                ? 'This PIN protects your wallet. You\'ll need it to sign transactions.'
-                : 'Enter your PIN again to confirm.'
+                ? 'This PIN protects your wallet'
+                : 'Enter your PIN again to confirm'
             }
           </p>
         </div>
 
-        {/* Email badge */}
-        <div className="flex items-center justify-center gap-2 rounded-lg bg-gray-900 border border-gray-800 px-3 py-2 mb-4">
-          <svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="text-xs text-gray-400">{email}</span>
+        {/* Email Badge */}
+        <div className="mb-6 p-4 border border-[#2A2A2A] slide-up">
+          <div className="text-label mb-1">AUTHENTICATED AS</div>
+          <div className="text-mono text-sm text-white truncate">{email}</div>
         </div>
 
-        {/* Existing wallet address (restore flow) */}
+        {/* Existing Wallet (restore flow) */}
         {isRestoreFlow && existingAddress && (
-          <div className="rounded-lg bg-green-500/5 border border-green-500/20 px-3 py-2 mb-6">
-            <p className="text-xs text-gray-500 mb-1">Your wallet address:</p>
-            <p className="text-xs text-green-400 font-mono break-all">
-              {existingAddress.slice(0, 12)}...{existingAddress.slice(-8)}
-            </p>
+          <div className="mb-6 p-4 border border-[#00E5FF]/30 bg-[#00E5FF]/5 slide-up" style={{ animationDelay: '0.05s' }}>
+            <div className="text-label mb-1">WALLET ADDRESS</div>
+            <div className="text-mono text-xs text-[#00E5FF] break-all">
+              {existingAddress}
+            </div>
           </div>
         )}
 
         {/* PIN Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* PIN Input */}
+        <form onSubmit={handleSubmit} className="space-y-6 slide-up" style={{ animationDelay: '0.1s' }}>
           <div>
-            <label className="block text-xs text-gray-500 mb-2">
-              {isRestoreFlow 
-                ? 'Enter your PIN to unlock' 
-                : step === 1 
-                  ? 'Enter a 6-8 digit PIN' 
-                  : 'Re-enter your PIN to confirm'
-              }
+            <label className="text-label block mb-3">
+              {isRestoreFlow ? 'YOUR PIN' : step === 1 ? '6-8 DIGIT PIN' : 'RE-ENTER PIN'}
             </label>
             <input
               type="password"
@@ -133,26 +108,23 @@ export function PinScreen() {
               value={currentPin}
               onChange={(e) => handlePinChange(e.target.value)}
               placeholder="••••••"
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white text-center text-2xl tracking-[0.5em] placeholder:tracking-normal placeholder:text-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+              className="input-brutal w-full rounded-none text-center text-2xl tracking-[0.5em] placeholder:tracking-normal"
               autoFocus
               disabled={loading}
             />
-            <p className="text-xs text-gray-600 mt-2 text-center">
-              {currentPin.length}/6 minimum
-            </p>
           </div>
 
-          {/* PIN dots indicator */}
+          {/* PIN Progress */}
           <div className="flex justify-center gap-2">
             {[...Array(8)].map((_, i) => (
               <div
                 key={i}
-                className={`w-3 h-3 rounded-full transition-colors ${
+                className={`w-3 h-3 transition-all duration-150 ${
                   i < currentPin.length
-                    ? 'bg-blue-500'
+                    ? 'bg-[#00E5FF] shadow-[0_0_10px_rgba(0,229,255,0.5)]'
                     : i < 6
-                    ? 'bg-gray-700'
-                    : 'bg-gray-800'
+                    ? 'bg-[#2A2A2A]'
+                    : 'bg-[#1A1A1A]'
                 }`}
               />
             ))}
@@ -160,36 +132,32 @@ export function PinScreen() {
 
           {/* Error */}
           {displayError && (
-            <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2">
-              <p className="text-xs text-red-400">{displayError}</p>
+            <div className="p-4 bg-[#FF3366]/10 border-2 border-[#FF3366]/30">
+              <p className="text-mono text-sm text-[#FF3366]">{displayError}</p>
             </div>
           )}
 
           {/* Submit */}
-          <Button
+          <button
             type="submit"
-            variant="primary"
-            fullWidth
             disabled={currentPin.length < 6 || loading}
+            className="btn-primary w-full rounded-none h-14"
           >
             {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                {isRestoreFlow ? 'Unlocking...' : 'Creating Wallet...'}
+              <span className="flex items-center justify-center gap-3">
+                <LoadingSpinner />
+                {isRestoreFlow ? 'UNLOCKING' : 'CREATING'}
               </span>
             ) : isRestoreFlow ? (
-              'Unlock Wallet'
+              'UNLOCK WALLET'
             ) : step === 1 ? (
-              'Continue'
+              'CONTINUE'
             ) : (
-              'Create Wallet'
+              'CREATE WALLET'
             )}
-          </Button>
+          </button>
 
-          {/* Back button for confirm step (create flow only) */}
+          {/* Back (create flow step 2) */}
           {!isRestoreFlow && step === 2 && (
             <button
               type="button"
@@ -198,37 +166,36 @@ export function PinScreen() {
                 setConfirmPin('');
                 setLocalError(null);
               }}
-              className="w-full text-sm text-gray-500 hover:text-gray-300 transition-colors"
+              className="btn-secondary w-full rounded-none"
             >
-              ← Change PIN
+              ← CHANGE PIN
             </button>
           )}
         </form>
 
-        {/* Security note */}
-        <div className="mt-8 p-4 rounded-xl bg-gray-900/50 border border-gray-800">
-          <div className="flex items-start gap-3">
-            <svg className={`w-5 h-5 mt-0.5 shrink-0 ${isRestoreFlow ? 'text-green-400' : 'text-blue-400'}`} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-            </svg>
-            <div>
-              <p className="text-xs text-gray-400">
-                {isRestoreFlow ? (
-                  <>
-                    <strong className="text-white">Same PIN, same wallet.</strong> Use the PIN you created before 
-                    to unlock your existing wallet on this device.
-                  </>
-                ) : (
-                  <>
-                    <strong className="text-white">Your keys, your crypto.</strong> Your PIN never leaves this device. 
-                    We can't recover it if you forget.
-                  </>
-                )}
-              </p>
-            </div>
+        {/* Security Note */}
+        <div className="mt-10 pt-6 border-t border-[#1A1A1A]">
+          <div className="flex gap-3">
+            <div className="text-[#00E5FF] text-lg">⚡</div>
+            <p className="text-body-xs text-[#4A4A4A]">
+              {isRestoreFlow ? (
+                <>Same PIN unlocks the same wallet. Your keys are derived locally from your email + PIN combination.</>
+              ) : (
+                <>Your PIN never leaves this device. We cannot recover it. Store it safely.</>
+              )}
+            </p>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function LoadingSpinner() {
+  return (
+    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+    </svg>
   );
 }

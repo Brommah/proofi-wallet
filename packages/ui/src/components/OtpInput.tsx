@@ -70,9 +70,10 @@ export function OtpInput({ length = 6, onComplete, disabled = false }: OtpInputP
           maxLength={1}
           value={v}
           disabled={disabled}
-          className="h-12 w-10 rounded-lg border border-gray-700 bg-gray-800 text-center text-lg font-mono text-white
-                     focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 focus:outline-none
-                     disabled:opacity-40 transition-colors"
+          className="h-14 w-11 border-2 border-[#2A2A2A] bg-[#0A0A0A] text-center text-xl text-white
+                     focus:border-[#00E5FF] focus:outline-none focus:shadow-[0_0_10px_rgba(0,229,255,0.3)]
+                     disabled:opacity-40 transition-all font-mono"
+          style={{ fontFamily: 'Space Mono, monospace' }}
           onChange={(e) => {
             const digit = e.target.value.replace(/\D/g, '').slice(-1);
             update(i, digit);
