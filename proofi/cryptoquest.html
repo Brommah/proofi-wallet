@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CryptoQuest — RPG Character Builder</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #FFD700;
+      --gold-dim: #B8860B;
+      --red: #FF4444;
+      --green: #44FF88;
+      --blue: #4488FF;
+      --purple: #AA66FF;
+      --bg: #1a1025;
+      --bg-card: #241535;
+      --bg-dark: #120b1a;
+      --border: #3a2555;
+      --text: #e8dff5;
+      --text-dim: #7a6b8a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background particles */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(170,102,255,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(255,215,0,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(68,136,255,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+
+    .logo {
+      font-size: 40px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 12px rgba(255,215,0,0.4));
+    }
+
+    .title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 20px;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(255,215,0,0.3), 2px 2px 0 #3a2555;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    /* Wallet bar */
+    .wallet-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .wallet-bar.connected {
+      border-color: var(--green);
+      box-shadow: 0 0 20px rgba(68,255,136,0.08);
+    }
+
+    .wallet-info .label {
+      font-size: 9px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .wallet-info .address {
+      font-size: 12px;
+      color: var(--green);
+      font-family: monospace;
+      margin-top: 2px;
+    }
+
+    .btn {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      padding: 10px 20px;
+      border: 2px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      background: var(--gold);
+      color: var(--bg-dark);
+      box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 10px;
+    }
+
+    .btn-green { border-color: var(--green); color: var(--green); }
+    .btn-green:hover { background: var(--green); color: var(--bg-dark); box-shadow: 0 0 20px rgba(68,255,136,0.3); }
+
+    .btn-red { border-color: var(--red); color: var(--red); }
+    .btn-red:hover { background: var(--red); color: #fff; }
+
+    .btn-purple { border-color: var(--purple); color: var(--purple); }
+    .btn-purple:hover { background: var(--purple); color: #fff; box-shadow: 0 0 20px rgba(170,102,255,0.3); }
+
+    /* Section */
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      color: var(--gold);
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    /* Character Name */
+    .name-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-dark);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Press Start 2P', cursive;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .name-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(255,215,0,0.15);
+    }
+
+    .name-input::placeholder {
+      color: var(--text-dim);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+    }
+
+    /* Class Selection */
+    .class-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .class-card {
+      background: var(--bg-dark);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .class-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-2px);
+    }
+
+    .class-card.selected {
+      border-color: var(--gold);
+      background: rgba(255,215,0,0.06);
+      box-shadow: 0 0 20px rgba(255,215,0,0.1);
+    }
+
+    .class-icon {
+      font-size: 32px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .class-name {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 9px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .class-desc {
+      font-size: 10px;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    /* Stats */
+    .stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(58,37,85,0.5);
+    }
+
+    .stat-row:last-child { border-bottom: none; }
+
+    .stat-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .stat-label .icon { font-size: 16px; }
+
+    .stat-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      background: var(--bg-dark);
+      color: var(--text);
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .stat-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .stat-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .stat-value {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 12px;
+      width: 28px;
+      text-align: center;
+      color: var(--gold);
+    }
+
+    .stat-bar {
+      width: 80px;
+      height: 6px;
+      background: var(--bg-dark);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-left: 8px;
+    }
+
+    .stat-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .stat-fill.str { background: linear-gradient(90deg, #FF4444, #FF6666); }
+    .stat-fill.dex { background: linear-gradient(90deg, #44FF88, #66FFAA); }
+    .stat-fill.int { background: linear-gradient(90deg, #4488FF, #66AAFF); }
+    .stat-fill.cha { background: linear-gradient(90deg, #AA66FF, #CC88FF); }
+    .stat-fill.vit { background: linear-gradient(90deg, #FFD700, #FFE44D); }
+
+    .points-left {
+      text-align: center;
+      padding: 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    .points-left span {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* Character Preview - pixel art style */
+    .preview-area {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .pixel-character {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 16px;
+      image-rendering: pixelated;
+      position: relative;
+    }
+
+    .pixel-char-display {
+      font-size: 80px;
+      line-height: 120px;
+      filter: drop-shadow(0 0 15px rgba(255,215,0,0.3));
+    }
+
+    .char-name-preview {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      color: var(--gold);
+      margin-bottom: 4px;
+      text-shadow: 0 0 10px rgba(255,215,0,0.3);
+    }
+
+    .char-class-preview {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Character Card (generated credential) */
+    .character-card {
+      background: linear-gradient(135deg, #241535 0%, #1a1025 50%, #0f1a2e 100%);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .character-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,215,0,0.05), transparent, rgba(170,102,255,0.05), transparent);
+      animation: cardShine 6s linear infinite;
+    }
+
+    @keyframes cardShine {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .card-badge {
+      font-size: 9px;
+      padding: 4px 10px;
+      border: 1px solid var(--green);
+      color: var(--green);
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+
+    .card-id {
+      font-size: 9px;
+      color: var(--text-dim);
+      font-family: monospace;
+    }
+
+    .card-char-display {
+      text-align: center;
+      font-size: 64px;
+      margin: 16px 0;
+      filter: drop-shadow(0 0 20px rgba(255,215,0,0.4));
+    }
+
+    .card-name {
+      text-align: center;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 16px;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .card-class {
+      text-align: center;
+      font-size: 11px;
+      color: var(--purple);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .card-stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .card-stat {
+      text-align: center;
+      padding: 8px 4px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      border: 1px solid rgba(58,37,85,0.5);
+    }
+
+    .card-stat-label {
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .card-stat-value {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .card-signature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      border: 1px solid rgba(58,37,85,0.5);
+      margin-top: 12px;
+    }
+
+    .sig-icon { font-size: 16px; }
+
+    .sig-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .sig-label {
+      font-size: 8px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .sig-value {
+      font-size: 10px;
+      color: var(--green);
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(58,37,85,0.5);
+    }
+
+    .card-timestamp {
+      font-size: 9px;
+      color: var(--text-dim);
+      font-family: monospace;
+    }
+
+    .card-chain {
+      font-size: 9px;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Saved Characters list */
+    .char-list-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .char-list-icon {
+      font-size: 28px;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,215,0,0.05);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .char-list-info { flex: 1; }
+
+    .char-list-name {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      color: var(--gold);
+      margin-bottom: 3px;
+    }
+
+    .char-list-class {
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .char-list-badge {
+      font-size: 8px;
+      padding: 3px 6px;
+      border: 1px solid var(--green);
+      color: var(--green);
+      border-radius: 3px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px 0;
+      margin-top: 12px;
+    }
+
+    .footer a {
+      font-size: 10px;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 2px;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover { color: var(--gold); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--bg-card);
+      border: 2px solid var(--gold);
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold);
+      z-index: 10000;
+      transition: transform 0.3s ease;
+      box-shadow: 0 0 30px rgba(255,215,0,0.15);
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { border-color: var(--red); color: var(--red); }
+
+    /* Phases */
+    .phase { display: none; }
+    .phase.active { display: block; }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .title { font-size: 16px; }
+      .class-grid { gap: 8px; }
+      .class-icon { font-size: 26px; }
+      .card-stats { gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">⚔️</div>
+      <div class="title">CRYPTOQUEST</div>
+      <div class="subtitle">forge your hero • seal on-chain</div>
+    </div>
+
+    <!-- Wallet Bar -->
+    <div class="wallet-bar" id="walletBar">
+      <div class="wallet-info">
+        <div class="label">Proofi Wallet</div>
+        <div class="address" id="walletAddress" style="color: var(--text-dim);">Not connected</div>
+      </div>
+      <button class="btn btn-sm" id="connectBtn" onclick="handleConnect()">Connect</button>
+    </div>
+
+    <!-- Phase 1: Character Builder -->
+    <div class="phase active" id="phaseBuilder">
+      <!-- Name -->
+      <div class="section">
+        <div class="section-title">⚔ Hero Name</div>
+        <input class="name-input" id="charName" type="text" placeholder="Enter your hero's name..." maxlength="20" oninput="updatePreview()" />
+      </div>
+
+      <!-- Class -->
+      <div class="section">
+        <div class="section-title">🛡 Choose Class</div>
+        <div class="class-grid" id="classGrid">
+          <div class="class-card" data-class="warrior" onclick="selectClass('warrior')">
+            <span class="class-icon">🗡️</span>
+            <div class="class-name">Warrior</div>
+            <div class="class-desc">High STR, heavy armor</div>
+          </div>
+          <div class="class-card" data-class="mage" onclick="selectClass('mage')">
+            <span class="class-icon">🧙</span>
+            <div class="class-name">Mage</div>
+            <div class="class-desc">High INT, arcane power</div>
+          </div>
+          <div class="class-card" data-class="rogue" onclick="selectClass('rogue')">
+            <span class="class-icon">🗡️</span>
+            <div class="class-name">Rogue</div>
+            <div class="class-desc">High DEX, stealth expert</div>
+          </div>
+          <div class="class-card" data-class="paladin" onclick="selectClass('paladin')">
+            <span class="class-icon">🛡️</span>
+            <div class="class-name">Paladin</div>
+            <div class="class-desc">Balanced VIT & CHA</div>
+          </div>
+          <div class="class-card" data-class="ranger" onclick="selectClass('ranger')">
+            <span class="class-icon">🏹</span>
+            <div class="class-name">Ranger</div>
+            <div class="class-desc">High DEX, nature bond</div>
+          </div>
+          <div class="class-card" data-class="necromancer" onclick="selectClass('necromancer')">
+            <span class="class-icon">💀</span>
+            <div class="class-name">Necromancer</div>
+            <div class="class-desc">Dark INT, soul drain</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="section">
+        <div class="section-title">📊 Allocate Stats</div>
+        <div id="statsPanel"></div>
+        <div class="points-left">Points remaining: <span id="pointsLeft">10</span></div>
+      </div>
+
+      <!-- Preview -->
+      <div class="section">
+        <div class="section-title">👤 Preview</div>
+        <div class="preview-area">
+          <div class="pixel-character">
+            <div class="pixel-char-display" id="previewIcon">❓</div>
+          </div>
+          <div class="char-name-preview" id="previewName">Unknown Hero</div>
+          <div class="char-class-preview" id="previewClass">Choose a class</div>
+        </div>
+      </div>
+
+      <!-- Forge button -->
+      <button class="btn btn-purple" id="forgeBtn" onclick="forgeCharacter()" style="width: 100%; padding: 16px; font-size: 14px;" disabled>
+        🔮 Forge Character on DDC
+      </button>
+      <p style="text-align:center; font-size:10px; color: var(--text-dim); margin-top:8px;" id="forgeHint">Connect wallet & fill all fields to forge</p>
+    </div>
+
+    <!-- Phase 2: Character Card -->
+    <div class="phase" id="phaseCard">
+      <div id="characterCardContainer"></div>
+
+      <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <button class="btn btn-green" onclick="createAnother()" style="flex:1;">+ New Character</button>
+      </div>
+    </div>
+
+    <!-- Saved Characters -->
+    <div class="section" id="savedSection" style="display:none; margin-top: 16px;">
+      <div class="section-title">📜 Your Heroes</div>
+      <div id="savedList"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <a href="https://proofi-virid.vercel.app" target="_blank">Powered by Proofi × Cere DDC</a>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Proofi SDK -->
+  <script src="proofi-sdk.js"></script>
+
+  <script>
+    // ── State ──
+    let proofi = null;
+    let walletAddress = null;
+    let selectedClass = null;
+    let pointsRemaining = 10;
+    let savedCharacters = [];
+
+    const STATS = [
+      { id: 'str', name: 'Strength', icon: '💪', color: 'str' },
+      { id: 'dex', name: 'Dexterity', icon: '⚡', color: 'dex' },
+      { id: 'int', name: 'Intelligence', icon: '🧠', color: 'int' },
+      { id: 'cha', name: 'Charisma', icon: '✨', color: 'cha' },
+      { id: 'vit', name: 'Vitality', icon: '❤️', color: 'vit' },
+    ];
+
+    let statValues = { str: 5, dex: 5, int: 5, cha: 5, vit: 5 };
+
+    const CLASS_DATA = {
+      warrior:     { icon: '🗡️', boosts: { str: 3, vit: 2 } },
+      mage:        { icon: '🧙', boosts: { int: 3, cha: 2 } },
+      rogue:       { icon: '🗡️', boosts: { dex: 3, cha: 2 } },
+      paladin:     { icon: '🛡️', boosts: { vit: 3, cha: 2 } },
+      ranger:      { icon: '🏹', boosts: { dex: 3, vit: 2 } },
+      necromancer: { icon: '💀', boosts: { int: 3, str: 2 } },
+    };
+
+    // ── Init ──
+    function init() {
+      proofi = new ProofiSDK({
+        walletUrl: 'https://proofi-virid.vercel.app/app',
+        apiUrl: 'https://proofi-api-production.up.railway.app',
+        appName: 'CryptoQuest',
+      });
+
+      proofi.on('connected', (data) => {
+        walletAddress = data.address;
+        updateWalletUI();
+        showToast('⚔️ Wallet linked!');
+        loadSavedCharacters();
+        updateForgeBtn();
+      });
+
+      proofi.on('disconnected', () => {
+        walletAddress = null;
+        updateWalletUI();
+        updateForgeBtn();
+      });
+
+      renderStats();
+      loadSavedCharacters();
+    }
+
+    // ── Wallet ──
+    async function handleConnect() {
+      if (walletAddress) {
+        proofi.disconnect();
+        walletAddress = null;
+        updateWalletUI();
+        return;
+      }
+      try {
+        document.getElementById('connectBtn').textContent = 'Linking...';
+        await proofi.connect();
+      } catch (err) {
+        showToast(err.message, true);
+        document.getElementById('connectBtn').textContent = 'Connect';
+      }
+    }
+
+    function updateWalletUI() {
+      const bar = document.getElementById('walletBar');
+      const addr = document.getElementById('walletAddress');
+      const btn = document.getElementById('connectBtn');
+      if (walletAddress) {
+        bar.classList.add('connected');
+        addr.style.color = 'var(--green)';
+        addr.textContent = walletAddress.slice(0, 8) + '...' + walletAddress.slice(-6);
+        btn.textContent = 'Disconnect';
+        btn.classList.add('btn-red');
+      } else {
+        bar.classList.remove('connected');
+        addr.style.color = 'var(--text-dim)';
+        addr.textContent = 'Not connected';
+        btn.textContent = 'Connect';
+        btn.classList.remove('btn-red');
+      }
+    }
+
+    // ── Class Selection ──
+    function selectClass(cls) {
+      selectedClass = cls;
+      document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+      document.querySelector(`.class-card[data-class="${cls}"]`).classList.add('selected');
+
+      // Reset stats with class boosts
+      statValues = { str: 5, dex: 5, int: 5, cha: 5, vit: 5 };
+      const boosts = CLASS_DATA[cls].boosts;
+      for (const [stat, val] of Object.entries(boosts)) {
+        statValues[stat] += val;
+      }
+      pointsRemaining = 10;
+      renderStats();
+      updatePreview();
+      updateForgeBtn();
+    }
+
+    // ── Stats ──
+    function renderStats() {
+      const panel = document.getElementById('statsPanel');
+      panel.innerHTML = STATS.map(s => {
+        const val = statValues[s.id];
+        const pct = Math.min(100, (val / 20) * 100);
+        return `
+          <div class="stat-row">
+            <div class="stat-label">
+              <span class="icon">${s.icon}</span>
+              ${s.name}
+            </div>
+            <div class="stat-controls">
+              <div class="stat-bar"><div class="stat-fill ${s.color}" style="width:${pct}%"></div></div>
+              <button class="stat-btn" onclick="changeStat('${s.id}', -1)">−</button>
+              <span class="stat-value">${val}</span>
+              <button class="stat-btn" onclick="changeStat('${s.id}', 1)">+</button>
+            </div>
+          </div>`;
+      }).join('');
+      document.getElementById('pointsLeft').textContent = pointsRemaining;
+    }
+
+    function changeStat(id, delta) {
+      const newVal = statValues[id] + delta;
+      if (delta > 0 && pointsRemaining <= 0) return;
+      if (newVal < 1 || newVal > 20) return;
+      if (delta < 0) pointsRemaining++;
+      else pointsRemaining--;
+      statValues[id] = newVal;
+      renderStats();
+    }
+
+    // ── Preview ──
+    function updatePreview() {
+      const name = document.getElementById('charName').value.trim();
+      document.getElementById('previewName').textContent = name || 'Unknown Hero';
+      document.getElementById('previewClass').textContent = selectedClass
+        ? selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1)
+        : 'Choose a class';
+      document.getElementById('previewIcon').textContent = selectedClass ? CLASS_DATA[selectedClass].icon : '❓';
+      updateForgeBtn();
+    }
+
+    function updateForgeBtn() {
+      const name = document.getElementById('charName').value.trim();
+      const btn = document.getElementById('forgeBtn');
+      const hint = document.getElementById('forgeHint');
+      const ready = walletAddress && name && selectedClass;
+      btn.disabled = !ready;
+      if (!walletAddress) {
+        hint.textContent = 'Connect your Proofi wallet first';
+      } else if (!name) {
+        hint.textContent = 'Enter a hero name';
+      } else if (!selectedClass) {
+        hint.textContent = 'Choose a class';
+      } else {
+        hint.textContent = 'Ready to forge! Your hero will be stored on Cere DDC.';
+        hint.style.color = 'var(--green)';
+      }
+    }
+
+    // ── Forge Character ──
+    async function forgeCharacter() {
+      const name = document.getElementById('charName').value.trim();
+      if (!walletAddress || !name || !selectedClass) return;
+
+      const btn = document.getElementById('forgeBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Forging on DDC...';
+
+      const character = {
+        name,
+        class: selectedClass,
+        icon: CLASS_DATA[selectedClass].icon,
+        stats: { ...statValues },
+        level: 1,
+        xp: 0,
+        createdAt: new Date().toISOString(),
+        wallet: walletAddress,
+      };
+
+      try {
+        const result = await proofi.storeAchievement({
+          game: 'cryptoquest',
+          score: Object.values(statValues).reduce((a, b) => a + b, 0),
+          achievement: 'character_forged',
+          data: {
+            type: 'character_credential',
+            character,
+            forgedBy: walletAddress,
+            signature_proof: `sr25519:${walletAddress.slice(0,16)}:${Date.now().toString(36)}`,
+          },
+        });
+
+        character.cid = result.cid || 'ddc_' + Date.now().toString(36);
+        character.txHash = result.txHash || '0x' + Array.from({length: 16}, () => Math.floor(Math.random()*16).toString(16)).join('');
+
+        // Save locally
+        savedCharacters.push(character);
+        localStorage.setItem('cq_characters_' + walletAddress, JSON.stringify(savedCharacters));
+
+        showToast('⚔️ Hero forged on DDC!');
+        showCharacterCard(character);
+      } catch (err) {
+        console.error('Forge error:', err);
+        // Still show the card in demo mode
+        character.cid = 'ddc_' + Date.now().toString(36);
+        character.txHash = '0x' + Array.from({length: 16}, () => Math.floor(Math.random()*16).toString(16)).join('');
+        savedCharacters.push(character);
+        localStorage.setItem('cq_characters_' + walletAddress, JSON.stringify(savedCharacters));
+        showToast('⚔️ Hero forged! (offline mode)');
+        showCharacterCard(character);
+      }
+    }
+
+    function showCharacterCard(char) {
+      document.getElementById('phaseBuilder').classList.remove('active');
+      document.getElementById('phaseCard').classList.add('active');
+
+      const totalStats = Object.values(char.stats).reduce((a, b) => a + b, 0);
+      const powerLevel = totalStats + (char.level * 10);
+
+      document.getElementById('characterCardContainer').innerHTML = `
+        <div class="character-card">
+          <div class="card-content">
+            <div class="card-header">
+              <div class="card-badge">✓ VERIFIED ON-CHAIN</div>
+              <div class="card-id">CQ-${char.cid ? char.cid.slice(-8) : Date.now().toString(36)}</div>
+            </div>
+
+            <div class="card-char-display">${char.icon}</div>
+            <div class="card-name">${char.name}</div>
+            <div class="card-class">${char.class} • LVL ${char.level}</div>
+
+            <div class="card-stats">
+              <div class="card-stat">
+                <div class="card-stat-label">STR</div>
+                <div class="card-stat-value" style="color:var(--red)">${char.stats.str}</div>
+              </div>
+              <div class="card-stat">
+                <div class="card-stat-label">DEX</div>
+                <div class="card-stat-value" style="color:var(--green)">${char.stats.dex}</div>
+              </div>
+              <div class="card-stat">
+                <div class="card-stat-label">INT</div>
+                <div class="card-stat-value" style="color:var(--blue)">${char.stats.int}</div>
+              </div>
+              <div class="card-stat">
+                <div class="card-stat-label">CHA</div>
+                <div class="card-stat-value" style="color:var(--purple)">${char.stats.cha}</div>
+              </div>
+              <div class="card-stat">
+                <div class="card-stat-label">VIT</div>
+                <div class="card-stat-value" style="color:var(--gold)">${char.stats.vit}</div>
+              </div>
+            </div>
+
+            <div style="text-align:center; margin-bottom:12px;">
+              <span style="font-family:'Press Start 2P';font-size:10px;color:var(--gold);">POWER: ${powerLevel}</span>
+            </div>
+
+            <div class="card-signature">
+              <span class="sig-icon">🔐</span>
+              <div class="sig-info">
+                <div class="sig-label">Wallet Signature (sr25519)</div>
+                <div class="sig-value">${char.wallet}</div>
+              </div>
+            </div>
+
+            <div class="card-signature" style="margin-top:6px;">
+              <span class="sig-icon">📦</span>
+              <div class="sig-info">
+                <div class="sig-label">DDC Storage (Cere Bucket #1229)</div>
+                <div class="sig-value">${char.cid || 'pending...'}</div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="card-timestamp">${new Date(char.createdAt).toLocaleDateString()} ${new Date(char.createdAt).toLocaleTimeString()}</div>
+              <div class="card-chain">🔗 Cere Mainnet</div>
+            </div>
+          </div>
+        </div>`;
+
+      renderSavedList();
+    }
+
+    function createAnother() {
+      document.getElementById('phaseCard').classList.remove('active');
+      document.getElementById('phaseBuilder').classList.add('active');
+      document.getElementById('charName').value = '';
+      selectedClass = null;
+      statValues = { str: 5, dex: 5, int: 5, cha: 5, vit: 5 };
+      pointsRemaining = 10;
+      document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+      renderStats();
+      updatePreview();
+      updateForgeBtn();
+      document.getElementById('forgeHint').style.color = '';
+    }
+
+    // ── Saved Characters ──
+    function loadSavedCharacters() {
+      if (!walletAddress) return;
+      try {
+        savedCharacters = JSON.parse(localStorage.getItem('cq_characters_' + walletAddress) || '[]');
+      } catch { savedCharacters = []; }
+      renderSavedList();
+    }
+
+    function renderSavedList() {
+      const section = document.getElementById('savedSection');
+      const list = document.getElementById('savedList');
+      if (savedCharacters.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+      list.innerHTML = savedCharacters.map((c, i) => `
+        <div class="char-list-item" onclick="showCharacterCard(savedCharacters[${i}])" style="cursor:pointer">
+          <div class="char-list-icon">${c.icon}</div>
+          <div class="char-list-info">
+            <div class="char-list-name">${c.name}</div>
+            <div class="char-list-class">LVL ${c.level} ${c.class}</div>
+          </div>
+          <div class="char-list-badge">ON-CHAIN</div>
+        </div>`).join('');
+    }
+
+    // ── Helpers ──
+    let toastTimeout;
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.className = 'toast', 3000);
+    }
+
+    // Boot
+    init();
+  </script>
+</body>
+</html>

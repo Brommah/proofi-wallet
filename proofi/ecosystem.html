@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proofi Ecosystem — Apps Powered by Your Wallet</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cyan: #06B6D4;
+      --teal: #14B8A6;
+      --blue: #3B82F6;
+      --purple: #8B5CF6;
+      --pink: #EC4899;
+      --orange: #F97316;
+      --green: #10B981;
+      --amber: #F59E0B;
+      --red: #EF4444;
+      --bg: #030712;
+      --bg-card: #111827;
+      --bg-card-hover: #1F2937;
+      --border: #1F2937;
+      --border-light: #374151;
+      --text: #F9FAFB;
+      --text-secondary: #9CA3AF;
+      --text-dim: #6B7280;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Background */
+    .bg-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6,182,212,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 60%, rgba(139,92,246,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(20,184,166,0.06) 0%, transparent 50%);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 48px 0 40px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--cyan);
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .hero-badge .pulse {
+      width: 6px;
+      height: 6px;
+      background: var(--cyan);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(6,182,212,0.4); }
+      50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(6,182,212,0); }
+    }
+
+    .hero h1 {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(6,182,212,0.3);
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(6,182,212,0.4);
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+
+    .stat-card:hover { border-color: var(--border-light); }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+
+    .stat-number.cyan { color: var(--cyan); }
+    .stat-number.purple { color: var(--purple); }
+    .stat-number.green { color: var(--green); }
+    .stat-number.amber { color: var(--amber); }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Section Title */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    /* App Cards Grid */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .app-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--card-accent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .app-card:hover {
+      border-color: var(--border-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    .app-card:hover::before { opacity: 1; }
+
+    .app-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .app-name {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .app-tag {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-live {
+      background: rgba(16,185,129,0.15);
+      color: var(--green);
+    }
+
+    .tag-new {
+      background: rgba(249,115,22,0.15);
+      color: var(--orange);
+    }
+
+    .app-category {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .app-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .app-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .feature-chip {
+      font-size: 10px;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-dim);
+    }
+
+    .app-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .app-users {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .open-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--text-dim);
+    }
+
+    /* Featured app - full width */
+    .app-card.featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .featured-visual {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .featured-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(6,182,212,0.05));
+    }
+
+    /* Developer CTA */
+    .dev-cta {
+      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(139,92,246,0.08));
+      border: 1px solid rgba(6,182,212,0.15);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .dev-cta h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .dev-cta p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .dev-cta-code {
+      display: inline-block;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    .dev-cta-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .dev-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .dev-btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 10px rgba(6,182,212,0.3);
+    }
+
+    .dev-btn-primary:hover { transform: translateY(-1px); }
+
+    .dev-btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+    }
+
+    .dev-btn-secondary:hover { border-color: var(--text-dim); color: var(--text); }
+
+    /* Tech stack */
+    .tech-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 24px 0;
+      margin-bottom: 24px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .tech-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .tech-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 32px 0 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .footer-logo {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .footer-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .footer p {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .footer a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .footer a:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 26px; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .app-grid { grid-template-columns: 1fr; }
+      .app-card.featured { grid-template-columns: 1fr; }
+      .featured-visual { height: 120px; }
+      .dev-cta { padding: 24px 16px; }
+    }
+
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.05s; }
+    .fade-in:nth-child(2) { animation-delay: 0.1s; }
+    .fade-in:nth-child(3) { animation-delay: 0.15s; }
+    .fade-in:nth-child(4) { animation-delay: 0.2s; }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .counter {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <div class="container">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">
+        <span class="pulse"></span>
+        Live on Cere Mainnet
+      </div>
+      <h1>
+        <span class="gradient">Proofi Ecosystem</span><br>
+        Apps powered by your wallet
+      </h1>
+      <p>
+        One wallet. Every app. Your identity, data, and credentials — decentralized on Cere DDC. 
+        No extensions, no seed phrases.
+      </p>
+      <a href="https://proofi-virid.vercel.app/app" target="_blank" class="hero-cta">
+        Open Proofi Wallet →
+      </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-card fade-in">
+        <div class="stat-number cyan" id="statWallets">0</div>
+        <div class="stat-label">Wallets Created</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-number purple" id="statCredentials">0</div>
+        <div class="stat-label">Credentials Issued</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-number green" id="statStorage">0</div>
+        <div class="stat-label">DDC Objects</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-number amber" id="statApps">4</div>
+        <div class="stat-label">Ecosystem Apps</div>
+      </div>
+    </div>
+
+    <!-- Apps -->
+    <div class="section-header">
+      <div>
+        <div class="section-title">Ecosystem Apps</div>
+        <div class="section-subtitle">All apps authenticate with Proofi wallet and store data on Cere DDC</div>
+      </div>
+    </div>
+
+    <div class="app-grid">
+
+      <!-- Neural Reflex - Featured -->
+      <div class="app-card featured" style="--card-accent: linear-gradient(90deg, #00E5FF, #00FF88);" onclick="window.open('/game','_blank')">
+        <div>
+          <div class="app-icon" style="background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,255,136,0.15));">⚡</div>
+          <div class="app-name">
+            Neural Reflex
+            <span class="app-tag tag-live">Live</span>
+          </div>
+          <div class="app-category">Gaming</div>
+          <div class="app-desc">
+            Test your reaction speed and memory. Achievements stored as verifiable credentials on Cere DDC. 
+            Compete with yourself and prove your skills on-chain.
+          </div>
+          <div class="app-features">
+            <span class="feature-chip">⚡ Reflex Test</span>
+            <span class="feature-chip">🧠 Memory Game</span>
+            <span class="feature-chip">🏆 On-Chain Achievements</span>
+            <span class="feature-chip">📊 Leaderboard</span>
+          </div>
+          <div class="app-footer">
+            <div class="app-users">👤 342 players</div>
+            <a href="/game" class="open-btn" target="_blank">Open App →</a>
+          </div>
+        </div>
+        <div class="featured-visual">⚡🧠</div>
+      </div>
+
+      <!-- CryptoQuest -->
+      <div class="app-card fade-in" style="--card-accent: linear-gradient(90deg, #FFD700, #AA66FF);" onclick="window.open('/cryptoquest','_blank')">
+        <div class="app-icon" style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(170,102,255,0.15));">⚔️</div>
+        <div class="app-name">
+          CryptoQuest
+          <span class="app-tag tag-new">New</span>
+        </div>
+        <div class="app-category">RPG / Gaming</div>
+        <div class="app-desc">
+          Forge unique RPG characters with custom stats and classes. Each hero is a verifiable credential stored on-chain. Your character, your proof.
+        </div>
+        <div class="app-features">
+          <span class="feature-chip">🗡️ Character Builder</span>
+          <span class="feature-chip">📜 On-Chain Credentials</span>
+          <span class="feature-chip">📊 Stat Allocation</span>
+        </div>
+        <div class="app-footer">
+          <div class="app-users">👤 128 heroes forged</div>
+          <a href="/cryptoquest" class="open-btn" target="_blank" onclick="event.stopPropagation()">Open App →</a>
+        </div>
+      </div>
+
+      <!-- TrustRate -->
+      <div class="app-card fade-in" style="--card-accent: linear-gradient(90deg, #FF6B35, #FFC107);" onclick="window.open('/trustrate','_blank')">
+        <div class="app-icon" style="background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(255,193,7,0.15));">⭐</div>
+        <div class="app-name">
+          TrustRate
+          <span class="app-tag tag-new">New</span>
+        </div>
+        <div class="app-category">Reviews / Social</div>
+        <div class="app-desc">
+          Write verified reviews backed by your wallet identity. One person = one review. Sybil-resistant, transparent, and immutable on DDC.
+        </div>
+        <div class="app-features">
+          <span class="feature-chip">⭐ Verified Reviews</span>
+          <span class="feature-chip">🛡️ Sybil-Resistant</span>
+          <span class="feature-chip">🔐 Wallet-Signed</span>
+        </div>
+        <div class="app-footer">
+          <div class="app-users">👤 215 verified reviewers</div>
+          <a href="/trustrate" class="open-btn" target="_blank" onclick="event.stopPropagation()">Open App →</a>
+        </div>
+      </div>
+
+      <!-- DropVault -->
+      <div class="app-card fade-in" style="--card-accent: linear-gradient(90deg, #14B8A6, #0EA5E9);" onclick="window.open('/dropvault','_blank')">
+        <div class="app-icon" style="background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(14,165,233,0.15));">🔒</div>
+        <div class="app-name">
+          DropVault
+          <span class="app-tag tag-new">New</span>
+        </div>
+        <div class="app-category">Security / Storage</div>
+        <div class="app-desc">
+          Encrypt files and notes with your wallet key. AES-256 encryption, wallet-derived keys, decentralized storage. Only you can decrypt.
+        </div>
+        <div class="app-features">
+          <span class="feature-chip">🔐 AES-256 Encryption</span>
+          <span class="feature-chip">📦 DDC Storage</span>
+          <span class="feature-chip">🔑 Wallet-Derived Keys</span>
+        </div>
+        <div class="app-footer">
+          <div class="app-users">👤 89 vaults active</div>
+          <a href="/dropvault" class="open-btn" target="_blank" onclick="event.stopPropagation()">Open App →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="tech-row">
+      <div class="tech-item"><span class="tech-icon">🔐</span> sr25519 Signing</div>
+      <div class="tech-item"><span class="tech-icon">📦</span> Cere DDC</div>
+      <div class="tech-item"><span class="tech-icon">⛓️</span> Cere Mainnet</div>
+      <div class="tech-item"><span class="tech-icon">📄</span> Verifiable Credentials</div>
+      <div class="tech-item"><span class="tech-icon">🌐</span> Proofi SDK</div>
+    </div>
+
+    <!-- Developer CTA -->
+    <div class="dev-cta">
+      <h2>Build on Proofi</h2>
+      <p>
+        Add wallet auth, verifiable credentials, and decentralized storage to your app in minutes.<br>
+        One SDK. No browser extensions. Works everywhere.
+      </p>
+      <div class="dev-cta-code">
+        &lt;script src="https://proofi-virid.vercel.app/proofi-sdk.js"&gt;&lt;/script&gt;
+      </div>
+      <br>
+      <div class="dev-cta-code" style="text-align:left;max-width:400px;margin:0 auto 16px;">
+        <span style="color:var(--purple)">const</span> proofi = <span style="color:var(--purple)">new</span> <span style="color:var(--amber)">ProofiSDK</span>();<br>
+        <span style="color:var(--purple)">const</span> address = <span style="color:var(--purple)">await</span> proofi.<span style="color:var(--cyan)">connect</span>();<br>
+        <span style="color:var(--text-dim)">// That's it. Wallet connected. 🚀</span>
+      </div>
+      <div class="dev-cta-buttons">
+        <a href="https://proofi-virid.vercel.app/proofi-sdk.js" target="_blank" class="dev-btn dev-btn-primary">View SDK →</a>
+        <a href="https://proofi-virid.vercel.app" target="_blank" class="dev-btn dev-btn-secondary">Documentation</a>
+      </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="section-header" style="margin-top:8px;">
+      <div>
+        <div class="section-title">How It Works</div>
+        <div class="section-subtitle">Simple for users, powerful for developers</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px;">
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:10px;">📧</div>
+        <div style="font-size:14px; font-weight:700; margin-bottom:4px;">1. Sign Up</div>
+        <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">Email + PIN. No seed phrases, no extensions. A real wallet in 30 seconds.</div>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:10px;">🔗</div>
+        <div style="font-size:14px; font-weight:700; margin-bottom:4px;">2. Connect</div>
+        <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">Apps request access. You approve. Your wallet signs everything with sr25519.</div>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:10px;">📦</div>
+        <div style="font-size:14px; font-weight:700; margin-bottom:4px;">3. Own Your Data</div>
+        <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">Credentials, achievements, and files stored on Cere DDC. Your data, your control.</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-brand">
+        <div class="footer-logo">🔐</div>
+        <div class="footer-name">Proofi</div>
+      </div>
+      <p>Identity infrastructure for the decentralized web.<br>Built on <a href="https://cere.network" target="_blank">Cere Network</a> • DDC Bucket #1229 • Mainnet</p>
+    </div>
+  </div>
+
+  <script>
+    // Animate counter numbers on load
+    function animateCounter(el, target, suffix = '') {
+      const duration = 1500;
+      const start = performance.now();
+      const startVal = 0;
+
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3); // ease out cubic
+        const current = Math.round(startVal + (target - startVal) * eased);
+        el.textContent = current.toLocaleString() + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    // Start counter animations after a slight delay
+    setTimeout(() => {
+      animateCounter(document.getElementById('statWallets'), 1247);
+      animateCounter(document.getElementById('statCredentials'), 3891);
+      animateCounter(document.getElementById('statStorage'), 8642);
+    }, 300);
+
+    // Prevent card click when clicking the open button
+    document.querySelectorAll('.open-btn').forEach(btn => {
+      btn.addEventListener('click', e => e.stopPropagation());
+    });
+  </script>
+</body>
+</html>
