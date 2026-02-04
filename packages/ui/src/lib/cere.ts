@@ -7,6 +7,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { Keyring } from '@polkadot/keyring';
 import { formatBalance } from '@polkadot/util';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 // Primary and fallback RPC endpoints (archive is more stable)
 const CERE_RPC_ENDPOINTS = [
@@ -73,7 +74,8 @@ export async function getBalance(address: string): Promise<{
   formatted: string;
 }> {
   const api = await getApi();
-  const account = await api.query.system.account(address);
+  const normalizedAddr = normalizeAddress(address) || address;
+  const account = await api.query.system.account(normalizedAddr);
   const { free, reserved } = account.data;
   
   const freeBn = BigInt(free.toString());
@@ -147,7 +149,9 @@ export async function transfer(
   
   onStatus?.('Building transaction...');
   
-  const tx = api.tx.balances.transferKeepAlive(recipient, amount);
+  // Normalize recipient address to fix any checksum issues
+  const normalizedRecipient = normalizeAddress(recipient) || recipient;
+  const tx = api.tx.balances.transferKeepAlive(normalizedRecipient, amount);
   
   return new Promise((resolve, reject) => {
     let unsub: () => void;
@@ -193,24 +197,37 @@ export async function estimateFee(
   amount: bigint
 ): Promise<bigint> {
   const api = await getApi();
-  const tx = api.tx.balances.transferKeepAlive(recipient, amount);
+  const normalizedRecipient = normalizeAddress(recipient) || recipient;
+  const tx = api.tx.balances.transferKeepAlive(normalizedRecipient, amount);
   const info = await tx.paymentInfo(sender);
   return BigInt(info.partialFee.toString());
 }
 
 /**
- * Validate Cere address — accepts both prefix 42 (5...) and prefix 54 (6...)
+ * Normalize an SS58 address: decode (ignoring checksum) and re-encode with correct checksum.
+ * This fixes addresses from wallets that may produce incorrect checksums.
+ * Returns the corrected address with Cere prefix (54), or null if not decodable.
+ */
+export function normalizeAddress(address: string): string | null {
+  if (!address || address.length < 46 || address.length > 48) return null;
+  if (address[0] !== '5' && address[0] !== '6') return null;
+  try {
+    // decodeAddress with ignoreChecksum=true extracts the pubkey regardless of checksum
+    const pubkey = decodeAddress(address, true);
+    if (pubkey.length !== 32) return null;
+    // Re-encode with correct SS58 checksum for Cere (prefix 54)
+    return encodeAddress(pubkey, 54);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Validate Cere address — accepts prefix 42 (5...) and prefix 54 (6...).
+ * Tolerates incorrect checksums by normalizing first.
  */
 export function isValidAddress(address: string): boolean {
-  try {
-    // decodeAddress accepts any valid SS58 address regardless of prefix
-    const keyring = new Keyring({ type: 'sr25519' });
-    const decoded = keyring.decodeAddress(address);
-    // Must decode to a 32-byte public key
-    return decoded.length === 32;
-  } catch {
-    return false;
-  }
+  return normalizeAddress(address) !== null;
 }
 
 /**
@@ -221,8 +238,9 @@ export async function subscribeBalance(
   callback: (balance: { free: bigint; formatted: string }) => void
 ): Promise<() => void> {
   const api = await getApi();
+  const normalizedAddr = normalizeAddress(address) || address;
   
-  const unsub = await api.query.system.account(address, (account: any) => {
+  const unsub = await api.query.system.account(normalizedAddr, (account: any) => {
     const free = BigInt(account.data.free.toString());
     callback({
       free,

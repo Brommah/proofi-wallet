@@ -81,7 +81,9 @@ export function AccountScreen() {
   };
 
   const handleSend = async () => {
-    if (!keypair?.secretKey) {
+    // Read keypair from store directly (React state may be stale after PIN unlock)
+    const kp = keypair || useWalletStore.getState().keypair;
+    if (!kp?.secretKey) {
       setShowPinUnlock(true);
       return;
     }
@@ -96,7 +98,7 @@ export function AccountScreen() {
       
       const amountBn = parseCere(amount);
       const result = await transfer(
-        keypair.secretKey,
+        kp.secretKey,
         recipient,
         amountBn,
         (status) => setSendStatus(status)

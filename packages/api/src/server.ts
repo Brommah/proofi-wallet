@@ -54,8 +54,58 @@ app.use('*', corsMiddleware());
 
 // ── Routes ──────────────────────────────────────────────────────────
 
-app.get('/health', (c) => c.json({ status: 'ok', version: '0.3.0' }));
-app.get('/', (c) => c.json({ name: 'Proofi Wallet API', version: '0.3.0', status: 'running' }));
+app.get('/health', (c) => c.json({ status: 'ok', version: '0.3.1' }));
+app.get('/', (c) => c.json({ name: 'Proofi Wallet API', version: '0.3.1', status: 'running' }));
+
+// ── Balance (RPC proxy for mobile) ──────────────────────────────────
+
+app.get('/balance/:address', async (c) => {
+  const { address } = c.req.param();
+  const RPC_ENDPOINTS = [
+    'wss://archive.mainnet.cere.network/ws',
+    'wss://rpc.mainnet.cere.network/ws',
+  ];
+
+  try {
+    // Use polkadot.js API to query balance via RPC
+    const { ApiPromise, WsProvider } = await import('@polkadot/api');
+    const { decodeAddress, encodeAddress } = await import('@polkadot/util-crypto');
+
+    // Normalize address (handle checksum issues)
+    let normalizedAddr = address;
+    try {
+      const pubkey = decodeAddress(address, true); // ignoreChecksum
+      normalizedAddr = encodeAddress(pubkey, 54);
+    } catch {}
+
+    const provider = new WsProvider(RPC_ENDPOINTS, 5000);
+    const api = await ApiPromise.create({ provider, noInitWarn: true });
+
+    try {
+      const account = await api.query.system.account(normalizedAddr);
+      const { free, reserved } = (account as any).data;
+      const freeBn = BigInt(free.toString());
+      const reservedBn = BigInt(reserved.toString());
+      const decimals = 10;
+      const whole = freeBn / BigInt(10 ** decimals);
+      const frac = freeBn % BigInt(10 ** decimals);
+      const formatted = `${whole}.${frac.toString().padStart(decimals, '0').slice(0, 2)} CERE`;
+
+      return c.json({
+        free: free.toString(),
+        reserved: reserved.toString(),
+        total: (freeBn + reservedBn).toString(),
+        formatted,
+        address: normalizedAddr,
+      });
+    } finally {
+      await api.disconnect();
+    }
+  } catch (err: any) {
+    console.error('[BALANCE] Error:', err.message);
+    return c.json({ error: 'Failed to fetch balance', details: err.message }, 500);
+  }
+});
 
 // JWKS endpoint
 app.get('/.well-known/jwks.json', async (c) => {
