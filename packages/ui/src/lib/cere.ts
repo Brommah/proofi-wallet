@@ -199,13 +199,15 @@ export async function estimateFee(
 }
 
 /**
- * Validate Cere address
+ * Validate Cere address — accepts both prefix 42 (5...) and prefix 54 (6...)
  */
 export function isValidAddress(address: string): boolean {
   try {
-    const keyring = new Keyring({ type: 'sr25519', ss58Format: 54 });
-    keyring.encodeAddress(keyring.decodeAddress(address));
-    return true;
+    // decodeAddress accepts any valid SS58 address regardless of prefix
+    const keyring = new Keyring({ type: 'sr25519' });
+    const decoded = keyring.decodeAddress(address);
+    // Must decode to a 32-byte public key
+    return decoded.length === 32;
   } catch {
     return false;
   }
