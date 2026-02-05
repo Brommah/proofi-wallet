@@ -3,7 +3,7 @@ import type { Context, Next } from 'hono';
 /**
  * In-memory sliding window rate limiter.
  * Tracks request timestamps per key (IP) within a time window.
- * No external dependencies (Redis) needed for now.
+ * No external dependencies needed — fully in-memory (stateless on restart).
  */
 
 interface WindowEntry {
