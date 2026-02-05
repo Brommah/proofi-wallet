@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi — Ecosystem</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #000;
+      --surface: #0a0a0a;
+      --card: #111;
+      --card-hover: #191919;
+      --border: #222;
+      --border-hover: #333;
+      --text: #ededed;
+      --text-secondary: #888;
+      --text-tertiary: #555;
+      --accent: #fff;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'Geist Mono', 'SF Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo-mark {
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+    }
+    .logo-text {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+    .logo-sep {
+      color: var(--text-tertiary);
+      font-size: 20px;
+      font-weight: 300;
+    }
+    .logo-page {
+      font-size: 15px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    .nav-links a.active { color: var(--text); }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .connect-btn {
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .connect-btn:hover { opacity: 0.9; }
+    .connect-btn:active { transform: scale(0.97); }
+    .connect-btn.connected {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .wallet-addr {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .wallet-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      flex-shrink: 0;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      opacity: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 13px;
+      color: var(--text);
+      z-index: 999;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px 48px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      background: var(--surface);
+    }
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34,197,94,0.4);
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.5) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ===== CONTROLS ===== */
+    .controls-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 32px;
+    }
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      max-width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: var(--border-hover); }
+    .search-input::placeholder { color: var(--text-tertiary); }
+    .filters {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-family: var(--font);
+      font-size: 13px;
+      padding: 8px 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .filter-btn:hover { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+    .filter-btn.active {
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ===== GRID ===== */
+    .grid-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .app-card {
+      background: var(--surface);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: background 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+    }
+    .app-card:hover { background: var(--card-hover); }
+    .app-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .app-card-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .app-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .app-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .app-name {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+    .app-category {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .app-arrow {
+      color: var(--text-tertiary);
+      font-size: 18px;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .app-card:hover .app-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .app-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .app-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+    .app-tag {
+      font-size: 11px;
+      font-family: var(--mono);
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text-tertiary);
+    }
+    .app-card.locked .app-desc { color: var(--text-tertiary); }
+    .lock-badge {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ===== EMPTY ===== */
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 64px 24px;
+      text-align: center;
+      background: var(--surface);
+    }
+    .empty-state p { color: var(--text-tertiary); font-size: 14px; }
+
+    /* ===== DEV CTA ===== */
+    .cta-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+    .cta-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .cta-top {
+      padding: 48px 40px 32px;
+      text-align: center;
+    }
+    .cta-top h2 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .cta-top p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .cta-code {
+      margin: 0 40px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .cta-code .kw { color: #c084fc; }
+    .cta-code .fn { color: #e2e8f0; }
+    .cta-code .str { color: #86efac; }
+    .cta-code .cm { color: #555; }
+    .cta-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 32px 40px 48px;
+      flex-wrap: wrap;
+    }
+    .cta-btn {
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: opacity 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .cta-btn.primary {
+      background: #fff;
+      color: #000;
+      border: none;
+    }
+    .cta-btn.primary:hover { opacity: 0.9; }
+    .cta-btn.secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .cta-btn.secondary:hover { color: var(--text); border-color: var(--border-hover); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-links a {
+      color: var(--text-tertiary);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--text-secondary); }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero { padding: 48px 20px 32px; }
+      .app-grid { grid-template-columns: 1fr; }
+      .controls { flex-direction: column; align-items: stretch; }
+      .search-input { max-width: none; }
+      .cta-top { padding: 32px 24px 24px; }
+      .cta-code { margin: 0 20px; font-size: 11px; }
+      .cta-actions { padding: 24px 20px 32px; }
+      .footer-inner { flex-direction: column; gap: 12px; }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      animation: fadeUp 0.5s ease forwards;
+      opacity: 0;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a class="logo" href="/">
+          <div class="logo-mark">P</div>
+          <span class="logo-text">Proofi</span>
+          <span class="logo-sep">/</span>
+          <span class="logo-page">Ecosystem</span>
+        </a>
+        <div class="nav-links">
+          <a href="/app">Wallet</a>
+          <a href="/" class="active">Ecosystem</a>
+          <a href="https://proofi-virid.vercel.app/proofi-sdk.js" target="_blank">SDK</a>
+        </div>
+      </div>
+      <div class="nav-right" id="navRight">
+        <button class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge fade-up">
+      <span class="dot"></span>
+      Live on Cere Mainnet
+    </div>
+    <h1 class="fade-up delay-1">Explore the Ecosystem</h1>
+    <p class="fade-up delay-2">Apps and experiences built with Proofi. Every interaction is verifiable, every credential is yours.</p>
+  </section>
+
+  <!-- Controls -->
+  <div class="controls-wrap fade-up delay-3">
+    <div class="controls">
+      <input class="search-input" id="searchBox" placeholder="Search apps..." oninput="filterApps()">
+      <div class="filters" id="filters"></div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-wrap">
+    <div class="app-grid" id="appGrid"></div>
+  </div>
+
+  <!-- Developer CTA -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <div class="cta-top">
+        <h2>Build on Proofi</h2>
+        <p>Add wallet authentication and decentralized storage to your app in minutes.</p>
+      </div>
+      <div class="cta-code"><span class="kw">const</span> <span class="fn">proofi</span> = <span class="kw">new</span> <span class="fn">ProofiSDK</span>({ <span class="str">appName</span>: <span class="str">'My App'</span> });
+<span class="kw">const</span> <span class="fn">address</span> = <span class="kw">await</span> proofi.<span class="fn">connect</span>();
+<span class="kw">await</span> proofi.<span class="fn">storeCredential</span>({ <span class="str">type</span>: <span class="str">'achievement'</span>, <span class="str">score</span>: <span class="str">100</span> });</div>
+      <div class="cta-actions">
+        <a class="cta-btn primary" href="https://proofi-virid.vercel.app/proofi-sdk.js" target="_blank">Get the SDK</a>
+        <a class="cta-btn secondary" href="https://proofi-virid.vercel.app/app" target="_blank">Open Wallet</a>
+        <a class="cta-btn secondary" href="https://github.com" target="_blank">Documentation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="https://proofi-virid.vercel.app/app">Wallet</a>
+        <a href="https://proofi-virid.vercel.app/proofi-sdk.js">SDK</a>
+        <a href="https://proofi-api-production.up.railway.app">API</a>
+        <a href="https://cere.network">Cere Network</a>
+      </div>
+      <span class="footer-copy">Proofi × Cere DDC</span>
+    </div>
+  </footer>
+
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+  <script>
+    let proofi = null;
+    let walletAddress = null;
+
+    const APPS = [
+      {
+        name: 'Neural Reflex', emoji: '⚡', category: 'Gaming',
+        desc: 'Test your reaction speed and memory. Achievements stored on-chain with verifiable credentials.',
+        url: '/game', tags: ['reflex', 'memory', 'achievements'],
+        iconBg: 'linear-gradient(135deg, #333 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'CryptoQuest', emoji: '⚔️', category: 'Gaming',
+        desc: 'RPG character creator. Pick a class, customize stats, forge your hero as an on-chain credential.',
+        url: '/cryptoquest', tags: ['rpg', 'characters', 'nft'],
+        iconBg: 'linear-gradient(135deg, #2a2015 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'TrustRate', emoji: '⭐', category: 'Social',
+        desc: 'Anonymous verified reviews. One wallet, one review. No fakes, no duplicates.',
+        url: '/trustrate', tags: ['reviews', 'identity', 'anti-fraud'],
+        iconBg: 'linear-gradient(135deg, #2a2510 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'DropVault', emoji: '🔐', category: 'Security',
+        desc: 'Encrypted note locker. Store secrets encrypted with your wallet key. Only you can decrypt.',
+        url: '/dropvault', tags: ['encryption', 'privacy', 'storage'],
+        iconBg: 'linear-gradient(135deg, #102a1a 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'SkillBadge', emoji: '🎓', category: 'Education',
+        desc: 'Take quizzes, earn verifiable skill badges. Prove your knowledge with on-chain credentials.',
+        url: '/skillbadge', tags: ['quizzes', 'credentials', 'skills'],
+        iconBg: 'linear-gradient(135deg, #1f1530 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'ChainPoll', emoji: '📊', category: 'Governance',
+        desc: 'Decentralized polling. One wallet, one vote. Results are transparent and verifiable.',
+        url: '/chainpoll', tags: ['voting', 'democracy', 'transparent'],
+        iconBg: 'linear-gradient(135deg, #101a2a 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'MemoryChain', emoji: '📔', category: 'Lifestyle',
+        desc: 'Encrypted digital diary. Journal entries timestamped on-chain. Private and permanent.',
+        url: '/memorychain', tags: ['diary', 'encrypted', 'personal'],
+        iconBg: 'linear-gradient(135deg, #2a2520 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'TokenGate', emoji: '🚪', category: 'Tools',
+        desc: 'Wallet-gated content. Publish articles and code that only wallet holders can access.',
+        url: '/tokengate', tags: ['access-control', 'content', 'gating'],
+        iconBg: 'linear-gradient(135deg, #2a2a10 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'NFTicket', emoji: '🎫', category: 'Events',
+        desc: 'Event ticketing as credentials. Claim tickets, show QR code, prove attendance on DDC.',
+        url: '/nfticket', tags: ['events', 'tickets', 'qr-code'],
+        iconBg: 'linear-gradient(135deg, #251530 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'ChainChat', emoji: '💬', category: 'Social',
+        desc: 'Verified messaging between wallets. Every message signed by the sender. Stored on DDC.',
+        url: '/chainchat', tags: ['messaging', 'verified', 'e2e'],
+        iconBg: 'linear-gradient(135deg, #102a20 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'ArtMint', emoji: '🎨', category: 'Creative',
+        desc: 'Pixel art creator with provenance proof. Draw, mint, and prove content authorship on-chain.',
+        url: '/artmint', tags: ['art', 'provenance', 'creator'],
+        iconBg: 'linear-gradient(135deg, #2a1515 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'SpeedType', emoji: '⌨️', category: 'Gaming',
+        desc: 'Typing speed test. Race against the clock, measure your WPM, store your best on DDC.',
+        url: '/speedtype', tags: ['typing', 'speed', 'wpm'],
+        iconBg: 'linear-gradient(135deg, #10202a 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'ColorDash', emoji: '🎯', category: 'Gaming', locked: true,
+        desc: 'Stroop effect color reaction game. Read the word, ignore the color.',
+        url: '/colordash', tags: ['reaction', 'colors', 'gated'],
+        lockMsg: 'Requires SpeedType 50+ WPM',
+        iconBg: 'linear-gradient(135deg, #2a1020 0%, #1a1a1a 100%)',
+      },
+    ];
+
+    const CATEGORIES = ['All', ...new Set(APPS.map(a => a.category))];
+    let activeFilter = 'All';
+
+    function init() {
+      initWallet();
+      renderFilters();
+      renderApps(APPS);
+    }
+
+    function initWallet() {
+      try {
+        proofi = new ProofiSDK({
+          walletUrl: 'https://proofi-virid.vercel.app/app',
+          apiUrl: 'https://proofi-api-production.up.railway.app',
+          appName: 'PROOFI ECOSYSTEM',
+        });
+        proofi.on('connected', (data) => {
+          walletAddress = data.address;
+          updateWalletUI();
+          showToast('Wallet connected');
+        });
+        proofi.on('disconnected', () => {
+          walletAddress = null;
+          updateWalletUI();
+        });
+        checkExtensionConnect();
+        window.addEventListener('proofi-extension-ready', checkExtensionConnect);
+      } catch(e) {}
+    }
+
+    function checkExtensionConnect() {
+      if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {
+        walletAddress = window.__proofi_extension__.address;
+        updateWalletUI();
+        showToast('Connected via extension');
+      }
+    }
+
+    function handleConnect() {
+      if (walletAddress) {
+        proofi?.disconnect();
+        walletAddress = null;
+        updateWalletUI();
+        return;
+      }
+      proofi?.connect().then(addr => {
+        walletAddress = addr;
+        updateWalletUI();
+      }).catch(() => {});
+    }
+
+    function updateWalletUI() {
+      const nav = document.getElementById('navRight');
+      const btn = document.getElementById('connectBtn');
+      if (walletAddress) {
+        nav.innerHTML = `
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="wallet-dot"></span>
+            <span class="wallet-addr">${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}</span>
+          </div>
+          <button class="connect-btn connected" id="connectBtn" onclick="handleConnect()">Disconnect</button>
+        `;
+      } else {
+        nav.innerHTML = `<button class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>`;
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function renderFilters() {
+      document.getElementById('filters').innerHTML = CATEGORIES.map(c =>
+        `<button class="filter-btn ${c === 'All' ? 'active' : ''}" onclick="setFilter('${c}')">${c}</button>`
+      ).join('');
+    }
+
+    function setFilter(cat) {
+      activeFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b =>
+        b.classList.toggle('active', b.textContent === cat)
+      );
+      filterApps();
+    }
+
+    function filterApps() {
+      const q = document.getElementById('searchBox').value.toLowerCase();
+      const filtered = APPS.filter(a => {
+        const matchCat = activeFilter === 'All' || a.category === activeFilter;
+        const matchQ = !q || a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q) || a.tags.some(t => t.includes(q));
+        return matchCat && matchQ;
+      });
+      renderApps(filtered);
+    }
+
+    function renderApps(apps) {
+      const grid = document.getElementById('appGrid');
+      if (!apps.length) {
+        grid.innerHTML = '<div class="empty-state"><p>No apps match your search</p></div>';
+        return;
+      }
+      grid.innerHTML = apps.map(app => `
+        <a class="app-card ${app.locked ? 'locked' : ''}" href="${app.url}" ${app.locked ? 'title="' + app.lockMsg + '"' : ''}>
+          <div class="app-card-top">
+            <div class="app-card-left">
+              <div class="app-icon" style="background:${app.iconBg}">${app.emoji}</div>
+              <div class="app-meta">
+                <span class="app-name">${app.name}</span>
+                <span class="app-category">${app.category}${app.locked ? ' · 🔒 Gated' : ''}</span>
+              </div>
+            </div>
+            <span class="app-arrow">↗</span>
+          </div>
+          <div class="app-desc">${app.desc}</div>
+          <div class="app-tags">${app.tags.map(t => `<span class="app-tag">${t}</span>`).join('')}</div>
+        </a>
+      `).join('');
+    }
+
+    init();
+  </script>
+</body>
+</html>
