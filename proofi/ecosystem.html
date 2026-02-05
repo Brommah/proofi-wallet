@@ -1,793 +1,801 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Proofi Ecosystem — Apps Powered by Your Wallet</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi — Ecosystem</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --cyan: #06B6D4;
-      --teal: #14B8A6;
-      --blue: #3B82F6;
-      --purple: #8B5CF6;
-      --pink: #EC4899;
-      --orange: #F97316;
-      --green: #10B981;
-      --amber: #F59E0B;
-      --red: #EF4444;
-      --bg: #030712;
-      --bg-card: #111827;
-      --bg-card-hover: #1F2937;
-      --border: #1F2937;
-      --border-light: #374151;
-      --text: #F9FAFB;
-      --text-secondary: #9CA3AF;
-      --text-dim: #6B7280;
+      --bg: #000;
+      --surface: #0a0a0a;
+      --card: #111;
+      --card-hover: #191919;
+      --border: #222;
+      --border-hover: #333;
+      --text: #ededed;
+      --text-secondary: #888;
+      --text-tertiary: #555;
+      --accent: #fff;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'Geist Mono', 'SF Mono', 'Fira Code', monospace;
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: var(--font);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Background */
-    .bg-glow {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
-      z-index: 0;
-      background:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6,182,212,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 60%, rgba(139,92,246,0.06) 0%, transparent 50%),
-        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(20,184,166,0.06) 0%, transparent 50%);
+    /* ===== NAV ===== */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
     }
-
-    .container {
-      max-width: 900px;
+    .nav-inner {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px;
-      position: relative;
-      z-index: 1;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo-mark {
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+    }
+    .logo-text {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+    .logo-sep {
+      color: var(--text-tertiary);
+      font-size: 20px;
+      font-weight: 300;
+    }
+    .logo-page {
+      font-size: 15px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    .nav-links a.active { color: var(--text); }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .connect-btn {
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .connect-btn:hover { opacity: 0.9; }
+    .connect-btn:active { transform: scale(0.97); }
+    .connect-btn.connected {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .wallet-addr {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .wallet-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      flex-shrink: 0;
     }
 
-    /* Hero */
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      opacity: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 13px;
+      color: var(--text);
+      z-index: 999;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== HERO ===== */
     .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px 48px;
       text-align: center;
-      padding: 48px 0 40px;
     }
-
     .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      background: rgba(6,182,212,0.1);
-      border: 1px solid rgba(6,182,212,0.2);
-      border-radius: 20px;
+      gap: 8px;
+      padding: 6px 14px 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
       font-size: 12px;
-      color: var(--cyan);
-      font-weight: 500;
-      margin-bottom: 20px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      background: var(--surface);
     }
-
-    .hero-badge .pulse {
+    .hero-badge .dot {
       width: 6px;
       height: 6px;
-      background: var(--cyan);
       border-radius: 50%;
-      animation: pulse 2s ease infinite;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34,197,94,0.4);
     }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(6,182,212,0.4); }
-      50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(6,182,212,0); }
-    }
-
     .hero h1 {
-      font-size: 36px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      line-height: 1.2;
-      margin-bottom: 12px;
-    }
-
-    .hero h1 .gradient {
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.5) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
     .hero p {
-      font-size: 16px;
+      font-size: 17px;
       color: var(--text-secondary);
       max-width: 520px;
-      margin: 0 auto 24px;
+      margin: 0 auto;
       line-height: 1.6;
     }
 
-    .hero-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 24px;
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      box-shadow: 0 4px 15px rgba(6,182,212,0.3);
+    /* ===== CONTROLS ===== */
+    .controls-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 32px;
     }
-
-    .hero-cta:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(6,182,212,0.4);
-    }
-
-    /* Stats Bar */
-    .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 40px;
-    }
-
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      transition: border-color 0.2s;
-    }
-
-    .stat-card:hover { border-color: var(--border-light); }
-
-    .stat-number {
-      font-size: 24px;
-      font-weight: 800;
-      font-family: 'JetBrains Mono', monospace;
-      margin-bottom: 4px;
-    }
-
-    .stat-number.cyan { color: var(--cyan); }
-    .stat-number.purple { color: var(--purple); }
-    .stat-number.green { color: var(--green); }
-    .stat-number.amber { color: var(--amber); }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* Section Title */
-    .section-header {
+    .controls {
       display: flex;
+      gap: 12px;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
+      flex-wrap: wrap;
     }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: 700;
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      max-width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
     }
-
-    .section-subtitle {
+    .search-input:focus { border-color: var(--border-hover); }
+    .search-input::placeholder { color: var(--text-tertiary); }
+    .filters {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-family: var(--font);
       font-size: 13px;
-      color: var(--text-dim);
+      padding: 8px 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .filter-btn:hover { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+    .filter-btn.active {
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
     }
 
-    /* App Cards Grid */
+    /* ===== GRID ===== */
+    .grid-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
     .app-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 48px;
-    }
-
-    .app-card {
-      background: var(--bg-card);
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1px;
+      background: var(--border);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px 20px;
-      transition: all 0.3s;
-      cursor: pointer;
-      position: relative;
+      border-radius: var(--radius);
       overflow: hidden;
     }
-
-    .app-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: var(--card-accent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .app-card:hover {
-      border-color: var(--border-light);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    }
-
-    .app-card:hover::before { opacity: 1; }
-
-    .app-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
+    .app-card {
+      background: var(--surface);
+      padding: 24px;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      margin-bottom: 14px;
+      flex-direction: column;
+      gap: 16px;
+      transition: background 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
       position: relative;
     }
-
-    .app-name {
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 4px;
+    .app-card:hover { background: var(--card-hover); }
+    .app-card-top {
       display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .app-tag {
-      font-size: 9px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .tag-live {
-      background: rgba(16,185,129,0.15);
-      color: var(--green);
-    }
-
-    .tag-new {
-      background: rgba(249,115,22,0.15);
-      color: var(--orange);
-    }
-
-    .app-category {
-      font-size: 11px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .app-desc {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
-
-    .app-features {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .feature-chip {
-      font-size: 10px;
-      padding: 4px 8px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-dim);
-    }
-
-    .app-footer {
-      display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
     }
-
-    .app-users {
-      font-size: 11px;
-      color: var(--text-dim);
+    .app-card-left {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 14px;
     }
-
-    .open-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 8px 16px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-
-    .open-btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: var(--text-dim);
-    }
-
-    /* Featured app - full width */
-    .app-card.featured {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      align-items: center;
-    }
-
-    .featured-visual {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      height: 180px;
+    .app-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 64px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .featured-visual::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, transparent, rgba(6,182,212,0.05));
-    }
-
-    /* Developer CTA */
-    .dev-cta {
-      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(139,92,246,0.08));
-      border: 1px solid rgba(6,182,212,0.15);
-      border-radius: 16px;
-      padding: 32px;
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .dev-cta h2 {
       font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 8px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.06);
     }
-
-    .dev-cta p {
+    .app-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .app-name {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+    .app-category {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .app-arrow {
+      color: var(--text-tertiary);
+      font-size: 18px;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .app-card:hover .app-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .app-desc {
       font-size: 14px;
       color: var(--text-secondary);
-      margin-bottom: 20px;
       line-height: 1.6;
     }
-
-    .dev-cta-code {
-      display: inline-block;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--cyan);
-      margin-bottom: 16px;
-    }
-
-    .dev-cta-buttons {
+    .app-tags {
       display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .dev-btn {
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .dev-btn-primary {
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      color: #fff;
-      border: none;
-      box-shadow: 0 2px 10px rgba(6,182,212,0.3);
-    }
-
-    .dev-btn-primary:hover { transform: translateY(-1px); }
-
-    .dev-btn-secondary {
-      background: transparent;
-      color: var(--text-secondary);
-      border: 1px solid var(--border-light);
-    }
-
-    .dev-btn-secondary:hover { border-color: var(--text-dim); color: var(--text); }
-
-    /* Tech stack */
-    .tech-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
-      padding: 24px 0;
-      margin-bottom: 24px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-
-    .tech-item {
-      display: flex;
-      align-items: center;
       gap: 6px;
-      font-size: 12px;
-      color: var(--text-dim);
+      flex-wrap: wrap;
+      margin-top: auto;
     }
-
-    .tech-icon {
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
+    .app-tag {
+      font-size: 11px;
+      font-family: var(--mono);
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text-tertiary);
+    }
+    .app-card.locked .app-desc { color: var(--text-tertiary); }
+    .lock-badge {
+      font-size: 11px;
+      color: var(--text-tertiary);
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      background: rgba(255,255,255,0.05);
+      gap: 4px;
     }
 
-    /* Footer */
-    .footer {
+    /* ===== EMPTY ===== */
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 64px 24px;
       text-align: center;
-      padding: 32px 0 40px;
-      border-top: 1px solid var(--border);
+      background: var(--surface);
     }
+    .empty-state p { color: var(--text-tertiary); font-size: 14px; }
 
-    .footer-brand {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+    /* ===== DEV CTA ===== */
+    .cta-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+    .cta-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .cta-top {
+      padding: 48px 40px 32px;
+      text-align: center;
+    }
+    .cta-top h2 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
       margin-bottom: 8px;
     }
-
-    .footer-logo {
-      width: 24px;
-      height: 24px;
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
-      border-radius: 6px;
+    .cta-top p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .cta-code {
+      margin: 0 40px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .cta-code .kw { color: #c084fc; }
+    .cta-code .fn { color: #e2e8f0; }
+    .cta-code .str { color: #86efac; }
+    .cta-code .cm { color: #555; }
+    .cta-actions {
       display: flex;
-      align-items: center;
+      gap: 8px;
       justify-content: center;
-      font-size: 12px;
+      padding: 32px 40px 48px;
+      flex-wrap: wrap;
     }
-
-    .footer-name {
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .footer p {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
-
-    .footer a {
-      color: var(--cyan);
+    .cta-btn {
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: opacity 0.15s, background 0.15s;
       text-decoration: none;
     }
+    .cta-btn.primary {
+      background: #fff;
+      color: #000;
+      border: none;
+    }
+    .cta-btn.primary:hover { opacity: 0.9; }
+    .cta-btn.secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .cta-btn.secondary:hover { color: var(--text); border-color: var(--border-hover); }
 
-    .footer a:hover { text-decoration: underline; }
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-links a {
+      color: var(--text-tertiary);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--text-secondary); }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
 
-    /* Responsive */
-    @media (max-width: 640px) {
-      .hero h1 { font-size: 26px; }
-      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero { padding: 48px 20px 32px; }
       .app-grid { grid-template-columns: 1fr; }
-      .app-card.featured { grid-template-columns: 1fr; }
-      .featured-visual { height: 120px; }
-      .dev-cta { padding: 24px 16px; }
+      .controls { flex-direction: column; align-items: stretch; }
+      .search-input { max-width: none; }
+      .cta-top { padding: 32px 24px 24px; }
+      .cta-code { margin: 0 20px; font-size: 11px; }
+      .cta-actions { padding: 24px 20px 32px; }
+      .footer-inner { flex-direction: column; gap: 12px; }
     }
 
-    /* Animations */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(12px);
-      animation: fadeIn 0.5s ease forwards;
-    }
-
-    .fade-in:nth-child(1) { animation-delay: 0.05s; }
-    .fade-in:nth-child(2) { animation-delay: 0.1s; }
-    .fade-in:nth-child(3) { animation-delay: 0.15s; }
-    .fade-in:nth-child(4) { animation-delay: 0.2s; }
-
-    @keyframes fadeIn {
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    .counter {
-      display: inline-block;
+    .fade-up {
+      animation: fadeUp 0.5s ease forwards;
+      opacity: 0;
     }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
   </style>
 </head>
 <body>
-  <div class="bg-glow"></div>
 
-  <div class="container">
-    <!-- Hero -->
-    <div class="hero">
-      <div class="hero-badge">
-        <span class="pulse"></span>
-        Live on Cere Mainnet
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a class="logo" href="/">
+          <div class="logo-mark">P</div>
+          <span class="logo-text">Proofi</span>
+          <span class="logo-sep">/</span>
+          <span class="logo-page">Ecosystem</span>
+        </a>
+        <div class="nav-links">
+          <a href="/app">Wallet</a>
+          <a href="/" class="active">Ecosystem</a>
+          <a href="https://proofi-virid.vercel.app/proofi-sdk.js" target="_blank">SDK</a>
+        </div>
       </div>
-      <h1>
-        <span class="gradient">Proofi Ecosystem</span><br>
-        Apps powered by your wallet
-      </h1>
-      <p>
-        One wallet. Every app. Your identity, data, and credentials — decentralized on Cere DDC. 
-        No extensions, no seed phrases.
-      </p>
-      <a href="https://proofi-virid.vercel.app/app" target="_blank" class="hero-cta">
-        Open Proofi Wallet →
-      </a>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-bar">
-      <div class="stat-card fade-in">
-        <div class="stat-number cyan" id="statWallets">0</div>
-        <div class="stat-label">Wallets Created</div>
-      </div>
-      <div class="stat-card fade-in">
-        <div class="stat-number purple" id="statCredentials">0</div>
-        <div class="stat-label">Credentials Issued</div>
-      </div>
-      <div class="stat-card fade-in">
-        <div class="stat-number green" id="statStorage">0</div>
-        <div class="stat-label">DDC Objects</div>
-      </div>
-      <div class="stat-card fade-in">
-        <div class="stat-number amber" id="statApps">4</div>
-        <div class="stat-label">Ecosystem Apps</div>
+      <div class="nav-right" id="navRight">
+        <button class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>
       </div>
     </div>
+  </nav>
 
-    <!-- Apps -->
-    <div class="section-header">
-      <div>
-        <div class="section-title">Ecosystem Apps</div>
-        <div class="section-subtitle">All apps authenticate with Proofi wallet and store data on Cere DDC</div>
-      </div>
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge fade-up">
+      <span class="dot"></span>
+      Live on Cere Mainnet
     </div>
+    <h1 class="fade-up delay-1">Explore the Ecosystem</h1>
+    <p class="fade-up delay-2">Apps and experiences built with Proofi. Every interaction is verifiable, every credential is yours.</p>
+  </section>
 
-    <div class="app-grid">
-
-      <!-- Neural Reflex - Featured -->
-      <div class="app-card featured" style="--card-accent: linear-gradient(90deg, #00E5FF, #00FF88);" onclick="window.open('/game','_blank')">
-        <div>
-          <div class="app-icon" style="background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,255,136,0.15));">⚡</div>
-          <div class="app-name">
-            Neural Reflex
-            <span class="app-tag tag-live">Live</span>
-          </div>
-          <div class="app-category">Gaming</div>
-          <div class="app-desc">
-            Test your reaction speed and memory. Achievements stored as verifiable credentials on Cere DDC. 
-            Compete with yourself and prove your skills on-chain.
-          </div>
-          <div class="app-features">
-            <span class="feature-chip">⚡ Reflex Test</span>
-            <span class="feature-chip">🧠 Memory Game</span>
-            <span class="feature-chip">🏆 On-Chain Achievements</span>
-            <span class="feature-chip">📊 Leaderboard</span>
-          </div>
-          <div class="app-footer">
-            <div class="app-users">👤 342 players</div>
-            <a href="/game" class="open-btn" target="_blank">Open App →</a>
-          </div>
-        </div>
-        <div class="featured-visual">⚡🧠</div>
-      </div>
-
-      <!-- CryptoQuest -->
-      <div class="app-card fade-in" style="--card-accent: linear-gradient(90deg, #FFD700, #AA66FF);" onclick="window.open('/cryptoquest','_blank')">
-        <div class="app-icon" style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(170,102,255,0.15));">⚔️</div>
-        <div class="app-name">
-          CryptoQuest
-          <span class="app-tag tag-new">New</span>
-        </div>
-        <div class="app-category">RPG / Gaming</div>
-        <div class="app-desc">
-          Forge unique RPG characters with custom stats and classes. Each hero is a verifiable credential stored on-chain. Your character, your proof.
-        </div>
-        <div class="app-features">
-          <span class="feature-chip">🗡️ Character Builder</span>
-          <span class="feature-chip">📜 On-Chain Credentials</span>
-          <span class="feature-chip">📊 Stat Allocation</span>
-        </div>
-        <div class="app-footer">
-          <div class="app-users">👤 128 heroes forged</div>
-          <a href="/cryptoquest" class="open-btn" target="_blank" onclick="event.stopPropagation()">Open App →</a>
-        </div>
-      </div>
-
-      <!-- TrustRate -->
-      <div class="app-card fade-in" style="--card-accent: linear-gradient(90deg, #FF6B35, #FFC107);" onclick="window.open('/trustrate','_blank')">
-        <div class="app-icon" style="background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(255,193,7,0.15));">⭐</div>
-        <div class="app-name">
-          TrustRate
-          <span class="app-tag tag-new">New</span>
-        </div>
-        <div class="app-category">Reviews / Social</div>
-        <div class="app-desc">
-          Write verified reviews backed by your wallet identity. One person = one review. Sybil-resistant, transparent, and immutable on DDC.
-        </div>
-        <div class="app-features">
-          <span class="feature-chip">⭐ Verified Reviews</span>
-          <span class="feature-chip">🛡️ Sybil-Resistant</span>
-          <span class="feature-chip">🔐 Wallet-Signed</span>
-        </div>
-        <div class="app-footer">
-          <div class="app-users">👤 215 verified reviewers</div>
-          <a href="/trustrate" class="open-btn" target="_blank" onclick="event.stopPropagation()">Open App →</a>
-        </div>
-      </div>
-
-      <!-- DropVault -->
-      <div class="app-card fade-in" style="--card-accent: linear-gradient(90deg, #14B8A6, #0EA5E9);" onclick="window.open('/dropvault','_blank')">
-        <div class="app-icon" style="background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(14,165,233,0.15));">🔒</div>
-        <div class="app-name">
-          DropVault
-          <span class="app-tag tag-new">New</span>
-        </div>
-        <div class="app-category">Security / Storage</div>
-        <div class="app-desc">
-          Encrypt files and notes with your wallet key. AES-256 encryption, wallet-derived keys, decentralized storage. Only you can decrypt.
-        </div>
-        <div class="app-features">
-          <span class="feature-chip">🔐 AES-256 Encryption</span>
-          <span class="feature-chip">📦 DDC Storage</span>
-          <span class="feature-chip">🔑 Wallet-Derived Keys</span>
-        </div>
-        <div class="app-footer">
-          <div class="app-users">👤 89 vaults active</div>
-          <a href="/dropvault" class="open-btn" target="_blank" onclick="event.stopPropagation()">Open App →</a>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Tech Stack -->
-    <div class="tech-row">
-      <div class="tech-item"><span class="tech-icon">🔐</span> sr25519 Signing</div>
-      <div class="tech-item"><span class="tech-icon">📦</span> Cere DDC</div>
-      <div class="tech-item"><span class="tech-icon">⛓️</span> Cere Mainnet</div>
-      <div class="tech-item"><span class="tech-icon">📄</span> Verifiable Credentials</div>
-      <div class="tech-item"><span class="tech-icon">🌐</span> Proofi SDK</div>
-    </div>
-
-    <!-- Developer CTA -->
-    <div class="dev-cta">
-      <h2>Build on Proofi</h2>
-      <p>
-        Add wallet auth, verifiable credentials, and decentralized storage to your app in minutes.<br>
-        One SDK. No browser extensions. Works everywhere.
-      </p>
-      <div class="dev-cta-code">
-        &lt;script src="https://proofi-virid.vercel.app/proofi-sdk.js"&gt;&lt;/script&gt;
-      </div>
-      <br>
-      <div class="dev-cta-code" style="text-align:left;max-width:400px;margin:0 auto 16px;">
-        <span style="color:var(--purple)">const</span> proofi = <span style="color:var(--purple)">new</span> <span style="color:var(--amber)">ProofiSDK</span>();<br>
-        <span style="color:var(--purple)">const</span> address = <span style="color:var(--purple)">await</span> proofi.<span style="color:var(--cyan)">connect</span>();<br>
-        <span style="color:var(--text-dim)">// That's it. Wallet connected. 🚀</span>
-      </div>
-      <div class="dev-cta-buttons">
-        <a href="https://proofi-virid.vercel.app/proofi-sdk.js" target="_blank" class="dev-btn dev-btn-primary">View SDK →</a>
-        <a href="https://proofi-virid.vercel.app" target="_blank" class="dev-btn dev-btn-secondary">Documentation</a>
-      </div>
-    </div>
-
-    <!-- How It Works -->
-    <div class="section-header" style="margin-top:8px;">
-      <div>
-        <div class="section-title">How It Works</div>
-        <div class="section-subtitle">Simple for users, powerful for developers</div>
-      </div>
-    </div>
-
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px;">
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center;">
-        <div style="font-size:32px; margin-bottom:10px;">📧</div>
-        <div style="font-size:14px; font-weight:700; margin-bottom:4px;">1. Sign Up</div>
-        <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">Email + PIN. No seed phrases, no extensions. A real wallet in 30 seconds.</div>
-      </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center;">
-        <div style="font-size:32px; margin-bottom:10px;">🔗</div>
-        <div style="font-size:14px; font-weight:700; margin-bottom:4px;">2. Connect</div>
-        <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">Apps request access. You approve. Your wallet signs everything with sr25519.</div>
-      </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center;">
-        <div style="font-size:32px; margin-bottom:10px;">📦</div>
-        <div style="font-size:14px; font-weight:700; margin-bottom:4px;">3. Own Your Data</div>
-        <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">Credentials, achievements, and files stored on Cere DDC. Your data, your control.</div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-      <div class="footer-brand">
-        <div class="footer-logo">🔐</div>
-        <div class="footer-name">Proofi</div>
-      </div>
-      <p>Identity infrastructure for the decentralized web.<br>Built on <a href="https://cere.network" target="_blank">Cere Network</a> • DDC Bucket #1229 • Mainnet</p>
+  <!-- Controls -->
+  <div class="controls-wrap fade-up delay-3">
+    <div class="controls">
+      <input class="search-input" id="searchBox" placeholder="Search apps..." oninput="filterApps()">
+      <div class="filters" id="filters"></div>
     </div>
   </div>
 
+  <!-- Grid -->
+  <div class="grid-wrap">
+    <div class="app-grid" id="appGrid"></div>
+  </div>
+
+  <!-- Developer CTA -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <div class="cta-top">
+        <h2>Build on Proofi</h2>
+        <p>Add wallet authentication and decentralized storage to your app in minutes.</p>
+      </div>
+      <div class="cta-code"><span class="kw">const</span> <span class="fn">proofi</span> = <span class="kw">new</span> <span class="fn">ProofiSDK</span>({ <span class="str">appName</span>: <span class="str">'My App'</span> });
+<span class="kw">const</span> <span class="fn">address</span> = <span class="kw">await</span> proofi.<span class="fn">connect</span>();
+<span class="kw">await</span> proofi.<span class="fn">storeCredential</span>({ <span class="str">type</span>: <span class="str">'achievement'</span>, <span class="str">score</span>: <span class="str">100</span> });</div>
+      <div class="cta-actions">
+        <a class="cta-btn primary" href="https://proofi-virid.vercel.app/proofi-sdk.js" target="_blank">Get the SDK</a>
+        <a class="cta-btn secondary" href="https://proofi-virid.vercel.app/app" target="_blank">Open Wallet</a>
+        <a class="cta-btn secondary" href="https://github.com" target="_blank">Documentation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="https://proofi-virid.vercel.app/app">Wallet</a>
+        <a href="https://proofi-virid.vercel.app/proofi-sdk.js">SDK</a>
+        <a href="https://proofi-api-production.up.railway.app">API</a>
+        <a href="https://cere.network">Cere Network</a>
+      </div>
+      <span class="footer-copy">Proofi × Cere DDC</span>
+    </div>
+  </footer>
+
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
   <script>
-    // Animate counter numbers on load
-    function animateCounter(el, target, suffix = '') {
-      const duration = 1500;
-      const start = performance.now();
-      const startVal = 0;
+    let proofi = null;
+    let walletAddress = null;
 
-      function update(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3); // ease out cubic
-        const current = Math.round(startVal + (target - startVal) * eased);
-        el.textContent = current.toLocaleString() + suffix;
-        if (progress < 1) requestAnimationFrame(update);
-      }
+    const APPS = [
+      {
+        name: 'Neural Reflex', emoji: '⚡', category: 'Gaming',
+        desc: 'Test your reaction speed and memory. Achievements stored on-chain with verifiable credentials.',
+        url: '/game', tags: ['reflex', 'memory', 'achievements'],
+        iconBg: 'linear-gradient(135deg, #333 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'CryptoQuest', emoji: '⚔️', category: 'Gaming',
+        desc: 'RPG character creator. Pick a class, customize stats, forge your hero as an on-chain credential.',
+        url: '/cryptoquest', tags: ['rpg', 'characters', 'nft'],
+        iconBg: 'linear-gradient(135deg, #2a2015 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'TrustRate', emoji: '⭐', category: 'Social',
+        desc: 'Anonymous verified reviews. One wallet, one review. No fakes, no duplicates.',
+        url: '/trustrate', tags: ['reviews', 'identity', 'anti-fraud'],
+        iconBg: 'linear-gradient(135deg, #2a2510 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'DropVault', emoji: '🔐', category: 'Security',
+        desc: 'Encrypted note locker. Store secrets encrypted with your wallet key. Only you can decrypt.',
+        url: '/dropvault', tags: ['encryption', 'privacy', 'storage'],
+        iconBg: 'linear-gradient(135deg, #102a1a 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'SkillBadge', emoji: '🎓', category: 'Education',
+        desc: 'Take quizzes, earn verifiable skill badges. Prove your knowledge with on-chain credentials.',
+        url: '/skillbadge', tags: ['quizzes', 'credentials', 'skills'],
+        iconBg: 'linear-gradient(135deg, #1f1530 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'ChainPoll', emoji: '📊', category: 'Governance',
+        desc: 'Decentralized polling. One wallet, one vote. Results are transparent and verifiable.',
+        url: '/chainpoll', tags: ['voting', 'democracy', 'transparent'],
+        iconBg: 'linear-gradient(135deg, #101a2a 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'MemoryChain', emoji: '📔', category: 'Lifestyle',
+        desc: 'Encrypted digital diary. Journal entries timestamped on-chain. Private and permanent.',
+        url: '/memorychain', tags: ['diary', 'encrypted', 'personal'],
+        iconBg: 'linear-gradient(135deg, #2a2520 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'TokenGate', emoji: '🚪', category: 'Tools',
+        desc: 'Wallet-gated content. Publish articles and code that only wallet holders can access.',
+        url: '/tokengate', tags: ['access-control', 'content', 'gating'],
+        iconBg: 'linear-gradient(135deg, #2a2a10 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'NFTicket', emoji: '🎫', category: 'Events',
+        desc: 'Event ticketing as credentials. Claim tickets, show QR code, prove attendance on DDC.',
+        url: '/nfticket', tags: ['events', 'tickets', 'qr-code'],
+        iconBg: 'linear-gradient(135deg, #251530 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'ChainChat', emoji: '💬', category: 'Social',
+        desc: 'Verified messaging between wallets. Every message signed by the sender. Stored on DDC.',
+        url: '/chainchat', tags: ['messaging', 'verified', 'e2e'],
+        iconBg: 'linear-gradient(135deg, #102a20 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'ArtMint', emoji: '🎨', category: 'Creative',
+        desc: 'Pixel art creator with provenance proof. Draw, mint, and prove content authorship on-chain.',
+        url: '/artmint', tags: ['art', 'provenance', 'creator'],
+        iconBg: 'linear-gradient(135deg, #2a1515 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'SpeedType', emoji: '⌨️', category: 'Gaming',
+        desc: 'Typing speed test. Race against the clock, measure your WPM, store your best on DDC.',
+        url: '/speedtype', tags: ['typing', 'speed', 'wpm'],
+        iconBg: 'linear-gradient(135deg, #10202a 0%, #1a1a1a 100%)',
+      },
+      {
+        name: 'ColorDash', emoji: '🎯', category: 'Gaming', locked: true,
+        desc: 'Stroop effect color reaction game. Read the word, ignore the color.',
+        url: '/colordash', tags: ['reaction', 'colors', 'gated'],
+        lockMsg: 'Requires SpeedType 50+ WPM',
+        iconBg: 'linear-gradient(135deg, #2a1020 0%, #1a1a1a 100%)',
+      },
+    ];
 
-      requestAnimationFrame(update);
+    const CATEGORIES = ['All', ...new Set(APPS.map(a => a.category))];
+    let activeFilter = 'All';
+
+    function init() {
+      initWallet();
+      renderFilters();
+      renderApps(APPS);
     }
 
-    // Start counter animations after a slight delay
-    setTimeout(() => {
-      animateCounter(document.getElementById('statWallets'), 1247);
-      animateCounter(document.getElementById('statCredentials'), 3891);
-      animateCounter(document.getElementById('statStorage'), 8642);
-    }, 300);
+    function initWallet() {
+      try {
+        proofi = new ProofiSDK({
+          walletUrl: 'https://proofi-virid.vercel.app/app',
+          apiUrl: 'https://proofi-api-production.up.railway.app',
+          appName: 'PROOFI ECOSYSTEM',
+        });
+        proofi.on('connected', (data) => {
+          walletAddress = data.address;
+          updateWalletUI();
+          showToast('Wallet connected');
+        });
+        proofi.on('disconnected', () => {
+          walletAddress = null;
+          updateWalletUI();
+        });
+        checkExtensionConnect();
+        window.addEventListener('proofi-extension-ready', checkExtensionConnect);
+      } catch(e) {}
+    }
 
-    // Prevent card click when clicking the open button
-    document.querySelectorAll('.open-btn').forEach(btn => {
-      btn.addEventListener('click', e => e.stopPropagation());
-    });
+    function checkExtensionConnect() {
+      if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {
+        walletAddress = window.__proofi_extension__.address;
+        updateWalletUI();
+        showToast('Connected via extension');
+      }
+    }
+
+    function handleConnect() {
+      if (walletAddress) {
+        proofi?.disconnect();
+        walletAddress = null;
+        updateWalletUI();
+        return;
+      }
+      proofi?.connect().then(addr => {
+        walletAddress = addr;
+        updateWalletUI();
+      }).catch(() => {});
+    }
+
+    function updateWalletUI() {
+      const nav = document.getElementById('navRight');
+      const btn = document.getElementById('connectBtn');
+      if (walletAddress) {
+        nav.innerHTML = `
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="wallet-dot"></span>
+            <span class="wallet-addr">${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}</span>
+          </div>
+          <button class="connect-btn connected" id="connectBtn" onclick="handleConnect()">Disconnect</button>
+        `;
+      } else {
+        nav.innerHTML = `<button class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>`;
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function renderFilters() {
+      document.getElementById('filters').innerHTML = CATEGORIES.map(c =>
+        `<button class="filter-btn ${c === 'All' ? 'active' : ''}" onclick="setFilter('${c}')">${c}</button>`
+      ).join('');
+    }
+
+    function setFilter(cat) {
+      activeFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b =>
+        b.classList.toggle('active', b.textContent === cat)
+      );
+      filterApps();
+    }
+
+    function filterApps() {
+      const q = document.getElementById('searchBox').value.toLowerCase();
+      const filtered = APPS.filter(a => {
+        const matchCat = activeFilter === 'All' || a.category === activeFilter;
+        const matchQ = !q || a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q) || a.tags.some(t => t.includes(q));
+        return matchCat && matchQ;
+      });
+      renderApps(filtered);
+    }
+
+    function renderApps(apps) {
+      const grid = document.getElementById('appGrid');
+      if (!apps.length) {
+        grid.innerHTML = '<div class="empty-state"><p>No apps match your search</p></div>';
+        return;
+      }
+      grid.innerHTML = apps.map(app => `
+        <a class="app-card ${app.locked ? 'locked' : ''}" href="${app.url}" ${app.locked ? 'title="' + app.lockMsg + '"' : ''}>
+          <div class="app-card-top">
+            <div class="app-card-left">
+              <div class="app-icon" style="background:${app.iconBg}">${app.emoji}</div>
+              <div class="app-meta">
+                <span class="app-name">${app.name}</span>
+                <span class="app-category">${app.category}${app.locked ? ' · 🔒 Gated' : ''}</span>
+              </div>
+            </div>
+            <span class="app-arrow">↗</span>
+          </div>
+          <div class="app-desc">${app.desc}</div>
+          <div class="app-tags">${app.tags.map(t => `<span class="app-tag">${t}</span>`).join('')}</div>
+        </a>
+      `).join('');
+    }
+
+    init();
   </script>
 </body>
 </html>
