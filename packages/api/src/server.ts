@@ -1,15 +1,16 @@
 import { Hono } from 'hono';
 import { env } from './config/env.js';
 import { corsMiddleware } from './middleware/cors.js';
-import { MemoryOtpStore } from './otp/store.js';
+import { cspMiddleware } from './middleware/csp.js';
+import { globalRateLimit, otpRateLimit, ddcRateLimit } from './middleware/rateLimit.js';
+import { HmacOtpStore, MemoryOtpStore } from './otp/store.js';
 import { OtpService } from './otp/service.js';
 import { createEmailSender } from './otp/email.js';
-import { SqliteAppStore } from './apps/store.js';
-import { SqliteUserStore } from './users/store.js';
-// SqliteMemoStore kept for migration only - all NEW data goes to DDC index
-import { SqliteMemoStore } from './memos/store.js';
+import { MemoryAppStore } from './apps/store.js';
+import { DdcUserStore } from './users/store.js';
+import { LegacyMemoStore } from './memos/store.js';
 import { JwtService } from './jwt/service.js';
-import { generateDerivationSalt, deriveUserSeed, seedToHex } from './keys/derive.js';
+import { generateDerivationSalt } from './keys/derive.js';
 import { verifySignatureAuth } from './auth/signature.js';
 import {
   initDdc,
@@ -29,17 +30,20 @@ const app = new Hono();
 // ── Services ────────────────────────────────────────────────────────
 
 export const jwtService = new JwtService();
-const otpStore = new MemoryOtpStore();
+
+// OTP: Use HMAC-based stateless store in production, memory in development
+const otpStore = env.NODE_ENV === 'production'
+  ? new HmacOtpStore(env.MASTER_SECRET)
+  : new MemoryOtpStore();
 const emailSender = createEmailSender();
 const otpService = new OtpService(otpStore, emailSender);
-const appStore = new SqliteAppStore();
+const appStore = new MemoryAppStore();
 
-// ── Persistent address store (email → wallet address) ───────────────
-// SQLite-backed for persistence across server restarts
-const userStore = new SqliteUserStore();
+// DDC-backed user store (email → wallet address)
+const userStore = new DdcUserStore();
 
-// ── Memo index: legacy SQLite (for migration) + DDC (new data) ──────
-const legacyMemoStore = new SqliteMemoStore();
+// Legacy memo store stub (for migration endpoint only)
+const legacyMemoStore = new LegacyMemoStore();
 
 // Seed a dev app
 if (env.NODE_ENV === 'development') {
@@ -51,11 +55,13 @@ if (env.NODE_ENV === 'development') {
 // ── Middleware ───────────────────────────────────────────────────────
 
 app.use('*', corsMiddleware());
+app.use('*', cspMiddleware());
+app.use('*', globalRateLimit());
 
 // ── Routes ──────────────────────────────────────────────────────────
 
-app.get('/health', (c) => c.json({ status: 'ok', version: '0.3.1' }));
-app.get('/', (c) => c.json({ name: 'Proofi Wallet API', version: '0.3.1', status: 'running' }));
+app.get('/health', (c) => c.json({ status: 'ok', version: '0.3.2' }));
+app.get('/', (c) => c.json({ name: 'Proofi Wallet API', version: '0.3.2', status: 'running' }));
 
 // ── Balance (RPC proxy for mobile) ──────────────────────────────────
 
@@ -67,14 +73,12 @@ app.get('/balance/:address', async (c) => {
   ];
 
   try {
-    // Use polkadot.js API to query balance via RPC
     const { ApiPromise, WsProvider } = await import('@polkadot/api');
     const { decodeAddress, encodeAddress } = await import('@polkadot/util-crypto');
 
-    // Normalize address (handle checksum issues)
     let normalizedAddr = address;
     try {
-      const pubkey = decodeAddress(address, true); // ignoreChecksum
+      const pubkey = decodeAddress(address, true);
       normalizedAddr = encodeAddress(pubkey, 54);
     } catch {}
 
@@ -113,8 +117,8 @@ app.get('/.well-known/jwks.json', async (c) => {
   return c.json(jwks);
 });
 
-// OTP send
-app.post('/auth/otp/send', async (c) => {
+// OTP send — with rate limiting
+app.post('/auth/otp/send', otpRateLimit(), async (c) => {
   const { email } = await c.req.json<{ email: string }>();
   if (!email) return c.json({ error: 'email required' }, 400);
   const result = await otpService.send(email);
@@ -130,30 +134,28 @@ app.post('/auth/otp/send', async (c) => {
   return c.json(result);
 });
 
-// OTP verify → issue JWT + derivation salt (v2: client derives key with PIN, server NEVER sees private key)
+// OTP verify → issue JWT + derivation salt
 app.post('/auth/otp/verify', async (c) => {
   const { email, code } = await c.req.json<{ email: string; code: string }>();
   if (!email || !code) return c.json({ error: 'email and code required' }, 400);
   const valid = await otpService.validateAndConsume(email, code);
   if (!valid) return c.json({ error: 'Invalid or expired OTP' }, 401);
 
-  // v2: Server only sends derivation salt — client combines with PIN to derive key
   const derivationSalt = await generateDerivationSalt(email);
   const token = await jwtService.sign({ email });
 
-  // Check if user already registered an address
   const existingAddress = userStore.getAddress(email);
 
   return c.json({
     token,
     email,
-    derivationSalt,  // Client: PBKDF2(PIN, salt) → seed → keypair
+    derivationSalt,
     hasAddress: !!existingAddress,
     address: existingAddress || null,
   });
 });
 
-// Register wallet address (client derived key locally, sends only public address)
+// Register wallet address
 app.post('/auth/register-address', async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
@@ -163,14 +165,13 @@ app.post('/auth/register-address', async (c) => {
     return c.json({ error: 'address required' }, 400);
   }
 
-  // Store email → address mapping (persistent)
   userStore.setAddress(auth.email, address);
   console.log(`🔑 Address registered for ${auth.email}: ${address}`);
 
   return c.json({ ok: true, email: auth.email, address });
 });
 
-// Get derivation salt (for returning users who need to re-derive their key)
+// Get derivation salt (for returning users)
 app.post('/auth/derive', async (c) => {
   const authHeader = c.req.header('Authorization');
   if (!authHeader?.startsWith('Bearer ')) {
@@ -182,13 +183,12 @@ app.post('/auth/derive', async (c) => {
     const email = (payload.sub || (payload as any).email) as string;
     if (!email) return c.json({ error: 'Invalid token' }, 401);
 
-    // v2: Only send derivation salt — client derives with PIN
     const derivationSalt = await generateDerivationSalt(email);
     const existingAddress = userStore.getAddress(email);
 
     return c.json({
       email,
-      derivationSalt,  // Client: PBKDF2(PIN, salt) → seed → keypair
+      derivationSalt,
       hasAddress: !!existingAddress,
       address: existingAddress || null,
     });
@@ -197,19 +197,65 @@ app.post('/auth/derive', async (c) => {
   }
 });
 
+// ── Wallet recovery endpoint ────────────────────────────────────────
+
+app.post('/auth/recover', async (c) => {
+  const { email, code, newAddress, oldAddress } = await c.req.json<{
+    email: string;
+    code: string;
+    newAddress: string;
+    oldAddress?: string;
+  }>();
+  if (!email || !code || !newAddress) {
+    return c.json({ error: 'email, code, and newAddress required' }, 400);
+  }
+
+  // Verify OTP
+  const valid = await otpService.validateAndConsume(email, code);
+  if (!valid) return c.json({ error: 'Invalid or expired OTP' }, 401);
+
+  // Get the old address for this email (if any)
+  const previousAddress = oldAddress || userStore.getAddress(email);
+
+  // Update to new address
+  userStore.setAddress(email, newAddress);
+  const derivationSalt = await generateDerivationSalt(email);
+  const token = await jwtService.sign({ email });
+
+  console.log(`🔄 Wallet recovered for ${email}: ${previousAddress || 'none'} → ${newAddress}`);
+
+  // If there was an old address, store a recovery credential on DDC
+  if (previousAddress && previousAddress !== newAddress) {
+    try {
+      await storeCredential(email, newAddress, 'WalletRecovery', {
+        previousAddress,
+        newAddress,
+        recoveryTimestamp: new Date().toISOString(),
+        reason: 'pin-recovery',
+      });
+      console.log(`📋 Recovery credential stored linking ${previousAddress} → ${newAddress}`);
+    } catch (e: any) {
+      console.error(`⚠️ Failed to store recovery credential: ${e.message}`);
+    }
+  }
+
+  return c.json({
+    ok: true,
+    token,
+    email,
+    derivationSalt,
+    previousAddress: previousAddress || null,
+    newAddress,
+  });
+});
+
 // ── Helper: extract auth ────────────────────────────────────────────
 
-/**
- * Decentralized auth: supports wallet signature (primary) and JWT (legacy fallback).
- * 
- * Signature auth (preferred): Authorization: Signature {address}:{timestamp}:{signature}
- * JWT auth (legacy): Authorization: Bearer {token}
- */
 async function getAuth(c: any): Promise<{ email: string; walletAddress: string } | null> {
   const authHeader = c.req.header('Authorization');
   if (!authHeader) return null;
 
-  // ── Primary: Wallet Signature Auth (fully decentralized) ──
+  // Primary: Wallet Signature Auth (fully decentralized)
   if (authHeader.startsWith('Signature ')) {
     const result = await verifySignatureAuth(authHeader);
     if (!result.valid) {
@@ -217,24 +263,20 @@ async function getAuth(c: any): Promise<{ email: string; walletAddress: string }
       return null;
     }
     
-    // Look up email for this address (optional — address is the identity)
     const email = userStore.getEmailByAddress(result.address) || `wallet:${result.address}`;
     console.log(`✅ Signature auth: ${result.address}`);
     return { email, walletAddress: result.address };
   }
 
-  // ── Fallback: JWT Auth (legacy, for migration) ──
+  // Fallback: JWT Auth (legacy)
   if (authHeader.startsWith('Bearer ')) {
     try {
       const payload = await jwtService.verify(authHeader.slice(7));
       const email = (payload.sub || (payload as any).email) as string;
       if (!email) return null;
 
-      // v2: Look up stored address (client-derived, never server-derived)
       const walletAddress = userStore.getAddress(email);
       if (!walletAddress) {
-        // Fallback: user hasn't registered an address yet
-        // Use email as identity placeholder (credentials still work, just no wallet address)
         return { email, walletAddress: `pending:${email}` };
       }
 
@@ -247,7 +289,7 @@ async function getAuth(c: any): Promise<{ email: string; walletAddress: string }
   return null;
 }
 
-// ── DDC Routes (powered by cere-wallet.json) ────────────────────────
+// ── DDC Routes ──────────────────────────────────────────────────────
 
 // DDC status
 app.get('/ddc/status', async (c) => {
@@ -265,21 +307,19 @@ app.get('/ddc/status', async (c) => {
   }
 });
 
-// Store a memo on DDC (fully decentralized - index stored on DDC!)
-app.post('/ddc/memo', async (c) => {
+// Store a memo on DDC — with rate limiting
+app.post('/ddc/memo', ddcRateLimit(), async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
 
   const { memo } = await c.req.json<{ memo: string }>();
   if (!memo) return c.json({ error: 'memo required' }, 400);
 
-  // Require registered wallet address
   if (!auth.walletAddress || auth.walletAddress.startsWith('pending:')) {
     return c.json({ error: 'Wallet address not registered. Please complete wallet setup.' }, 400);
   }
 
   try {
-    // storeMemo now also updates the decentralized index on DDC
     const result = await ddcStoreMemo(auth.email, auth.walletAddress, memo);
     console.log(`📝 Memo stored for ${auth.email} (${auth.walletAddress}): ${result.cid}`);
     
@@ -290,8 +330,8 @@ app.post('/ddc/memo', async (c) => {
   }
 });
 
-// Store a credential on DDC (fully decentralized - index stored on DDC!)
-app.post('/ddc/credential', async (c) => {
+// Store a credential on DDC — with rate limiting
+app.post('/ddc/credential', ddcRateLimit(), async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
 
@@ -305,7 +345,6 @@ app.post('/ddc/credential', async (c) => {
   }
 
   try {
-    // storeCredential now also updates the decentralized index on DDC
     const result = await storeCredential(auth.email, auth.walletAddress, claimType, claimData);
     console.log(`🎓 Credential stored for ${auth.email}: ${result.cid}`);
     
@@ -338,18 +377,16 @@ app.get('/ddc/verify/:cid', async (c) => {
   }
 });
 
-// List user's memos and credentials from DDC (fully decentralized!)
+// List user's items from DDC
 app.get('/ddc/list', async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
 
-  // Skip pending users without wallet address
   if (!auth.walletAddress || auth.walletAddress.startsWith('pending:')) {
     return c.json({ ok: true, count: 0, items: [] });
   }
 
   try {
-    // Read index directly from DDC - no database!
     const index = await readWalletIndex(auth.walletAddress);
     return c.json({ 
       ok: true, 
@@ -362,12 +399,10 @@ app.get('/ddc/list', async (c) => {
   }
 });
 
-// List memos/credentials by wallet address (public endpoint for verification)
-// Fully decentralized - reads directly from DDC!
+// List by wallet address (public endpoint)
 app.get('/ddc/list/:walletAddress', async (c) => {
   const { walletAddress } = c.req.param();
   try {
-    // Read index directly from DDC - no database!
     const index = await readWalletIndex(walletAddress);
     return c.json({ 
       ok: true, 
@@ -381,9 +416,7 @@ app.get('/ddc/list/:walletAddress', async (c) => {
   }
 });
 
-// ── Migration: SQLite → DDC index (one-time use) ────────────────────
-
-// Migrate old memos from SQLite to DDC index
+// Migration endpoint (legacy SQLite → DDC)
 app.post('/ddc/migrate', async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
@@ -393,18 +426,15 @@ app.post('/ddc/migrate', async (c) => {
   }
 
   try {
-    // Read legacy items from SQLite
     const legacyItems = legacyMemoStore.listByWallet(auth.walletAddress);
     
     if (legacyItems.length === 0) {
       return c.json({ ok: true, migrated: 0, message: 'No legacy items to migrate' });
     }
 
-    // Read current DDC index
     const currentIndex = await readWalletIndex(auth.walletAddress);
     const existingCids = new Set(currentIndex.entries.map(e => e.cid));
 
-    // Add each legacy item to DDC index (skip duplicates)
     let migrated = 0;
     for (const item of legacyItems) {
       if (!existingCids.has(item.cid)) {
@@ -415,7 +445,6 @@ app.post('/ddc/migrate', async (c) => {
           credentialType: item.credentialType,
         });
         migrated++;
-        console.log(`📦 Migrated ${item.type} ${item.cid} for ${auth.walletAddress}`);
       }
     }
 
@@ -431,20 +460,19 @@ app.post('/ddc/migrate', async (c) => {
   }
 });
 
-// ── DDC Key Backup (encrypted client-side, stored server-side on DDC) ──
+// ── DDC Key Backup ──────────────────────────────────────────────────
 
-// In-memory index of backup CIDs per email
+// In-memory index of backup CIDs per email (cache — DDC is source of truth)
 const backupIndex = new Map<string, string>();
 
-// Store encrypted key backup on DDC
-app.post('/ddc/backup', async (c) => {
+app.post('/ddc/backup', ddcRateLimit(), async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
 
   const { encryptedSeed, iv, salt } = await c.req.json<{
-    encryptedSeed: string; // base64-encoded AES-GCM ciphertext
-    iv: string;            // base64-encoded IV
-    salt: string;          // base64-encoded PBKDF2 salt used for encryption key
+    encryptedSeed: string;
+    iv: string;
+    salt: string;
   }>();
 
   if (!encryptedSeed || !iv) {
@@ -467,7 +495,6 @@ app.post('/ddc/backup', async (c) => {
       { key: 'version', value: 'v2' },
     ]);
 
-    // Store CID in index for fast retrieval
     backupIndex.set(auth.email.toLowerCase().trim(), cid);
     console.log(`🔐 Key backup stored for ${auth.email}: ${cid}`);
 
@@ -478,9 +505,7 @@ app.post('/ddc/backup', async (c) => {
   }
 });
 
-// Retrieve encrypted key backup from DDC
 app.get('/ddc/backup/:email', async (c) => {
-  // Auth required — only the user can fetch their own backup
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
 
@@ -505,8 +530,7 @@ app.get('/ddc/backup/:email', async (c) => {
 
 // ── Game Achievement Routes ──────────────────────────────────────────
 
-// Store a game achievement on DDC
-app.post('/game/achievement', async (c) => {
+app.post('/game/achievement', ddcRateLimit(), async (c) => {
   const auth = await getAuth(c);
   if (!auth) return c.json({ error: 'Authorization required' }, 401);
 
@@ -547,19 +571,15 @@ app.post('/game/achievement', async (c) => {
   }
 });
 
-// Get achievements for a specific game (public endpoint)
 app.get('/game/achievements/:walletAddress', async (c) => {
   const { walletAddress } = c.req.param();
-  const game = c.req.query('game');
 
   try {
     const index = await readWalletIndex(walletAddress);
-    let achievements = index.entries.filter(
+    const achievements = index.entries.filter(
       (e) => e.type === 'credential' && e.credentialType === 'GameAchievement',
     );
 
-    // If game filter provided, we'd need to read each credential to filter
-    // For now, return all game achievements
     return c.json({
       ok: true,
       walletAddress,

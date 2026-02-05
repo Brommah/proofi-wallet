@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { OtpInput } from '../components/OtpInput';
 
-export function LoginScreen() {
+export function LoginScreen({ onForgotPin }: { onForgotPin?: () => void }) {
   const [email, setEmail] = useState('');
   const { 
     otpSent, 
@@ -113,6 +113,16 @@ export function LoginScreen() {
               >
                 ← DIFFERENT EMAIL
               </button>
+
+              {onForgotPin && (
+                <button
+                  type="button"
+                  onClick={onForgotPin}
+                  className="w-full text-center text-mono text-xs text-[#4A4A4A] hover:text-[#FFB800] transition-colors py-2"
+                >
+                  Forgot your PIN? Recover wallet →
+                </button>
+              )}
             </div>
           )}
         </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 
-export function PinScreen() {
+export function PinScreen({ onForgotPin }: { onForgotPin?: () => void }) {
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [step, setStep] = useState<1 | 2>(1);
@@ -185,6 +185,15 @@ export function PinScreen() {
               )}
             </p>
           </div>
+          {onForgotPin && isRestoreFlow && (
+            <button
+              type="button"
+              onClick={onForgotPin}
+              className="w-full text-center text-mono text-xs text-[#4A4A4A] hover:text-[#FFB800] transition-colors py-3 mt-4"
+            >
+              Forgot your PIN? Recover wallet →
+            </button>
+          )}
         </div>
       </div>
     </div>

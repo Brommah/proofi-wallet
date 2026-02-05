@@ -36,6 +36,15 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   SAFE AREA (PWA / Mobile)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    BASE
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -412,4 +421,63 @@ body::before {
     rgba(0, 0, 0, 0.1) 4px
   );
   pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SKELETON LOADING STATES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-steel) 25%,
+    var(--color-smoke) 37%,
+    var(--color-steel) 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: 2px;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-text {
+  composes: skeleton;
+  height: 1em;
+  margin-bottom: 0.5em;
+}
+
+.skeleton-block {
+  composes: skeleton;
+  height: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Notification badge */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  background: var(--color-error);
+  color: var(--color-white);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  padding: 0 4px;
+  box-shadow: 0 0 8px var(--color-error);
+  animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }

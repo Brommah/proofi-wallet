@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { KeyPairData } from '@proofi/core';
 import { useWalletStore } from './walletStore';
+import { getTargetOrigin } from '../lib/targetOrigin';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3847';
 
@@ -177,7 +178,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         throw new Error(data.error || 'Failed to send OTP');
       }
       set({ email, otpSent: true, loading: false });
-      window.parent.postMessage({ type: 'PROOFI_OTP_SENT', email }, '*');
+      window.parent.postMessage({ type: 'PROOFI_OTP_SENT', email }, getTargetOrigin());
     } catch (e: any) {
       set({ error: e.message || 'Failed to send verification code', loading: false });
     }
@@ -217,7 +218,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         type: 'PROOFI_OTP_VERIFIED', 
         email: get().email,
         hasAddress: data.hasAddress,
-      }, '*');
+      }, getTargetOrigin());
 
     } catch (e: any) {
       set({ error: e.message || 'Verification failed', loading: false });
@@ -299,7 +300,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       console.log('[setupPin] ✅ Wallet', hasExistingWallet ? 'restored' : 'created', 'successfully!');
       window.parent.postMessage(
         { type: 'PROOFI_AUTHENTICATED', email, address: keypair.address },
-        '*',
+        getTargetOrigin(),
       );
     } catch (e: any) {
       console.error('[setupPin] ❌ Error:', e);
@@ -328,7 +329,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       
       // Signal that PIN is needed to unlock full signing
       if (encryptedSeed) {
-        window.parent.postMessage({ type: 'PROOFI_NEEDS_PIN_UNLOCK', email, address: cachedAddress }, '*');
+        window.parent.postMessage({ type: 'PROOFI_NEEDS_PIN_UNLOCK', email, address: cachedAddress }, getTargetOrigin());
       }
     }
   },
@@ -349,7 +350,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       existingAddress: null,
       token: null,
     });
-    window.parent.postMessage({ type: 'PROOFI_LOGGED_OUT' }, '*');
+    window.parent.postMessage({ type: 'PROOFI_LOGGED_OUT' }, getTargetOrigin());
   },
 
   clearError: () => set({ error: null }),

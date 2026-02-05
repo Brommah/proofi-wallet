@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { KeyPairData } from '@proofi/core';
+import { getTargetOrigin } from '../lib/targetOrigin';
 
 interface ConnectedApp {
   name: string;
@@ -29,12 +30,14 @@ export const useWalletStore = create<WalletState>()((set, get) => ({
 
   connect: (address: string, keypair?: KeyPairData) => {
     set({ address, keypair: keypair || null, isConnected: true });
-    window.parent.postMessage({ type: 'PROOFI_CONNECTED', address }, '*');
+    const targetOrigin = getTargetOrigin();
+    window.parent.postMessage({ type: 'PROOFI_CONNECTED', address }, targetOrigin);
   },
 
   disconnect: () => {
     set({ address: null, keypair: null, isConnected: false, connectedApps: [] });
-    window.parent.postMessage({ type: 'PROOFI_DISCONNECTED' }, '*');
+    const targetOrigin = getTargetOrigin();
+    window.parent.postMessage({ type: 'PROOFI_DISCONNECTED' }, targetOrigin);
   },
 
   setKeypair: (keypair: KeyPairData) => {

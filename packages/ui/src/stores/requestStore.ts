@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { useWalletStore } from './walletStore';
+import { getTargetOrigin } from '../lib/targetOrigin';
 
 export type RequestType = 'sign' | 'connect';
 export type SignCategory = 'credential' | 'transaction';
@@ -42,18 +43,18 @@ export const useRequestStore = create<RequestState>()((set, get) => ({
   approve: () => {
     const req = get().pendingRequest;
     if (!req) return;
+    const targetOrigin = getTargetOrigin();
     window.parent.postMessage(
       { type: 'PROOFI_REQUEST_APPROVED', requestId: req.id, requestType: req.type },
-      '*',
+      targetOrigin,
     );
     // For connect requests, also send PROOFI_CONNECTED with the wallet address
-    // so the SDK knows to stop polling and resolve the connection
     if (req.type === 'connect') {
       const address = useWalletStore.getState().address;
       if (address) {
         window.parent.postMessage(
           { type: 'PROOFI_CONNECTED', address },
-          '*',
+          targetOrigin,
         );
       }
     }
@@ -63,9 +64,10 @@ export const useRequestStore = create<RequestState>()((set, get) => ({
   reject: () => {
     const req = get().pendingRequest;
     if (!req) return;
+    const targetOrigin = getTargetOrigin();
     window.parent.postMessage(
       { type: 'PROOFI_REQUEST_REJECTED', requestId: req.id, requestType: req.type },
-      '*',
+      targetOrigin,
     );
     set({ pendingRequest: null });
   },

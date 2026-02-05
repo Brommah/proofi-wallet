@@ -55,7 +55,9 @@ function findSecretsDir(): string {
   return process.env.PROOFI_SECRETS_DIR || resolve(process.env.HOME || '', 'clawd/.secrets');
 }
 
-const WALLET_PASSPHRASE = process.env.CERE_WALLET_PASSPHRASE || 'roezel';
+// Passphrase from env — no hardcoded fallback (see config/env.ts for enforcement)
+import { env as appEnv } from '../config/env.js';
+const WALLET_PASSPHRASE = appEnv.CERE_WALLET_PASSPHRASE;
 const BUCKET_ID = 1229n;
 const USE_MAINNET = true; // server-v3 uses mainnet
 

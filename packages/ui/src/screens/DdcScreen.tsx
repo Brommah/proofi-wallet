@@ -205,12 +205,12 @@ function DetailModal({
       <div className="min-h-full max-w-[400px] mx-auto">
         {/* Top bar */}
         <div className="sticky top-0 bg-[#000]/95 backdrop-blur-sm px-6 py-4 border-b border-[#1A1A1A] flex items-center justify-between z-10">
-          <button onClick={onClose} className="text-mono text-xs text-[#4A4A4A] hover:text-white transition-colors flex items-center gap-2">
+          <button onClick={onClose} className="text-mono text-xs text-[#4A4A4A] hover:text-white transition-colors flex items-center gap-2 py-3 px-4">
             <span>←</span> BACK
           </button>
           <button 
             onClick={handleShare}
-            className="text-mono text-xs px-3 py-1.5 border border-[#2A2A2A] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
+            className="text-mono text-xs px-4 py-3 border border-[#2A2A2A] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
           >
             SHARE ↗
           </button>
@@ -399,6 +399,7 @@ export function DdcScreen() {
       .catch(() => setStatus(null));
   }, []);
 
+  const [initialLoading, setInitialLoading] = useState(true);
   const address = useWalletStore((s) => s.address);
   const keypair = useWalletStore((s) => s.keypair);
 
@@ -451,11 +452,11 @@ export function DdcScreen() {
       .then((d) => {
         if (d.ok && d.items) {
           setStoredItems(d.items);
-          // Fetch content for all items
           d.items.forEach((item: StoredItem) => fetchContent(item));
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setInitialLoading(false));
   }, [fetchContent]);
 
   useEffect(() => {
@@ -570,7 +571,7 @@ export function DdcScreen() {
           <div className="flex items-center gap-3">
             <button 
               onClick={loadItems}
-              className="text-[#4A4A4A] hover:text-[#00E5FF] transition-colors p-1"
+              className="text-[#4A4A4A] hover:text-[#00E5FF] transition-colors p-3"
               title="Refresh"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -618,7 +619,7 @@ export function DdcScreen() {
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4A4A4A] hover:text-white"
+              className="absolute right-1 top-1/2 -translate-y-1/2 p-3 text-[#4A4A4A] hover:text-white"
             >
               ✕
             </button>
@@ -636,7 +637,7 @@ export function DdcScreen() {
             <button
               key={key}
               onClick={() => setFilter(key)}
-              className={`flex-shrink-0 text-mono text-xs px-3 py-1.5 border transition-all ${
+              className={`flex-shrink-0 text-mono text-xs px-3 py-2.5 border transition-all ${
                 filter === key
                   ? 'border-current bg-current/10'
                   : 'border-[#2A2A2A] text-[#4A4A4A] hover:text-[#8A8A8A] hover:border-[#4A4A4A]'
@@ -765,7 +766,22 @@ export function DdcScreen() {
 
       {/* Items list */}
       <div className="px-6">
-        {filteredItems.length > 0 ? (
+        {/* Skeleton loading state */}
+        {initialLoading && storedItems.length === 0 ? (
+          <div className="space-y-2">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="p-4 border border-[#1A1A1A]" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="skeleton" style={{ width: '1.5rem', height: '1.5rem' }} />
+                  <div className="skeleton" style={{ width: '5rem', height: '0.875rem' }} />
+                  <div className="skeleton ml-auto" style={{ width: '3rem', height: '0.75rem' }} />
+                </div>
+                <div className="skeleton" style={{ width: '70%', height: '1rem', marginBottom: '0.5rem' }} />
+                <div className="skeleton" style={{ width: '90%', height: '0.75rem' }} />
+              </div>
+            ))}
+          </div>
+        ) : filteredItems.length > 0 ? (
           <div className="space-y-2">
             {searchQuery && (
               <div className="text-mono text-xs text-[#4A4A4A] mb-2">

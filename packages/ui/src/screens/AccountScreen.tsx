@@ -1,10 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useWalletStore } from '../stores/walletStore';
 import { getBalance, subscribeBalance, transfer, parseCere, formatCere, isValidAddress, estimateFee } from '../lib/cere';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { PinUnlockModal } from '../components/PinUnlockModal';
 import { QRCodeSVG } from 'qrcode.react';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3847';
+
+interface RecentItem {
+  cid: string;
+  cdnUrl: string;
+  type: 'memo' | 'credential';
+  credentialType?: string;
+  createdAt?: string;
+}
 
 type View = 'main' | 'send' | 'receive';
 
@@ -26,6 +36,10 @@ export function AccountScreen() {
   
   // PIN unlock
   const [showPinUnlock, setShowPinUnlock] = useState(false);
+  
+  // Recent activity
+  const [recentItems, setRecentItems] = useState<RecentItem[]>([]);
+  const [activityLoading, setActivityLoading] = useState(true);
 
   // Fetch and subscribe to balance
   useEffect(() => {
@@ -53,6 +67,21 @@ export function AccountScreen() {
     
     init();
     return () => { unsub?.(); };
+  }, [address]);
+
+  // Fetch recent DDC activity
+  useEffect(() => {
+    if (!address) return;
+    setActivityLoading(true);
+    fetch(`${API_URL}/ddc/list/${address}`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.ok && d.items) {
+          setRecentItems(d.items.slice(0, 5)); // Last 5 items
+        }
+      })
+      .catch(() => {})
+      .finally(() => setActivityLoading(false));
   }, [address]);
 
   // Estimate fee when amount/recipient changes
@@ -125,7 +154,7 @@ export function AccountScreen() {
           <div className="text-label mb-2 text-[#00E5FF]">Balance</div>
           <h1 className="text-display text-display-xl text-white leading-none">
             {balanceLoading ? (
-              <span className="text-[#4A4A4A] animate-pulse">LOADING</span>
+              <div className="skeleton" style={{ height: '3.5rem', width: '60%' }} />
             ) : (
               balance.replace(' CERE', '')
             )}
@@ -192,6 +221,48 @@ export function AccountScreen() {
           </div>
         </div>
 
+        {/* Recent Activity */}
+        <div className="px-6 mb-6">
+          <div className="text-label mb-3">RECENT ACTIVITY</div>
+          {activityLoading ? (
+            <div className="space-y-2">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="p-3 border border-[#1A1A1A]">
+                  <div className="flex items-center gap-2">
+                    <div className="skeleton" style={{ width: '1.25rem', height: '1.25rem' }} />
+                    <div className="skeleton" style={{ width: '60%', height: '0.875rem' }} />
+                    <div className="skeleton ml-auto" style={{ width: '3rem', height: '0.625rem' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : recentItems.length > 0 ? (
+            <div className="space-y-1">
+              {recentItems.map((item, i) => (
+                <div key={item.cid + i} className="p-3 border border-[#1A1A1A] hover:border-[#2A2A2A] transition-colors">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">
+                      {item.type === 'memo' ? '📝' : item.credentialType === 'GameAchievement' ? '🎮' : '📜'}
+                    </span>
+                    <span className="text-mono text-xs text-white truncate flex-1">
+                      {item.credentialType || item.type.toUpperCase()}
+                    </span>
+                    {item.createdAt && (
+                      <span className="text-mono text-xs text-[#4A4A4A] flex-shrink-0">
+                        {new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 border border-[#1A1A1A] text-center">
+              <p className="text-mono text-xs text-[#4A4A4A]">No activity yet</p>
+            </div>
+          )}
+        </div>
+
         {/* Disconnect */}
         <div className="px-6">
           <button
@@ -214,7 +285,7 @@ export function AccountScreen() {
         <div className="px-6 pt-8 pb-6 border-b border-[#1A1A1A]">
           <button
             onClick={() => { setView('main'); setSendError(null); setSendSuccess(null); }}
-            className="text-mono text-xs text-[#4A4A4A] hover:text-white transition-colors mb-4"
+            className="text-mono text-xs text-[#4A4A4A] hover:text-white transition-colors mb-4 py-3 px-4"
           >
             ← BACK
           </button>
@@ -323,7 +394,7 @@ export function AccountScreen() {
         <div className="px-6 pt-8 pb-6 border-b border-[#1A1A1A]">
           <button
             onClick={() => setView('main')}
-            className="text-mono text-xs text-[#4A4A4A] hover:text-white transition-colors mb-4"
+            className="text-mono text-xs text-[#4A4A4A] hover:text-white transition-colors mb-4 py-3 px-4"
           >
             ← BACK
           </button>
