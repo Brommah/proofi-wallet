@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi Wallet — Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0a; color: #e0e0e0;
+      min-height: 100vh; padding: 2rem;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #fff; }
+    .subtitle { color: #888; margin-bottom: 2rem; font-size: 0.9rem; }
+    .card {
+      background: #1a1a1a; border: 1px solid #333; border-radius: 12px;
+      padding: 1.5rem; margin-bottom: 1.5rem; max-width: 600px;
+    }
+    .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #ccc; }
+    button {
+      background: #6c5ce7; color: #fff; border: none; border-radius: 8px;
+      padding: 0.6rem 1.2rem; font-size: 0.9rem; cursor: pointer;
+      transition: background 0.15s;
+    }
+    button:hover { background: #7c6df7; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.secondary { background: #333; }
+    button.secondary:hover { background: #444; }
+    .status {
+      display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem;
+    }
+    .status.disconnected { background: #3a1c1c; color: #e74c3c; }
+    .status.connected { background: #1c3a1c; color: #2ecc71; }
+    .status.connecting { background: #3a3a1c; color: #f1c40f; }
+    .log {
+      background: #111; border: 1px solid #2a2a2a; border-radius: 8px;
+      padding: 1rem; margin-top: 1rem; max-height: 300px; overflow-y: auto;
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.8rem;
+      line-height: 1.6;
+    }
+    .log-entry { border-bottom: 1px solid #1a1a1a; padding: 0.25rem 0; }
+    .log-entry.info { color: #74b9ff; }
+    .log-entry.success { color: #55efc4; }
+    .log-entry.error { color: #ff7675; }
+    .log-entry .time { color: #636e72; margin-right: 0.5rem; }
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    input {
+      background: #111; border: 1px solid #333; border-radius: 8px;
+      padding: 0.5rem 0.8rem; color: #e0e0e0; font-size: 0.9rem;
+      width: 100%; margin-bottom: 0.75rem;
+    }
+    .address { font-family: monospace; color: #fdcb6e; font-size: 0.85rem; word-break: break-all; }
+  </style>
+</head>
+<body>
+
+  <h1>🔐 Proofi Wallet Demo</h1>
+  <p class="subtitle">Host app integration — this simulates how proofi.ai would embed the wallet</p>
+
+  <!-- Connection -->
+  <div class="card">
+    <h2>1. Connection</h2>
+    <span id="status" class="status disconnected">disconnected</span>
+    <div style="margin-top: 0.75rem">
+      <p id="address" class="address" style="display:none"></p>
+    </div>
+    <div class="actions" style="margin-top: 1rem">
+      <button id="btn-connect" onclick="connectWallet()">Connect Wallet</button>
+      <button id="btn-disconnect" class="secondary" onclick="disconnectWallet()" disabled>Disconnect</button>
+    </div>
+  </div>
+
+  <!-- Sign Message -->
+  <div class="card">
+    <h2>2. Sign Message</h2>
+    <input id="sign-msg" type="text" placeholder="Enter message to sign..." value="Hello from Proofi demo!" />
+    <div class="actions">
+      <button id="btn-sign" onclick="signMessage()" disabled>Sign Message</button>
+    </div>
+  </div>
+
+  <!-- Sign Credential -->
+  <div class="card">
+    <h2>3. Sign Credential</h2>
+    <input id="cred-type" type="text" placeholder="Credential type" value="EmailVerification" />
+    <input id="cred-subject" type="text" placeholder="Subject (e.g., email)" value="user@example.com" />
+    <div class="actions">
+      <button id="btn-cred" onclick="signCredential()" disabled>Sign Credential</button>
+    </div>
+  </div>
+
+  <!-- Log -->
+  <div class="card">
+    <h2>📋 Event Log</h2>
+    <div id="log" class="log">
+      <div class="log-entry info"><span class="time">--:--:--</span>Ready. Click "Connect Wallet" to start.</div>
+    </div>
+  </div>
+
+  <script type="module">
+    // ── Configuration ──────────────────────────────────────────────────
+    const WALLET_URL = 'http://localhost:5173';
+    const API_URL = 'http://localhost:3847';
+
+    // ── Minimal SDK usage (simulates @proofi/sdk) ──────────────────────
+    // In production you'd import { ProofiWallet } from '@proofi/sdk'
+    // For the demo we talk to the iframe directly via postMessage
+
+    let wallet = null;
+    let connected = false;
+    let address = null;
+
+    function log(msg, type = 'info') {
+      const el = document.getElementById('log');
+      const time = new Date().toLocaleTimeString('en-GB');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      entry.innerHTML = `<span class="time">${time}</span>${msg}`;
+      el.appendChild(entry);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function setStatus(status) {
+      const el = document.getElementById('status');
+      el.textContent = status;
+      el.className = `status ${status}`;
+    }
+
+    function setButtons(isConnected) {
+      document.getElementById('btn-connect').disabled = isConnected;
+      document.getElementById('btn-disconnect').disabled = !isConnected;
+      document.getElementById('btn-sign').disabled = !isConnected;
+      document.getElementById('btn-cred').disabled = !isConnected;
+    }
+
+    // ── Wallet connection via iframe ───────────────────────────────────
+
+    window.connectWallet = async function() {
+      log('Connecting to wallet...');
+      setStatus('connecting');
+
+      try {
+        // Check API health first
+        const health = await fetch(`${API_URL}/health`).then(r => r.json());
+        log(`API healthy: v${health.version}`, 'success');
+
+        // For the demo, simulate a connection
+        // In production, ProofiWallet opens an iframe to WALLET_URL
+        // and negotiates via postMessage (via @proofi/comm)
+        connected = true;
+        address = '5' + Array.from({ length: 47 }, () =>
+          'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789'
+            [Math.floor(Math.random() * 58)]
+        ).join('');
+
+        setStatus('connected');
+        setButtons(true);
+        document.getElementById('address').style.display = 'block';
+        document.getElementById('address').textContent = `Address: ${address}`;
+        log(`Connected! Address: ${address.slice(0, 8)}...${address.slice(-6)}`, 'success');
+      } catch (err) {
+        setStatus('disconnected');
+        log(`Connection failed: ${err.message}`, 'error');
+        log('Make sure the API is running: pnpm dev', 'error');
+      }
+    };
+
+    window.disconnectWallet = function() {
+      connected = false;
+      address = null;
+      setStatus('disconnected');
+      setButtons(false);
+      document.getElementById('address').style.display = 'none';
+      log('Disconnected');
+    };
+
+    // ── Message signing ────────────────────────────────────────────────
+
+    window.signMessage = async function() {
+      const msg = document.getElementById('sign-msg').value;
+      if (!msg) return log('Enter a message first', 'error');
+
+      log(`Signing message: "${msg}"...`);
+
+      // Simulate signing (in production, this goes through @proofi/sdk → iframe → @proofi/core)
+      const mockSig = '0x' + Array.from({ length: 128 }, () =>
+        '0123456789abcdef'[Math.floor(Math.random() * 16)]
+      ).join('');
+
+      log(`✅ Signature: ${mockSig.slice(0, 18)}...${mockSig.slice(-8)}`, 'success');
+    };
+
+    // ── Credential signing ─────────────────────────────────────────────
+
+    window.signCredential = async function() {
+      const type = document.getElementById('cred-type').value;
+      const subject = document.getElementById('cred-subject').value;
+      if (!type || !subject) return log('Fill in credential fields', 'error');
+
+      const credential = {
+        '@context': ['https://www.w3.org/2018/credentials/v1'],
+        type: ['VerifiableCredential', type],
+        credentialSubject: { id: address, value: subject },
+        issuanceDate: new Date().toISOString(),
+      };
+
+      log(`Signing credential: ${type} for ${subject}...`);
+
+      // Simulate signing
+      const mockProof = {
+        type: 'Sr25519Signature2024',
+        created: new Date().toISOString(),
+        verificationMethod: address,
+        proofValue: '0x' + Array.from({ length: 128 }, () =>
+          '0123456789abcdef'[Math.floor(Math.random() * 16)]
+        ).join(''),
+      };
+
+      log(`✅ Credential signed!`, 'success');
+      log(`Proof: ${JSON.stringify(mockProof).slice(0, 80)}...`, 'info');
+    };
+  </script>
+
+</body>
+</html>

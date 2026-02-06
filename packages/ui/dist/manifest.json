@@ -1,0 +1,10 @@
+{
+  "name": "Proofi Wallet",
+  "short_name": "Proofi",
+  "description": "Decentralized credential wallet on Cere Network",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#0A0A0F",
+  "theme_color": "#00E5FF",
+  "icons": []
+}
