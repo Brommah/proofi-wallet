@@ -22,6 +22,12 @@
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
       ]
+    },
+    {
+      "source": "/app/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://proofi-api-production.up.railway.app https://*.cere.network wss://*.cere.network https://cdn.ddc-dragon.com https://*.ddc.cere.network http://localhost:*; img-src 'self' data: blob: https:; frame-ancestors https://proofi-virid.vercel.app https://proofi.ai http://localhost:*;" }
+      ]
     }
   ]
 }
