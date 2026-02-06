@@ -4,31 +4,39 @@
  * Archive RPC: wss://archive.mainnet.cere.network/ws
  */
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise, WsProvider, HttpProvider } from '@polkadot/api';
 import { Keyring } from '@polkadot/keyring';
 import { formatBalance } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-// Primary and fallback RPC endpoints (archive is more stable)
-const CERE_RPC_ENDPOINTS = [
-  'wss://archive.mainnet.cere.network/ws',
-  'wss://rpc.mainnet.cere.network/ws',
+// Multiple RPC endpoints for failover
+const CERE_WSS_ENDPOINTS = [
+  'wss://rpc.mainnet.cere.network/ws',      // Primary
+  'wss://archive.mainnet.cere.network/ws',  // Archive (slower but complete history)
 ];
+
+// HTTP fallbacks (more reliable when WSS times out)
+const CERE_HTTP_ENDPOINTS = [
+  'https://rpc.mainnet.cere.network',
+  'https://archive.mainnet.cere.network',
+];
+
 const CERE_DECIMALS = 10;
 const CERE_SYMBOL = 'CERE';
 
 let api: ApiPromise | null = null;
 let connecting = false;
+let usingHttp = false;
 
 /**
- * Get or create API connection to Cere mainnet (with fallback)
+ * Get or create API connection to Cere mainnet (WSS first, HTTP fallback)
  */
 export async function getApi(): Promise<ApiPromise> {
   if (api && api.isConnected) return api;
   
   if (connecting) {
     let waited = 0;
-    while (connecting && waited < 15000) {
+    while (connecting && waited < 20000) {
       await new Promise(r => setTimeout(r, 100));
       waited += 100;
     }
@@ -37,13 +45,14 @@ export async function getApi(): Promise<ApiPromise> {
 
   connecting = true;
   
-  for (const endpoint of CERE_RPC_ENDPOINTS) {
+  // Try WSS first (supports subscriptions)
+  for (const endpoint of CERE_WSS_ENDPOINTS) {
     try {
-      console.log('[CERE] Trying:', endpoint);
+      console.log('[CERE] Trying WSS:', endpoint);
       const provider = new WsProvider(endpoint, 3000);
       
       const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout')), 12000)
+        setTimeout(() => reject(new Error('Timeout')), 15000)  // 15s timeout
       );
       
       api = await Promise.race([
@@ -51,17 +60,41 @@ export async function getApi(): Promise<ApiPromise> {
         timeoutPromise
       ]);
       
-      console.log('[CERE] Connected via:', endpoint);
+      console.log('[CERE] Connected via WSS:', endpoint);
+      usingHttp = false;
       connecting = false;
       return api;
     } catch (err) {
-      console.warn('[CERE] Failed:', endpoint, err);
-      // Try next endpoint
+      console.warn('[CERE] WSS failed:', endpoint, err);
+    }
+  }
+  
+  // Fallback to HTTP (no subscriptions, but reliable for queries)
+  for (const endpoint of CERE_HTTP_ENDPOINTS) {
+    try {
+      console.log('[CERE] Trying HTTP:', endpoint);
+      const provider = new HttpProvider(endpoint);
+      
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 15000)  // 15s timeout
+      );
+      
+      api = await Promise.race([
+        ApiPromise.create({ provider }),
+        timeoutPromise
+      ]);
+      
+      console.log('[CERE] Connected via HTTP:', endpoint);
+      usingHttp = true;
+      connecting = false;
+      return api;
+    } catch (err) {
+      console.warn('[CERE] HTTP failed:', endpoint, err);
     }
   }
   
   connecting = false;
-  throw new Error('All Cere RPC endpoints failed');
+  throw new Error('All Cere RPC endpoints failed (WSS + HTTP)');
 }
 
 /**
@@ -231,7 +264,7 @@ export function isValidAddress(address: string): boolean {
 }
 
 /**
- * Subscribe to balance changes
+ * Subscribe to balance changes (falls back to polling over HTTP)
  */
 export async function subscribeBalance(
   address: string,
@@ -239,6 +272,25 @@ export async function subscribeBalance(
 ): Promise<() => void> {
   const api = await getApi();
   const normalizedAddr = normalizeAddress(address) || address;
+  
+  // If using HTTP provider, subscriptions don't work — poll instead
+  if (usingHttp) {
+    let active = true;
+    const poll = async () => {
+      while (active) {
+        try {
+          const account = await api.query.system.account(normalizedAddr);
+          const free = BigInt((account as any).data.free.toString());
+          callback({ free, formatted: formatCere(free) });
+        } catch (err) {
+          console.warn('[CERE] Poll error:', err);
+        }
+        await new Promise(r => setTimeout(r, 30000)); // Poll every 30s
+      }
+    };
+    poll();
+    return () => { active = false; };
+  }
   
   const unsub = await api.query.system.account(normalizedAddr, (account: any) => {
     const free = BigInt(account.data.free.toString());
