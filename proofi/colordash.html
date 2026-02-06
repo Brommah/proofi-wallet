@@ -400,13 +400,24 @@
         const data = await res.json();
 
         if (data.ok && data.achievements) {
+          // DEBUG: Log ALL achievements to see the structure
+          console.log('[ColorDash] ALL achievements from API:', JSON.stringify(data.achievements, null, 2));
+          
           // Look for SpeedType achievements with WPM >= REQUIRED_WPM
-          // Find all speedtype achievements
-          const speedtypeAchievements = data.achievements.filter(a => 
-            a.game === 'speedtype' || 
-            a.achievement?.includes('wpm') ||
-            (a.data && a.data.game === 'speedtype')
-          );
+          // Find all speedtype achievements - check multiple possible fields
+          const speedtypeAchievements = data.achievements.filter(a => {
+            const isSpeedtype = 
+              a.game === 'speedtype' || 
+              a.game === 'SpeedType' ||
+              a.achievement?.toLowerCase().includes('wpm') ||
+              a.achievement?.toLowerCase().includes('speedtype') ||
+              a.type?.toLowerCase().includes('speedtype') ||
+              a.credentialType?.toLowerCase().includes('speedtype') ||
+              (a.data && (a.data.game === 'speedtype' || a.data.game === 'SpeedType')) ||
+              (a.claim && (a.claim.game === 'speedtype' || a.claim.bestWpm));
+            console.log('[ColorDash] Checking achievement:', a, '-> isSpeedtype:', isSpeedtype);
+            return isSpeedtype;
+          });
           
           console.log('[ColorDash] SpeedType achievements found:', speedtypeAchievements);
 
@@ -449,7 +460,40 @@
             }
           }
 
-          // No speedtype achievements at all
+          // No speedtype achievements found by name - try reading ALL CIDs for any WPM data
+          console.log('[ColorDash] No speedtype by name, checking all CIDs...');
+          for (const a of data.achievements) {
+            if (a.cid && !a.cid.startsWith('local_')) {
+              try {
+                const credRes = await fetch(`${API_URL}/ddc/read/${a.cid}`);
+                const credData = await credRes.json();
+                console.log('[ColorDash] CID content:', a.cid, credData);
+                
+                // Look for any WPM data anywhere in the credential
+                const findWpm = (obj) => {
+                  if (!obj || typeof obj !== 'object') return 0;
+                  if (obj.bestWpm) return obj.bestWpm;
+                  if (obj.wpm) return obj.wpm;
+                  if (obj.game === 'speedtype' && obj.score) return obj.score;
+                  for (const v of Object.values(obj)) {
+                    const found = findWpm(v);
+                    if (found > 0) return found;
+                  }
+                  return 0;
+                };
+                
+                const wpm = findWpm(credData);
+                if (wpm >= REQUIRED_WPM) {
+                  console.log('[ColorDash] Found qualifying WPM in CID:', wpm);
+                  unlockGame(wpm);
+                  return;
+                }
+              } catch (e) {
+                console.warn('[ColorDash] Could not read CID:', a.cid);
+              }
+            }
+          }
+          
           showLockGate(`No SpeedType scores found on-chain for this wallet`);
         } else {
           showLockGate('No achievements found — play SpeedType first!');
