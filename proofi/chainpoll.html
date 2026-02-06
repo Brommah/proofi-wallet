@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChainPoll — Decentralized Polling</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--blue:#00E5FF;--indigo:#00E5FF;--rose:#FF3366;--emerald:#00FF88;--amber:#FFB800;--bg:#000000;--surface:#0A0A0A;--card:#111111;--border:#1A1A1A;--text:#F0F0F0;--dim:#555555}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,229,255,0.04) 0%,transparent 50%);pointer-events:none}
+    .container{max-width:520px;margin:0 auto;padding:16px}
+    .header{text-align:center;padding:20px 0 16px}
+    .logo{font-size:28px;font-weight:800;background:linear-gradient(135deg,#00E5FF,#00FF88);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px}
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:2px;margin-bottom:16px}
+    .wallet-bar.connected{border-color:var(--blue);box-shadow:0 0 20px rgba(0,229,255,0.1)}
+    .wl{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}.wa{font-size:11px;color:var(--blue);font-family:monospace}
+    .btn{font-family:'Inter',sans-serif;font-weight:700;font-size:12px;padding:10px 18px;border:2px solid var(--blue);background:transparent;color:var(--blue);border-radius:2px;cursor:pointer;transition:all .2s}
+    .btn:hover{background:var(--blue);color:#fff;box-shadow:0 4px 15px rgba(0,229,255,0.3)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.emerald{border-color:var(--emerald);color:var(--emerald)}.btn.emerald:hover{background:var(--emerald);color:#fff}
+    .btn.rose{border-color:var(--rose);color:var(--rose)}.btn.rose:hover{background:var(--rose);color:#fff}
+    .btn.red{border-color:#FF3366;color:#FF3366}.btn.red:hover{background:#FF3366;color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+    .tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--surface);border-radius:2px;padding:3px}
+    .tab{flex:1;padding:10px;text-align:center;border-radius:2px;cursor:pointer;font-size:12px;font-weight:600;color:var(--dim);transition:all .2s}
+    .tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:16px;margin-bottom:16px}
+    .section-title{font-size:14px;font-weight:700;margin-bottom:12px}
+    input[type=text]{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:2px;padding:10px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;margin-bottom:8px}
+    input:focus{border-color:var(--blue)}input::placeholder{color:var(--dim)}
+    .option-input{display:flex;gap:6px;margin-bottom:6px}
+    .option-input input{flex:1;margin-bottom:0}
+    .option-input .remove{width:36px;height:36px;border:1px solid var(--border);background:transparent;color:var(--dim);border-radius:2px;cursor:pointer;font-size:14px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+    .option-input .remove:hover{border-color:var(--rose);color:var(--rose)}
+    .add-option{display:flex;align-items:center;gap:6px;color:var(--blue);font-size:12px;cursor:pointer;padding:6px 0;font-weight:600}
+    .add-option:hover{color:var(--indigo)}
+    .poll-card{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:16px;margin-bottom:12px;transition:border-color .2s}
+    .poll-card:hover{border-color:rgba(0,229,255,0.3)}
+    .poll-question{font-size:16px;font-weight:700;margin-bottom:4px}
+    .poll-meta{font-size:10px;color:var(--dim);margin-bottom:12px;display:flex;gap:8px;align-items:center}
+    .poll-meta .tag{padding:2px 8px;border-radius:4px;font-size:9px;font-weight:600}
+    .tag-active{background:rgba(16,185,129,0.15);color:var(--emerald)}
+    .tag-closed{background:rgba(244,63,94,0.15);color:var(--rose)}
+    .poll-option{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:2px solid var(--border);border-radius:2px;margin-bottom:6px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+    .poll-option:hover:not(.voted):not(.disabled){border-color:var(--blue)}
+    .poll-option.voted{border-color:var(--blue);background:rgba(0,229,255,0.08)}
+    .poll-option.disabled{cursor:default;opacity:.8}
+    .poll-option .bar{position:absolute;left:0;top:0;bottom:0;background:rgba(0,229,255,0.08);transition:width .6s ease;border-radius:2px}
+    .poll-option .content{position:relative;z-index:1;display:flex;align-items:center;gap:10px;flex:1}
+    .poll-option .radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);transition:all .2s;flex-shrink:0}
+    .poll-option.voted .radio{border-color:var(--blue);background:var(--blue);box-shadow:inset 0 0 0 3px var(--card)}
+    .poll-option .label{font-size:13px;flex:1}
+    .poll-option .count{font-size:11px;color:var(--dim);font-weight:600}
+    .poll-option .pct{font-size:12px;font-weight:700;color:var(--blue);min-width:36px;text-align:right}
+    .total-votes{font-size:11px;color:var(--dim);text-align:center;margin-top:8px}
+    .stat-row{display:flex;gap:8px;margin-bottom:16px}
+    .stat-box{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:12px;text-align:center}
+    .stat-box .num{font-size:22px;font-weight:800;color:var(--blue)}
+    .stat-box .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    .empty{text-align:center;padding:30px;color:var(--dim);font-size:13px}
+    .empty .icon{font-size:36px;display:block;margin-bottom:8px}
+    .footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase}.footer a:hover{color:var(--blue)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--blue);border-radius:2px;padding:10px 20px;font-size:11px;color:var(--blue);z-index:10000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#FF3366;color:#FF3366}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">📊 ChainPoll</div>
+      <div class="tagline">1 wallet = 1 vote • Transparent & verifiable</div>
+    </div>
+    <div class="wallet-bar" id="walletBar">
+      <div><div class="wl">Proofi Wallet</div><div class="wa" id="walletAddr">Not connected</div></div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn sm" id="connectBtn" onclick="handleConnect()">CONNECT</button>
+        <button class="btn sm" id="demoBtn" onclick="enterDemoMode()" style="border-color:#00FF88;color:#00FF88;">TRY DEMO</button>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" id="sPolls">0</div><div class="lbl">Polls</div></div>
+      <div class="stat-box"><div class="num" id="sVotes">0</div><div class="lbl">Total Votes</div></div>
+      <div class="stat-box"><div class="num" id="sVoters">0</div><div class="lbl">Unique Voters</div></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('browse')">Active Polls</div>
+      <div class="tab" onclick="switchTab('create')">Create Poll</div>
+    </div>
+
+    <div id="tab-browse"><div id="pollList"></div></div>
+
+    <div id="tab-create" style="display:none">
+      <div class="section">
+        <div class="section-title">📝 Create a Poll</div>
+        <input type="text" id="pollQuestion" placeholder="What's your question?">
+        <div id="optionInputs"></div>
+        <div class="add-option" onclick="addOption()">+ Add option</div>
+        <button class="btn emerald" style="width:100%;margin-top:12px;padding:12px" onclick="createPoll()" id="createBtn" disabled>Create Poll</button>
+      </div>
+    </div>
+
+    <div class="footer"><a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+  <script>
+    let proofi, walletAddress, isDemoMode = false;
+    let polls = JSON.parse(localStorage.getItem('cp_polls') || 'null');
+    let optionCount = 2;
+
+    if (!polls) {
+      polls = [
+        { id:'p1', question:'What blockchain feature matters most?', options:['Scalability','Security','Decentralization','Interoperability'], votes:[12,8,15,6], voters:{'5Grw..':'Decentralization','5FHn..':'Security'}, creator:'5GrwvaEF...JMakdg', active:true, createdAt:'2024-01-15T10:00:00Z' },
+        { id:'p2', question:'Best programming language for Web3?', options:['Rust','Solidity','TypeScript','Go'], votes:[18,22,14,7], voters:{}, creator:'5FHneW46...xPJ9B3', active:true, createdAt:'2024-01-14T14:00:00Z' },
+        { id:'p3', question:'Should AI agents have wallets?', options:['Yes, definitely','Not yet','Only for read access','No, never'], votes:[25,10,18,3], voters:{}, creator:'5DAAnrj7...VvBZn', active:true, createdAt:'2024-01-13T09:00:00Z' },
+      ];
+      localStorage.setItem('cp_polls', JSON.stringify(polls));
+    }
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'ChainPoll' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Wallet connected!'); renderPolls(); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); });
+      renderPolls();
+      renderOptionInputs();
+      updateStats();
+      document.getElementById('pollQuestion').addEventListener('input', checkCreate);
+    }
+
+    function switchTab(n) {
+      document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active',['browse','create'][i]===n));
+      document.getElementById('tab-browse').style.display = n==='browse'?'block':'none';
+      document.getElementById('tab-create').style.display = n==='create'?'block':'none';
+    }
+
+    function renderOptionInputs() {
+      const c = document.getElementById('optionInputs');
+      c.innerHTML = '';
+      for (let i = 0; i < optionCount; i++) {
+        c.innerHTML += `<div class="option-input"><input type="text" class="opt-input" placeholder="Option ${i+1}" oninput="checkCreate()"><button class="remove" onclick="removeOption(${i})" ${optionCount<=2?'disabled':''}>×</button></div>`;
+      }
+    }
+
+    function addOption() { if (optionCount < 6) { optionCount++; renderOptionInputs(); } }
+    function removeOption(i) { if (optionCount > 2) { optionCount--; renderOptionInputs(); } }
+
+    function checkCreate() {
+      const q = document.getElementById('pollQuestion').value.trim();
+      const opts = [...document.querySelectorAll('.opt-input')].map(i => i.value.trim()).filter(Boolean);
+      document.getElementById('createBtn').disabled = !q || opts.length < 2;
+    }
+
+    async function createPoll() {
+      const q = document.getElementById('pollQuestion').value.trim();
+      const opts = [...document.querySelectorAll('.opt-input')].map(i => i.value.trim()).filter(Boolean);
+      if (!q || opts.length < 2) return;
+
+      const poll = {
+        id: 'p' + Date.now().toString(36),
+        question: q, options: opts,
+        votes: opts.map(() => 0), voters: {},
+        creator: walletAddress ? walletAddress.slice(0,10)+'...'+walletAddress.slice(-4) : 'Anonymous',
+        active: true, createdAt: new Date().toISOString(), onChain: false,
+      };
+
+      if (walletAddress) {
+        try {
+          document.getElementById('createBtn').textContent = 'Creating...';
+          document.getElementById('createBtn').disabled = true;
+          await proofi.storeAchievement({ game:'chainpoll', score:opts.length, achievement:'poll-created', data:{ question:q, options:opts } });
+          poll.onChain = true;
+          toast('📊 Poll created on-chain!');
+        } catch (e) { toast(e.message, true); }
+      } else { toast('Poll created locally'); }
+
+      polls.unshift(poll);
+      localStorage.setItem('cp_polls', JSON.stringify(polls));
+      renderPolls(); updateStats();
+      document.getElementById('pollQuestion').value = '';
+      optionCount = 2; renderOptionInputs();
+      document.getElementById('createBtn').textContent = 'Create Poll';
+      document.getElementById('createBtn').disabled = true;
+      switchTab('browse');
+    }
+
+    async function vote(pollId, optIdx) {
+      const poll = polls.find(p => p.id === pollId);
+      if (!poll) return;
+      const voterKey = walletAddress ? walletAddress.slice(0,8) : 'anon';
+      if (poll.voters[voterKey] !== undefined) { toast('Already voted!', true); return; }
+
+      poll.votes[optIdx]++;
+      poll.voters[voterKey] = optIdx;
+      localStorage.setItem('cp_polls', JSON.stringify(polls));
+
+      if (walletAddress) {
+        try {
+          await proofi.storeAchievement({ game:'chainpoll', score:1, achievement:'vote-cast', data:{ pollId, option: poll.options[optIdx] } });
+          toast('✓ Vote recorded on-chain!');
+        } catch (e) { toast(e.message, true); }
+      } else { toast('Vote recorded locally'); }
+
+      renderPolls(); updateStats();
+    }
+
+    function renderPolls() {
+      const list = document.getElementById('pollList');
+      if (!polls.length) { list.innerHTML = '<div class="empty"><span class="icon">📊</span>No polls yet</div>'; return; }
+      const voterKey = walletAddress ? walletAddress.slice(0,8) : 'anon';
+      list.innerHTML = polls.map(p => {
+        const totalVotes = p.votes.reduce((a,b) => a+b, 0);
+        const hasVoted = p.voters[voterKey] !== undefined;
+        const votedIdx = p.voters[voterKey];
+        return `
+          <div class="poll-card">
+            <div class="poll-question">${p.question}</div>
+            <div class="poll-meta">
+              <span class="tag ${p.active?'tag-active':'tag-closed'}">${p.active?'Active':'Closed'}</span>
+              <span>by ${p.creator}</span>
+              <span>${new Date(p.createdAt).toLocaleDateString()}</span>
+            </div>
+            ${p.options.map((opt, i) => {
+              const pct = totalVotes ? Math.round((p.votes[i]/totalVotes)*100) : 0;
+              const isVoted = hasVoted && votedIdx === i;
+              return `
+                <div class="poll-option ${isVoted?'voted':''} ${hasVoted?'disabled':''}" onclick="${hasVoted?'':`vote('${p.id}',${i})`}">
+                  <div class="bar" style="width:${hasVoted?pct:0}%"></div>
+                  <div class="content">
+                    <div class="radio"></div>
+                    <span class="label">${opt}</span>
+                    ${hasVoted ? `<span class="count">${p.votes[i]}</span><span class="pct">${pct}%</span>` : ''}
+                  </div>
+                </div>`;
+            }).join('')}
+            <div class="total-votes">${totalVotes} vote${totalVotes!==1?'s':''} ${hasVoted?'• ✓ You voted':''}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function updateStats() {
+      document.getElementById('sPolls').textContent = polls.length;
+      document.getElementById('sVotes').textContent = polls.reduce((s,p) => s + p.votes.reduce((a,b)=>a+b,0), 0);
+      const voters = new Set();
+      polls.forEach(p => Object.keys(p.voters).forEach(v => voters.add(v)));
+      document.getElementById('sVoters').textContent = voters.size;
+    }
+
+    function enterDemoMode() {
+      isDemoMode = true;
+      walletAddress = '5Demo' + Math.random().toString(36).slice(2, 14) + 'ABCDEF';
+      updateWalletUI();
+      toast('📊 Demo mode — vote and create polls!');
+      renderPolls();
+    }
+    async function handleConnect() {
+      if (walletAddress) { proofi.disconnect(); walletAddress=null; isDemoMode=false; updateWalletUI(); return; }
+      try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){const msg=e.message==='User closed wallet'?'Cancelled':'Could not connect — try demo mode';toast(msg,true);document.getElementById('connectBtn').textContent='CONNECT'}
+    }
+    function updateWalletUI() {
+      const bar=document.getElementById('walletBar'),addr=document.getElementById('walletAddr'),btn=document.getElementById('connectBtn');
+      if(walletAddress){bar.classList.add('connected');addr.textContent=(isDemoMode?'🎮 ':'')+walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);btn.textContent='DISCONNECT';btn.className='btn sm red';document.getElementById('demoBtn').style.display='none'}
+      else{bar.classList.remove('connected');addr.textContent='Not connected';btn.textContent='CONNECT';btn.className='btn sm';document.getElementById('demoBtn').style.display=''}
+    }
+    let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+    // Auto-connect from Proofi Chrome extension
+    function checkExtensionConnect() {
+      if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {
+        walletAddress = window.__proofi_extension__.address;
+        // Sync token to localStorage so SDK API calls work
+        if (window.__proofi_extension__.token) {
+          try { localStorage.setItem('proofi_token', window.__proofi_extension__.token); } catch(e) {}
+        }        // Also sync with ProofiSDK so store operations work
+        if (typeof proofi !== 'undefined') {
+          proofi.address = walletAddress;
+          proofi.connected = true;
+        }        updateWalletUI();
+        toast('WALLET CONNECTED VIA EXTENSION');
+      }
+    }
+    checkExtensionConnect();
+    window.addEventListener('proofi-extension-ready', checkExtensionConnect);
+
+    init();
+  </script>
+</body>
+</html>

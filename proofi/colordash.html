@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ColorDash — Proofi Stroop Challenge</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--cyan:#00E5FF;--green:#00FF88;--magenta:#FF3366;--yellow:#FFE100;--purple:#8B5CF6;--bg:#000;--surface:#0A0A0A;--card:#111;--border:#1A1A1A;--text:#F0F0F0;--dim:#555}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(255,51,102,0.04) 0%,transparent 60%);pointer-events:none}
+
+    .container{max-width:540px;margin:0 auto;padding:16px}
+
+    /* Header */
+    .header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--border);margin-bottom:20px}
+    .title{font-size:32px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--magenta),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .subtitle{font-size:10px;color:var(--dim);letter-spacing:4px;text-transform:uppercase;margin-top:4px}
+
+    /* Wallet Bar */
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:20px}
+    .wallet-bar.connected{border-color:var(--green);box-shadow:0 0 20px rgba(0,255,136,0.05)}
+    .wallet-info{display:flex;align-items:center;gap:10px}
+    .wallet-dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+    .wallet-dot.on{background:var(--green);box-shadow:0 0 8px rgba(0,255,136,0.4)}
+    .wallet-label{font-size:12px;color:var(--dim)}
+    .wallet-addr{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan)}
+    .wallet-actions{display:flex;gap:6px}
+    .btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border:2px solid var(--cyan);background:transparent;color:var(--cyan);border-radius:6px;cursor:pointer;transition:all .15s}
+    .btn:hover{background:var(--cyan);color:#000;box-shadow:0 0 20px rgba(0,229,255,0.3)}
+    .btn:active{transform:scale(.97)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.green{border-color:var(--green);color:var(--green)}.btn.green:hover{background:var(--green);color:#000}
+    .btn.magenta{border-color:var(--magenta);color:var(--magenta)}.btn.magenta:hover{background:var(--magenta);color:#fff}
+    .btn.yellow{border-color:var(--yellow);color:var(--yellow)}.btn.yellow:hover{background:var(--yellow);color:#000}
+    .btn.purple{border-color:var(--purple);color:var(--purple)}.btn.purple:hover{background:var(--purple);color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+
+    /* Score Panel */
+    .score-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:20px}
+    .score-item{background:var(--surface);border:1px solid var(--border);padding:14px 10px;text-align:center;border-radius:8px}
+    .score-label{font-size:9px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:4px}
+    .score-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700}
+    .score-value.cyan{color:var(--cyan)}.score-value.green{color:var(--green)}
+    .score-value.yellow{color:var(--yellow)}.score-value.magenta{color:var(--magenta)}
+
+    /* Game Area */
+    .game-area{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:0;margin-bottom:16px;position:relative;overflow:hidden;transition:all .3s;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .game-area.active{border-color:var(--cyan);box-shadow:0 0 40px rgba(0,229,255,0.08)}
+    .game-area.correct-flash{border-color:var(--green);box-shadow:0 0 50px rgba(0,255,136,0.15)}
+    .game-area.wrong-flash{border-color:var(--magenta);box-shadow:0 0 50px rgba(255,51,102,0.15)}
+
+    /* Round Counter */
+    .round-bar{display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 20px 0;position:absolute;top:0;left:0;right:0}
+    .round-info{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:2px}
+    .round-timer{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--yellow);letter-spacing:1px}
+
+    /* Progress Dots */
+    .round-dots{display:flex;gap:4px;padding:0 20px;position:absolute;top:38px;left:0;right:0}
+    .round-dot{flex:1;height:3px;background:var(--border);border-radius:2px;transition:background .3s}
+    .round-dot.correct{background:var(--green)}
+    .round-dot.wrong{background:var(--magenta)}
+    .round-dot.current{background:var(--cyan);animation:dotPulse 1s infinite}
+    @keyframes dotPulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+    /* Color Word Display */
+    .color-word{font-size:56px;font-weight:900;letter-spacing:2px;text-transform:uppercase;text-align:center;padding:10px;animation:wordAppear .25s ease;user-select:none}
+    @keyframes wordAppear{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+
+    .instruction{font-size:11px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;margin-top:8px;text-align:center}
+
+    /* Color Buttons */
+    .color-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:16px;width:100%}
+    .color-btn{padding:16px 8px;border:2px solid var(--border);background:var(--card);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .12s;text-align:center;user-select:none;-webkit-tap-highlight-color:transparent}
+    .color-btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .color-btn:active{transform:scale(.95)}
+    .color-btn.correct-pick{border-color:var(--green)!important;background:rgba(0,255,136,0.1)!important;animation:correctPop .4s ease}
+    .color-btn.wrong-pick{border-color:var(--magenta)!important;background:rgba(255,51,102,0.1)!important;animation:shake .4s ease}
+    @keyframes correctPop{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+    /* Idle/Start State */
+    .game-idle{text-align:center;padding:40px 20px}
+    .game-idle .icon{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .game-idle .desc{font-size:14px;color:var(--dim);line-height:1.6;margin-bottom:8px;max-width:360px;margin-left:auto;margin-right:auto}
+    .game-idle .hint{font-size:11px;color:var(--magenta);font-weight:700;letter-spacing:1px;margin-bottom:20px}
+
+    /* Result Screen */
+    .result-screen{display:none;text-align:center;padding:30px 20px}
+    .result-score{font-size:72px;font-weight:900;background:linear-gradient(135deg,var(--magenta),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+    .result-unit{font-size:14px;color:var(--dim);letter-spacing:4px;text-transform:uppercase;margin-top:4px}
+    .result-grade{font-size:20px;font-weight:700;margin-top:12px;letter-spacing:3px}
+    .result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+    .result-stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px}
+    .result-stat .val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700}
+    .result-stat .lbl{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+    .result-actions{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+
+    /* Streak Indicator */
+    .streak-bar{position:absolute;bottom:12px;left:20px;right:20px;display:flex;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity .3s}
+    .streak-bar.show{opacity:1}
+    .streak-fire{font-size:18px;animation:fireWiggle .5s ease infinite}
+    @keyframes fireWiggle{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+    .streak-text{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--yellow);letter-spacing:2px}
+
+    /* Achievements */
+    .achievements{margin-top:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .achievements-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .achievements-title{font-size:11px;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+    .achievement-count{font-size:10px;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+    .achievement-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+    .achievement-item:last-child{border-bottom:none}
+    .achievement-icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(0,229,255,0.05);border:1px solid var(--border);border-radius:8px}
+    .achievement-icon.unlocked{border-color:var(--green);background:rgba(0,255,136,0.1)}
+    .achievement-info{flex:1}
+    .achievement-name{font-size:11px;font-weight:700;letter-spacing:1px}
+    .achievement-desc{font-size:9px;color:var(--dim);margin-top:2px}
+    .achievement-badge{font-size:9px;padding:3px 8px;letter-spacing:1px;border-radius:4px}
+    .achievement-badge.on-chain{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.3)}
+    .achievement-badge.locked{color:var(--dim);border:1px solid var(--border)}
+
+    /* Toast */
+    .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--surface);border:2px solid var(--green);padding:12px 24px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);letter-spacing:2px;z-index:10000;transition:transform .3s ease;box-shadow:0 0 40px rgba(0,255,136,0.2);border-radius:8px}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .toast.error{border-color:var(--magenta);color:var(--magenta);box-shadow:0 0 40px rgba(255,51,102,0.2)}
+
+    /* Footer */
+    .footer{text-align:center;padding:24px 0;margin-top:20px;border-top:1px solid var(--border)}
+    .footer .powered{display:flex;align-items:center;justify-content:center;gap:8px}
+    .footer .dot{width:4px;height:4px;background:var(--magenta);display:inline-block;border-radius:50%}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:3px;text-transform:uppercase;transition:color .15s}
+    .footer a:hover{color:var(--cyan)}
+
+    /* Confetti */
+    .confetti-piece{position:fixed;width:8px;height:8px;z-index:9999;pointer-events:none;animation:confettiFall linear forwards}
+    @keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+
+    /* Responsive */
+    @media(max-width:480px){
+      .container{padding:12px}
+      .title{font-size:24px}
+      .color-word{font-size:40px}
+      .color-buttons{grid-template-columns:repeat(3,1fr);gap:6px;padding:12px}
+      .color-btn{padding:14px 6px;font-size:11px;letter-spacing:1px}
+      .game-area{min-height:280px}
+      .score-value{font-size:20px}
+      .result-score{font-size:56px}
+      .result-stat .val{font-size:16px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="title">🎨 ColorDash</div>
+      <div class="subtitle">read the word • ignore the color • prove your brain</div>
+    </div>
+
+    <!-- Wallet Bar -->
+    <div class="wallet-bar" id="walletBar">
+      <div class="wallet-info">
+        <div class="wallet-dot" id="walletDot"></div>
+        <span class="wallet-label" id="walletLabel">No wallet connected</span>
+        <span class="wallet-addr" id="walletAddr"></span>
+      </div>
+      <div class="wallet-actions">
+        <button class="btn sm" id="connectBtn" onclick="handleConnect()">CONNECT</button>
+        <button class="btn sm green" id="demoBtn" onclick="enterDemoMode()">TRY DEMO</button>
+      </div>
+    </div>
+
+    <!-- Score Panel -->
+    <div class="score-panel">
+      <div class="score-item">
+        <div class="score-label">Best Score</div>
+        <div class="score-value magenta" id="bestScore">—</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Best Streak</div>
+        <div class="score-value yellow" id="bestStreak">—</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Games</div>
+        <div class="score-value cyan" id="gamesPlayed">0</div>
+      </div>
+    </div>
+
+    <!-- Lock Gate (requires SpeedType score ≥ 50 WPM) -->
+    <div id="lockGate" style="display:none">
+      <div class="game-area" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center">
+        <div style="font-size:64px;opacity:0.6">🔒</div>
+        <div style="font-size:18px;font-weight:800;color:var(--magenta)">LOCKED</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.6;max-width:360px">
+          ColorDash requires a <strong style="color:var(--cyan)">SpeedType score of 50+ WPM</strong> stored on-chain.
+          <br>Prove your typing skills first!
+        </div>
+        <div id="lockStatus" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);margin-top:8px"></div>
+        <a href="/speedtype" class="btn cyan" style="margin-top:12px;text-decoration:none;display:inline-block;padding:14px 32px;font-size:13px">⌨️ PLAY SPEEDTYPE FIRST</a>
+        <button class="btn sm" onclick="recheckUnlock()" style="margin-top:4px;font-size:10px;color:var(--dim);border-color:var(--border)">🔄 RECHECK</button>
+      </div>
+    </div>
+
+    <!-- Game View -->
+    <div id="gameView">
+      <div class="game-area" id="gameArea">
+        <!-- Round bar (hidden until playing) -->
+        <div class="round-bar" id="roundBar" style="display:none">
+          <span class="round-info" id="roundInfo">1 / 20</span>
+          <span class="round-timer" id="roundTimer">0.0s</span>
+        </div>
+        <div class="round-dots" id="roundDots" style="display:none"></div>
+
+        <!-- Idle State -->
+        <div class="game-idle" id="gameIdle">
+          <div class="icon">🎨</div>
+          <div class="desc">A color NAME appears written in a DIFFERENT color. Tap the button matching the <strong>WRITTEN WORD</strong>, not the display color!</div>
+          <div class="hint">⚠️ Trust the text, not your eyes</div>
+        </div>
+
+        <!-- Play State (hidden) -->
+        <div id="playState" style="display:none;width:100%;text-align:center">
+          <div class="color-word" id="colorWord">RED</div>
+          <div class="instruction">TAP THE WRITTEN WORD ↓</div>
+          <div class="color-buttons" id="colorButtons"></div>
+        </div>
+
+        <!-- Streak -->
+        <div class="streak-bar" id="streakBar">
+          <span class="streak-fire">🔥</span>
+          <span class="streak-text" id="streakText">3 STREAK</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div style="display:flex;gap:8px">
+        <button class="btn magenta" id="startBtn" onclick="startGame()" style="flex:1">▶ START GAME</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="result-screen" id="resultScreen">
+      <div class="result-score" id="resultScore">0</div>
+      <div class="result-unit">Points</div>
+      <div class="result-grade" id="resultGrade"></div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="val green" id="resultCorrect">0/20</div>
+          <div class="lbl">Correct</div>
+        </div>
+        <div class="result-stat">
+          <div class="val yellow" id="resultAvgTime">0ms</div>
+          <div class="lbl">Avg Speed</div>
+        </div>
+        <div class="result-stat">
+          <div class="val magenta" id="resultMaxStreak">0</div>
+          <div class="lbl">Max Streak</div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn magenta" onclick="startGame()">▶ PLAY AGAIN</button>
+        <button class="btn" onclick="resetView()">↺ MENU</button>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="achievements" id="achievementsPanel">
+      <div class="achievements-header">
+        <span class="achievements-title">🏆 Achievements</span>
+        <span class="achievement-count" id="achievementCount">0 / 8</span>
+      </div>
+      <div id="achievementsList"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="powered">
+        <span class="dot"></span>
+        <a href="https://proofi-virid.vercel.app" target="_blank">Powered by Proofi × Cere DDC</a>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Proofi SDK -->
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+
+  <script>
+    // ── Color Definitions ──
+    const COLORS = [
+      { name: 'RED',     hex: '#FF3366' },
+      { name: 'BLUE',    hex: '#3B82F6' },
+      { name: 'GREEN',   hex: '#00FF88' },
+      { name: 'YELLOW',  hex: '#FFE100' },
+      { name: 'PURPLE',  hex: '#8B5CF6' },
+      { name: 'CYAN',    hex: '#00E5FF' },
+    ];
+
+    const TOTAL_ROUNDS = 20;
+
+    // ── State ──
+    let proofi = null;
+    let walletAddress = null;
+    let isDemoMode = false;
+
+    // Game state
+    let isPlaying = false;
+    let currentRound = 0;
+    let score = 0;
+    let correctCount = 0;
+    let streak = 0;
+    let maxStreak = 0;
+    let roundResults = []; // 'correct' | 'wrong' per round
+    let roundStartTime = 0;
+    let gameStartTime = 0;
+    let roundTimes = [];
+    let answerWord = ''; // the correct answer (the WRITTEN word)
+    let locked = false;
+
+    // Persistent
+    let bestScore = 0;
+    let bestStreak = 0;
+    let gamesPlayed = 0;
+
+    // Achievements
+    const ACHIEVEMENTS = [
+      { id: 'first_game', name: 'FIRST DASH', desc: 'Complete your first ColorDash game', icon: '🎨', check: () => gamesPlayed >= 1 },
+      { id: 'score_100', name: 'TRIPLE DIGITS', desc: 'Score 100+ points', icon: '💯', check: () => bestScore >= 100 },
+      { id: 'score_200', name: 'COLOR MASTER', desc: 'Score 200+ points', icon: '🌈', check: () => bestScore >= 200 },
+      { id: 'perfect', name: 'PERFECT VISION', desc: 'Get all 20 rounds correct', icon: '👁️', check: () => roundResults.length === TOTAL_ROUNDS && roundResults.every(r => r === 'correct') },
+      { id: 'streak_5', name: 'ON FIRE', desc: 'Get a 5 streak', icon: '🔥', check: () => bestStreak >= 5 },
+      { id: 'streak_10', name: 'UNSTOPPABLE', desc: 'Get a 10 streak', icon: '💀', check: () => bestStreak >= 10 },
+      { id: 'streak_20', name: 'FLAWLESS', desc: 'Get a 20 streak (perfect game!)', icon: '💎', check: () => bestStreak >= 20 },
+      { id: 'speed_demon', name: 'SPEED DEMON', desc: 'Average under 500ms per round', icon: '⚡', check: () => { const avg = roundTimes.length > 0 ? roundTimes.reduce((a,b) => a+b, 0) / roundTimes.length : Infinity; return avg < 500 && roundTimes.length === TOTAL_ROUNDS; }},
+    ];
+    let unlockedAchievements = new Set();
+    let onChainAchievements = new Set();
+    let achievementQueue = [];
+    let storingAchievement = false;
+
+    let gameUnlocked = false;
+    const REQUIRED_WPM = 50;
+    const API_URL = 'https://proofi-api-production.up.railway.app';
+
+    // ── Init ──
+    function init() {
+      proofi = new ProofiSDK({
+        walletUrl: 'https://proofi-virid.vercel.app/app',
+        apiUrl: API_URL,
+        appName: 'COLORDASH',
+      });
+
+      proofi.on('connected', (data) => {
+        walletAddress = data.address;
+        updateWalletUI();
+        toast('🎨 WALLET CONNECTED');
+        syncAchievementsToChain();
+        checkUnlock(data.address);
+      });
+
+      proofi.on('disconnected', () => {
+        walletAddress = null;
+        updateWalletUI();
+        showLockGate('Connect your wallet to verify SpeedType score');
+      });
+
+      // Load saved data
+      try {
+        const saved = JSON.parse(localStorage.getItem('colordash_data') || '{}');
+        if (saved.bestScore) bestScore = saved.bestScore;
+        if (saved.bestStreak) bestStreak = saved.bestStreak;
+        if (saved.gamesPlayed) gamesPlayed = saved.gamesPlayed;
+        if (saved.achievements) saved.achievements.forEach(id => unlockedAchievements.add(id));
+      } catch {}
+
+      updateScorePanel();
+      renderAchievements();
+
+      // Check unlock on load — if extension auto-connects, checkExtensionConnect handles it
+      // Otherwise show lock gate
+      if (!walletAddress) {
+        showLockGate('Connect your wallet to verify your SpeedType score');
+      }
+    }
+
+    // ── Unlock Gate ──
+    async function checkUnlock(address) {
+      if (!address) { showLockGate('Connect your wallet to verify SpeedType score'); return; }
+      const lockStatus = document.getElementById('lockStatus');
+      if (lockStatus) lockStatus.textContent = 'Checking SpeedType achievements on DDC...';
+
+      try {
+        const res = await fetch(`${API_URL}/game/achievements/${address}`);
+        const data = await res.json();
+
+        if (data.ok && data.achievements) {
+          // Look for SpeedType achievements with WPM >= REQUIRED_WPM
+          const qualifying = data.achievements.find(a => {
+            // Check if it's a speedtype achievement by reading the CDN content or checking the game field
+            // The index entry has: credentialType: 'GameAchievement', game: 'speedtype'
+            if (a.game === 'speedtype') return true;
+            // Fallback: check CID content
+            return false;
+          });
+
+          if (qualifying) {
+            // Found a speedtype achievement — now verify the score from DDC
+            try {
+              const credRes = await fetch(`${API_URL}/ddc/read/${qualifying.cid}`);
+              const credData = await credRes.json();
+              const claim = credData?.content?.credentialSubject?.claim;
+              const wpm = claim?.bestWpm || claim?.score || 0;
+
+              if (wpm >= REQUIRED_WPM) {
+                unlockGame(wpm);
+                return;
+              } else {
+                showLockGate(`SpeedType best: ${wpm} WPM — need ${REQUIRED_WPM}+ to unlock`);
+                return;
+              }
+            } catch (e) {
+              // If we can't read the credential, trust that they have one
+              unlockGame(0);
+              return;
+            }
+          }
+
+          // No speedtype achievements at all
+          showLockGate(`No SpeedType scores found on-chain for this wallet`);
+        } else {
+          showLockGate('No achievements found — play SpeedType first!');
+        }
+      } catch (err) {
+        console.error('Unlock check failed:', err);
+        showLockGate('Could not verify — check connection');
+      }
+    }
+
+    function unlockGame(wpm) {
+      gameUnlocked = true;
+      document.getElementById('lockGate').style.display = 'none';
+      document.getElementById('gameView').style.display = '';
+      if (wpm > 0) toast(`🔓 UNLOCKED — SpeedType ${wpm} WPM verified on DDC`);
+    }
+
+    function showLockGate(msg) {
+      gameUnlocked = false;
+      document.getElementById('lockGate').style.display = '';
+      document.getElementById('gameView').style.display = 'none';
+      const lockStatus = document.getElementById('lockStatus');
+      if (lockStatus) lockStatus.textContent = msg || '';
+    }
+
+    async function recheckUnlock() {
+      if (walletAddress) {
+        await checkUnlock(walletAddress);
+      } else {
+        toast('Connect your wallet first', true);
+      }
+    }
+
+    // ── Wallet ──
+    function enterDemoMode() {
+      isDemoMode = true;
+      walletAddress = '5Demo' + Math.random().toString(36).slice(2, 14) + 'ABCDEF';
+      updateWalletUI();
+      toast('🎨 DEMO MODE ACTIVE');
+    }
+
+    async function handleConnect() {
+      if (walletAddress) {
+        proofi.disconnect();
+        walletAddress = null;
+        isDemoMode = false;
+        updateWalletUI();
+        return;
+      }
+      try {
+        document.getElementById('connectBtn').textContent = 'LINKING...';
+        const addr = await proofi.connect();
+        walletAddress = addr;
+        updateWalletUI();
+      } catch (err) {
+        toast(err.message === 'User closed wallet' ? 'CANCELLED' : 'CONNECT FAILED — TRY DEMO', true);
+        document.getElementById('connectBtn').textContent = 'CONNECT';
+      }
+    }
+
+    function updateWalletUI() {
+      const bar = document.getElementById('walletBar');
+      const dot = document.getElementById('walletDot');
+      const label = document.getElementById('walletLabel');
+      const addr = document.getElementById('walletAddr');
+      const btn = document.getElementById('connectBtn');
+      if (walletAddress) {
+        bar.classList.add('connected');
+        dot.classList.add('on');
+        label.textContent = isDemoMode ? '🎮 Demo' : 'Connected';
+        addr.textContent = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+        btn.textContent = 'DISCONNECT';
+        btn.className = 'btn sm magenta';
+        document.getElementById('demoBtn').style.display = 'none';
+      } else {
+        bar.classList.remove('connected');
+        dot.classList.remove('on');
+        label.textContent = 'No wallet connected';
+        addr.textContent = '';
+        btn.textContent = 'CONNECT';
+        btn.className = 'btn sm';
+        document.getElementById('demoBtn').style.display = '';
+      }
+    }
+
+    // ── Start Game ──
+    function startGame() {
+      isPlaying = true;
+      currentRound = 0;
+      score = 0;
+      correctCount = 0;
+      streak = 0;
+      maxStreak = 0;
+      roundResults = [];
+      roundTimes = [];
+      gameStartTime = performance.now();
+
+      document.getElementById('resultScreen').style.display = 'none';
+      document.getElementById('gameView').style.display = '';
+      document.getElementById('gameIdle').style.display = 'none';
+      document.getElementById('playState').style.display = '';
+      document.getElementById('roundBar').style.display = '';
+      document.getElementById('startBtn').style.display = 'none';
+      document.getElementById('gameArea').className = 'game-area active';
+
+      // Create round dots
+      const dotsEl = document.getElementById('roundDots');
+      dotsEl.style.display = 'flex';
+      dotsEl.innerHTML = Array.from({ length: TOTAL_ROUNDS }, () => '<div class="round-dot"></div>').join('');
+
+      document.getElementById('streakBar').classList.remove('show');
+
+      nextRound();
+    }
+
+    // ── Next Round ──
+    function nextRound() {
+      if (currentRound >= TOTAL_ROUNDS) {
+        endGame();
+        return;
+      }
+
+      locked = false;
+      currentRound++;
+      roundStartTime = performance.now();
+
+      // Update round info
+      document.getElementById('roundInfo').textContent = currentRound + ' / ' + TOTAL_ROUNDS;
+      updateTimerDisplay();
+
+      // Mark current dot
+      const dots = document.querySelectorAll('.round-dot');
+      if (dots[currentRound - 1]) dots[currentRound - 1].classList.add('current');
+
+      // Pick a random word and a DIFFERENT display color
+      const wordIndex = Math.floor(Math.random() * COLORS.length);
+      let colorIndex;
+      do { colorIndex = Math.floor(Math.random() * COLORS.length); } while (colorIndex === wordIndex);
+
+      answerWord = COLORS[wordIndex].name;
+      const displayColor = COLORS[colorIndex].hex;
+
+      // Show the word
+      const wordEl = document.getElementById('colorWord');
+      wordEl.textContent = answerWord;
+      wordEl.style.color = displayColor;
+      wordEl.style.animation = 'none';
+      wordEl.offsetHeight; // reflow
+      wordEl.style.animation = '';
+
+      // Generate buttons: always show all 6 colors as options (shuffled)
+      const shuffled = [...COLORS].sort(() => Math.random() - 0.5);
+      const buttonsEl = document.getElementById('colorButtons');
+      buttonsEl.innerHTML = shuffled.map(c =>
+        `<button class="color-btn" style="color:${c.hex};border-color:${c.hex}22" onclick="pickColor('${c.name}', this)" data-name="${c.name}">${c.name}</button>`
+      ).join('');
+    }
+
+    // ── Pick Color ──
+    function pickColor(name, btnEl) {
+      if (locked || !isPlaying) return;
+      locked = true;
+
+      const elapsed = performance.now() - roundStartTime;
+      roundTimes.push(elapsed);
+
+      const dots = document.querySelectorAll('.round-dot');
+      const currentDot = dots[currentRound - 1];
+      if (currentDot) currentDot.classList.remove('current');
+
+      if (name === answerWord) {
+        // Correct!
+        correctCount++;
+        streak++;
+        if (streak > maxStreak) maxStreak = streak;
+
+        // Score: base 10 + speed bonus (faster = more points, max bonus at <300ms)
+        const speedBonus = Math.max(0, Math.round((2000 - elapsed) / 100));
+        const streakBonus = Math.min(streak - 1, 5); // up to 5 bonus for streak
+        const roundScore = 10 + speedBonus + streakBonus;
+        score += roundScore;
+
+        roundResults.push('correct');
+        if (currentDot) currentDot.classList.add('correct');
+
+        btnEl.classList.add('correct-pick');
+        document.getElementById('gameArea').classList.add('correct-flash');
+        setTimeout(() => document.getElementById('gameArea').classList.remove('correct-flash'), 300);
+
+        // Streak display
+        if (streak >= 3) {
+          document.getElementById('streakBar').classList.add('show');
+          document.getElementById('streakText').textContent = streak + ' STREAK!';
+        }
+      } else {
+        // Wrong
+        streak = 0;
+        roundResults.push('wrong');
+        if (currentDot) currentDot.classList.add('wrong');
+
+        btnEl.classList.add('wrong-pick');
+        document.getElementById('gameArea').classList.add('wrong-flash');
+        setTimeout(() => document.getElementById('gameArea').classList.remove('wrong-flash'), 300);
+
+        // Highlight correct answer
+        document.querySelectorAll('.color-btn').forEach(b => {
+          if (b.dataset.name === answerWord) b.classList.add('correct-pick');
+        });
+
+        document.getElementById('streakBar').classList.remove('show');
+      }
+
+      // Wait then next round
+      setTimeout(() => {
+        document.querySelectorAll('.color-btn').forEach(b => {
+          b.classList.remove('correct-pick', 'wrong-pick');
+        });
+        nextRound();
+      }, 600);
+    }
+
+    // ── Timer ──
+    function updateTimerDisplay() {
+      if (!isPlaying) return;
+      const elapsed = (performance.now() - gameStartTime) / 1000;
+      document.getElementById('roundTimer').textContent = elapsed.toFixed(1) + 's';
+      if (isPlaying) requestAnimationFrame(updateTimerDisplay);
+    }
+
+    // ── End Game ──
+    function endGame() {
+      isPlaying = false;
+      gamesPlayed++;
+
+      let isNewBest = false;
+      if (score > bestScore) { bestScore = score; isNewBest = true; }
+      if (maxStreak > bestStreak) bestStreak = maxStreak;
+
+      saveData();
+      updateScorePanel();
+
+      // Show result
+      document.getElementById('gameView').style.display = 'none';
+      document.getElementById('resultScreen').style.display = '';
+
+      animateNumber('resultScore', 0, score, 1000);
+
+      document.getElementById('resultCorrect').textContent = correctCount + '/' + TOTAL_ROUNDS;
+      document.getElementById('resultCorrect').style.color = correctCount >= 18 ? 'var(--green)' : correctCount >= 14 ? 'var(--yellow)' : 'var(--magenta)';
+
+      const avgTime = roundTimes.length > 0 ? Math.round(roundTimes.reduce((a, b) => a + b, 0) / roundTimes.length) : 0;
+      document.getElementById('resultAvgTime').textContent = avgTime + 'ms';
+      document.getElementById('resultMaxStreak').textContent = maxStreak;
+
+      // Grade
+      const grade = score >= 300 ? { text: '🌈 CHROMATIC GOD', color: 'var(--cyan)' } :
+                    score >= 250 ? { text: '💎 COLOR MASTER', color: 'var(--green)' } :
+                    score >= 200 ? { text: '🔥 BRILLIANT', color: 'var(--green)' } :
+                    score >= 150 ? { text: '👍 GREAT', color: 'var(--yellow)' } :
+                    score >= 100 ? { text: '📝 GOOD', color: 'var(--yellow)' } :
+                    { text: '🐢 KEEP TRYING', color: 'var(--magenta)' };
+      const gradeEl = document.getElementById('resultGrade');
+      gradeEl.textContent = grade.text;
+      gradeEl.style.color = grade.color;
+
+      if (isNewBest && score > 50) {
+        toast('🏆 NEW BEST: ' + score + ' POINTS!');
+        spawnConfetti();
+      }
+
+      checkAchievements();
+    }
+
+    function resetView() {
+      document.getElementById('resultScreen').style.display = 'none';
+      document.getElementById('gameView').style.display = '';
+      document.getElementById('gameIdle').style.display = '';
+      document.getElementById('playState').style.display = 'none';
+      document.getElementById('roundBar').style.display = 'none';
+      document.getElementById('roundDots').style.display = 'none';
+      document.getElementById('startBtn').style.display = '';
+      document.getElementById('gameArea').className = 'game-area';
+      document.getElementById('streakBar').classList.remove('show');
+    }
+
+    // ── Score Panel ──
+    function updateScorePanel() {
+      document.getElementById('bestScore').textContent = bestScore > 0 ? bestScore : '—';
+      document.getElementById('bestStreak').textContent = bestStreak > 0 ? bestStreak : '—';
+      document.getElementById('gamesPlayed').textContent = gamesPlayed;
+    }
+
+    // ── Persistence ──
+    function saveData() {
+      localStorage.setItem('colordash_data', JSON.stringify({
+        bestScore, bestStreak, gamesPlayed,
+        achievements: [...unlockedAchievements],
+      }));
+    }
+
+    // ── Achievements ──
+    function checkAchievements() {
+      ACHIEVEMENTS.forEach(a => {
+        if (!unlockedAchievements.has(a.id) && a.check()) {
+          unlockAchievement(a);
+        }
+      });
+    }
+
+    function unlockAchievement(achievement) {
+      unlockedAchievements.add(achievement.id);
+      saveData();
+      toast('🏆 ' + achievement.name + ' UNLOCKED!');
+      renderAchievements();
+      if (walletAddress && !isDemoMode) storeAchievementOnChain(achievement);
+    }
+
+    function syncAchievementsToChain() {
+      if (!walletAddress || isDemoMode) return;
+      ACHIEVEMENTS.forEach(a => {
+        if (unlockedAchievements.has(a.id) && !onChainAchievements.has(a.id)) {
+          storeAchievementOnChain(a);
+        }
+      });
+    }
+
+    async function storeAchievementOnChain(achievement) {
+      if (storingAchievement) { achievementQueue.push(achievement); return; }
+      storingAchievement = true;
+      try {
+        await proofi.storeAchievement({
+          game: 'colordash',
+          score: bestScore,
+          achievement: 'streak-' + bestStreak,
+          data: {
+            name: achievement.name,
+            description: achievement.desc,
+            bestScore, bestStreak, gamesPlayed,
+          },
+        });
+        onChainAchievements.add(achievement.id);
+        toast('✓ ' + achievement.name + ' STORED ON DDC');
+      } catch (err) {
+        console.error('Store failed:', err);
+        toast('Store failed: ' + err.message, true);
+      }
+      storingAchievement = false;
+      if (achievementQueue.length > 0) storeAchievementOnChain(achievementQueue.shift());
+    }
+
+    function renderAchievements() {
+      document.getElementById('achievementCount').textContent = unlockedAchievements.size + ' / ' + ACHIEVEMENTS.length;
+      document.getElementById('achievementsList').innerHTML = ACHIEVEMENTS.map(a => {
+        const u = unlockedAchievements.has(a.id);
+        return `<div class="achievement-item" style="opacity:${u ? 1 : .5}">
+          <div class="achievement-icon ${u ? 'unlocked' : ''}">${a.icon}</div>
+          <div class="achievement-info">
+            <div class="achievement-name">${a.name}</div>
+            <div class="achievement-desc">${a.desc}</div>
+          </div>
+          ${u ? '<span class="achievement-badge on-chain">✓ UNLOCKED</span>' : '<span class="achievement-badge locked">LOCKED</span>'}
+        </div>`;
+      }).join('');
+    }
+
+    // ── Helpers ──
+    function animateNumber(id, start, end, duration) {
+      const el = document.getElementById(id);
+      const t0 = performance.now();
+      function update(now) {
+        const p = Math.min((now - t0) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(start + (end - start) * eased);
+        if (p < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    function spawnConfetti() {
+      const colors = ['#FF3366', '#FFE100', '#00E5FF', '#00FF88', '#8B5CF6'];
+      for (let i = 0; i < 40; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.top = '-10px';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.width = (4 + Math.random() * 8) + 'px';
+        piece.style.height = (4 + Math.random() * 8) + 'px';
+        piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+        piece.style.animationDelay = (Math.random() * 0.5) + 's';
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 4000);
+      }
+    }
+
+    let toastTimeout;
+    function toast(msg, isError = false) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => el.className = 'toast', 3000);
+    }
+
+    // ── Extension Auto-Connect ──
+    function checkExtensionConnect() {
+      if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {
+        walletAddress = window.__proofi_extension__.address;
+        if (window.__proofi_extension__.token) {
+          try { localStorage.setItem('proofi_token', window.__proofi_extension__.token); } catch(e) {}
+        }
+        if (typeof proofi !== 'undefined') {
+          proofi.address = walletAddress;
+          proofi.connected = true;
+        }
+        updateWalletUI();
+        toast('WALLET CONNECTED VIA EXTENSION');
+        // Check DDC for SpeedType unlock
+        checkUnlock(walletAddress);
+      }
+    }
+    checkExtensionConnect();
+    window.addEventListener('proofi-extension-ready', checkExtensionConnect);
+
+    // ── Boot ──
+    init();
+  </script>
+</body>
+</html>

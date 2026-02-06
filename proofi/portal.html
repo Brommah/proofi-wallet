@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Proofi — Portal</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%233B82F6'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='20' font-weight='bold' fill='white'%3E◇%3C/text%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --accent: #3B82F6; --accent-hover: #2563EB; --purple: #8B5CF6;
+      --bg: #FAFAFA; --surface: #FFFFFF; --border: #E5E7EB;
+      --text: #111827; --dim: #6B7280; --muted: #9CA3AF;
+      --green: #10B981; --red: #EF4444;
+      --radius: 12px; --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); 
+           -webkit-font-smoothing: antialiased; min-height: 100dvh; padding-bottom: calc(72px + var(--safe-bottom)); }
+    h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
+    
+    /* ═══ HEADER ═══ */
+    .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px;
+              display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .header-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; 
+                    font-family: 'Space Grotesk', sans-serif; }
+    .header-logo { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex;
+                   align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 16px; }
+    .header-user { font-size: 13px; color: var(--dim); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    /* ═══ CONTENT ═══ */
+    .content { max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+    .page { display: none; } .page.active { display: block; }
+    
+    /* ═══ STATUS CARD ═══ */
+    .status-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .status-row { display: flex; align-items: center; justify-content: space-between; }
+    .status-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .status-value { font-size: 14px; font-weight: 500; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .status-dot.green { background: var(--green); } .status-dot.red { background: var(--red); }
+    .status-divider { height: 1px; background: var(--border); margin: 14px 0; }
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); }
+    
+    /* ═══ CARDS ═══ */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    
+    /* ═══ FORM ═══ */
+    .form-label { font-size: 12px; font-weight: 600; color: var(--dim); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.3px; }
+    .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); outline: none; transition: border-color 0.15s; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: none; min-height: 100px; }
+    .form-group { margin-bottom: 16px; }
+    
+    /* ═══ TABS ═══ */
+    .tab-row { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface);
+               font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.15s; font-family: inherit; }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tab-btn:not(.active):hover { background: var(--bg); }
+    .subtab { display: none; } .subtab.active { display: block; }
+    
+    /* ═══ BUTTONS ═══ */
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
+           cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .btn-primary { background: var(--accent); color: #fff; } .btn-primary:hover { background: var(--accent-hover); }
+    .btn-purple { background: var(--purple); color: #fff; } .btn-purple:hover { background: #7C3AED; }
+    .btn-outline { background: none; border: 1px solid var(--border); color: var(--dim); } .btn-outline:hover { border-color: var(--text); color: var(--text); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-loading { position: relative; color: transparent !important; }
+    .btn-loading::after { content: ''; position: absolute; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; top: 50%; left: 50%; margin: -9px 0 0 -9px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* ═══ ITEMS ═══ */
+    .item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+    .item-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .item-icon { font-size: 20px; }
+    .item-type { font-size: 13px; font-weight: 600; flex: 1; }
+    .item-time { font-size: 11px; color: var(--muted); }
+    .item-cid { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); margin-bottom: 4px; }
+    .item-link { font-size: 12px; color: var(--accent); text-decoration: none; font-weight: 500; }
+    .item-link:hover { text-decoration: underline; }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+    
+    /* ═══ BOTTOM NAV ═══ */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border);
+                  display: flex; padding-bottom: var(--safe-bottom); z-index: 100; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 0;
+                font-size: 11px; font-weight: 500; color: var(--muted); cursor: pointer; transition: color 0.15s; border: none; background: none; }
+    .nav-item.active { color: var(--accent); }
+    .nav-item svg { width: 22px; height: 22px; }
+    
+    /* ═══ TOAST ═══ */
+    .toast-container { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 200; width: calc(100% - 32px); max-width: 420px; }
+    .toast { padding: 14px 18px; border-radius: 10px; font-size: 13px; font-weight: 500; margin-bottom: 8px; 
+             animation: slideDown 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .toast-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+    .toast-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-brand"><div class="header-logo">◇</div> Proofi</div>
+    <div class="header-user" id="headerUser"></div>
+  </div>
+
+  <div class="toast-container" id="toasts"></div>
+
+  <div class="content">
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="page active" id="pageDashboard">
+      <h2 style="font-size: 22px; margin-bottom: 16px;">Dashboard</h2>
+      
+      <div class="status-card">
+        <div class="status-row">
+          <span class="status-label">Account</span>
+          <span class="status-value" id="dashEmail"></span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-row">
+          <span class="status-label">Wallet</span>
+          <span class="status-value mono" id="dashWallet" style="font-size: 11px; max-width: 200px; overflow: hidden; text-overflow: ellipsis;">—</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-row">
+          <span class="status-label">Security</span>
+          <span class="status-value"><span class="status-dot green"></span> Client-side keys</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-row">
+          <span class="status-label">DDC Network</span>
+          <span class="status-value" id="dashDdc"><span class="status-dot"></span> Connecting...</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-row">
+          <span class="status-label">Bucket</span>
+          <span class="status-value mono" id="dashBucket">—</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-row">
+          <span class="status-label">Items Stored</span>
+          <span class="status-value" id="dashItems">0</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚡ Quick Memo</div>
+        <div class="form-group">
+          <textarea class="form-textarea" id="quickMemo" placeholder="Write something to store on DDC..."></textarea>
+        </div>
+        <button class="btn btn-primary" id="quickMemoBtn" onclick="submitQuickMemo()">Store on DDC</button>
+      </div>
+
+      <button class="btn btn-outline" onclick="disconnectProofi()" style="margin-top: 8px;">Sign Out</button>
+    </div>
+
+    <!-- ═══ SUBMIT ═══ -->
+    <div class="page" id="pageSubmit">
+      <h2 style="font-size: 22px; margin-bottom: 16px;">Submit Claims</h2>
+      
+      <div class="tab-row">
+        <button class="tab-btn active" onclick="switchSubmitTab('memo', this)">📝 Memo</button>
+        <button class="tab-btn" onclick="switchSubmitTab('credential', this)">🎓 Credential</button>
+      </div>
+
+      <!-- Memo -->
+      <div class="subtab active" id="subtabMemo">
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label">Memo Content</label>
+            <textarea class="form-textarea" id="memoContent" placeholder="Enter your memo..." rows="5"></textarea>
+          </div>
+          <button class="btn btn-primary" id="memoBtn" onclick="submitMemo()">📝 Store Memo</button>
+        </div>
+      </div>
+
+      <!-- Credential -->
+      <div class="subtab" id="subtabCredential">
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label">Credential Type</label>
+            <select class="form-select" id="credType">
+              <option value="ProofOfIdentity">🪪 Proof of Identity</option>
+              <option value="ProofOfOwnership">🏠 Proof of Ownership</option>
+              <option value="ProofOfMembership">👥 Proof of Membership</option>
+              <option value="ProofOfCompletion">🎓 Proof of Completion</option>
+              <option value="Custom">✏️ Custom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Claim Data</label>
+            <textarea class="form-textarea" id="credData" placeholder='{"name": "Your Name", "role": "Your Role"}
+or just plain text' style="font-family: 'JetBrains Mono', monospace; font-size: 13px;"></textarea>
+          </div>
+          <button class="btn btn-purple" id="credBtn" onclick="submitCredential()">🎓 Issue Credential</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CREDENTIALS ═══ -->
+    <div class="page" id="pageCredentials">
+      <h2 style="font-size: 22px; margin-bottom: 16px;">My Credentials</h2>
+      <div id="itemsList"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="nav-item active" onclick="switchPage('Dashboard', this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+      Home
+    </button>
+    <button class="nav-item" onclick="switchPage('Submit', this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      Submit
+    </button>
+    <button class="nav-item" onclick="switchPage('Credentials', this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+      Credentials
+    </button>
+  </div>
+
+  <script>
+    const PROOFI_API = window.location.hostname === 'localhost' 
+      ? 'http://localhost:3847' 
+      : 'https://proofi-api-production.up.railway.app';
+
+    // ═══ AUTH CHECK ═══
+    const token = localStorage.getItem('proofi_token');
+    const email = localStorage.getItem('proofi_email');
+    if (!token || !email) { window.location.href = 'landing.html'; }
+
+    document.getElementById('headerUser').textContent = email;
+    document.getElementById('dashEmail').textContent = email;
+
+    function authHeaders() {
+      return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+    }
+
+    // ═══ TOAST ═══
+    function toast(msg, type = 'success') {
+      const el = document.createElement('div');
+      el.className = `toast toast-${type}`;
+      el.textContent = msg;
+      document.getElementById('toasts').appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }
+
+    // ═══ NAV ═══
+    function switchPage(name, btn) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page' + name).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function switchSubmitTab(tab, btn) {
+      document.querySelectorAll('.subtab').forEach(t => t.classList.remove('active'));
+      document.getElementById('subtab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // ═══ STORED ITEMS (fetched from DDC index) ═══
+    let cachedItems = [];
+    
+    async function fetchItems() {
+      try {
+        const res = await fetch(`${PROOFI_API}/ddc/list`, { headers: authHeaders() });
+        const data = await res.json();
+        if (data.ok) {
+          cachedItems = data.items || [];
+          renderItems();
+          updateCount();
+        }
+      } catch (e) {
+        console.error('Failed to fetch items:', e);
+        // Fallback to localStorage cache
+        try { cachedItems = JSON.parse(localStorage.getItem('proofi_stored_items') || '[]'); } catch { cachedItems = []; }
+        renderItems();
+        updateCount();
+      }
+    }
+    
+    function saveItemLocally(item) {
+      // Also save to localStorage as backup
+      const items = JSON.parse(localStorage.getItem('proofi_stored_items') || '[]');
+      items.unshift({ ...item, timestamp: new Date().toISOString() });
+      localStorage.setItem('proofi_stored_items', JSON.stringify(items));
+      // Refresh from server
+      fetchItems();
+    }
+    
+    function updateCount() {
+      document.getElementById('dashItems').textContent = cachedItems.length;
+    }
+    
+    function renderItems() {
+      const container = document.getElementById('itemsList');
+      if (cachedItems.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><p>No credentials yet.<br>Submit your first claim!</p></div>`;
+        return;
+      }
+      container.innerHTML = cachedItems.map(item => `
+        <div class="item">
+          <div class="item-header">
+            <span class="item-icon">${item.type === 'memo' ? '📝' : '🎓'}</span>
+            <span class="item-type">${item.type === 'memo' ? 'Memo' : item.credentialType || 'Credential'}</span>
+            <span class="item-time">${timeAgo(item.createdAt)}</span>
+          </div>
+          <div class="item-cid">${item.cid}</div>
+          <a href="${item.cdnUrl}" target="_blank" rel="noopener" class="item-link">View on DDC →</a>
+        </div>
+      `).join('');
+    }
+    
+    function timeAgo(ts) {
+      if (!ts) return '';
+      const s = Math.floor((Date.now() - new Date(ts)) / 1000);
+      if (s < 60) return 'just now';
+      if (s < 3600) return Math.floor(s / 60) + 'm ago';
+      if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+      return Math.floor(s / 86400) + 'd ago';
+    }
+
+    // ═══ DDC STATUS ═══
+    async function checkDdc() {
+      try {
+        const res = await fetch(`${PROOFI_API}/ddc/status`);
+        const data = await res.json();
+        if (data.ok) {
+          document.getElementById('dashDdc').innerHTML = `<span class="status-dot green"></span> Mainnet`;
+          document.getElementById('dashBucket').textContent = '#' + data.bucket;
+        } else {
+          document.getElementById('dashDdc').innerHTML = `<span class="status-dot red"></span> Offline`;
+        }
+      } catch {
+        document.getElementById('dashDdc').innerHTML = `<span class="status-dot red"></span> Unreachable`;
+      }
+    }
+
+    // ═══ SUBMIT ═══
+    function setLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      btn.disabled = loading;
+      if (loading) btn.classList.add('btn-loading'); else btn.classList.remove('btn-loading');
+    }
+
+    async function submitQuickMemo() {
+      const memo = document.getElementById('quickMemo').value.trim();
+      if (!memo) return;
+      setLoading('quickMemoBtn', true);
+      try {
+        const res = await fetch(`${PROOFI_API}/ddc/memo`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ memo }) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        saveItemLocally({ type: 'memo', cid: data.cid, cdnUrl: data.cdnUrl });
+        document.getElementById('quickMemo').value = '';
+        toast('✅ Memo stored on DDC!');
+      } catch (e) { toast('❌ ' + e.message, 'error'); }
+      finally { setLoading('quickMemoBtn', false); }
+    }
+
+    async function submitMemo() {
+      const memo = document.getElementById('memoContent').value.trim();
+      if (!memo) return;
+      setLoading('memoBtn', true);
+      try {
+        const res = await fetch(`${PROOFI_API}/ddc/memo`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ memo }) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        saveItemLocally({ type: 'memo', cid: data.cid, cdnUrl: data.cdnUrl });
+        document.getElementById('memoContent').value = '';
+        toast('✅ Memo stored on DDC!');
+      } catch (e) { toast('❌ ' + e.message, 'error'); }
+      finally { setLoading('memoBtn', false); }
+    }
+
+    async function submitCredential() {
+      const credType = document.getElementById('credType').value;
+      const rawData = document.getElementById('credData').value.trim();
+      if (!rawData) return;
+      let claimData;
+      try { claimData = JSON.parse(rawData); } catch { claimData = { value: rawData }; }
+      
+      setLoading('credBtn', true);
+      try {
+        const res = await fetch(`${PROOFI_API}/ddc/credential`, {
+          method: 'POST', headers: authHeaders(),
+          body: JSON.stringify({ claimType: credType, claimData }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        saveItemLocally({ type: 'credential', credType, cid: data.cid, cdnUrl: data.cdnUrl });
+        document.getElementById('credData').value = '';
+        toast('🎓 Credential issued on DDC!');
+      } catch (e) { toast('❌ ' + e.message, 'error'); }
+      finally { setLoading('credBtn', false); }
+    }
+
+    function disconnectProofi() {
+      localStorage.removeItem('proofi_token');
+      localStorage.removeItem('proofi_email');
+      localStorage.removeItem('proofi_address');
+      localStorage.removeItem('proofi_seed');
+      localStorage.removeItem('proofi_encrypted_seed');
+      localStorage.removeItem('proofi_stored_items');
+      window.location.href = 'landing.html';
+    }
+
+    // ═══ INIT ═══
+    const walletAddr = localStorage.getItem('proofi_address');
+    if (walletAddr) {
+      document.getElementById('dashWallet').textContent = walletAddr;
+      document.getElementById('dashWallet').title = walletAddr;
+    }
+    checkDdc();
+    fetchItems(); // Fetch from DDC index API
+  </script>
+</body>
+</html>

@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEURAL REFLEX — Proofi Game</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cyan: #00E5FF;
+      --green: #00FF88;
+      --magenta: #FF3366;
+      --yellow: #FFE100;
+      --bg: #000000;
+      --surface: #0A0A0A;
+      --border: #1A1A1A;
+      --text-dim: #4A4A4A;
+      --text-mid: #8A8A8A;
+    }
+
+    body {
+      background: var(--bg);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Scanline effect */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 229, 255, 0.015) 2px,
+        rgba(0, 229, 255, 0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      padding: 30px 0 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 40px rgba(0, 229, 255, 0.3);
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 10px;
+      letter-spacing: 6px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    /* ── Wallet Bar ── */
+    .wallet-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .wallet-bar.connected {
+      border-color: var(--green);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.05);
+    }
+
+    .wallet-address {
+      font-size: 11px;
+      color: var(--green);
+      letter-spacing: 1px;
+    }
+
+    .wallet-label {
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      border: 2px solid var(--cyan);
+      background: transparent;
+      color: var(--cyan);
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover {
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn.btn-green {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .btn.btn-green:hover {
+      background: var(--green);
+      color: #000;
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+    }
+
+    .btn.btn-magenta {
+      border-color: var(--magenta);
+      color: var(--magenta);
+    }
+
+    .btn.btn-magenta:hover {
+      background: var(--magenta);
+      color: #000;
+    }
+
+    .btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 10px;
+    }
+
+    /* ── Score Display ── */
+    .score-panel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-bottom: 20px;
+    }
+
+    .score-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px 12px;
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .score-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--cyan);
+    }
+
+    .score-value.green { color: var(--green); }
+    .score-value.magenta { color: var(--magenta); }
+    .score-value.yellow { color: var(--yellow); }
+
+    /* ── Game Area ── */
+    .game-area {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .game-area.active {
+      border-color: var(--cyan);
+      box-shadow: 0 0 40px rgba(0, 229, 255, 0.1);
+    }
+
+    /* ── Memory Grid ── */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 12px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .memory-card {
+      aspect-ratio: 1;
+      background: #111;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+      position: relative;
+    }
+
+    .memory-card:hover:not(.matched):not(.flipped) {
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+    }
+
+    .memory-card.flipped {
+      background: #1a1a2e;
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+    }
+
+    .memory-card.matched {
+      background: rgba(0, 255, 136, 0.1);
+      border-color: var(--green);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+      animation: matchPulse 0.5s ease;
+    }
+
+    .memory-card.wrong {
+      border-color: var(--magenta) !important;
+      background: rgba(255, 51, 102, 0.1) !important;
+      animation: shake 0.4s ease;
+    }
+
+    .memory-card .face {
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .memory-card.flipped .face,
+    .memory-card.matched .face {
+      opacity: 1;
+    }
+
+    .memory-card .back {
+      position: absolute;
+      font-size: 20px;
+      color: var(--text-dim);
+      transition: opacity 0.15s;
+    }
+
+    .memory-card.flipped .back,
+    .memory-card.matched .back {
+      opacity: 0;
+    }
+
+    @keyframes matchPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    /* ── Reaction Target ── */
+    .reaction-target {
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.1s;
+      animation: targetAppear 0.2s ease;
+    }
+
+    .reaction-target:hover {
+      transform: scale(1.1);
+    }
+
+    .reaction-target::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1px solid currentColor;
+      opacity: 0.3;
+      animation: targetRing 0.8s ease infinite;
+    }
+
+    @keyframes targetAppear {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes targetRing {
+      0% { transform: scale(1); opacity: 0.3; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    /* ── Game Mode Tabs ── */
+    .mode-tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 20px;
+    }
+
+    .mode-tab {
+      flex: 1;
+      padding: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .mode-tab:hover {
+      color: var(--text-mid);
+      border-color: var(--text-mid);
+    }
+
+    .mode-tab.active {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      background: rgba(0, 229, 255, 0.05);
+    }
+
+    /* ── Reaction Game States ── */
+    .game-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .state-text {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+    }
+
+    .state-waiting {
+      font-size: 16px;
+      color: var(--yellow);
+      letter-spacing: 3px;
+    }
+
+    .state-ready {
+      font-size: 14px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    .state-result {
+      font-size: 40px;
+      color: var(--cyan);
+    }
+
+    .state-result small {
+      display: block;
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      letter-spacing: 2px;
+    }
+
+    .state-too-early {
+      font-size: 20px;
+      color: var(--magenta);
+    }
+
+    .game-area.waiting-state {
+      background: var(--surface);
+      border-color: var(--yellow);
+      box-shadow: 0 0 30px rgba(255, 225, 0, 0.05);
+      cursor: default;
+    }
+
+    .game-area.ready-state {
+      border-color: var(--text-dim);
+      cursor: pointer;
+    }
+
+    .game-area.go-state {
+      background: rgba(0, 255, 136, 0.08);
+      border-color: var(--green);
+      box-shadow: 0 0 40px rgba(0, 255, 136, 0.15);
+      cursor: pointer;
+    }
+
+    /* ── Achievements ── */
+    .achievements {
+      margin-top: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .achievements-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .achievements-title {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--text-mid);
+      text-transform: uppercase;
+    }
+
+    .achievement-count {
+      font-size: 10px;
+      color: var(--cyan);
+    }
+
+    .achievement-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .achievement-item:last-child {
+      border-bottom: none;
+    }
+
+    .achievement-icon {
+      font-size: 20px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 229, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .achievement-icon.unlocked {
+      border-color: var(--green);
+      background: rgba(0, 255, 136, 0.1);
+    }
+
+    .achievement-info {
+      flex: 1;
+    }
+
+    .achievement-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .achievement-desc {
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .achievement-badge {
+      font-size: 9px;
+      padding: 3px 8px;
+      letter-spacing: 1px;
+    }
+
+    .achievement-badge.on-chain {
+      background: rgba(0, 255, 136, 0.1);
+      color: var(--green);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+
+    .achievement-badge.locked {
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--surface);
+      border: 2px solid var(--green);
+      padding: 12px 24px;
+      font-size: 11px;
+      color: var(--green);
+      letter-spacing: 2px;
+      z-index: 10000;
+      transition: transform 0.3s ease;
+      box-shadow: 0 0 40px rgba(0, 255, 136, 0.2);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      border-color: var(--magenta);
+      color: var(--magenta);
+      box-shadow: 0 0 40px rgba(255, 51, 102, 0.2);
+    }
+
+    /* ── Powered By ── */
+    .footer {
+      text-align: center;
+      padding: 24px 0;
+      margin-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: color 0.15s;
+    }
+
+    .footer a:hover {
+      color: var(--cyan);
+    }
+
+    .footer .powered {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .footer .dot {
+      width: 4px;
+      height: 4px;
+      background: var(--cyan);
+      display: inline-block;
+    }
+
+    /* ── Timer animation ── */
+    .timer-bar {
+      height: 3px;
+      background: var(--border);
+      position: relative;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .timer-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .container { padding: 12px; }
+      .title { font-size: 22px; letter-spacing: 2px; }
+      .memory-grid { gap: 6px; padding: 8px; }
+      .memory-card { font-size: 22px; }
+      .score-value { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="title">NEURAL REFLEX</div>
+      <div class="subtitle">train your synapses • store on-chain</div>
+    </div>
+
+    <!-- Wallet Bar -->
+    <div class="wallet-bar" id="walletBar">
+      <div>
+        <div class="wallet-label">PROOFI WALLET</div>
+        <div class="wallet-address" id="walletAddress">NOT CONNECTED</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-small" id="connectBtn" onclick="handleConnect()">CONNECT</button>
+        <button class="btn btn-small btn-green" id="demoBtn" onclick="enterDemoMode()">TRY DEMO</button>
+      </div>
+    </div>
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tab-reaction" onclick="switchMode('reaction')">⚡ REFLEX</button>
+      <button class="mode-tab" id="tab-memory" onclick="switchMode('memory')">🧠 MEMORY</button>
+    </div>
+
+    <!-- Score Panel -->
+    <div class="score-panel">
+      <div class="score-item">
+        <div class="score-label" id="scoreLabel1">BEST TIME</div>
+        <div class="score-value green" id="score1">—</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">ROUND</div>
+        <div class="score-value" id="score2">0</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label" id="scoreLabel3">AVG TIME</div>
+        <div class="score-value yellow" id="score3">—</div>
+      </div>
+    </div>
+
+    <!-- Timer Bar -->
+    <div class="timer-bar" id="timerBar" style="display:none">
+      <div class="timer-fill" id="timerFill" style="width: 100%"></div>
+    </div>
+
+    <!-- Game Area -->
+    <div class="game-area" id="gameArea">
+      <div class="game-state">
+        <div class="state-text state-ready">
+          PRESS START<br><br>
+          <span style="font-size: 10px; color: var(--text-dim);">Test your reaction speed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Controls -->
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-green" id="startBtn" onclick="startGame()" style="flex: 1;">▶ START</button>
+    </div>
+
+    <!-- Achievements -->
+    <div class="achievements" id="achievementsPanel">
+      <div class="achievements-header">
+        <span class="achievements-title">🏆 Achievements</span>
+        <span class="achievement-count" id="achievementCount">0 / 8</span>
+      </div>
+      <div id="achievementsList"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="powered">
+        <span class="dot"></span>
+        <a href="https://proofi-virid.vercel.app" target="_blank">Powered by Proofi × Cere DDC</a>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Proofi SDK -->
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+
+  <script>
+    // ── Game State ──
+    let mode = 'reaction'; // 'reaction' or 'memory'
+    let proofi = null;
+    let walletAddress = null;
+
+    // Reaction game state
+    let reactionState = 'idle'; // idle, waiting, go, result, too-early
+    let reactionTimeout = null;
+    let goTimestamp = 0;
+    let reactionTimes = [];
+    let bestReaction = Infinity;
+    let round = 0;
+
+    // Memory game state
+    let memoryCards = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let totalPairs = 8;
+    let memoryMoves = 0;
+    let memoryStartTime = 0;
+    let memoryLocked = false;
+    let memoryBestMoves = Infinity;
+    let memoryBestTime = Infinity;
+    let memoryRound = 0;
+
+    // Achievement definitions
+    const ACHIEVEMENTS = [
+      { id: 'first_reflex', name: 'FIRST SYNAPSE', desc: 'Complete your first reflex test', icon: '⚡', check: () => round >= 1 },
+      { id: 'sub_300', name: 'QUICK DRAW', desc: 'React in under 300ms', icon: '🎯', check: () => bestReaction < 300 },
+      { id: 'sub_200', name: 'NEURAL BOOST', desc: 'React in under 200ms', icon: '🧬', check: () => bestReaction < 200 },
+      { id: 'streak_5', name: 'FIVE ALIVE', desc: 'Complete 5 reflex rounds', icon: '🔥', check: () => round >= 5 },
+      { id: 'streak_10', name: 'UNSTOPPABLE', desc: 'Complete 10 reflex rounds', icon: '💀', check: () => round >= 10 },
+      { id: 'first_memory', name: 'RECALL INIT', desc: 'Complete your first memory game', icon: '🧠', check: () => memoryRound >= 1 },
+      { id: 'memory_under_20', name: 'EFFICIENT MIND', desc: 'Solve memory in under 20 moves', icon: '💎', check: () => memoryBestMoves < 20 },
+      { id: 'memory_speed', name: 'SPEED RECALL', desc: 'Solve memory in 30 seconds or less', icon: '⏱️', check: () => memoryBestTime <= 30 },
+    ];
+
+    let unlockedAchievements = new Set();
+    let achievementQueue = [];
+    let storingAchievement = false;
+
+    // ── Init ──
+    function init() {
+      proofi = new ProofiSDK({
+        walletUrl: 'https://proofi-virid.vercel.app/app',
+        apiUrl: 'https://proofi-api-production.up.railway.app',
+        appName: 'NEURAL REFLEX',
+      });
+
+      proofi.on('connected', (data) => {
+        walletAddress = data.address;
+        updateWalletUI();
+        showToast('WALLET CONNECTED');
+        // Sync any locally unlocked achievements to chain
+        syncAchievementsToChain();
+      });
+
+      proofi.on('disconnected', () => {
+        walletAddress = null;
+        updateWalletUI();
+      });
+
+      // Load saved achievements from localStorage
+      try {
+        const saved = JSON.parse(localStorage.getItem('neural_reflex_achievements') || '[]');
+        saved.forEach(id => unlockedAchievements.add(id));
+      } catch {}
+
+      // Load best scores
+      try {
+        const savedScores = JSON.parse(localStorage.getItem('neural_reflex_scores') || '{}');
+        if (savedScores.bestReaction) bestReaction = savedScores.bestReaction;
+        if (savedScores.memoryBestMoves) memoryBestMoves = savedScores.memoryBestMoves;
+        if (savedScores.memoryBestTime) memoryBestTime = savedScores.memoryBestTime;
+      } catch {}
+
+      renderAchievements();
+      updateScorePanel();
+    }
+
+    // ── Demo Mode ──
+    let isDemoMode = false;
+    function enterDemoMode() {
+      isDemoMode = true;
+      walletAddress = '5Demo' + Math.random().toString(36).slice(2, 14) + 'ABCDEF';
+      updateWalletUI();
+      showToast('⚡ DEMO MODE ACTIVE');
+    }
+
+    // ── Wallet ──
+    async function handleConnect() {
+      if (walletAddress) {
+        proofi.disconnect();
+        walletAddress = null;
+        isDemoMode = false;
+        updateWalletUI();
+        return;
+      }
+
+      try {
+        document.getElementById('connectBtn').textContent = 'LINKING...';
+        const addr = await proofi.connect();
+        walletAddress = addr;
+        updateWalletUI();
+      } catch (err) {
+        const msg = err.message === 'User closed wallet' ? 'CANCELLED' : 'COULD NOT CONNECT — TRY DEMO';
+        showToast(msg, true);
+        document.getElementById('connectBtn').textContent = 'CONNECT';
+      }
+    }
+
+    function updateWalletUI() {
+      const bar = document.getElementById('walletBar');
+      const addr = document.getElementById('walletAddress');
+      const btn = document.getElementById('connectBtn');
+
+      if (walletAddress) {
+        bar.classList.add('connected');
+        addr.textContent = (isDemoMode ? '🎮 DEMO · ' : '') + walletAddress.slice(0, 8) + '...' + walletAddress.slice(-6);
+        btn.textContent = 'DISCONNECT';
+        btn.classList.add('btn-magenta');
+        btn.classList.remove('btn-small');
+        document.getElementById('demoBtn').style.display = 'none';
+      } else {
+        bar.classList.remove('connected');
+        addr.textContent = 'NOT CONNECTED';
+        btn.textContent = 'CONNECT';
+        btn.classList.remove('btn-magenta');
+        btn.classList.add('btn-small');
+        document.getElementById('demoBtn').style.display = '';
+      }
+    }
+
+    // ── Mode Switching ──
+    function switchMode(newMode) {
+      mode = newMode;
+      document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + newMode).classList.add('active');
+
+      // Reset game area
+      const area = document.getElementById('gameArea');
+      area.className = 'game-area';
+
+      if (mode === 'reaction') {
+        reactionState = 'idle';
+        clearTimeout(reactionTimeout);
+        area.innerHTML = `
+          <div class="game-state">
+            <div class="state-text state-ready">
+              PRESS START<br><br>
+              <span style="font-size: 10px; color: var(--text-dim);">Test your reaction speed</span>
+            </div>
+          </div>`;
+        document.getElementById('startBtn').textContent = '▶ START';
+        document.getElementById('scoreLabel1').textContent = 'BEST TIME';
+        document.getElementById('scoreLabel3').textContent = 'AVG TIME';
+        document.getElementById('timerBar').style.display = 'none';
+      } else {
+        area.innerHTML = `
+          <div class="game-state">
+            <div class="state-text state-ready">
+              PRESS START<br><br>
+              <span style="font-size: 10px; color: var(--text-dim);">Match the pairs from memory</span>
+            </div>
+          </div>`;
+        document.getElementById('startBtn').textContent = '▶ START';
+        document.getElementById('scoreLabel1').textContent = 'BEST MOVES';
+        document.getElementById('scoreLabel3').textContent = 'BEST TIME';
+      }
+
+      updateScorePanel();
+    }
+
+    function updateScorePanel() {
+      if (mode === 'reaction') {
+        document.getElementById('score1').textContent = bestReaction < Infinity ? bestReaction + 'ms' : '—';
+        document.getElementById('score2').textContent = round;
+        const avg = reactionTimes.length > 0
+          ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length)
+          : null;
+        document.getElementById('score3').textContent = avg ? avg + 'ms' : '—';
+      } else {
+        document.getElementById('score1').textContent = memoryBestMoves < Infinity ? memoryBestMoves : '—';
+        document.getElementById('score2').textContent = memoryRound;
+        document.getElementById('score3').textContent = memoryBestTime < Infinity ? memoryBestTime.toFixed(1) + 's' : '—';
+      }
+    }
+
+    // ── Reaction Game ──
+    function startGame() {
+      if (mode === 'reaction') startReaction();
+      else startMemory();
+    }
+
+    function startReaction() {
+      const area = document.getElementById('gameArea');
+      reactionState = 'waiting';
+      area.className = 'game-area waiting-state';
+
+      area.innerHTML = `
+        <div class="game-state">
+          <div class="state-text state-waiting">WAIT FOR GREEN...</div>
+        </div>`;
+
+      document.getElementById('startBtn').disabled = true;
+
+      // Random delay 1-4 seconds
+      const delay = 1000 + Math.random() * 3000;
+
+      area.onclick = () => {
+        if (reactionState === 'waiting') {
+          // Clicked too early!
+          clearTimeout(reactionTimeout);
+          reactionState = 'too-early';
+          area.className = 'game-area';
+          area.innerHTML = `
+            <div class="game-state">
+              <div class="state-text state-too-early">
+                TOO EARLY!<br><br>
+                <span style="font-size: 10px; color: var(--text-dim);">Wait for green, not yellow</span>
+              </div>
+            </div>`;
+          area.onclick = null;
+          document.getElementById('startBtn').disabled = false;
+        }
+      };
+
+      reactionTimeout = setTimeout(() => {
+        reactionState = 'go';
+        goTimestamp = performance.now();
+        area.className = 'game-area go-state';
+        area.innerHTML = `
+          <div class="game-state">
+            <div class="state-text state-waiting" style="color: var(--green);">
+              CLICK NOW!
+            </div>
+          </div>`;
+
+        area.onclick = () => {
+          if (reactionState !== 'go') return;
+          const reactionTime = Math.round(performance.now() - goTimestamp);
+          reactionState = 'result';
+          round++;
+          reactionTimes.push(reactionTime);
+
+          if (reactionTime < bestReaction) {
+            bestReaction = reactionTime;
+            saveScores();
+          }
+
+          area.className = 'game-area active';
+
+          const rating = reactionTime < 150 ? 'INHUMAN' :
+                         reactionTime < 200 ? 'EXCELLENT' :
+                         reactionTime < 250 ? 'GREAT' :
+                         reactionTime < 350 ? 'GOOD' :
+                         reactionTime < 500 ? 'AVERAGE' : 'SLOW';
+
+          const ratingColor = reactionTime < 200 ? 'var(--green)' :
+                              reactionTime < 350 ? 'var(--cyan)' :
+                              reactionTime < 500 ? 'var(--yellow)' : 'var(--magenta)';
+
+          area.innerHTML = `
+            <div class="game-state">
+              <div>
+                <div class="state-text state-result">${reactionTime}ms</div>
+                <div style="font-size: 12px; color: ${ratingColor}; letter-spacing: 3px; margin-top: 8px; font-family: Orbitron, sans-serif;">${rating}</div>
+                <small>Round ${round} • Click START for next</small>
+              </div>
+            </div>`;
+          area.onclick = null;
+
+          document.getElementById('startBtn').disabled = false;
+          updateScorePanel();
+          checkAchievements();
+        };
+      }, delay);
+    }
+
+    // ── Memory Game ──
+    const EMOJIS = ['🔮', '⚡', '🌀', '💎', '🎯', '🧬', '🔥', '💀', '🌊', '🎪', '🦾', '🧿'];
+
+    function startMemory() {
+      const area = document.getElementById('gameArea');
+      area.className = 'game-area active';
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('timerBar').style.display = 'block';
+
+      // Pick 8 random emojis and create pairs
+      const selected = EMOJIS.sort(() => Math.random() - 0.5).slice(0, totalPairs);
+      memoryCards = [...selected, ...selected].sort(() => Math.random() - 0.5);
+      flippedCards = [];
+      matchedPairs = 0;
+      memoryMoves = 0;
+      memoryLocked = false;
+      memoryStartTime = performance.now();
+
+      // Render grid
+      area.innerHTML = `<div class="memory-grid" id="memoryGrid"></div>`;
+      const grid = document.getElementById('memoryGrid');
+
+      memoryCards.forEach((emoji, i) => {
+        const card = document.createElement('div');
+        card.className = 'memory-card';
+        card.dataset.index = i;
+        card.innerHTML = `<span class="back">?</span><span class="face">${emoji}</span>`;
+        card.onclick = () => flipCard(i, card);
+        grid.appendChild(card);
+      });
+
+      // Brief peek at all cards
+      const cards = grid.querySelectorAll('.memory-card');
+      cards.forEach(c => c.classList.add('flipped'));
+      setTimeout(() => {
+        cards.forEach(c => c.classList.remove('flipped'));
+      }, 1200);
+
+      // Start timer
+      updateMemoryTimer();
+    }
+
+    function updateMemoryTimer() {
+      if (matchedPairs >= totalPairs) return;
+      const elapsed = (performance.now() - memoryStartTime) / 1000;
+      const maxTime = 120; // 2 minutes
+      const pct = Math.max(0, 100 - (elapsed / maxTime) * 100);
+      document.getElementById('timerFill').style.width = pct + '%';
+
+      if (pct > 0) {
+        requestAnimationFrame(updateMemoryTimer);
+      }
+    }
+
+    function flipCard(index, cardEl) {
+      if (memoryLocked) return;
+      if (flippedCards.find(c => c.index === index)) return;
+      if (cardEl.classList.contains('matched')) return;
+
+      cardEl.classList.add('flipped');
+      flippedCards.push({ index, emoji: memoryCards[index], el: cardEl });
+
+      if (flippedCards.length === 2) {
+        memoryMoves++;
+        memoryLocked = true;
+        updateScorePanel();
+
+        const [a, b] = flippedCards;
+        if (a.emoji === b.emoji) {
+          // Match!
+          setTimeout(() => {
+            a.el.classList.add('matched');
+            b.el.classList.add('matched');
+            matchedPairs++;
+            flippedCards = [];
+            memoryLocked = false;
+
+            if (matchedPairs >= totalPairs) {
+              memoryGameComplete();
+            }
+          }, 300);
+        } else {
+          // No match
+          setTimeout(() => {
+            a.el.classList.add('wrong');
+            b.el.classList.add('wrong');
+            setTimeout(() => {
+              a.el.classList.remove('flipped', 'wrong');
+              b.el.classList.remove('flipped', 'wrong');
+              flippedCards = [];
+              memoryLocked = false;
+            }, 500);
+          }, 400);
+        }
+      }
+    }
+
+    function memoryGameComplete() {
+      memoryRound++;
+      const elapsed = (performance.now() - memoryStartTime) / 1000;
+
+      if (memoryMoves < memoryBestMoves) memoryBestMoves = memoryMoves;
+      if (elapsed < memoryBestTime) memoryBestTime = elapsed;
+      saveScores();
+
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('timerBar').style.display = 'none';
+
+      const area = document.getElementById('gameArea');
+      area.className = 'game-area active';
+
+      const rating = memoryMoves <= 10 ? 'PERFECT MEMORY' :
+                     memoryMoves <= 14 ? 'EXCELLENT' :
+                     memoryMoves <= 18 ? 'GREAT' :
+                     memoryMoves <= 24 ? 'GOOD' : 'KEEP TRYING';
+
+      area.innerHTML = `
+        <div class="game-state">
+          <div>
+            <div class="state-text state-result" style="font-size: 32px;">${memoryMoves} MOVES</div>
+            <div style="font-size: 14px; color: var(--cyan); margin-top: 4px; font-family: Orbitron;">${elapsed.toFixed(1)}s</div>
+            <div style="font-size: 12px; color: var(--green); letter-spacing: 3px; margin-top: 8px; font-family: Orbitron;">${rating}</div>
+            <small style="display:block; font-size:10px; color: var(--text-dim); margin-top: 12px;">Round ${memoryRound} • Press START to play again</small>
+          </div>
+        </div>`;
+
+      updateScorePanel();
+      checkAchievements();
+    }
+
+    // ── Achievements ──
+    // Track which achievements have been sent to chain
+    const onChainAchievements = new Set();
+
+    // Sync locally unlocked achievements to chain (e.g. after wallet connect)
+    function syncAchievementsToChain() {
+      if (!walletAddress) return;
+      ACHIEVEMENTS.forEach(a => {
+        if (unlockedAchievements.has(a.id) && !onChainAchievements.has(a.id)) {
+          storeAchievementOnChain(a);
+        }
+      });
+    }
+
+    function checkAchievements() {
+      ACHIEVEMENTS.forEach(a => {
+        if (!unlockedAchievements.has(a.id) && a.check()) {
+          unlockAchievement(a);
+        }
+      });
+    }
+
+    function unlockAchievement(achievement) {
+      unlockedAchievements.add(achievement.id);
+
+      // Save to localStorage
+      localStorage.setItem('neural_reflex_achievements',
+        JSON.stringify([...unlockedAchievements]));
+
+      showToast(`🏆 ${achievement.name} UNLOCKED!`);
+      renderAchievements();
+
+      // Queue for on-chain storage if connected
+      if (walletAddress) {
+        storeAchievementOnChain(achievement);
+      }
+    }
+
+    async function storeAchievementOnChain(achievement) {
+      if (storingAchievement) {
+        achievementQueue.push(achievement);
+        return;
+      }
+
+      storingAchievement = true;
+
+      try {
+        await proofi.storeAchievement({
+          game: 'neural-reflex',
+          score: mode === 'reaction' ? bestReaction : memoryBestMoves,
+          achievement: achievement.id,
+          data: {
+            name: achievement.name,
+            description: achievement.desc,
+            mode: mode,
+            stats: {
+              bestReaction: bestReaction < Infinity ? bestReaction : null,
+              totalReactionRounds: round,
+              memoryBestMoves: memoryBestMoves < Infinity ? memoryBestMoves : null,
+              memoryBestTime: memoryBestTime < Infinity ? memoryBestTime : null,
+              memoryRounds: memoryRound,
+            },
+          },
+        });
+        onChainAchievements.add(achievement.id);
+        showToast(`✓ ${achievement.name} STORED ON DDC`);
+      } catch (err) {
+        console.error('Failed to store achievement:', err);
+        showToast('Failed to store on-chain: ' + err.message, true);
+      }
+
+      storingAchievement = false;
+      if (achievementQueue.length > 0) {
+        storeAchievementOnChain(achievementQueue.shift());
+      }
+    }
+
+    function renderAchievements() {
+      const list = document.getElementById('achievementsList');
+      const count = document.getElementById('achievementCount');
+      count.textContent = `${unlockedAchievements.size} / ${ACHIEVEMENTS.length}`;
+
+      list.innerHTML = ACHIEVEMENTS.map(a => {
+        const unlocked = unlockedAchievements.has(a.id);
+        return `
+          <div class="achievement-item" style="opacity: ${unlocked ? 1 : 0.5}">
+            <div class="achievement-icon ${unlocked ? 'unlocked' : ''}">${a.icon}</div>
+            <div class="achievement-info">
+              <div class="achievement-name">${a.name}</div>
+              <div class="achievement-desc">${a.desc}</div>
+            </div>
+            ${unlocked
+              ? '<span class="achievement-badge on-chain">✓ UNLOCKED</span>'
+              : '<span class="achievement-badge locked">LOCKED</span>'
+            }
+          </div>`;
+      }).join('');
+    }
+
+    // ── Helpers ──
+    function saveScores() {
+      localStorage.setItem('neural_reflex_scores', JSON.stringify({
+        bestReaction: bestReaction < Infinity ? bestReaction : null,
+        memoryBestMoves: memoryBestMoves < Infinity ? memoryBestMoves : null,
+        memoryBestTime: memoryBestTime < Infinity ? memoryBestTime : null,
+      }));
+    }
+
+    let toastTimeout;
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
+    // ── Boot ──
+    // Auto-connect from Proofi Chrome extension
+    function checkExtensionConnect() {
+      if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {
+        walletAddress = window.__proofi_extension__.address;
+        // Sync token to localStorage so SDK API calls work
+        if (window.__proofi_extension__.token) {
+          try { localStorage.setItem('proofi_token', window.__proofi_extension__.token); } catch(e) {}
+        }        // Also sync with ProofiSDK so store operations work
+        if (typeof proofi !== 'undefined') {
+          proofi.address = walletAddress;
+          proofi.connected = true;
+        }        updateWalletUI();
+        showToast('WALLET CONNECTED VIA EXTENSION');
+      }
+    }
+    checkExtensionConnect();
+    window.addEventListener('proofi-extension-ready', checkExtensionConnect);
+
+    init();
+  </script>
+</body>
+</html>

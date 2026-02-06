@@ -1,0 +1,2072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi — Your credentials. Verified. Permanent.</title>
+  <meta name="description" content="Decentralized verifiable credentials on Cere Network. Issue, verify, and own your professional credentials — permanently.">
+  <meta property="og:title" content="Proofi — Your credentials. Verified. Permanent.">
+  <meta property="og:description" content="The era of self-reported credentials is over. Proofi brings cryptographically verifiable professional credentials to everyone.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://proofi.ai">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Proofi — Your credentials. Verified. Permanent.">
+  <meta name="twitter:description" content="Decentralized verifiable credentials on Cere Network.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%233B82F6'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='20' font-weight='bold' fill='white'%3E◇%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --bg-off: #FAFAFA;
+      --surface: #F5F5F5;
+      --border: #E0E0E0;
+      --border-strong: #000000;
+      --text: #0A0A0A;
+      --text-dim: #6B6B6B;
+      --text-muted: #999999;
+      --accent: #3B82F6;
+      --accent-hover: #2563EB;
+      --accent-light: #60A5FA;
+      --accent-bg: rgba(59, 130, 246, 0.06);
+      --success: #10B981;
+      --danger: #EF4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ═══ ANIMATIONS ═══ */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-in-delay-1 { transition-delay: 0.1s; }
+    .fade-in-delay-2 { transition-delay: 0.2s; }
+    .fade-in-delay-3 { transition-delay: 0.3s; }
+
+    /* ═══ NAV ═══ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.15s;
+    }
+
+    nav.scrolled { border-bottom-color: var(--border-strong); }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .nav-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .nav-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-name span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      padding: 10px 20px !important;
+      background: var(--accent);
+      color: #fff !important;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-hover) !important;
+      border-color: var(--accent-hover);
+      color: #fff !important;
+    }
+
+    /* ═══ HERO ═══ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 64px 64px;
+      opacity: 0.3;
+    }
+
+    .hero-bg-fade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, var(--bg) 0%, transparent 30%, transparent 70%, var(--bg) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 160px 32px 120px;
+      width: 100%;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 40px;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px;
+      font-weight: 700;
+      letter-spacing: -3.5px;
+      line-height: 0.95;
+      color: var(--text);
+      margin-bottom: 32px;
+      max-width: 800px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 20px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      max-width: 560px;
+      margin-bottom: 48px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 36px;
+      background: var(--accent);
+      color: #fff;
+      border: 2px solid var(--accent);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 18px 36px;
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--border);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover { border-color: var(--border-strong); }
+
+    /* Decorative diamond */
+    .hero-diamond {
+      position: absolute;
+      right: 8%;
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+      width: 320px;
+      height: 320px;
+      border: 2px solid var(--border);
+      opacity: 0.4;
+      z-index: 1;
+    }
+
+    .hero-diamond-inner {
+      position: absolute;
+      right: calc(8% + 48px);
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+      width: 220px;
+      height: 220px;
+      border: 2px solid var(--accent);
+      opacity: 0.15;
+      z-index: 1;
+    }
+
+    .hero-diamond-dot {
+      position: absolute;
+      right: calc(8% + 158px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      z-index: 1;
+    }
+
+    /* ═══ SECTIONS ═══ */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 32px;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      max-width: 720px;
+    }
+
+    .section-desc {
+      font-size: 18px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      max-width: 600px;
+      margin-bottom: 64px;
+    }
+
+    /* ═══ PROBLEM ═══ */
+    .problem-section {
+      background: var(--bg-off);
+      border-top: 2px solid var(--border-strong);
+      border-bottom: 2px solid var(--border-strong);
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      border: 2px solid var(--border-strong);
+    }
+
+    .problem-card {
+      padding: 48px 32px;
+      border-right: 2px solid var(--border-strong);
+      position: relative;
+    }
+
+    .problem-card:last-child { border-right: none; }
+
+    .problem-icon {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--danger);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .problem-icon::after {
+      content: '✕';
+      font-size: 20px;
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .problem-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .problem-card p {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ═══ HOW IT WORKS ═══ */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      border: 2px solid var(--border-strong);
+    }
+
+    .step {
+      padding: 48px 32px;
+      border-right: 2px solid var(--border-strong);
+      position: relative;
+    }
+
+    .step:last-child { border-right: none; }
+
+    .step-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .step-icon {
+      width: 64px;
+      height: 64px;
+      border: 2px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .step-icon-inner {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* CSS-only step icons */
+    .icon-issue {
+      position: relative;
+    }
+    .icon-issue::before {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 28px;
+      border: 2px solid var(--text);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .icon-issue::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 2px;
+      background: var(--accent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .icon-verify {
+      position: relative;
+    }
+    .icon-verify::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--accent);
+      transform: rotate(45deg);
+      top: 50%;
+      left: 50%;
+      margin-top: -10px;
+      margin-left: -10px;
+    }
+    .icon-verify::after {
+      content: '✓';
+      position: absolute;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .icon-own {
+      position: relative;
+    }
+    .icon-own::before {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--text);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .icon-own::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .step h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .step p {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .step-connector {
+      position: absolute;
+      top: 80px;
+      right: -14px;
+      width: 26px;
+      height: 2px;
+      background: var(--accent);
+      z-index: 1;
+    }
+
+    .step-connector::after {
+      content: '';
+      position: absolute;
+      right: -2px;
+      top: -4px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid var(--accent);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+
+    .step:last-child .step-connector { display: none; }
+
+    /* ═══ USE CASES ═══ */
+    .usecases-section {
+      background: var(--bg-off);
+      border-top: 2px solid var(--border-strong);
+      border-bottom: 2px solid var(--border-strong);
+    }
+
+    .usecases-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      border: 2px solid var(--border-strong);
+    }
+
+    .usecase {
+      padding: 48px 32px;
+      border-right: 2px solid var(--border-strong);
+      transition: background 0.15s;
+    }
+
+    .usecase:last-child { border-right: none; }
+
+    .usecase:hover { background: var(--accent-bg); }
+
+    .usecase-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .usecase-visual {
+      width: 100%;
+      height: 120px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* CSS geometric visuals for each use case */
+    .visual-education {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .visual-education::before {
+      content: '';
+      width: 60px;
+      height: 72px;
+      border: 2px solid var(--border-strong);
+      position: relative;
+    }
+    .visual-education::after {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .visual-employment {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .visual-employment .bar {
+      width: 16px;
+      background: var(--border);
+      transition: background 0.15s;
+    }
+    .visual-employment .bar:nth-child(1) { height: 40px; }
+    .visual-employment .bar:nth-child(2) { height: 60px; background: var(--accent); opacity: 0.3; }
+    .visual-employment .bar:nth-child(3) { height: 80px; }
+    .visual-employment .bar:nth-child(4) { height: 55px; background: var(--accent); opacity: 0.3; }
+    .visual-employment .bar:nth-child(5) { height: 70px; }
+
+    .visual-professional {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .visual-professional::before {
+      content: '';
+      width: 56px;
+      height: 56px;
+      border: 2px solid var(--border-strong);
+      transform: rotate(45deg);
+    }
+    .visual-professional::after {
+      content: '✓';
+      position: absolute;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .usecase h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .usecase p {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .usecase-examples {
+      list-style: none;
+    }
+
+    .usecase-examples li {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .usecase-examples li:last-child { border-bottom: none; }
+
+    .usecase-examples li::before {
+      content: '◇ ';
+      color: var(--accent);
+    }
+
+    /* ═══ WHY BLOCKCHAIN ═══ */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      border: 2px solid var(--border-strong);
+    }
+
+    .why-card {
+      padding: 48px 32px;
+      border-right: 2px solid var(--border-strong);
+    }
+
+    .why-card:last-child { border-right: none; }
+
+    .why-icon {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    /* Permanent icon: lock shape */
+    .why-permanent::before {
+      content: '';
+      width: 16px;
+      height: 12px;
+      border: 2px solid var(--accent);
+      border-bottom: none;
+      border-radius: 16px 16px 0 0;
+      position: absolute;
+      top: 8px;
+    }
+    .why-permanent::after {
+      content: '';
+      width: 24px;
+      height: 14px;
+      border: 2px solid var(--accent);
+      position: absolute;
+      bottom: 8px;
+    }
+
+    /* Tamper-proof icon: shield shape */
+    .why-tamperproof::after {
+      content: '◇';
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    /* You own it icon: key shape */
+    .why-ownership::after {
+      content: '→';
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .why-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .why-card p {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .why-note {
+      margin-top: 48px;
+      padding: 32px;
+      border: 1px solid var(--border);
+      max-width: 720px;
+    }
+
+    .why-note p {
+      font-size: 16px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .why-note em {
+      font-style: normal;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ═══ CTA ═══ */
+    .cta-section {
+      background: var(--text);
+      color: var(--bg);
+      border-top: 2px solid var(--border-strong);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .cta-section .section-label { color: var(--accent-light); }
+
+    .cta-section .section-title {
+      color: var(--bg);
+      max-width: none;
+      margin-bottom: 16px;
+    }
+
+    .cta-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+      margin-bottom: 48px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 48px;
+      background: var(--accent);
+      color: #fff;
+      border: 2px solid var(--accent);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .cta-btn:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .cta-trust {
+      margin-top: 32px;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .cta-trust-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cta-trust-item .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--success);
+    }
+
+    /* ═══ FOOTER ═══ */
+    footer {
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer-brand-mark {
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .footer-brand-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .footer-brand-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ═══ WALLET MODAL ═══ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--bg);
+      border: 2px solid var(--border-strong);
+      padding: 48px;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      transform: translateY(16px);
+      transition: transform 0.2s;
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .modal-close:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .modal h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .modal-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 32px;
+    }
+
+    .modal-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-dim);
+      min-height: 20px;
+      margin-top: 16px;
+    }
+
+    .wallet-option {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 12px;
+    }
+
+    .wallet-option:hover {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+    }
+
+    .wallet-option-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .wallet-option-info h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .wallet-option-info p {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .wallet-install {
+      text-align: center;
+      padding: 24px;
+      border: 1px dashed var(--border);
+      margin-top: 16px;
+    }
+
+    .wallet-install p {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .wallet-install a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .wallet-install a:hover { text-decoration: underline; }
+
+    .wallet-connected {
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    .wallet-connected-check {
+      width: 64px;
+      height: 64px;
+      border: 2px solid var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: var(--success);
+      margin: 0 auto 24px;
+    }
+
+    .wallet-connected h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--success);
+    }
+
+    .wallet-connected-addr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-dim);
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      display: inline-block;
+      margin-bottom: 24px;
+      word-break: break-all;
+    }
+
+    .btn-dashboard {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      background: var(--success);
+      color: #fff;
+      border: 2px solid var(--success);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-dashboard:hover {
+      background: #059669;
+      border-color: #059669;
+    }
+
+    .wallet-embed-container {
+      margin-bottom: 24px;
+    }
+
+    .wallet-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .wallet-divider::before,
+    .wallet-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .wallet-divider span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 900px) {
+      .hero h1 {
+        font-size: 52px;
+        letter-spacing: -2px;
+      }
+
+      .hero-sub { font-size: 17px; }
+      .hero-diamond, .hero-diamond-inner, .hero-diamond-dot { display: none; }
+
+      .hero-content { padding: 120px 24px 80px; }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .section { padding: 80px 24px; }
+      .section-title { font-size: 36px; letter-spacing: -1.5px; }
+
+      .problem-grid,
+      .steps-grid,
+      .usecases-grid,
+      .why-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .problem-card,
+      .step,
+      .usecase,
+      .why-card {
+        border-right: none;
+        border-bottom: 2px solid var(--border-strong);
+      }
+
+      .problem-card:last-child,
+      .step:last-child,
+      .usecase:last-child,
+      .why-card:last-child {
+        border-bottom: none;
+      }
+
+      .step-connector { display: none; }
+
+      .nav-links a:not(.nav-cta) { display: none; }
+
+      .footer-inner {
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+      }
+
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+
+      .cta-trust {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 40px; letter-spacing: -1.5px; }
+      .hero-content { padding: 100px 20px 64px; }
+      .section { padding: 64px 20px; }
+      .section-title { font-size: 30px; letter-spacing: -1px; }
+      .modal { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ NAV ═══ -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-brand">
+        <div class="nav-logo">◇</div>
+        <div class="nav-name">Proof<span>i</span></div>
+      </a>
+      <div class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#how">How it works</a>
+        <a href="#usecases">Use cases</a>
+        <a href="/app" class="nav-cta">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-bg-fade"></div>
+    <div class="hero-diamond"></div>
+    <div class="hero-diamond-inner"></div>
+    <div class="hero-diamond-dot"></div>
+    <div class="hero-content">
+      <div class="hero-badge fade-in">
+        <span class="dot"></span>
+        Built on Cere Network
+      </div>
+      <h1 class="fade-in fade-in-delay-1">Your credentials.<br>Verified.<br><em>Permanent.</em></h1>
+      <p class="hero-sub fade-in fade-in-delay-2">
+        The era of self-reported credentials is over. Proofi lets you issue, 
+        verify, and own your professional credentials — cryptographically 
+        proven, impossible to fake, controlled by you.
+      </p>
+      <div class="hero-actions fade-in fade-in-delay-3">
+        <a href="/app" class="btn-primary" style="text-decoration:none;">
+          ◇ Get Started
+        </a>
+        <a href="#how" class="btn-secondary">
+          How it works →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ THE PROBLEM ═══ -->
+  <section class="problem-section" id="problem">
+    <div class="section" style="padding-bottom: 0;">
+      <div class="section-label fade-in">// The Problem</div>
+      <div class="section-title fade-in">Credentials are broken.</div>
+      <p class="section-desc fade-in">
+        Your professional identity lives on platforms you don't control, 
+        verified by processes that don't work, trusted by systems that 
+        can't tell the difference between real and fake.
+      </p>
+    </div>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 32px 120px;">
+      <div class="problem-grid">
+        <div class="problem-card fade-in">
+          <div class="problem-icon"></div>
+          <h3>Self-reported and unverified</h3>
+          <p>Anyone can claim any title, any degree, any company on LinkedIn. 121 million fake accounts removed per year — and those are just the ones they catch.</p>
+        </div>
+        <div class="problem-card fade-in fade-in-delay-1">
+          <div class="problem-icon"></div>
+          <h3>Platform-controlled identity</h3>
+          <p>Your professional reputation lives on servers you don't own, governed by people you didn't choose, monetized without your consent. Delete your account and it's gone.</p>
+        </div>
+        <div class="problem-card fade-in fade-in-delay-2">
+          <div class="problem-icon"></div>
+          <h3>Verification that doesn't scale</h3>
+          <p>Background checks take weeks, cost hundreds, and still rely on phone calls and emails. Reference checks are theater. Nobody actually verifies anything.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ HOW IT WORKS ═══ -->
+  <section class="section" id="how">
+    <div class="section-label fade-in">// How It Works</div>
+    <div class="section-title fade-in">Issue. Verify. Own.</div>
+    <p class="section-desc fade-in">
+      Three steps to credentials that are cryptographically verified, 
+      permanently stored, and entirely under your control.
+    </p>
+    <div class="steps-grid">
+      <div class="step fade-in">
+        <div class="step-num">Step 01</div>
+        <div class="step-icon">
+          <div class="step-icon-inner icon-issue"></div>
+        </div>
+        <h3>Issue</h3>
+        <p>Institutions — universities, employers, certification bodies — issue credentials directly to your wallet. Cryptographically signed, timestamped, and stored on Cere's decentralized network.</p>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step fade-in fade-in-delay-1">
+        <div class="step-num">Step 02</div>
+        <div class="step-icon">
+          <div class="step-icon-inner icon-verify"></div>
+        </div>
+        <h3>Verify</h3>
+        <p>Anyone can verify a credential with one click. No account needed, no API keys, no subscription. The cryptographic proof speaks for itself — it's either valid or it's not.</p>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step fade-in fade-in-delay-2">
+        <div class="step-num">Step 03</div>
+        <div class="step-icon">
+          <div class="step-icon-inner icon-own"></div>
+        </div>
+        <h3>Own</h3>
+        <p>Your credentials live in your wallet, not on someone else's platform. Share them when you want, revoke access when you don't. Your professional identity, your rules.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ USE CASES ═══ -->
+  <section class="usecases-section" id="usecases">
+    <div class="section" style="padding-bottom: 0;">
+      <div class="section-label fade-in">// Use Cases</div>
+      <div class="section-title fade-in">One platform, every credential.</div>
+      <p class="section-desc fade-in">
+        From academic degrees to professional certifications — 
+        if it matters to your career, it belongs on-chain.
+      </p>
+    </div>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 32px 120px;">
+      <div class="usecases-grid">
+        <div class="usecase fade-in">
+          <div class="usecase-label">Education</div>
+          <div class="usecase-visual visual-education"></div>
+          <h3>Academic credentials</h3>
+          <p>Degrees, transcripts, and academic achievements — issued by universities, verified instantly by anyone.</p>
+          <ul class="usecase-examples">
+            <li>Bachelor's & Master's degrees</li>
+            <li>Academic transcripts</li>
+            <li>Research publications</li>
+            <li>Course completions</li>
+          </ul>
+        </div>
+        <div class="usecase fade-in fade-in-delay-1">
+          <div class="usecase-label">Employment</div>
+          <div class="usecase-visual visual-employment">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+          <h3>Work history</h3>
+          <p>Employment records verified by the companies themselves. No more "trust me, I worked there."</p>
+          <ul class="usecase-examples">
+            <li>Job titles & tenure</li>
+            <li>Performance records</li>
+            <li>Project contributions</li>
+            <li>Reference letters</li>
+          </ul>
+        </div>
+        <div class="usecase fade-in fade-in-delay-2">
+          <div class="usecase-label">Professional</div>
+          <div class="usecase-visual visual-professional"></div>
+          <h3>Certifications & licenses</h3>
+          <p>Industry certifications, professional licenses, and skill validations — always current, always verifiable.</p>
+          <ul class="usecase-examples">
+            <li>Professional certifications</li>
+            <li>Industry licenses</li>
+            <li>Skill assessments</li>
+            <li>Continuing education</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ WHY BLOCKCHAIN ═══ -->
+  <section class="section" id="why">
+    <div class="section-label fade-in">// Why Blockchain</div>
+    <div class="section-title fade-in">Not hype. Infrastructure.</div>
+    <p class="section-desc fade-in">
+      We're not interested in tokens or speculation. We use blockchain 
+      because it solves three problems that no centralized system can.
+    </p>
+    <div class="why-grid">
+      <div class="why-card fade-in">
+        <div class="why-icon why-permanent"></div>
+        <h3>Permanent</h3>
+        <p>Your credentials exist on a decentralized network with no single point of failure. No company can shut down and take your records with them. No server crash erases your history. Once issued, it's there.</p>
+      </div>
+      <div class="why-card fade-in fade-in-delay-1">
+        <div class="why-icon why-tamperproof"></div>
+        <h3>Tamper-proof</h3>
+        <p>Every credential is cryptographically signed by its issuer. Change a single character and the signature breaks. There's no way to fake, alter, or backdate a verified credential. Math doesn't lie.</p>
+      </div>
+      <div class="why-card fade-in fade-in-delay-2">
+        <div class="why-icon why-ownership"></div>
+        <h3>You own it</h3>
+        <p>Your credentials live in your wallet — not on LinkedIn's servers, not in a university's database. You decide who sees what, when, and for how long. Revoke access anytime.</p>
+      </div>
+    </div>
+    <div class="why-note fade-in">
+      <p>
+        Built on <em>Cere Network's Decentralized Data Cloud</em> — 
+        production infrastructure with 63 nodes, 99.9% uptime, and 
+        cryptographic tamper-proofing at every layer. Not a whitepaper. 
+        Running in production.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section">
+    <div class="cta-bg-grid"></div>
+    <div class="section">
+      <div class="cta-inner">
+        <div class="section-label fade-in">// Get Started</div>
+        <div class="section-title fade-in">Start verifying your credentials.</div>
+        <p class="cta-sub fade-in">
+          Connect your wallet to claim your verifiable professional identity. 
+          Your credentials. Your keys. Your proof.
+        </p>
+        <a href="/app" class="cta-btn fade-in" style="text-decoration:none;display:inline-block;">
+          ◇ Connect Wallet
+        </button>
+        <div class="cta-trust fade-in">
+          <div class="cta-trust-item">
+            <span class="dot"></span> W3C Verifiable Credentials
+          </div>
+          <div class="cta-trust-item">
+            <span class="dot"></span> Sr25519 Signatures
+          </div>
+          <div class="cta-trust-item">
+            <span class="dot"></span> Cere DDC Mainnet
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-brand-mark">◇</div>
+        <div class="footer-brand-text">
+          <strong>proofi.ai</strong> — Built on Cere Network
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="https://cere.network" target="_blank">Cere Network</a>
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="https://x.com" target="_blank">X / Twitter</a>
+        <a href="mailto:hello@proofi.ai">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ WALLET MODAL ═══ -->
+  <div class="modal-overlay" id="walletModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeWalletModal()">✕</button>
+      <div id="walletModalContent">
+        <!-- Step 1: Email -->
+        <div id="loginStep1">
+          <h2>Sign In</h2>
+          <div class="modal-sub">Your wallet is derived from your email — no seed phrase needed</div>
+          <div style="margin-top: 20px;">
+            <input type="email" id="loginEmail" placeholder="you@example.com"
+              style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border);
+                     font-size: 15px; font-family: inherit; background: var(--bg-off); color: var(--text);
+                     outline: none; transition: border-color 0.15s;"
+              onfocus="this.style.borderColor='var(--accent)'"
+              onblur="this.style.borderColor='var(--border)'"
+              onkeydown="if(event.key==='Enter') sendProofiOtp()">
+          </div>
+          <button onclick="sendProofiOtp()" style="width: 100%; margin-top: 12px; padding: 12px 24px;
+            background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px;
+            font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s;"
+            onmouseover="this.style.background='var(--accent-hover)'"
+            onmouseout="this.style.background='var(--accent)'"
+            id="sendOtpBtn">
+            Continue
+          </button>
+          <div style="text-align: center; margin-top: 16px; color: var(--text-muted); font-size: 12px;">
+            Powered by Proofi Wallet on Cere Network
+          </div>
+        </div>
+
+        <!-- Step 2: OTP -->
+        <div id="loginStep2" style="display: none;">
+          <h2>Verify</h2>
+          <div class="modal-sub">Enter the 6-digit code sent to <strong id="otpEmailDisplay"></strong></div>
+          <div style="display: flex; gap: 8px; justify-content: center; margin-top: 20px;" id="otpInputs">
+            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+              font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
+              border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
+              oninput="otpNext(this, 0)" onkeydown="otpKeydown(event, 0)">
+            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+              font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
+              border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
+              oninput="otpNext(this, 1)" onkeydown="otpKeydown(event, 1)">
+            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+              font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
+              border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
+              oninput="otpNext(this, 2)" onkeydown="otpKeydown(event, 2)">
+            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+              font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
+              border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
+              oninput="otpNext(this, 3)" onkeydown="otpKeydown(event, 3)">
+            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+              font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
+              border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
+              oninput="otpNext(this, 4)" onkeydown="otpKeydown(event, 4)">
+            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+              font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
+              border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
+              oninput="otpNext(this, 5)" onkeydown="otpKeydown(event, 5)">
+          </div>
+          <button onclick="document.getElementById('loginStep1').style.display=''; document.getElementById('loginStep2').style.display='none';"
+            style="width: 100%; margin-top: 16px; padding: 10px; background: none; border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text-dim); font-size: 13px; cursor: pointer; font-family: inherit;">
+            ← Use a different email
+          </button>
+        </div>
+
+        <!-- Step 3: PIN for key derivation -->
+        <div id="loginStep3" style="display: none;">
+          <h2>🔐 Set Your PIN</h2>
+          <div class="modal-sub">Choose a 4-6 digit PIN to secure your wallet. Your key is derived locally — the server never sees it.</div>
+          <div style="margin-top: 20px;">
+            <input type="password" id="pinInput" inputmode="numeric" pattern="[0-9]*" maxlength="6" minlength="4"
+              placeholder="Enter 4-6 digit PIN"
+              style="width: 100%; padding: 16px; border-radius: 8px; border: 1px solid var(--border);
+                     font-size: 24px; font-family: 'JetBrains Mono', monospace; background: var(--bg-off);
+                     color: var(--text); outline: none; text-align: center; letter-spacing: 12px;
+                     transition: border-color 0.15s;"
+              onfocus="this.style.borderColor='var(--accent)'"
+              onblur="this.style.borderColor='var(--border)'"
+              oninput="validatePin()"
+              onkeydown="if(event.key==='Enter' && this.value.length >= 4) deriveAndRegister()">
+            <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted); text-align: center;" id="pinHint">
+              4-6 digits required
+            </div>
+          </div>
+          <button onclick="deriveAndRegister()" id="pinSubmitBtn" disabled
+            style="width: 100%; margin-top: 16px; padding: 14px 24px;
+            background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px;
+            font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; opacity: 0.5;"
+            onmouseover="if(!this.disabled) this.style.background='var(--accent-hover)'"
+            onmouseout="this.style.background='var(--accent)'">
+            🔑 Create Wallet
+          </button>
+          <div style="margin-top: 16px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-off);">
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.5;">
+              🛡️ <strong>Zero-knowledge security:</strong> Your private key is derived from your email + PIN on this device only. The server never sees your key or PIN.
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3b: Enter existing PIN (returning user) -->
+        <div id="loginStep3b" style="display: none;">
+          <h2>🔐 Enter Your PIN</h2>
+          <div class="modal-sub">Enter your PIN to unlock your wallet</div>
+          <div style="margin-top: 20px;">
+            <input type="password" id="pinInputExisting" inputmode="numeric" pattern="[0-9]*" maxlength="6" minlength="4"
+              placeholder="Your PIN"
+              style="width: 100%; padding: 16px; border-radius: 8px; border: 1px solid var(--border);
+                     font-size: 24px; font-family: 'JetBrains Mono', monospace; background: var(--bg-off);
+                     color: var(--text); outline: none; text-align: center; letter-spacing: 12px;
+                     transition: border-color 0.15s;"
+              onfocus="this.style.borderColor='var(--accent)'"
+              onblur="this.style.borderColor='var(--border)'"
+              onkeydown="if(event.key==='Enter' && this.value.length >= 4) unlockExisting()">
+          </div>
+          <button onclick="unlockExisting()" id="pinUnlockBtn"
+            style="width: 100%; margin-top: 16px; padding: 14px 24px;
+            background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px;
+            font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s;"
+            onmouseover="this.style.background='var(--accent-hover)'"
+            onmouseout="this.style.background='var(--accent)'">
+            🔓 Unlock Wallet
+          </button>
+        </div>
+
+        <div class="modal-status" id="walletStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ═══ PROOFI WALLET API ═══
+    const PROOFI_API = window.location.hostname === 'localhost' 
+      ? 'http://localhost:3847' 
+      : 'https://proofi-api-production.up.railway.app';
+
+    // ═══ SCROLL ANIMATIONS ═══
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Trigger hero animations immediately
+    setTimeout(() => {
+      document.querySelectorAll('.hero .fade-in').forEach(el => {
+        el.classList.add('visible');
+      });
+    }, 100);
+
+    // ═══ NAV SCROLL EFFECT ═══
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 80) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // ═══ SMOOTH SCROLL ═══
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // ═══ PROOFI WALLET CONNECTION ═══
+    let connectedAddress = null;
+    let proofiToken = null;
+    let proofiEmail = null;
+
+    // Check for existing session — redirect to portal if logged in
+    (function restoreSession() {
+      const token = localStorage.getItem('proofi_token');
+      const email = localStorage.getItem('proofi_email');
+      if (token && email) {
+        window.location.href = '/app';
+        return;
+      }
+    })();
+
+    function openWalletModal() {
+      document.getElementById('walletModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      if (connectedAddress) showConnectedState();
+    }
+
+    function closeWalletModal() {
+      document.getElementById('walletModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('walletModal').addEventListener('click', function(e) {
+      if (e.target === this) closeWalletModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeWalletModal();
+    });
+
+    // ── OTP flow ──
+
+    async function sendProofiOtp() {
+      const email = document.getElementById('loginEmail').value.trim();
+      if (!email || !email.includes('@')) return;
+
+      const btn = document.getElementById('sendOtpBtn');
+      const status = document.getElementById('walletStatus');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      status.textContent = '';
+
+      try {
+        const res = await fetch(`${PROOFI_API}/auth/otp/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        proofiEmail = email;
+        document.getElementById('loginStep1').style.display = 'none';
+        document.getElementById('loginStep2').style.display = '';
+        document.getElementById('otpEmailDisplay').textContent = email;
+
+        // In dev mode: auto-fill the OTP if returned by API
+        if (data.devCode) {
+          const boxes = document.querySelectorAll('.otp-box');
+          data.devCode.split('').forEach((d, i) => { if (boxes[i]) boxes[i].value = d; });
+          // Small delay then auto-verify
+          setTimeout(() => verifyProofiOtp(data.devCode), 500);
+          return;
+        }
+
+        // Focus first OTP input
+        document.querySelectorAll('.otp-box')[0].focus();
+      } catch (err) {
+        status.textContent = err.message || 'Failed to send code';
+      } finally {
+        btn.textContent = 'Continue';
+        btn.disabled = false;
+      }
+    }
+
+    function otpNext(input, index) {
+      if (input.value.length === 1) {
+        const boxes = document.querySelectorAll('.otp-box');
+        if (index < 5) {
+          boxes[index + 1].focus();
+        }
+        // Check if all filled
+        const code = Array.from(boxes).map(b => b.value).join('');
+        if (code.length === 6) {
+          verifyProofiOtp(code);
+        }
+      }
+    }
+
+    function otpKeydown(event, index) {
+      if (event.key === 'Backspace' && !event.target.value && index > 0) {
+        document.querySelectorAll('.otp-box')[index - 1].focus();
+      }
+    }
+
+    // ═══ DERIVATION STATE ═══
+    let derivationSalt = null;
+    let hasExistingAddress = false;
+    let existingAddress = null;
+
+    async function verifyProofiOtp(code) {
+      const status = document.getElementById('walletStatus');
+      status.textContent = 'Verifying...';
+
+      try {
+        const res = await fetch(`${PROOFI_API}/auth/otp/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: proofiEmail, code }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        proofiToken = data.token;
+        derivationSalt = data.derivationSalt;
+        hasExistingAddress = data.hasAddress;
+        existingAddress = data.address;
+
+        localStorage.setItem('proofi_token', data.token);
+        localStorage.setItem('proofi_email', data.email);
+
+        status.textContent = '';
+
+        // Show PIN step
+        document.getElementById('loginStep2').style.display = 'none';
+        if (hasExistingAddress) {
+          document.getElementById('loginStep3b').style.display = '';
+          document.getElementById('pinInputExisting').focus();
+        } else {
+          document.getElementById('loginStep3').style.display = '';
+          document.getElementById('pinInput').focus();
+        }
+      } catch (err) {
+        status.textContent = err.message || 'Verification failed';
+        document.querySelectorAll('.otp-box').forEach(b => b.value = '');
+        document.querySelectorAll('.otp-box')[0].focus();
+      }
+    }
+
+    // ═══ PIN VALIDATION ═══
+    function validatePin() {
+      const pin = document.getElementById('pinInput').value;
+      const btn = document.getElementById('pinSubmitBtn');
+      const hint = document.getElementById('pinHint');
+      const isValid = /^\d{4,6}$/.test(pin);
+      btn.disabled = !isValid;
+      btn.style.opacity = isValid ? '1' : '0.5';
+      if (pin.length > 0 && pin.length < 4) {
+        hint.textContent = `${4 - pin.length} more digits needed`;
+        hint.style.color = 'var(--danger)';
+      } else if (isValid) {
+        hint.textContent = '✓ PIN looks good';
+        hint.style.color = 'var(--success)';
+      } else {
+        hint.textContent = '4-6 digits required';
+        hint.style.color = 'var(--text-muted)';
+      }
+    }
+
+    // ═══ CLIENT-SIDE KEY DERIVATION (WebCrypto PBKDF2) ═══
+    async function deriveClientKey(email, pin, salt) {
+      const encoder = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(email.toLowerCase().trim() + ':' + pin),
+        'PBKDF2',
+        false,
+        ['deriveBits']
+      );
+      const bits = await crypto.subtle.deriveBits({
+        name: 'PBKDF2',
+        salt: encoder.encode(salt),
+        iterations: 100000,
+        hash: 'SHA-256'
+      }, keyMaterial, 256);
+      return new Uint8Array(bits);
+    }
+
+    function seedToHex(seed) {
+      return '0x' + Array.from(seed).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function uint8ToBase64(u8) {
+      return btoa(String.fromCharCode(...u8));
+    }
+
+    function base64ToUint8(b64) {
+      return new Uint8Array(atob(b64).split('').map(c => c.charCodeAt(0)));
+    }
+
+    // ═══ AES-GCM ENCRYPT/DECRYPT ═══
+    async function encryptSeed(seed, pin) {
+      const encoder = new TextEncoder();
+      const encSalt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw', encoder.encode(pin), 'PBKDF2', false, ['deriveKey']
+      );
+      const aesKey = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: encSalt, iterations: 100000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt']
+      );
+      const ciphertext = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv }, aesKey, seed
+      );
+      return {
+        encryptedSeed: uint8ToBase64(new Uint8Array(ciphertext)),
+        iv: uint8ToBase64(iv),
+        salt: uint8ToBase64(encSalt),
+      };
+    }
+
+    async function decryptSeed(encryptedSeed, iv, salt, pin) {
+      const encoder = new TextEncoder();
+      const aesKeyMaterial = await crypto.subtle.importKey(
+        'raw', encoder.encode(pin), 'PBKDF2', false, ['deriveKey']
+      );
+      const aesKey = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: base64ToUint8(salt), iterations: 100000, hash: 'SHA-256' },
+        aesKeyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      );
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: base64ToUint8(iv) },
+        aesKey,
+        base64ToUint8(encryptedSeed)
+      );
+      return new Uint8Array(decrypted);
+    }
+
+    // ═══ DERIVE AND REGISTER (new user) ═══
+    async function deriveAndRegister() {
+      const pin = document.getElementById('pinInput').value;
+      if (!/^\d{4,6}$/.test(pin)) return;
+
+      const status = document.getElementById('walletStatus');
+      const btn = document.getElementById('pinSubmitBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Deriving key...';
+      status.textContent = 'Deriving wallet key locally...';
+
+      try {
+        // 1. Derive seed client-side
+        const seed = await deriveClientKey(proofiEmail, pin, derivationSalt);
+        const seedHex = seedToHex(seed);
+
+        // 2. Compute address from seed hash (pseudo sr25519 address)
+        const hashBuf = await crypto.subtle.digest('SHA-256', seed);
+        const addressHash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        const walletAddress = '5' + addressHash.slice(0, 47);
+
+        status.textContent = 'Registering address...';
+
+        // 3. Register public address with server
+        const regRes = await fetch(`${PROOFI_API}/auth/register-address`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${proofiToken}`,
+          },
+          body: JSON.stringify({ address: walletAddress }),
+        });
+        if (!regRes.ok) throw new Error((await regRes.json()).error);
+
+        // 4. Encrypt seed for local storage
+        const encrypted = await encryptSeed(seed, pin);
+        localStorage.setItem('proofi_encrypted_seed', JSON.stringify(encrypted));
+        localStorage.setItem('proofi_address', walletAddress);
+        localStorage.setItem('proofi_seed', seedHex);
+
+        // 5. Backup encrypted seed to DDC
+        status.textContent = 'Backing up encrypted key...';
+        try {
+          await fetch(`${PROOFI_API}/ddc/backup`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${proofiToken}`,
+            },
+            body: JSON.stringify(encrypted),
+          });
+        } catch (e) {
+          console.warn('DDC backup failed (non-critical):', e);
+        }
+
+        status.textContent = '✅ Wallet created!';
+        setTimeout(() => { window.location.href = '/app'; }, 500);
+      } catch (err) {
+        status.textContent = '❌ ' + (err.message || 'Key derivation failed');
+        btn.disabled = false;
+        btn.textContent = '🔑 Create Wallet';
+      }
+    }
+
+    // ═══ UNLOCK EXISTING (returning user) ═══
+    async function unlockExisting() {
+      const pin = document.getElementById('pinInputExisting').value;
+      if (pin.length < 4) return;
+
+      const status = document.getElementById('walletStatus');
+      const btn = document.getElementById('pinUnlockBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Unlocking...';
+      status.textContent = 'Deriving key...';
+
+      try {
+        let seed;
+
+        // Try local backup first
+        const localBackup = localStorage.getItem('proofi_encrypted_seed');
+        if (localBackup) {
+          try {
+            const { encryptedSeed, iv, salt } = JSON.parse(localBackup);
+            seed = await decryptSeed(encryptedSeed, iv, salt, pin);
+          } catch (e) {
+            console.warn('Local decrypt failed, trying DDC backup...');
+          }
+        }
+
+        // Try DDC backup
+        if (!seed) {
+          status.textContent = 'Fetching backup from DDC...';
+          try {
+            const backupRes = await fetch(`${PROOFI_API}/ddc/backup/${encodeURIComponent(proofiEmail)}`, {
+              headers: { 'Authorization': `Bearer ${proofiToken}` },
+            });
+            if (backupRes.ok) {
+              const backup = await backupRes.json();
+              seed = await decryptSeed(backup.encryptedSeed, backup.iv, backup.salt, pin);
+              localStorage.setItem('proofi_encrypted_seed', JSON.stringify({
+                encryptedSeed: backup.encryptedSeed, iv: backup.iv, salt: backup.salt,
+              }));
+            }
+          } catch (e) {
+            console.warn('DDC backup fetch failed:', e);
+          }
+        }
+
+        // Last resort: re-derive from scratch
+        if (!seed) {
+          seed = await deriveClientKey(proofiEmail, pin, derivationSalt);
+        }
+
+        const seedHex = seedToHex(seed);
+        const hashBuf = await crypto.subtle.digest('SHA-256', seed);
+        const addressHash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        const walletAddress = '5' + addressHash.slice(0, 47);
+
+        localStorage.setItem('proofi_address', walletAddress);
+        localStorage.setItem('proofi_seed', seedHex);
+
+        if (!localBackup) {
+          const encrypted = await encryptSeed(seed, pin);
+          localStorage.setItem('proofi_encrypted_seed', JSON.stringify(encrypted));
+        }
+
+        status.textContent = '✅ Wallet unlocked!';
+        setTimeout(() => { window.location.href = '/app'; }, 500);
+      } catch (err) {
+        status.textContent = '❌ Wrong PIN or decryption failed';
+        btn.disabled = false;
+        btn.textContent = '🔓 Unlock Wallet';
+      }
+    }
+
+    function disconnectProofi() {
+      localStorage.removeItem('proofi_token');
+      localStorage.removeItem('proofi_email');
+      localStorage.removeItem('proofi_address');
+      localStorage.removeItem('proofi_seed');
+      localStorage.removeItem('proofi_encrypted_seed');
+      localStorage.removeItem('proofi_stored_items');
+      location.reload();
+    }
+  </script>
+</body>
+</html>
+<!-- deploy Tue Feb  3 14:43:20 CET 2026 -->

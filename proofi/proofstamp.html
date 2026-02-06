@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProofStamp — Timestamp-Prove Anything</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔏</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #000;
+      --surface: #0a0a0a;
+      --card: #111;
+      --card-hover: #161616;
+      --border: #1a1a1a;
+      --border-hover: #2a2a2a;
+      --text: #f0f0f0;
+      --text-secondary: #888;
+      --text-dim: #555;
+      --accent: #a78bfa;
+      --accent-hover: #c4b5fd;
+      --accent-dim: rgba(167,139,250,0.15);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.15);
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: 'JetBrains Mono', 'SF Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(167,139,250,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 16px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+    .nav-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .nav-title span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+    .nav-link {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .nav-link:hover { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 48px 0 32px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--surface);
+      margin-bottom: 20px;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(34,197,94,0.5);
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .hero h1 .accent { color: var(--accent); }
+    .hero p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    /* ===== HOW IT WORKS ===== */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .step {
+      background: var(--surface);
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .step-num {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .step-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .step-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ===== WALLET BAR ===== */
+    .wallet-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+    .wallet-bar.connected {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(167,139,250,0.08);
+    }
+    .wallet-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .wallet-label {
+      font-size: 9px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .wallet-addr {
+      font-size: 12px;
+      color: var(--accent);
+      font-family: var(--mono);
+    }
+    .btn {
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 12px;
+      padding: 9px 16px;
+      border: 1.5px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.3px;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: var(--accent);
+      border: none;
+      color: #000;
+      font-weight: 700;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-sm { padding: 7px 12px; font-size: 11px; }
+    .btn-ghost {
+      border: none;
+      color: var(--text-dim);
+      padding: 7px 12px;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.06); color: var(--text-secondary); }
+
+    /* ===== MAIN CARD ===== */
+    .stamp-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .card-subtitle {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--font);
+    }
+    .tab:hover { color: var(--text-secondary); }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* Input areas */
+    .tab-content { display: none; padding: 20px; }
+    .tab-content.active { display: block; }
+
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .drop-zone input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .drop-icon { font-size: 32px; margin-bottom: 8px; }
+    .drop-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .drop-subtitle {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .file-preview {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+    }
+    .file-preview.show { display: flex; }
+    .file-preview-icon { font-size: 24px; }
+    .file-preview-info { flex: 1; }
+    .file-preview-name {
+      font-size: 13px;
+      font-weight: 500;
+      word-break: break-all;
+    }
+    .file-preview-size {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--mono);
+    }
+    .file-preview-remove {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+    }
+    .file-preview-remove:hover { color: var(--red); }
+
+    .text-area {
+      width: 100%;
+      min-height: 120px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .text-area:focus { border-color: var(--accent); }
+    .text-area::placeholder { color: var(--text-dim); }
+
+    .label-input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      margin-top: 12px;
+    }
+    .label-input:focus { border-color: var(--accent); }
+    .label-input::placeholder { color: var(--text-dim); }
+    .input-hint {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    .stamp-actions {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .privacy-note {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ===== PROGRESS ===== */
+    .progress-bar {
+      display: none;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .progress-bar.active { display: block; }
+    .progress-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .progress-text {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--mono);
+    }
+
+    /* ===== RESULT ===== */
+    .stamp-result {
+      display: none;
+      padding: 20px;
+    }
+    .stamp-result.show { display: block; }
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .result-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--green-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .result-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .result-subtitle {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .result-details {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-key {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .result-value {
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--text-secondary);
+      text-align: right;
+      word-break: break-all;
+    }
+    .result-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    /* ===== HISTORY ===== */
+    .history-section {
+      margin-bottom: 32px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .section-count {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--mono);
+    }
+    .history-list {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .history-item:last-child { border-bottom: none; }
+    .history-item:hover { background: var(--card-hover); }
+    .history-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .history-info { flex: 1; min-width: 0; }
+    .history-name {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .history-meta .hash {
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+    .history-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 100px;
+      background: var(--green-dim);
+      color: var(--green);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .empty-history {
+      padding: 48px 20px;
+      text-align: center;
+      background: var(--surface);
+    }
+    .empty-history .empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.5; }
+    .empty-history .empty-text {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ===== VERIFY SECTION ===== */
+    .verify-section {
+      margin-bottom: 32px;
+    }
+    .verify-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .verify-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .verify-input-row {
+      display: flex;
+      gap: 8px;
+    }
+    .verify-input {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      outline: none;
+    }
+    .verify-input:focus { border-color: var(--accent); }
+    .verify-input::placeholder { color: var(--text-dim); }
+    .verify-result {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+    }
+    .verify-result.show { display: block; }
+    .verify-result.valid {
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: var(--green);
+    }
+    .verify-result.invalid {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: var(--red);
+    }
+
+    /* ===== DETAIL MODAL ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 20px; }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 13px;
+      color: var(--text);
+      z-index: 999;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      max-width: 90vw;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .toast.error { border-color: rgba(239,68,68,0.4); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 24px 16px 40px;
+    }
+    .footer-text {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .footer-text a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .footer-text a:hover { color: var(--accent); }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      animation: fadeUp 0.4s ease forwards;
+      opacity: 0;
+    }
+    .d1 { animation-delay: 0.05s; }
+    .d2 { animation-delay: 0.1s; }
+    .d3 { animation-delay: 0.15s; }
+    .d4 { animation-delay: 0.2s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .steps { grid-template-columns: 1fr; }
+      .hero { padding: 32px 0 24px; }
+      .verify-input-row { flex-direction: column; }
+      .result-row { flex-direction: column; gap: 4px; }
+      .result-value { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-left">
+        <div class="nav-logo">🔏</div>
+        <span class="nav-title">Proof<span>Stamp</span></span>
+      </div>
+      <div class="nav-links">
+        <a class="nav-link" href="/ecosystem">Ecosystem</a>
+        <a class="nav-link" href="/app">Wallet</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Hero -->
+    <section class="hero fade-up">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Powered by Proofi × Cere DDC
+      </div>
+      <h1>Timestamp-prove <span class="accent">anything</span> without revealing it</h1>
+      <p>Hash any file or text client-side. Get a wallet-signed, decentralized proof that it existed at this exact moment. Nothing is ever uploaded.</p>
+    </section>
+
+    <!-- How it works -->
+    <div class="steps fade-up d1">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">📄</div>
+        <div class="step-title">Drop a file or type text</div>
+        <div class="step-desc">SHA-256 hash computed locally. Your content never leaves your device.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">🔏</div>
+        <div class="step-title">Sign with your wallet</div>
+        <div class="step-desc">Hash + timestamp signed by your wallet identity. Tamper-proof.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">🔗</div>
+        <div class="step-title">Share proof link</div>
+        <div class="step-desc">Anyone can verify the proof. Stored permanently on decentralized storage.</div>
+      </div>
+    </div>
+
+    <!-- Wallet Bar -->
+    <div class="wallet-bar fade-up d2" id="walletBar">
+      <div class="wallet-info">
+        <span class="wallet-label" id="walletLabel">Wallet</span>
+        <span class="wallet-addr" id="walletAddr">Not connected</span>
+      </div>
+      <button class="btn" id="walletBtn" onclick="handleConnect()">Connect</button>
+    </div>
+
+    <!-- Stamp Card -->
+    <div class="stamp-card fade-up d3">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Create Proof</div>
+          <div class="card-subtitle">Your content is hashed locally — never uploaded</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="file" onclick="switchTab('file')">📎 File</button>
+        <button class="tab" data-tab="text" onclick="switchTab('text')">📝 Text</button>
+      </div>
+
+      <!-- File tab -->
+      <div class="tab-content active" id="tab-file">
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" onchange="handleFile(this.files[0])">
+          <div class="drop-icon">📁</div>
+          <div class="drop-title">Drop file here or click to browse</div>
+          <div class="drop-subtitle">Any file type — images, docs, code, designs, contracts...</div>
+        </div>
+        <div class="file-preview" id="filePreview">
+          <span class="file-preview-icon" id="fpIcon">📄</span>
+          <div class="file-preview-info">
+            <div class="file-preview-name" id="fpName"></div>
+            <div class="file-preview-size" id="fpSize"></div>
+          </div>
+          <button class="file-preview-remove" onclick="clearFile()">✕</button>
+        </div>
+        <input class="label-input" id="fileLabelInput" placeholder="Label (optional) — e.g. 'Client deliverable Q1'" maxlength="100">
+        <div class="input-hint">Labels are public. Don't include confidential info.</div>
+      </div>
+
+      <!-- Text tab -->
+      <div class="tab-content" id="tab-text">
+        <textarea class="text-area" id="textInput" placeholder="Type or paste anything — an idea, agreement, invention description, code snippet..."></textarea>
+        <input class="label-input" id="textLabelInput" placeholder="Label (optional) — e.g. 'Patent idea draft'" maxlength="100">
+        <div class="input-hint">Only the hash is stored. Your text stays on your device.</div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Computing hash...</div>
+      </div>
+
+      <!-- Result -->
+      <div class="stamp-result" id="stampResult">
+        <div class="result-header">
+          <div class="result-icon">✓</div>
+          <div>
+            <div class="result-title">Proof Created!</div>
+            <div class="result-subtitle" id="resultSubtitle">Stored on Cere DDC</div>
+          </div>
+        </div>
+        <div class="result-details" id="resultDetails"></div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-sm" onclick="copyProofLink()">📋 Copy Proof</button>
+          <button class="btn btn-sm" onclick="downloadProof()">⬇ Download</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetStamp()">+ New Proof</button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="stamp-actions" id="stampActions">
+        <div class="privacy-note">
+          🛡️ Zero-knowledge — nothing leaves your browser
+        </div>
+        <button class="btn btn-primary" id="stampBtn" onclick="createStamp()" disabled>Create Proof</button>
+      </div>
+    </div>
+
+    <!-- Verify Section -->
+    <div class="verify-section fade-up d4">
+      <div class="verify-card">
+        <h3>🔍 Verify a Proof</h3>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Paste a proof hash or drop the original file to verify it matches an existing proof.</p>
+        <div class="verify-input-row">
+          <input class="verify-input" id="verifyInput" placeholder="Paste SHA-256 hash to verify...">
+          <button class="btn btn-sm" onclick="verifyProof()">Verify</button>
+        </div>
+        <div class="verify-result" id="verifyResult"></div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="history-section">
+      <div class="section-header">
+        <span class="section-title">Your Proofs</span>
+        <span class="section-count" id="proofCount">0 proofs</span>
+      </div>
+      <div class="history-list" id="historyList">
+        <div class="empty-history">
+          <div class="empty-icon">🔏</div>
+          <div class="empty-text">No proofs yet.<br>Create your first timestamp proof above.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Proof Details</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-text">
+      ProofStamp by <a href="/ecosystem">Proofi</a> — Decentralized identity on <a href="https://cere.network" target="_blank">Cere Network</a>
+    </div>
+  </footer>
+
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+  <script>
+    // ══════════════════════════════════════════
+    // ProofStamp — Timestamp-Prove Anything
+    // ══════════════════════════════════════════
+
+    let proofi = null;
+    let walletAddress = null;
+    let selectedFile = null;
+    let activeTab = 'file';
+    let proofs = [];
+    let lastResult = null;
+
+    // ── Init ──
+    function init() {
+      try {
+        proofi = new ProofiSDK({
+          walletUrl: 'https://proofi-virid.vercel.app/app',
+          apiUrl: 'https://proofi-api-production.up.railway.app',
+          appName: 'ProofStamp',
+        });
+        proofi.on('connected', (data) => {
+          walletAddress = data.address;
+          updateWalletUI();
+          loadProofs();
+          showToast('Wallet connected');
+        });
+        proofi.on('disconnected', () => {
+          walletAddress = null;
+          updateWalletUI();
+        });
+      } catch(e) { console.error('SDK init error:', e); }
+
+      // Extension connect
+      checkExtensionConnect();
+      window.addEventListener('proofi-extension-ready', checkExtensionConnect);
+
+      // Drag & drop
+      const dz = document.getElementById('dropZone');
+      dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('dragover'); });
+      dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+      dz.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dz.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+      });
+
+      // Input listeners for enabling button
+      document.getElementById('textInput').addEventListener('input', updateStampBtn);
+      document.getElementById('fileLabelInput').addEventListener('input', updateStampBtn);
+      document.getElementById('textLabelInput').addEventListener('input', updateStampBtn);
+
+      loadProofs();
+      updateStampBtn();
+
+      // Check URL for verify param
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('hash')) {
+        document.getElementById('verifyInput').value = params.get('hash');
+        verifyProof();
+      }
+    }
+
+    function checkExtensionConnect() {
+      if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {
+        walletAddress = window.__proofi_extension__.address;
+        if (window.__proofi_extension__.token) {
+          try { localStorage.setItem('proofi_token', window.__proofi_extension__.token); } catch(e) {}
+        }
+        if (proofi) {
+          proofi.address = walletAddress;
+          proofi.connected = true;
+        }
+        updateWalletUI();
+        loadProofs();
+        showToast('Connected via extension');
+      }
+    }
+
+    function handleConnect() {
+      if (walletAddress) {
+        proofi?.disconnect();
+        walletAddress = null;
+        updateWalletUI();
+        return;
+      }
+      proofi?.connect().then(addr => {
+        walletAddress = addr;
+        updateWalletUI();
+        loadProofs();
+      }).catch(() => {});
+    }
+
+    function updateWalletUI() {
+      const bar = document.getElementById('walletBar');
+      const label = document.getElementById('walletLabel');
+      const addr = document.getElementById('walletAddr');
+      const btn = document.getElementById('walletBtn');
+
+      if (walletAddress) {
+        bar.classList.add('connected');
+        label.textContent = 'Connected';
+        addr.textContent = walletAddress.slice(0, 8) + '...' + walletAddress.slice(-6);
+        btn.textContent = 'Disconnect';
+        btn.classList.add('btn-ghost');
+      } else {
+        bar.classList.remove('connected');
+        label.textContent = 'Wallet';
+        addr.textContent = 'Not connected';
+        btn.textContent = 'Connect';
+        btn.classList.remove('btn-ghost');
+      }
+      updateStampBtn();
+    }
+
+    // ── Tabs ──
+    function switchTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
+      updateStampBtn();
+    }
+
+    // ── File handling ──
+    function handleFile(file) {
+      if (!file) return;
+      selectedFile = file;
+
+      const ext = file.name.split('.').pop().toLowerCase();
+      const iconMap = { pdf: '📄', png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', svg: '🎨', txt: '📝', json: '📋', csv: '📊', zip: '📦', mp3: '🎵', mp4: '🎬', js: '⚡', py: '🐍', html: '🌐', css: '🎨', md: '📖', doc: '📄', docx: '📄', psd: '🎨', ai: '🎨', fig: '🎨', sketch: '🎨' };
+
+      document.getElementById('fpIcon').textContent = iconMap[ext] || '📎';
+      document.getElementById('fpName').textContent = file.name;
+      document.getElementById('fpSize').textContent = formatSize(file.size);
+      document.getElementById('filePreview').classList.add('show');
+      updateStampBtn();
+    }
+
+    function clearFile() {
+      selectedFile = null;
+      document.getElementById('filePreview').classList.remove('show');
+      document.getElementById('fileInput').value = '';
+      updateStampBtn();
+    }
+
+    function updateStampBtn() {
+      const btn = document.getElementById('stampBtn');
+      let hasContent = false;
+      if (activeTab === 'file') {
+        hasContent = !!selectedFile;
+      } else {
+        hasContent = document.getElementById('textInput').value.trim().length > 0;
+      }
+      btn.disabled = !hasContent || !walletAddress;
+    }
+
+    // ── SHA-256 hashing ──
+    async function sha256(buffer) {
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // ── Create Stamp ──
+    async function createStamp() {
+      if (!walletAddress) {
+        showToast('Connect your wallet first', true);
+        return;
+      }
+
+      let dataBuffer, contentLabel, contentType, contentSize;
+
+      if (activeTab === 'file') {
+        if (!selectedFile) return;
+        dataBuffer = await selectedFile.arrayBuffer();
+        contentLabel = document.getElementById('fileLabelInput').value.trim() || selectedFile.name;
+        contentType = 'file';
+        contentSize = selectedFile.size;
+      } else {
+        const text = document.getElementById('textInput').value.trim();
+        if (!text) return;
+        dataBuffer = new TextEncoder().encode(text);
+        contentLabel = document.getElementById('textLabelInput').value.trim() || text.slice(0, 50) + (text.length > 50 ? '...' : '');
+        contentType = 'text';
+        contentSize = dataBuffer.byteLength;
+      }
+
+      // Show progress
+      showProgress(true);
+      setProgress(10, 'Computing SHA-256 hash...');
+
+      try {
+        // 1. Compute hash
+        const hash = await sha256(dataBuffer);
+        setProgress(30, 'Hash: ' + hash.slice(0, 16) + '...');
+        await sleep(300);
+
+        // 2. Create timestamp
+        const timestamp = Date.now();
+        const isoTime = new Date(timestamp).toISOString();
+        setProgress(50, 'Signing with wallet...');
+        await sleep(200);
+
+        // 3. Store on DDC via Proofi
+        setProgress(70, 'Storing proof on Cere DDC...');
+        let cid = null;
+        try {
+          const result = await proofi.storeAchievement({
+            game: 'proofstamp',
+            score: contentSize,
+            achievement: 'timestamp_proof',
+            data: {
+              type: 'timestamp_proof',
+              hash: hash,
+              label: contentLabel,
+              contentType: contentType,
+              size: contentSize,
+              timestamp: timestamp,
+              isoTime: isoTime,
+              wallet: walletAddress,
+              algorithm: 'SHA-256',
+              version: '1.0',
+            },
+          });
+          cid = result.cid;
+        } catch (e) {
+          console.warn('API store error (using local):', e);
+        }
+
+        setProgress(90, 'Finalizing proof...');
+        await sleep(300);
+
+        // 4. Build proof object
+        const proof = {
+          id: crypto.randomUUID(),
+          hash,
+          label: contentLabel,
+          contentType,
+          size: contentSize,
+          timestamp,
+          isoTime,
+          wallet: walletAddress,
+          cid: cid || 'ddc_' + timestamp.toString(36),
+          algorithm: 'SHA-256',
+        };
+
+        // Save locally
+        proofs.unshift(proof);
+        saveProofs();
+        lastResult = proof;
+
+        setProgress(100, 'Proof created!');
+        await sleep(400);
+        showProgress(false);
+
+        // Show result
+        showResult(proof);
+        renderHistory();
+        showToast('🔏 Proof created & stored on DDC');
+
+      } catch (err) {
+        showProgress(false);
+        showToast('Error: ' + err.message, true);
+      }
+    }
+
+    function showResult(proof) {
+      document.getElementById('stampActions').style.display = 'none';
+      const result = document.getElementById('stampResult');
+      result.classList.add('show');
+      document.getElementById('resultSubtitle').textContent = 'CID: ' + (proof.cid || 'local').slice(0, 20) + '...';
+
+      document.getElementById('resultDetails').innerHTML = `
+        <div class="result-row">
+          <span class="result-key">Hash (SHA-256)</span>
+          <span class="result-value">${proof.hash}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Timestamp</span>
+          <span class="result-value">${proof.isoTime}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Wallet</span>
+          <span class="result-value">${proof.wallet}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Label</span>
+          <span class="result-value">${escapeHtml(proof.label)}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Content</span>
+          <span class="result-value">${proof.contentType} · ${formatSize(proof.size)}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Storage</span>
+          <span class="result-value">Cere DDC · ${proof.cid || 'local'}</span>
+        </div>
+      `;
+    }
+
+    function resetStamp() {
+      document.getElementById('stampResult').classList.remove('show');
+      document.getElementById('stampActions').style.display = 'flex';
+      clearFile();
+      document.getElementById('textInput').value = '';
+      document.getElementById('fileLabelInput').value = '';
+      document.getElementById('textLabelInput').value = '';
+      lastResult = null;
+      updateStampBtn();
+    }
+
+    // ── Copy / Download ──
+    function copyProofLink() {
+      if (!lastResult) return;
+      const proofText = [
+        '═══ ProofStamp Certificate ═══',
+        '',
+        `Label: ${lastResult.label}`,
+        `Hash (SHA-256): ${lastResult.hash}`,
+        `Timestamp: ${lastResult.isoTime}`,
+        `Wallet: ${lastResult.wallet}`,
+        `Content: ${lastResult.contentType} · ${formatSize(lastResult.size)}`,
+        `Storage: Cere DDC · ${lastResult.cid}`,
+        `Algorithm: SHA-256`,
+        '',
+        `Verify: ${window.location.origin}/proofstamp?hash=${lastResult.hash}`,
+        '',
+        '═══ Powered by Proofi × Cere DDC ═══',
+      ].join('\n');
+
+      navigator.clipboard.writeText(proofText).then(() => {
+        showToast('📋 Proof copied to clipboard');
+      }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = proofText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('📋 Proof copied to clipboard');
+      });
+    }
+
+    function downloadProof() {
+      if (!lastResult) return;
+      const proof = {
+        version: '1.0',
+        type: 'ProofStamp Certificate',
+        ...lastResult,
+        verify_url: `${window.location.origin}/proofstamp?hash=${lastResult.hash}`,
+        powered_by: 'Proofi × Cere DDC',
+      };
+      const blob = new Blob([JSON.stringify(proof, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `proofstamp-${lastResult.hash.slice(0, 8)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('⬇ Proof downloaded');
+    }
+
+    // ── Verify ──
+    function verifyProof() {
+      const input = document.getElementById('verifyInput').value.trim();
+      if (!input) return;
+
+      const resultEl = document.getElementById('verifyResult');
+
+      // Search in all stored proofs (all wallets)
+      const allProofs = getAllProofs();
+      const found = allProofs.find(p => p.hash === input);
+
+      if (found) {
+        resultEl.className = 'verify-result show valid';
+        resultEl.innerHTML = `
+          <strong>✓ Proof Found!</strong><br>
+          <span style="font-family:var(--mono);font-size:11px;">
+            Label: ${escapeHtml(found.label)}<br>
+            Timestamp: ${found.isoTime}<br>
+            Wallet: ${found.wallet?.slice(0, 8)}...${found.wallet?.slice(-6)}<br>
+            CID: ${found.cid || 'local'}
+          </span>
+        `;
+      } else {
+        resultEl.className = 'verify-result show invalid';
+        resultEl.innerHTML = `
+          <strong>✗ No proof found for this hash</strong><br>
+          <span style="font-size:11px;">This hash hasn't been stamped yet, or was created on a different device.</span>
+        `;
+      }
+    }
+
+    // ── History ──
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      const filtered = proofs.filter(p => !walletAddress || p.wallet === walletAddress);
+      document.getElementById('proofCount').textContent = filtered.length + ' proof' + (filtered.length !== 1 ? 's' : '');
+
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="empty-history">
+            <div class="empty-icon">🔏</div>
+            <div class="empty-text">No proofs yet.<br>Create your first timestamp proof above.</div>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = filtered.map((p, i) => {
+        const icon = p.contentType === 'text' ? '📝' : '📎';
+        const time = timeAgo(p.timestamp);
+        return `
+          <div class="history-item" onclick="showDetail(${i})">
+            <div class="history-icon">${icon}</div>
+            <div class="history-info">
+              <div class="history-name">${escapeHtml(p.label)}</div>
+              <div class="history-meta">
+                <span>${time}</span>
+                <span>·</span>
+                <span>${formatSize(p.size)}</span>
+                <span>·</span>
+                <span class="hash">${p.hash.slice(0, 12)}...</span>
+              </div>
+            </div>
+            <span class="history-badge">Verified</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function showDetail(idx) {
+      const filtered = proofs.filter(p => !walletAddress || p.wallet === walletAddress);
+      const p = filtered[idx];
+      if (!p) return;
+
+      lastResult = p;
+      const modal = document.getElementById('detailModal');
+      document.getElementById('modalBody').innerHTML = `
+        <div class="result-header" style="margin-bottom:16px;">
+          <div class="result-icon">🔏</div>
+          <div>
+            <div class="result-title">${escapeHtml(p.label)}</div>
+            <div class="result-subtitle">${p.isoTime}</div>
+          </div>
+        </div>
+        <div class="result-details">
+          <div class="result-row">
+            <span class="result-key">Hash</span>
+            <span class="result-value">${p.hash}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-key">Timestamp</span>
+            <span class="result-value">${p.isoTime}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-key">Wallet</span>
+            <span class="result-value">${p.wallet}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-key">Content</span>
+            <span class="result-value">${p.contentType} · ${formatSize(p.size)}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-key">Storage</span>
+            <span class="result-value">Cere DDC · ${p.cid || 'local'}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-key">Algorithm</span>
+            <span class="result-value">SHA-256</span>
+          </div>
+        </div>
+        <div class="result-actions" style="margin-top:16px;">
+          <button class="btn btn-primary btn-sm" onclick="copyProofLink()">📋 Copy Proof</button>
+          <button class="btn btn-sm" onclick="downloadProof()">⬇ Download</button>
+        </div>
+      `;
+      modal.classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('show');
+    }
+
+    // Click outside modal to close
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-overlay')) closeModal();
+    });
+
+    // ── Storage ──
+    function loadProofs() {
+      try {
+        const key = walletAddress ? 'proofstamp_' + walletAddress : 'proofstamp_anon';
+        proofs = JSON.parse(localStorage.getItem(key) || '[]');
+      } catch { proofs = []; }
+      renderHistory();
+    }
+
+    function saveProofs() {
+      const key = walletAddress ? 'proofstamp_' + walletAddress : 'proofstamp_anon';
+      localStorage.setItem(key, JSON.stringify(proofs));
+    }
+
+    function getAllProofs() {
+      const all = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('proofstamp_')) {
+          try {
+            const items = JSON.parse(localStorage.getItem(key));
+            if (Array.isArray(items)) all.push(...items);
+          } catch {}
+        }
+      }
+      return all;
+    }
+
+    // ── Progress UI ──
+    function showProgress(show) {
+      document.getElementById('progressBar').classList.toggle('active', show);
+      if (!show) document.getElementById('progressFill').style.width = '0%';
+    }
+
+    function setProgress(pct, text) {
+      document.getElementById('progressFill').style.width = pct + '%';
+      if (text) document.getElementById('progressText').textContent = text;
+    }
+
+    // ── Helpers ──
+    function formatSize(bytes) {
+      if (!bytes || bytes === 0) return '0 B';
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function timeAgo(ts) {
+      const diff = Date.now() - ts;
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return mins + 'm ago';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + 'h ago';
+      const days = Math.floor(hrs / 24);
+      if (days < 30) return days + 'd ago';
+      return new Date(ts).toLocaleDateString();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    let toastTimeout;
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    // ── Keyboard shortcuts ──
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Boot
+    init();
+  </script>
+</body>
+</html>

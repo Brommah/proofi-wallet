@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpeedType — Proofi Typing Challenge</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--cyan:#00E5FF;--green:#00FF88;--magenta:#FF3366;--yellow:#FFE100;--purple:#8B5CF6;--bg:#000;--surface:#0A0A0A;--card:#111;--border:#1A1A1A;--text:#F0F0F0;--dim:#555}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(0,229,255,0.04) 0%,transparent 60%);pointer-events:none}
+
+    .container{max-width:640px;margin:0 auto;padding:16px}
+
+    /* Header */
+    .header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--border);margin-bottom:20px}
+    .title{font-size:32px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),#3B82F6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .subtitle{font-size:10px;color:var(--dim);letter-spacing:4px;text-transform:uppercase;margin-top:4px}
+
+    /* Wallet Bar */
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:20px}
+    .wallet-bar.connected{border-color:var(--green);box-shadow:0 0 20px rgba(0,255,136,0.05)}
+    .wallet-info{display:flex;align-items:center;gap:10px}
+    .wallet-dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+    .wallet-dot.on{background:var(--green);box-shadow:0 0 8px rgba(0,255,136,0.4)}
+    .wallet-label{font-size:12px;color:var(--dim)}
+    .wallet-addr{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan)}
+    .wallet-actions{display:flex;gap:6px}
+    .btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border:2px solid var(--cyan);background:transparent;color:var(--cyan);border-radius:6px;cursor:pointer;transition:all .15s}
+    .btn:hover{background:var(--cyan);color:#000;box-shadow:0 0 20px rgba(0,229,255,0.3)}
+    .btn:active{transform:scale(.97)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.green{border-color:var(--green);color:var(--green)}.btn.green:hover{background:var(--green);color:#000}
+    .btn.magenta{border-color:var(--magenta);color:var(--magenta)}.btn.magenta:hover{background:var(--magenta);color:#fff}
+    .btn.yellow{border-color:var(--yellow);color:var(--yellow)}.btn.yellow:hover{background:var(--yellow);color:#000}
+    .btn.purple{border-color:var(--purple);color:var(--purple)}.btn.purple:hover{background:var(--purple);color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+
+    /* Difficulty Tabs */
+    .diff-tabs{display:flex;gap:2px;margin-bottom:20px}
+    .diff-tab{flex:1;padding:12px;background:var(--surface);border:1px solid var(--border);color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-align:center;transition:all .15s}
+    .diff-tab:first-child{border-radius:8px 0 0 8px}
+    .diff-tab:last-child{border-radius:0 8px 8px 0}
+    .diff-tab:hover{color:var(--text);border-color:var(--dim)}
+    .diff-tab.active{color:var(--cyan);border-color:var(--cyan);background:rgba(0,229,255,0.05)}
+
+    /* Score Panel */
+    .score-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:20px}
+    .score-item{background:var(--surface);border:1px solid var(--border);padding:14px 10px;text-align:center;border-radius:8px}
+    .score-label{font-size:9px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:4px}
+    .score-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700}
+    .score-value.cyan{color:var(--cyan)}.score-value.green{color:var(--green)}
+    .score-value.yellow{color:var(--yellow)}.score-value.magenta{color:var(--magenta)}
+
+    /* Typing Area */
+    .type-area{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden;transition:border-color .3s}
+    .type-area.active{border-color:var(--cyan);box-shadow:0 0 30px rgba(0,229,255,0.08)}
+    .type-area.finished{border-color:var(--green);box-shadow:0 0 30px rgba(0,255,136,0.08)}
+
+    .prompt-text{font-size:18px;line-height:1.8;font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;margin-bottom:20px;min-height:60px;position:relative;white-space:pre-wrap;word-break:break-word}
+    .char{transition:color .05s}
+    .char.correct{color:var(--green)}
+    .char.wrong{color:var(--magenta);background:rgba(255,51,102,0.15);border-radius:2px}
+    .char.current{background:rgba(0,229,255,0.2);border-radius:2px;animation:blink 1s infinite}
+    .char.pending{color:var(--dim)}
+    @keyframes blink{0%,100%{background:rgba(0,229,255,0.2)}50%{background:rgba(0,229,255,0.05)}}
+
+    .type-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:16px;outline:none;transition:border-color .2s;resize:none}
+    .type-input:focus{border-color:var(--cyan)}
+    .type-input::placeholder{color:var(--dim)}
+    .type-input:disabled{opacity:.4}
+
+    /* Live Stats Bar */
+    .live-stats{display:flex;justify-content:space-between;align-items:center;padding:10px 0;margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
+    .live-wpm{color:var(--cyan);font-weight:700;font-size:14px}
+    .live-accuracy{color:var(--green)}
+    .live-timer{color:var(--yellow)}
+
+    /* Progress Bar */
+    .progress-bar{height:4px;background:var(--border);border-radius:4px;margin-bottom:20px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:4px;transition:width .15s;box-shadow:0 0 8px rgba(0,229,255,0.4)}
+
+    /* Result Screen */
+    .result-screen{display:none;text-align:center;padding:30px 20px}
+    .result-wpm{font-size:72px;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+    .result-unit{font-size:14px;color:var(--dim);letter-spacing:4px;text-transform:uppercase;margin-top:4px}
+    .result-grade{font-size:20px;font-weight:700;margin-top:12px;letter-spacing:3px}
+    .result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+    .result-stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px}
+    .result-stat .val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700}
+    .result-stat .lbl{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+    .result-actions{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+
+    /* Achievements */
+    .achievements{margin-top:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .achievements-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .achievements-title{font-size:11px;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+    .achievement-count{font-size:10px;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+    .achievement-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+    .achievement-item:last-child{border-bottom:none}
+    .achievement-icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(0,229,255,0.05);border:1px solid var(--border);border-radius:8px}
+    .achievement-icon.unlocked{border-color:var(--green);background:rgba(0,255,136,0.1)}
+    .achievement-info{flex:1}
+    .achievement-name{font-size:11px;font-weight:700;letter-spacing:1px}
+    .achievement-desc{font-size:9px;color:var(--dim);margin-top:2px}
+    .achievement-badge{font-size:9px;padding:3px 8px;letter-spacing:1px;border-radius:4px}
+    .achievement-badge.on-chain{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.3)}
+    .achievement-badge.locked{color:var(--dim);border:1px solid var(--border)}
+
+    /* Toast */
+    .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--surface);border:2px solid var(--green);padding:12px 24px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);letter-spacing:2px;z-index:10000;transition:transform .3s ease;box-shadow:0 0 40px rgba(0,255,136,0.2);border-radius:8px}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .toast.error{border-color:var(--magenta);color:var(--magenta);box-shadow:0 0 40px rgba(255,51,102,0.2)}
+
+    /* Footer */
+    .footer{text-align:center;padding:24px 0;margin-top:20px;border-top:1px solid var(--border)}
+    .footer .powered{display:flex;align-items:center;justify-content:center;gap:8px}
+    .footer .dot{width:4px;height:4px;background:var(--cyan);display:inline-block;border-radius:50%}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:3px;text-transform:uppercase;transition:color .15s}
+    .footer a:hover{color:var(--cyan)}
+
+    /* Confetti */
+    .confetti-piece{position:fixed;width:8px;height:8px;z-index:9999;pointer-events:none;animation:confettiFall linear forwards}
+    @keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+
+    /* Responsive */
+    @media(max-width:480px){
+      .container{padding:12px}
+      .title{font-size:24px}
+      .prompt-text{font-size:14px}
+      .type-input{font-size:14px}
+      .result-wpm{font-size:56px}
+      .score-value{font-size:20px}
+      .result-stats{grid-template-columns:1fr 1fr 1fr}
+      .result-stat .val{font-size:16px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="title">⌨️ SpeedType</div>
+      <div class="subtitle">type fast • prove your skill • store on chain</div>
+    </div>
+
+    <!-- Wallet Bar -->
+    <div class="wallet-bar" id="walletBar">
+      <div class="wallet-info">
+        <div class="wallet-dot" id="walletDot"></div>
+        <span class="wallet-label" id="walletLabel">No wallet connected</span>
+        <span class="wallet-addr" id="walletAddr"></span>
+      </div>
+      <div class="wallet-actions">
+        <button class="btn sm" id="connectBtn" onclick="handleConnect()">CONNECT</button>
+        <button class="btn sm green" id="demoBtn" onclick="enterDemoMode()">TRY DEMO</button>
+      </div>
+    </div>
+
+    <!-- Difficulty Tabs -->
+    <div class="diff-tabs">
+      <button class="diff-tab active" onclick="setDifficulty('easy')">📝 EASY</button>
+      <button class="diff-tab" onclick="setDifficulty('medium')">📄 MEDIUM</button>
+      <button class="diff-tab" onclick="setDifficulty('hard')">📖 HARD</button>
+    </div>
+
+    <!-- Score Panel -->
+    <div class="score-panel">
+      <div class="score-item">
+        <div class="score-label">Best WPM</div>
+        <div class="score-value cyan" id="bestWpm">—</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Round</div>
+        <div class="score-value" id="roundNum" style="color:var(--text)">0</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Best Accuracy</div>
+        <div class="score-value green" id="bestAcc">—</div>
+      </div>
+    </div>
+
+    <!-- Game View -->
+    <div id="gameView">
+      <!-- Live Stats -->
+      <div class="live-stats" id="liveStats" style="visibility:hidden">
+        <span class="live-wpm">⌨️ <span id="liveWpm">0</span> WPM</span>
+        <span class="live-accuracy">✓ <span id="liveAcc">100</span>%</span>
+        <span class="live-timer">⏱ <span id="liveTimer">0.0</span>s</span>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+      <!-- Typing Area -->
+      <div class="type-area" id="typeArea">
+        <div class="prompt-text" id="promptText">
+          <span class="char pending">P</span><span class="char pending">r</span><span class="char pending">e</span><span class="char pending">s</span><span class="char pending">s</span><span class="char pending"> </span><span class="char pending">S</span><span class="char pending">T</span><span class="char pending">A</span><span class="char pending">R</span><span class="char pending">T</span><span class="char pending"> </span><span class="char pending">t</span><span class="char pending">o</span><span class="char pending"> </span><span class="char pending">b</span><span class="char pending">e</span><span class="char pending">g</span><span class="char pending">i</span><span class="char pending">n</span>
+        </div>
+        <textarea class="type-input" id="typeInput" placeholder="Start typing here..." disabled rows="2"></textarea>
+      </div>
+
+      <!-- Controls -->
+      <div style="display:flex;gap:8px">
+        <button class="btn green" id="startBtn" onclick="startRound()" style="flex:1">▶ START</button>
+        <button class="btn yellow" id="skipBtn" onclick="skipRound()" style="display:none">⏭ SKIP</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="result-screen" id="resultScreen">
+      <div class="result-wpm" id="resultWpm">0</div>
+      <div class="result-unit">Words Per Minute</div>
+      <div class="result-grade" id="resultGrade"></div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="val green" id="resultAcc">0%</div>
+          <div class="lbl">Accuracy</div>
+        </div>
+        <div class="result-stat">
+          <div class="val yellow" id="resultTime">0s</div>
+          <div class="lbl">Time</div>
+        </div>
+        <div class="result-stat">
+          <div class="val magenta" id="resultErrors">0</div>
+          <div class="lbl">Errors</div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn green" onclick="startRound()">▶ NEXT ROUND</button>
+        <button class="btn" onclick="resetGame()">↺ RESET</button>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="achievements" id="achievementsPanel">
+      <div class="achievements-header">
+        <span class="achievements-title">🏆 Achievements</span>
+        <span class="achievement-count" id="achievementCount">0 / 8</span>
+      </div>
+      <div id="achievementsList"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="powered">
+        <span class="dot"></span>
+        <a href="https://proofi-virid.vercel.app" target="_blank">Powered by Proofi × Cere DDC</a>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Proofi SDK -->
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+
+  <script>
+    // ── Sentences ──
+    const SENTENCES = {
+      easy: [
+        "The quick brown fox jumps over the lazy dog.",
+        "A journey of a thousand miles begins with a single step.",
+        "To be or not to be, that is the question.",
+        "All that glitters is not gold.",
+        "The best way to predict the future is to invent it.",
+        "Stay hungry, stay foolish.",
+        "Less is more in design and in life.",
+        "Code is poetry written for machines.",
+        "Think different. Think bigger. Think better.",
+        "Every moment is a fresh beginning.",
+        "The only way to do great work is to love what you do.",
+        "Simplicity is the ultimate sophistication.",
+        "Fortune favors the bold and the prepared.",
+        "Not all who wander are lost.",
+        "In the middle of difficulty lies opportunity.",
+      ],
+      medium: [
+        "The blockchain is a decentralized ledger that records all transactions across a peer-to-peer network without the need for intermediaries.",
+        "Decentralized storage solutions like Cere DDC allow users to maintain full ownership and control of their data while leveraging the security of distributed networks.",
+        "Smart contracts are self-executing programs that automatically enforce the terms of an agreement when predefined conditions are met on the blockchain.",
+        "In the world of web3, your wallet is your identity. Every transaction, every credential, and every achievement is tied to your cryptographic keys.",
+        "Typing speed is measured in words per minute, where a word is standardized as five characters including spaces and punctuation marks.",
+        "The Stroop effect demonstrates the interference in reaction time when the name of a color is printed in a different color than the one it describes.",
+        "Open source software has revolutionized the technology industry by enabling collaborative development and transparent code review across global communities.",
+        "Artificial intelligence and machine learning are transforming how we interact with technology, from voice assistants to autonomous vehicles.",
+        "The internet of things connects billions of devices worldwide, creating smart ecosystems that optimize energy usage and improve daily life.",
+        "Cybersecurity professionals work tirelessly to protect digital infrastructure from increasingly sophisticated threats and attack vectors.",
+      ],
+      hard: [
+        "Decentralized Autonomous Organizations represent a paradigm shift in governance, enabling communities to make collective decisions through transparent voting mechanisms encoded in smart contracts on the blockchain, eliminating the need for traditional hierarchical management structures.",
+        "The convergence of artificial intelligence, blockchain technology, and the Internet of Things is creating unprecedented opportunities for innovation across industries, from supply chain management to healthcare diagnostics and financial services.",
+        "Quantum computing poses both tremendous opportunities and significant challenges for modern cryptography. While quantum algorithms could break many current encryption schemes, post-quantum cryptographic methods are being developed to ensure the security of digital communications in a quantum future.",
+        "Zero-knowledge proofs enable one party to prove to another that a statement is true without revealing any additional information beyond the validity of the statement itself. This cryptographic technique has profound implications for privacy-preserving transactions on public blockchains.",
+        "The evolution of the internet from static web pages to dynamic applications, and now to decentralized protocols, reflects humanity's ongoing quest for more open, transparent, and user-centric digital infrastructure that empowers individuals rather than centralized corporations.",
+        "Natural language processing has made remarkable strides in recent years, with large language models demonstrating an ability to generate coherent text, translate between languages, summarize documents, and answer complex questions across virtually every domain of human knowledge.",
+        "The principles of distributed systems design, including eventual consistency, partition tolerance, and availability, form the theoretical foundation upon which modern blockchain networks and decentralized applications are built, each making distinct trade-offs based on their specific use cases.",
+      ],
+    };
+
+    // ── State ──
+    let proofi = null;
+    let walletAddress = null;
+    let isDemoMode = false;
+    let difficulty = 'easy';
+    let currentText = '';
+    let typed = '';
+    let startTime = 0;
+    let timerInterval = null;
+    let isPlaying = false;
+    let round = 0;
+    let bestWpm = 0;
+    let bestAcc = 0;
+    let usedTexts = new Set();
+
+    // Achievements
+    const ACHIEVEMENTS = [
+      { id: 'first_type', name: 'FIRST WORDS', desc: 'Complete your first typing round', icon: '⌨️', check: () => round >= 1 },
+      { id: 'wpm_30', name: 'GETTING STARTED', desc: 'Reach 30 WPM', icon: '🐢', check: () => bestWpm >= 30 },
+      { id: 'wpm_50', name: 'STEADY HANDS', desc: 'Reach 50 WPM', icon: '✋', check: () => bestWpm >= 50 },
+      { id: 'wpm_80', name: 'SPEED DEMON', desc: 'Reach 80 WPM', icon: '🔥', check: () => bestWpm >= 80 },
+      { id: 'wpm_100', name: 'CENTURION', desc: 'Reach 100 WPM', icon: '💯', check: () => bestWpm >= 100 },
+      { id: 'wpm_120', name: 'LIGHTNING FINGERS', desc: 'Reach 120 WPM', icon: '⚡', check: () => bestWpm >= 120 },
+      { id: 'perfect', name: 'PERFECTIONIST', desc: 'Complete a round with 100% accuracy', icon: '💎', check: () => bestAcc >= 100 },
+      { id: 'streak_5', name: 'MARATHON TYPER', desc: 'Complete 5 rounds', icon: '🏃', check: () => round >= 5 },
+    ];
+    let unlockedAchievements = new Set();
+    let onChainAchievements = new Set();
+    let achievementQueue = [];
+    let storingAchievement = false;
+
+    // ── Init ──
+    function init() {
+      proofi = new ProofiSDK({
+        walletUrl: 'https://proofi-virid.vercel.app/app',
+        apiUrl: 'https://proofi-api-production.up.railway.app',
+        appName: 'SPEEDTYPE',
+      });
+
+      proofi.on('connected', (data) => {
+        walletAddress = data.address;
+        updateWalletUI();
+        toast('⌨️ WALLET CONNECTED');
+        syncAchievementsToChain();
+      });
+
+      proofi.on('disconnected', () => {
+        walletAddress = null;
+        updateWalletUI();
+      });
+
+      // Load saved data
+      try {
+        const saved = JSON.parse(localStorage.getItem('speedtype_data') || '{}');
+        if (saved.bestWpm) bestWpm = saved.bestWpm;
+        if (saved.bestAcc) bestAcc = saved.bestAcc;
+        if (saved.round) round = saved.round;
+        if (saved.achievements) saved.achievements.forEach(id => unlockedAchievements.add(id));
+      } catch {}
+
+      updateScorePanel();
+      renderAchievements();
+      renderPrompt();
+    }
+
+    // ── Wallet ──
+    function enterDemoMode() {
+      isDemoMode = true;
+      walletAddress = '5Demo' + Math.random().toString(36).slice(2, 14) + 'ABCDEF';
+      updateWalletUI();
+      toast('⌨️ DEMO MODE ACTIVE');
+    }
+
+    async function handleConnect() {
+      if (walletAddress) {
+        proofi.disconnect();
+        walletAddress = null;
+        isDemoMode = false;
+        updateWalletUI();
+        return;
+      }
+      try {
+        document.getElementById('connectBtn').textContent = 'LINKING...';
+        const addr = await proofi.connect();
+        walletAddress = addr;
+        updateWalletUI();
+      } catch (err) {
+        toast(err.message === 'User closed wallet' ? 'CANCELLED' : 'CONNECT FAILED — TRY DEMO', true);
+        document.getElementById('connectBtn').textContent = 'CONNECT';
+      }
+    }
+
+    function updateWalletUI() {
+      const bar = document.getElementById('walletBar');
+      const dot = document.getElementById('walletDot');
+      const label = document.getElementById('walletLabel');
+      const addr = document.getElementById('walletAddr');
+      const btn = document.getElementById('connectBtn');
+      if (walletAddress) {
+        bar.classList.add('connected');
+        dot.classList.add('on');
+        label.textContent = isDemoMode ? '🎮 Demo' : 'Connected';
+        addr.textContent = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+        btn.textContent = 'DISCONNECT';
+        btn.className = 'btn sm magenta';
+        document.getElementById('demoBtn').style.display = 'none';
+      } else {
+        bar.classList.remove('connected');
+        dot.classList.remove('on');
+        label.textContent = 'No wallet connected';
+        addr.textContent = '';
+        btn.textContent = 'CONNECT';
+        btn.className = 'btn sm';
+        document.getElementById('demoBtn').style.display = '';
+      }
+    }
+
+    // ── Difficulty ──
+    function setDifficulty(diff) {
+      if (isPlaying) return;
+      difficulty = diff;
+      document.querySelectorAll('.diff-tab').forEach((t, i) => {
+        t.classList.toggle('active', ['easy', 'medium', 'hard'][i] === diff);
+      });
+      usedTexts.clear();
+      renderPrompt();
+    }
+
+    // ── Get Random Text ──
+    function getRandomText() {
+      const pool = SENTENCES[difficulty].filter(s => !usedTexts.has(s));
+      if (pool.length === 0) usedTexts.clear();
+      const available = pool.length > 0 ? pool : SENTENCES[difficulty];
+      const text = available[Math.floor(Math.random() * available.length)];
+      usedTexts.add(text);
+      return text;
+    }
+
+    // ── Render Prompt ──
+    function renderPrompt(text) {
+      const el = document.getElementById('promptText');
+      const t = text || 'Press START to begin...';
+      el.innerHTML = t.split('').map((c, i) =>
+        `<span class="char ${text ? (i === 0 ? 'current' : 'pending') : 'pending'}">${c === ' ' ? '&nbsp;' : escapeHtml(c)}</span>`
+      ).join('');
+    }
+
+    function escapeHtml(c) {
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return map[c] || c;
+    }
+
+    // ── Start Round ──
+    function startRound() {
+      document.getElementById('gameView').style.display = '';
+      document.getElementById('resultScreen').style.display = 'none';
+
+      currentText = getRandomText();
+      typed = '';
+      startTime = 0;
+      isPlaying = true;
+
+      renderPrompt(currentText);
+
+      const input = document.getElementById('typeInput');
+      input.value = '';
+      input.disabled = false;
+      input.focus();
+
+      document.getElementById('typeArea').className = 'type-area active';
+      document.getElementById('liveStats').style.visibility = 'visible';
+      document.getElementById('startBtn').style.display = 'none';
+      document.getElementById('skipBtn').style.display = '';
+      document.getElementById('progressFill').style.width = '0%';
+
+      updateLiveStats(0, 100, 0);
+
+      // Clear any old timer
+      clearInterval(timerInterval);
+    }
+
+    // ── Input Handler ──
+    document.getElementById('typeInput').addEventListener('input', function(e) {
+      if (!isPlaying) return;
+
+      typed = this.value;
+
+      // Start timer on first keystroke
+      if (!startTime && typed.length > 0) {
+        startTime = performance.now();
+        timerInterval = setInterval(updateTimer, 100);
+      }
+
+      updatePromptHighlight();
+      updateProgress();
+
+      const elapsed = startTime ? (performance.now() - startTime) / 1000 : 0;
+      const { wpm, accuracy, errors } = calculateStats();
+      updateLiveStats(wpm, accuracy, elapsed);
+
+      // Check if done
+      if (typed.length >= currentText.length) {
+        finishRound();
+      }
+    });
+
+    // Prevent paste
+    document.getElementById('typeInput').addEventListener('paste', e => e.preventDefault());
+
+    function updatePromptHighlight() {
+      const chars = document.querySelectorAll('#promptText .char');
+      for (let i = 0; i < chars.length; i++) {
+        if (i < typed.length) {
+          if (typed[i] === currentText[i]) {
+            chars[i].className = 'char correct';
+          } else {
+            chars[i].className = 'char wrong';
+          }
+        } else if (i === typed.length) {
+          chars[i].className = 'char current';
+        } else {
+          chars[i].className = 'char pending';
+        }
+      }
+    }
+
+    function updateProgress() {
+      const pct = Math.min(100, (typed.length / currentText.length) * 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function calculateStats() {
+      let correct = 0;
+      let errors = 0;
+      for (let i = 0; i < typed.length; i++) {
+        if (typed[i] === currentText[i]) correct++;
+        else errors++;
+      }
+      const accuracy = typed.length > 0 ? Math.round((correct / typed.length) * 100) : 100;
+      const elapsed = startTime ? (performance.now() - startTime) / 1000 : 0;
+      const minutes = elapsed / 60;
+      const wordCount = correct / 5; // Standard: 1 word = 5 chars
+      const wpm = minutes > 0 ? Math.round(wordCount / minutes) : 0;
+      return { wpm, accuracy, errors, correct, elapsed };
+    }
+
+    function updateLiveStats(wpm, accuracy, elapsed) {
+      document.getElementById('liveWpm').textContent = wpm;
+      document.getElementById('liveAcc').textContent = accuracy;
+      document.getElementById('liveTimer').textContent = elapsed.toFixed(1);
+    }
+
+    function updateTimer() {
+      if (!startTime || !isPlaying) return;
+      const elapsed = (performance.now() - startTime) / 1000;
+      document.getElementById('liveTimer').textContent = elapsed.toFixed(1);
+    }
+
+    // ── Finish Round ──
+    function finishRound() {
+      isPlaying = false;
+      clearInterval(timerInterval);
+      round++;
+
+      const { wpm, accuracy, errors, elapsed } = calculateStats();
+
+      // Update bests
+      let isNewBest = false;
+      if (wpm > bestWpm) { bestWpm = wpm; isNewBest = true; }
+      if (accuracy > bestAcc) bestAcc = accuracy;
+
+      saveData();
+      updateScorePanel();
+
+      // Show result
+      document.getElementById('typeInput').disabled = true;
+      document.getElementById('typeArea').className = 'type-area finished';
+      document.getElementById('liveStats').style.visibility = 'hidden';
+      document.getElementById('skipBtn').style.display = 'none';
+      document.getElementById('gameView').style.display = 'none';
+      document.getElementById('resultScreen').style.display = '';
+
+      // Animate WPM counter
+      animateNumber('resultWpm', 0, wpm, 800);
+      document.getElementById('resultAcc').textContent = accuracy + '%';
+      document.getElementById('resultAcc').style.color = accuracy >= 95 ? 'var(--green)' : accuracy >= 80 ? 'var(--yellow)' : 'var(--magenta)';
+      document.getElementById('resultTime').textContent = elapsed.toFixed(1) + 's';
+      document.getElementById('resultErrors').textContent = errors;
+
+      // Grade
+      const grade = wpm >= 120 ? { text: '⚡ LIGHTNING', color: 'var(--cyan)' } :
+                    wpm >= 100 ? { text: '🔥 BLAZING', color: 'var(--green)' } :
+                    wpm >= 80 ? { text: '💨 FAST', color: 'var(--green)' } :
+                    wpm >= 60 ? { text: '👍 GOOD', color: 'var(--yellow)' } :
+                    wpm >= 40 ? { text: '📝 AVERAGE', color: 'var(--yellow)' } :
+                    { text: '🐢 KEEP PRACTICING', color: 'var(--magenta)' };
+
+      const gradeEl = document.getElementById('resultGrade');
+      gradeEl.textContent = grade.text;
+      gradeEl.style.color = grade.color;
+
+      if (isNewBest) {
+        toast('🏆 NEW BEST: ' + wpm + ' WPM!');
+        spawnConfetti();
+      }
+
+      checkAchievements();
+    }
+
+    function skipRound() {
+      isPlaying = false;
+      clearInterval(timerInterval);
+      document.getElementById('typeInput').disabled = true;
+      document.getElementById('liveStats').style.visibility = 'hidden';
+      document.getElementById('skipBtn').style.display = 'none';
+      document.getElementById('startBtn').style.display = '';
+      document.getElementById('typeArea').className = 'type-area';
+      renderPrompt();
+    }
+
+    function resetGame() {
+      document.getElementById('resultScreen').style.display = 'none';
+      document.getElementById('gameView').style.display = '';
+      document.getElementById('startBtn').style.display = '';
+      document.getElementById('skipBtn').style.display = 'none';
+      document.getElementById('typeArea').className = 'type-area';
+      document.getElementById('liveStats').style.visibility = 'hidden';
+      document.getElementById('progressFill').style.width = '0%';
+      renderPrompt();
+    }
+
+    // ── Score Panel ──
+    function updateScorePanel() {
+      document.getElementById('bestWpm').textContent = bestWpm > 0 ? bestWpm : '—';
+      document.getElementById('roundNum').textContent = round;
+      document.getElementById('bestAcc').textContent = bestAcc > 0 ? bestAcc + '%' : '—';
+    }
+
+    // ── Persistence ──
+    function saveData() {
+      localStorage.setItem('speedtype_data', JSON.stringify({
+        bestWpm, bestAcc, round,
+        achievements: [...unlockedAchievements],
+      }));
+    }
+
+    // ── Achievements ──
+    function checkAchievements() {
+      ACHIEVEMENTS.forEach(a => {
+        if (!unlockedAchievements.has(a.id) && a.check()) {
+          unlockAchievement(a);
+        }
+      });
+    }
+
+    function unlockAchievement(achievement) {
+      unlockedAchievements.add(achievement.id);
+      saveData();
+      toast('🏆 ' + achievement.name + ' UNLOCKED!');
+      renderAchievements();
+      if (walletAddress && !isDemoMode) storeAchievementOnChain(achievement);
+    }
+
+    function syncAchievementsToChain() {
+      if (!walletAddress || isDemoMode) return;
+      ACHIEVEMENTS.forEach(a => {
+        if (unlockedAchievements.has(a.id) && !onChainAchievements.has(a.id)) {
+          storeAchievementOnChain(a);
+        }
+      });
+    }
+
+    async function storeAchievementOnChain(achievement) {
+      if (storingAchievement) { achievementQueue.push(achievement); return; }
+      storingAchievement = true;
+      try {
+        await proofi.storeAchievement({
+          game: 'speedtype',
+          score: bestWpm,
+          achievement: 'wpm-' + bestWpm,
+          data: {
+            name: achievement.name,
+            description: achievement.desc,
+            bestWpm, bestAcc, round, difficulty,
+          },
+        });
+        onChainAchievements.add(achievement.id);
+        toast('✓ ' + achievement.name + ' STORED ON DDC');
+      } catch (err) {
+        console.error('Store failed:', err);
+        toast('Store failed: ' + err.message, true);
+      }
+      storingAchievement = false;
+      if (achievementQueue.length > 0) storeAchievementOnChain(achievementQueue.shift());
+    }
+
+    function renderAchievements() {
+      document.getElementById('achievementCount').textContent = unlockedAchievements.size + ' / ' + ACHIEVEMENTS.length;
+      document.getElementById('achievementsList').innerHTML = ACHIEVEMENTS.map(a => {
+        const u = unlockedAchievements.has(a.id);
+        return `<div class="achievement-item" style="opacity:${u ? 1 : .5}">
+          <div class="achievement-icon ${u ? 'unlocked' : ''}">${a.icon}</div>
+          <div class="achievement-info">
+            <div class="achievement-name">${a.name}</div>
+            <div class="achievement-desc">${a.desc}</div>
+          </div>
+          ${u ? '<span class="achievement-badge on-chain">✓ UNLOCKED</span>' : '<span class="achievement-badge locked">LOCKED</span>'}
+        </div>`;
+      }).join('');
+    }
+
+    // ── Helpers ──
+    function animateNumber(id, start, end, duration) {
+      const el = document.getElementById(id);
+      const startTime = performance.now();
+      function update(now) {
+        const p = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(start + (end - start) * eased);
+        if (p < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    function spawnConfetti() {
+      const colors = ['#00E5FF', '#00FF88', '#FF3366', '#FFE100', '#8B5CF6'];
+      for (let i = 0; i < 40; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.top = '-10px';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.width = (4 + Math.random() * 8) + 'px';
+        piece.style.height = (4 + Math.random() * 8) + 'px';
+        piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+        piece.style.animationDelay = (Math.random() * 0.5) + 's';
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 4000);
+      }
+    }
+
+    let toastTimeout;
+    function toast(msg, isError = false) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => el.className = 'toast', 3000);
+    }
+
+    // ── Extension Auto-Connect ──
+    function checkExtensionConnect() {
+      if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {
+        walletAddress = window.__proofi_extension__.address;
+        if (window.__proofi_extension__.token) {
+          try { localStorage.setItem('proofi_token', window.__proofi_extension__.token); } catch(e) {}
+        }
+        if (typeof proofi !== 'undefined') {
+          proofi.address = walletAddress;
+          proofi.connected = true;
+        }
+        updateWalletUI();
+        toast('WALLET CONNECTED VIA EXTENSION');
+      }
+    }
+    checkExtensionConnect();
+    window.addEventListener('proofi-extension-ready', checkExtensionConnect);
+
+    // ── Boot ──
+    init();
+  </script>
+</body>
+</html>
