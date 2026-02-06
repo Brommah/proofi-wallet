@@ -401,32 +401,50 @@
 
         if (data.ok && data.achievements) {
           // Look for SpeedType achievements with WPM >= REQUIRED_WPM
-          const qualifying = data.achievements.find(a => {
-            // Check if it's a speedtype achievement by reading the CDN content or checking the game field
-            // The index entry has: credentialType: 'GameAchievement', game: 'speedtype'
-            if (a.game === 'speedtype') return true;
-            // Fallback: check CID content
-            return false;
-          });
+          // Find all speedtype achievements
+          const speedtypeAchievements = data.achievements.filter(a => 
+            a.game === 'speedtype' || 
+            a.achievement?.includes('wpm') ||
+            (a.data && a.data.game === 'speedtype')
+          );
+          
+          console.log('[ColorDash] SpeedType achievements found:', speedtypeAchievements);
 
-          if (qualifying) {
-            // Found a speedtype achievement — now verify the score from DDC
-            try {
-              const credRes = await fetch(`${API_URL}/ddc/read/${qualifying.cid}`);
-              const credData = await credRes.json();
-              const claim = credData?.content?.credentialSubject?.claim;
-              const wpm = claim?.bestWpm || claim?.score || 0;
-
-              if (wpm >= REQUIRED_WPM) {
-                unlockGame(wpm);
-                return;
-              } else {
-                showLockGate(`SpeedType best: ${wpm} WPM — need ${REQUIRED_WPM}+ to unlock`);
-                return;
+          if (speedtypeAchievements.length > 0) {
+            // Find the highest WPM score from all speedtype achievements
+            let highestWpm = 0;
+            
+            for (const a of speedtypeAchievements) {
+              // Check direct score field first (from achievement index)
+              const directScore = a.score || a.data?.score || a.data?.bestWpm || 0;
+              if (directScore > highestWpm) highestWpm = directScore;
+              
+              // Also try to fetch from DDC if we have a CID
+              if (a.cid && !a.cid.startsWith('local_')) {
+                try {
+                  const credRes = await fetch(`${API_URL}/ddc/read/${a.cid}`);
+                  const credData = await credRes.json();
+                  // Try multiple possible locations for WPM data
+                  const wpm = credData?.content?.credentialSubject?.claim?.bestWpm ||
+                              credData?.content?.credentialSubject?.claim?.score ||
+                              credData?.content?.score ||
+                              credData?.score ||
+                              credData?.data?.bestWpm ||
+                              0;
+                  if (wpm > highestWpm) highestWpm = wpm;
+                } catch (e) {
+                  console.warn('[ColorDash] Could not read credential:', a.cid, e);
+                }
               }
-            } catch (e) {
-              // If we can't read the credential, trust that they have one
-              unlockGame(0);
+            }
+            
+            console.log('[ColorDash] Highest WPM found:', highestWpm);
+
+            if (highestWpm >= REQUIRED_WPM) {
+              unlockGame(highestWpm);
+              return;
+            } else if (highestWpm > 0) {
+              showLockGate(`SpeedType best: ${highestWpm} WPM — need ${REQUIRED_WPM}+ to unlock`);
               return;
             }
           }
