@@ -1114,6 +1114,33 @@
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
+    // ── HMAC-SHA256 proof signing ──
+    async function signProof(canonical, walletAddress) {
+      const encoder = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(walletAddress),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      );
+      const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(canonical));
+      return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function verifySignature(canonical, signature, walletAddr) {
+      const encoder = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(walletAddr),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['verify']
+      );
+      const sigBytes = new Uint8Array(signature.match(/.{2}/g).map(b => parseInt(b, 16)));
+      return crypto.subtle.verify('HMAC', key, sigBytes, encoder.encode(canonical));
+    }
+
     // ── Create Stamp ──
     async function createStamp() {
       if (!walletAddress) {
@@ -1148,13 +1175,20 @@
         setProgress(30, 'Hash: ' + hash.slice(0, 16) + '...');
         await sleep(300);
 
-        // 2. Create timestamp
+        // 2. Create timestamp + nonce
         const timestamp = Date.now();
         const isoTime = new Date(timestamp).toISOString();
+        const nonce = crypto.randomUUID();
         setProgress(50, 'Signing with wallet...');
         await sleep(200);
 
-        // 3. Store on DDC via Proofi
+        // 3. Build canonical payload & sign
+        const canonical = JSON.stringify({ hash, timestamp, wallet: walletAddress, nonce, algorithm: 'SHA-256' });
+        const signature = await signProof(canonical, walletAddress);
+        setProgress(60, 'Signature: ' + signature.slice(0, 16) + '...');
+        await sleep(200);
+
+        // 4. Store on DDC via Proofi
         setProgress(70, 'Storing proof on Cere DDC...');
         let cid = null;
         try {
@@ -1171,8 +1205,10 @@
               timestamp: timestamp,
               isoTime: isoTime,
               wallet: walletAddress,
+              nonce: nonce,
+              signature: signature,
               algorithm: 'SHA-256',
-              version: '1.0',
+              version: '2.0',
             },
           });
           cid = result.cid;
@@ -1183,7 +1219,7 @@
         setProgress(90, 'Finalizing proof...');
         await sleep(300);
 
-        // 4. Build proof object
+        // 5. Build proof object
         const proof = {
           id: crypto.randomUUID(),
           hash,
@@ -1193,6 +1229,8 @@
           timestamp,
           isoTime,
           wallet: walletAddress,
+          nonce,
+          signature,
           cid: cid || 'ddc_' + timestamp.toString(36),
           algorithm: 'SHA-256',
         };
@@ -1237,6 +1275,14 @@
           <span class="result-value">${proof.wallet}</span>
         </div>
         <div class="result-row">
+          <span class="result-key">Nonce</span>
+          <span class="result-value">${proof.nonce || 'n/a'}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Signature</span>
+          <span class="result-value">${proof.signature ? proof.signature.slice(0, 32) + '...' : 'n/a'}</span>
+        </div>
+        <div class="result-row">
           <span class="result-key">Label</span>
           <span class="result-value">${escapeHtml(proof.label)}</span>
         </div>
@@ -1272,6 +1318,8 @@
         `Hash (SHA-256): ${lastResult.hash}`,
         `Timestamp: ${lastResult.isoTime}`,
         `Wallet: ${lastResult.wallet}`,
+        `Nonce: ${lastResult.nonce || 'n/a'}`,
+        `Signature (HMAC-SHA256): ${lastResult.signature || 'n/a'}`,
         `Content: ${lastResult.contentType} · ${formatSize(lastResult.size)}`,
         `Storage: Cere DDC · ${lastResult.cid}`,
         `Algorithm: SHA-256`,
@@ -1315,7 +1363,7 @@
     }
 
     // ── Verify ──
-    function verifyProof() {
+    async function verifyProof() {
       const input = document.getElementById('verifyInput').value.trim();
       if (!input) return;
 
@@ -1326,14 +1374,36 @@
       const found = allProofs.find(p => p.hash === input);
 
       if (found) {
+        // Verify HMAC signature if present
+        let sigStatus = '';
+        if (found.signature && found.nonce && found.wallet) {
+          try {
+            const canonical = JSON.stringify({
+              hash: found.hash,
+              timestamp: found.timestamp,
+              wallet: found.wallet,
+              nonce: found.nonce,
+              algorithm: 'SHA-256',
+            });
+            const valid = await verifySignature(canonical, found.signature, found.wallet);
+            sigStatus = valid
+              ? '<br><span style="color:var(--green);">Signature: VALID (HMAC-SHA256)</span>'
+              : '<br><span style="color:var(--red);">Signature: INVALID — proof may be tampered</span>';
+          } catch (e) {
+            sigStatus = '<br><span style="color:var(--amber);">Signature: could not verify</span>';
+          }
+        } else {
+          sigStatus = '<br><span style="color:var(--amber);">Signature: not present (legacy proof)</span>';
+        }
+
         resultEl.className = 'verify-result show valid';
         resultEl.innerHTML = `
-          <strong>✓ Proof Found!</strong><br>
+          <strong>${found.signature ? '✓' : '⚠'} Proof Found!</strong><br>
           <span style="font-family:var(--mono);font-size:11px;">
             Label: ${escapeHtml(found.label)}<br>
             Timestamp: ${found.isoTime}<br>
             Wallet: ${found.wallet?.slice(0, 8)}...${found.wallet?.slice(-6)}<br>
-            CID: ${found.cid || 'local'}
+            CID: ${found.cid || 'local'}${sigStatus}
           </span>
         `;
       } else {
@@ -1412,6 +1482,14 @@
             <span class="result-value">${p.wallet}</span>
           </div>
           <div class="result-row">
+            <span class="result-key">Nonce</span>
+            <span class="result-value">${p.nonce || 'n/a (legacy)'}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-key">Signature</span>
+            <span class="result-value">${p.signature || 'n/a (legacy)'}</span>
+          </div>
+          <div class="result-row">
             <span class="result-key">Content</span>
             <span class="result-value">${p.contentType} · ${formatSize(p.size)}</span>
           </div>
@@ -1421,7 +1499,7 @@
           </div>
           <div class="result-row">
             <span class="result-key">Algorithm</span>
-            <span class="result-value">SHA-256</span>
+            <span class="result-value">SHA-256 + HMAC-SHA256</span>
           </div>
         </div>
         <div class="result-actions" style="margin-top:16px;">

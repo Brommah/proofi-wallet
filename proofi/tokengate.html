@@ -76,6 +76,24 @@
         <button class="btn sm" id="demoBtn" onclick="enterDemoMode()" style="border-color:#00FF88;color:#00FF88;">TRY DEMO</button>
       </div>
     </div>
+    <!-- Access Status Section -->
+    <div id="accessStatus" class="section" style="margin-bottom:16px">
+      <div id="accessLocked" style="text-align:center;padding:16px 0">
+        <div style="font-size:40px;margin-bottom:8px">🔒</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:4px">Connect Wallet to Access</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:12px">Gated content requires a verified Proofi wallet identity</div>
+        <button class="btn" onclick="handleConnect()">Connect Wallet</button>
+        <span style="margin:0 8px;color:var(--dim);font-size:11px">or</span>
+        <button class="btn" onclick="enterDemoMode()" style="border-color:#00FF88;color:#00FF88">Try Demo</button>
+      </div>
+      <div id="accessUnlocked" style="display:none;text-align:center;padding:16px 0">
+        <div style="font-size:40px;margin-bottom:8px">🔓</div>
+        <div style="font-size:16px;font-weight:700;color:var(--lime);margin-bottom:4px">You Have Access</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:8px">Wallet verified — you can unlock gated content below</div>
+        <div style="font-family:monospace;font-size:11px;color:var(--gold);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:2px;display:inline-block" id="accessAddr"></div>
+      </div>
+    </div>
+
     <div class="stat-row">
       <div class="stat-box"><div class="num" id="sContent">0</div><div class="lbl">Content</div></div>
       <div class="stat-box"><div class="num" id="sGated">0</div><div class="lbl">Gated</div></div>
@@ -188,7 +206,11 @@
     }
 
     function unlockContent(id) {
-      if (!walletAddress) { toast('Connect wallet to unlock', true); return; }
+      if (!walletAddress) {
+        // Trigger wallet connection flow, then unlock after connected
+        toast('Connect your wallet first to unlock content', true);
+        return;
+      }
       unlocked.add(id);
       localStorage.setItem('tg_unlocked', JSON.stringify([...unlocked]));
       const c = contents.find(x => x.id === id);
@@ -246,13 +268,19 @@
       renderContent();
     }
     async function handleConnect() {
-      if(walletAddress){proofi.disconnect();walletAddress=null;isDemoMode=false;updateWalletUI();return}
+      if(walletAddress){proofi.disconnect();walletAddress=null;isDemoMode=false;updateWalletUI();renderContent();updateStats();return}
       try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){const msg=e.message==='User closed wallet'?'Cancelled':'Could not connect — try demo mode';toast(msg,true);document.getElementById('connectBtn').textContent='CONNECT'}
     }
     function updateWalletUI() {
       const bar=document.getElementById('walletBar'),addr=document.getElementById('walletAddr'),btn=document.getElementById('connectBtn');
       if(walletAddress){bar.classList.add('connected');addr.textContent=(isDemoMode?'🎮 ':'')+walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);btn.textContent='DISCONNECT';btn.className='btn sm red';document.getElementById('demoBtn').style.display='none'}
       else{bar.classList.remove('connected');addr.textContent='Not connected';btn.textContent='CONNECT';btn.className='btn sm';document.getElementById('demoBtn').style.display=''}
+      // Update access status section
+      const locked=document.getElementById('accessLocked');
+      const unlockedEl=document.getElementById('accessUnlocked');
+      const accessAddr=document.getElementById('accessAddr');
+      if(walletAddress){locked.style.display='none';unlockedEl.style.display='block';accessAddr.textContent=walletAddress}
+      else{locked.style.display='block';unlockedEl.style.display='none'}
     }
     let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
     // Auto-connect from Proofi Chrome extension

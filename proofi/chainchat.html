@@ -202,7 +202,7 @@
 
       if (walletAddress) {
         try {
-          await proofi.storeAchievement({ game:'chainchat', score:1, achievement:'message-sent', data:{ channel:currentChannel, text:text.slice(0,100) } });
+          await proofi.storeAchievement({ game:'chainchat', score:1, achievement:'message-sent', data:{ nonce: crypto.randomUUID(), timestamp: Date.now(), channel:currentChannel, text:text.slice(0,100) } });
           msg.onChain = true;
         } catch (e) { /* silent fail for messages */ }
       }

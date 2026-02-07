@@ -237,7 +237,7 @@
 
         if (walletAddress) {
           try {
-            await proofi.storeAchievement({ game: 'skillbadge', score: pct, achievement: `${currentTopic.id}-${grade}`, data: { topic: currentTopic.name, score: pct, grade, questions: total, correct: score } });
+            await proofi.storeAchievement({ game: 'skillbadge', score: pct, achievement: `${currentTopic.id}-${grade}`, data: { nonce: crypto.randomUUID(), timestamp: Date.now(), topic: currentTopic.name, score: pct, grade, questions: total, correct: score } });
             badge.onChain = true;
             toast(`🎓 ${currentTopic.name} badge stored on DDC!`);
           } catch (e) { toast(e.message, true); }

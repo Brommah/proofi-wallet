@@ -683,6 +683,8 @@
           score: bestWpm,
           achievement: 'wpm-' + bestWpm,
           data: {
+            nonce: crypto.randomUUID(),
+            timestamp: Date.now(),
             name: achievement.name,
             description: achievement.desc,
             bestWpm, bestAcc, round, difficulty,

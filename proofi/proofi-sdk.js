@@ -28,6 +28,7 @@ class ProofiSDK {
     this._iframe = null;
     this._listeners = {};
     this._pendingRequests = new Map();
+    this._walletOrigin = new URL(this.walletUrl).origin;
     this._messageHandler = this._handleMessage.bind(this);
     window.addEventListener('message', this._messageHandler);
   }
@@ -55,7 +56,7 @@ class ProofiSDK {
               appName: this.appName,
               origin: window.location.origin,
               permissions: ['read', 'sign'],
-            }, '*');
+            }, this._walletOrigin);
           }
         } catch (e) { /* iframe not ready yet */ }
       }, 500);
@@ -413,6 +414,9 @@ class ProofiSDK {
   // ── Internal: Messages ──
 
   _handleMessage(event) {
+    // Validate origin — only accept messages from the wallet
+    if (event.origin !== this._walletOrigin) return;
+
     const { data } = event;
     if (!data || typeof data !== 'object' || !data.type) return;
 
@@ -477,7 +481,9 @@ class ProofiSDK {
 
   _getToken() {
     try {
-      // Check localStorage first
+      // Security trade-off: localStorage is accessible to any JS on this origin.
+      // A XSS vulnerability could expose the token. Prefer httpOnly cookies for
+      // production auth, but localStorage is used here for cross-origin iframe compat.
       const token = localStorage.getItem('proofi_token');
       if (token) return token;
       // Fallback: check Chrome extension injected state

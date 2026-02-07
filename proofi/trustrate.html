@@ -834,6 +834,8 @@
           score: currentRating,
           achievement: 'review_submitted',
           data: {
+            nonce: crypto.randomUUID(),
+            timestamp: Date.now(),
             type: 'verified_review',
             review: {
               subject,

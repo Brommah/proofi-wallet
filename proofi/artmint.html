@@ -261,6 +261,7 @@
         try {
           toast('Minting on DDC...');
           await proofi.storeAchievement({ game:'artmint', score:gridSize*gridSize, achievement:'art-minted', data:{
+            nonce: crypto.randomUUID(), timestamp: Date.now(),
             name: nameInput, size: gridSize, hash: art.hash,
             palette: [...new Set(pixels.filter(p => p !== '#1a1a2e'))],
           }});

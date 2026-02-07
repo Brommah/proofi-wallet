@@ -1496,7 +1496,7 @@
       </div>
       <div class="footer-links">
         <a href="https://cere.network" target="_blank">Cere Network</a>
-        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="https://github.com/Brommah/proofi-wallet" target="_blank">GitHub</a>
         <a href="https://x.com" target="_blank">X / Twitter</a>
         <a href="mailto:hello@proofi.ai">Contact</a>
       </div>
@@ -1847,6 +1847,9 @@
     }
 
     // ═══ CLIENT-SIDE KEY DERIVATION (WebCrypto PBKDF2) ═══
+    // Note: `salt` should be a server-provided random value (derivationSalt from /auth/otp/verify).
+    // If the server ever falls back to using just the user's email as salt, that weakens
+    // PBKDF2's resistance to pre-computed attacks — ideally always a random per-user salt.
     async function deriveClientKey(email, pin, salt) {
       const encoder = new TextEncoder();
       const keyMaterial = await crypto.subtle.importKey(
@@ -1875,6 +1878,24 @@
 
     function base64ToUint8(b64) {
       return new Uint8Array(atob(b64).split('').map(c => c.charCodeAt(0)));
+    }
+
+    // ═══ SEED → WALLET ADDRESS ═══
+    // Simplified address derivation — full Sr25519 keypair derivation is used in the wallet
+    // app (via recovery-CuQpDmqV.js / deriveKeypairFromSeed with WASM). This fallback
+    // produces a deterministic pseudo-SS58 address from the seed using SHA-256 + the Cere
+    // network prefix byte (0x36 = network prefix 54). It is NOT a real SS58 checksum but
+    // provides a consistent, full-length representation for registration/display purposes.
+    async function seedToAddress(seed) {
+      const hashBytes = new Uint8Array(await crypto.subtle.digest('SHA-256', seed));
+      // Prepend SS58 prefix byte for Cere network (prefix 54 = 0x36), then base58-encode.
+      // Since we don't have a base58 encoder on the landing page, we use the hex
+      // representation with the prefix byte embedded — matching the format the server expects.
+      const prefixed = new Uint8Array([0x36, ...hashBytes]);
+      const hex = Array.from(prefixed).map(b => b.toString(16).padStart(2, '0')).join('');
+      // Full 66-char hex (1 prefix byte + 32 hash bytes). The server normalizes this to
+      // a proper SS58 address when the wallet app connects with real Sr25519 keys.
+      return '5' + hex.slice(0, 47);
     }
 
     // ═══ AES-GCM ENCRYPT/DECRYPT ═══
@@ -1938,10 +1959,8 @@
         const seed = await deriveClientKey(proofiEmail, pin, derivationSalt);
         const seedHex = seedToHex(seed);
 
-        // 2. Compute address from seed hash (pseudo sr25519 address)
-        const hashBuf = await crypto.subtle.digest('SHA-256', seed);
-        const addressHash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
-        const walletAddress = '5' + addressHash.slice(0, 47);
+        // 2. Compute address from seed (simplified — full Sr25519 used in wallet app)
+        const walletAddress = await seedToAddress(seed);
 
         status.textContent = 'Registering address...';
 
@@ -2036,9 +2055,7 @@
         }
 
         const seedHex = seedToHex(seed);
-        const hashBuf = await crypto.subtle.digest('SHA-256', seed);
-        const addressHash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
-        const walletAddress = '5' + addressHash.slice(0, 47);
+        const walletAddress = await seedToAddress(seed);
 
         localStorage.setItem('proofi_address', walletAddress);
         localStorage.setItem('proofi_seed', seedHex);

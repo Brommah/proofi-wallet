@@ -151,7 +151,7 @@
       const event = { id:'e'+Date.now().toString(36), name, location, date, capacity, claimed:0, emoji:EMOJIS[Math.floor(Math.random()*EMOJIS.length)], gradient:GRADIENTS[Math.floor(Math.random()*GRADIENTS.length)], creator:walletAddress?walletAddress.slice(0,6)+'...':'Anon' };
 
       if (walletAddress) {
-        try { await proofi.storeAchievement({ game:'nfticket', score:capacity, achievement:'event-created', data:{name,location,date,capacity} }); event.onChain=true; toast('🎫 Event created on-chain!'); } catch(e){toast(e.message,true)}
+        try { await proofi.storeAchievement({ game:'nfticket', score:capacity, achievement:'event-created', data:{nonce: crypto.randomUUID(), timestamp: Date.now(), name,location,date,capacity} }); event.onChain=true; toast('🎫 Event created on-chain!'); } catch(e){toast(e.message,true)}
       }
 
       events.unshift(event);
@@ -177,7 +177,7 @@
       };
 
       try {
-        await proofi.storeAchievement({ game:'nfticket', score:1, achievement:'ticket-claimed', data:{ eventName:event.name, ticketId:ticket.id } });
+        await proofi.storeAchievement({ game:'nfticket', score:1, achievement:'ticket-claimed', data:{ nonce: crypto.randomUUID(), timestamp: Date.now(), eventName:event.name, ticketId:ticket.id } });
         ticket.onChain = true;
         toast('🎫 Ticket claimed & stored on DDC!');
       } catch(e) { toast(e.message, true); }

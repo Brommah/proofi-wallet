@@ -116,13 +116,27 @@
   <script>
     const MOODS = ['😊','😌','🤔','😢','😤','🥰','😴','🎉','💪','🌧️'];
     let proofi, walletAddress, isDemoMode = false;
-    let entries = JSON.parse(localStorage.getItem('mc_entries') || '[]');
+    let entries = [];
     let selectedMood = null;
+
+    function getStorageKey() {
+      return walletAddress ? 'mc_entries_' + walletAddress : 'mc_entries_anon';
+    }
+
+    function loadEntries() {
+      try {
+        entries = JSON.parse(localStorage.getItem(getStorageKey()) || '[]');
+      } catch { entries = []; }
+    }
+
+    function saveEntries() {
+      localStorage.setItem(getStorageKey(), JSON.stringify(entries));
+    }
 
     function init() {
       proofi = new ProofiSDK({ appName: 'MemoryChain' });
-      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Diary unlocked!'); });
-      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); loadEntries(); renderEntries(); updateStreak(); toast('Diary unlocked!'); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); loadEntries(); renderEntries(); updateStreak(); });
 
       const now = new Date();
       document.getElementById('dateDisplay').textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
@@ -137,6 +151,7 @@
         document.getElementById('saveBtn').disabled = !this.value.trim();
       });
 
+      loadEntries();
       renderEntries();
       updateStreak();
     }
@@ -169,26 +184,31 @@
       const encrypted = encrypt(text);
       const entry = {
         id: Date.now().toString(36),
+        text: encrypted,
         mood: selectedMood || '📝',
-        encrypted,
+        date: new Date().toISOString(),
+        timestamp: Date.now(),
+        encrypted: encrypted,
         preview: text.slice(0,50) + (text.length>50?'...':''),
         charCount: text.length,
         onChain: false,
-        date: new Date().toISOString(),
       };
 
-      if (walletAddress) {
+      if (walletAddress && !isDemoMode) {
         try {
           document.getElementById('saveBtn').textContent = '⏳ Encrypting...';
           document.getElementById('saveBtn').disabled = true;
           await proofi.storeAchievement({ game:'memorychain', score: entries.length+1, achievement:'diary-entry', data:{ mood: selectedMood, charCount: text.length, date: entry.date } });
           entry.onChain = true;
           toast('📔 Entry encrypted & stored on DDC!');
-        } catch (e) { toast(e.message, true); }
-      } else { toast('Entry saved locally (connect wallet for DDC)'); }
+        } catch (e) {
+          console.log('DDC store error (saving locally):', e);
+          toast('Entry saved locally');
+        }
+      } else { toast('Entry saved locally' + (walletAddress ? '' : ' (connect wallet for DDC)')); }
 
       entries.unshift(entry);
-      localStorage.setItem('mc_entries', JSON.stringify(entries));
+      saveEntries();
       renderEntries();
       updateStreak();
 
@@ -198,6 +218,17 @@
       document.querySelectorAll('.mood').forEach(m => m.classList.remove('selected'));
       document.getElementById('saveBtn').textContent = '📝 Save & Encrypt Entry';
       document.getElementById('saveBtn').disabled = true;
+    }
+
+    function deleteEntry(id, event) {
+      event.stopPropagation();
+      const idx = entries.findIndex(e => e.id === id);
+      if (idx === -1) return;
+      entries.splice(idx, 1);
+      saveEntries();
+      renderEntries();
+      updateStreak();
+      toast('Entry deleted');
     }
 
     function renderEntries() {
@@ -213,7 +244,10 @@
           <div class="entry-card" onclick="viewEntry('${e.id}')">
             <div class="entry-date">
               <span>${d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
-              <span class="entry-mood">${e.mood}</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="entry-mood">${e.mood}</span>
+                <button onclick="deleteEntry('${e.id}', event)" style="background:none;border:1px solid var(--border);border-radius:2px;color:var(--dim);font-size:12px;cursor:pointer;padding:2px 6px;transition:all .2s" onmouseover="this.style.borderColor='#FF3366';this.style.color='#FF3366'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'" title="Delete entry">✕</button>
+              </div>
             </div>
             <div class="entry-preview">${e.preview}</div>
             <div class="entry-meta">
@@ -275,10 +309,13 @@
       isDemoMode = true;
       walletAddress = '5Demo' + Math.random().toString(36).slice(2, 14) + 'ABCDEF';
       updateWalletUI();
+      loadEntries();
+      renderEntries();
+      updateStreak();
       toast('📔 Demo mode — write diary entries!');
     }
     async function handleConnect() {
-      if (walletAddress) { proofi.disconnect(); walletAddress=null; isDemoMode=false; updateWalletUI(); return; }
+      if (walletAddress) { proofi.disconnect(); walletAddress=null; isDemoMode=false; updateWalletUI(); loadEntries(); renderEntries(); updateStreak(); return; }
       try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){const msg=e.message==='User closed wallet'?'Cancelled':'Could not connect — try demo mode';toast(msg,true);document.getElementById('connectBtn').textContent='CONNECT'}
     }
     function updateWalletUI() {
@@ -299,6 +336,9 @@
           proofi.address = walletAddress;
           proofi.connected = true;
         }        updateWalletUI();
+        loadEntries();
+        renderEntries();
+        updateStreak();
         toast('WALLET CONNECTED VIA EXTENSION');
       }
     }

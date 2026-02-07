@@ -173,7 +173,7 @@
         try {
           document.getElementById('createBtn').textContent = 'Creating...';
           document.getElementById('createBtn').disabled = true;
-          await proofi.storeAchievement({ game:'chainpoll', score:opts.length, achievement:'poll-created', data:{ question:q, options:opts } });
+          await proofi.storeAchievement({ game:'chainpoll', score:opts.length, achievement:'poll-created', data:{ nonce: crypto.randomUUID(), timestamp: Date.now(), question:q, options:opts } });
           poll.onChain = true;
           toast('📊 Poll created on-chain!');
         } catch (e) { toast(e.message, true); }
@@ -201,7 +201,7 @@
 
       if (walletAddress) {
         try {
-          await proofi.storeAchievement({ game:'chainpoll', score:1, achievement:'vote-cast', data:{ pollId, option: poll.options[optIdx] } });
+          await proofi.storeAchievement({ game:'chainpoll', score:1, achievement:'vote-cast', data:{ nonce: crypto.randomUUID(), timestamp: Date.now(), pollId, option: poll.options[optIdx] } });
           toast('✓ Vote recorded on-chain!');
         } catch (e) { toast(e.message, true); }
       } else { toast('Vote recorded locally'); }

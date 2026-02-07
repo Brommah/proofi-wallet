@@ -945,6 +945,8 @@
           score: Object.values(statValues).reduce((a, b) => a + b, 0),
           achievement: 'character_forged',
           data: {
+            nonce: crypto.randomUUID(),
+            timestamp: Date.now(),
             type: 'character_credential',
             character,
             forgedBy: walletAddress,

@@ -1157,6 +1157,8 @@
           score: mode === 'reaction' ? bestReaction : memoryBestMoves,
           achievement: achievement.id,
           data: {
+            nonce: crypto.randomUUID(),
+            timestamp: Date.now(),
             name: achievement.name,
             description: achievement.desc,
             mode: mode,
