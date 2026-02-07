@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="100%" stop-color="#00cc6a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Solid black background with rounded corners for iOS -->
+  <rect width="180" height="180" rx="36" ry="36" fill="#000000"/>
+
+  <!-- Shield shape - centered with generous padding (scaled down from 512 to fit ~110px area) -->
+  <g transform="translate(90, 85) scale(0.188)">
+    <!-- Shield shape -->
+    <path d="M0 -184 L144 -120 L144 24 Q144 124 0 192 Q-144 124 -144 24 L-144 -120 Z" fill="url(#shieldGrad)"/>
+    <!-- Inner shield cutout for depth -->
+    <path d="M0 -156 L124 -100 L124 20 Q124 108 0 168 Q-124 108 -124 20 L-124 -100 Z" fill="#000" opacity="0.85"/>
+    <!-- Letter P -->
+    <text x="0" y="54" font-family="Arial, Helvetica, sans-serif" font-size="220" font-weight="bold" fill="#00ff88" text-anchor="middle" dominant-baseline="central">P</text>
+  </g>
+</svg>

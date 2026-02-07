@@ -41,6 +41,28 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     html { scroll-behavior: smooth; }
 
     body {
@@ -1510,6 +1532,8 @@
   </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
 
   <!-- Grid background -->
   <div class="grid-bg"></div>
@@ -1518,7 +1542,7 @@
   <div class="scanline"></div>
 
   <!-- ═══ NAV ═══ -->
-  <nav>
+  <nav role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <a href="#" class="nav-brand">
         <div class="nav-logo"></div>
@@ -1540,7 +1564,7 @@
 
 
   <!-- ═══ HERO ═══ -->
-  <section class="hero" id="hero">
+  <section class="hero" id="main-content">
     <div class="hero-content">
       <div class="hero-text">
         <div class="hero-badge reveal">
@@ -1960,7 +1984,7 @@ console.<span class="fn">log</span>(result.<span class="prop">issuer</span>); <s
 
 
   <!-- ═══ FOOTER ═══ -->
-  <footer>
+  <footer role="contentinfo">
     <div class="footer-inner">
       <div class="footer-top">
         <div class="footer-brand">

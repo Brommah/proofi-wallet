@@ -9,6 +9,28 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
+
     :root {
       --primary: #FF6B35;
       --primary-light: #FF8F5E;
@@ -552,8 +574,10 @@
   </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
   <!-- Nav -->
-  <nav class="nav">
+  <nav role="navigation" aria-label="Main navigation" class="nav">
     <div class="container nav-inner">
       <div class="nav-brand">
         <div class="nav-logo">⭐</div>
@@ -566,7 +590,7 @@
     </div>
   </nav>
 
-  <div class="container">
+  <div id="main-content" class="container">
     <!-- Hero -->
     <div class="hero">
       <h1>Verified reviews. Zero fakes.</h1>
@@ -629,7 +653,7 @@
         <textarea class="text-input" id="reviewText" placeholder="Share your honest experience..."></textarea>
       </div>
 
-      <button class="submit-btn" id="submitBtn" onclick="submitReview()" disabled>
+      <button aria-label="Close" class="submit-btn" id="submitBtn" onclick="submitReview()" disabled>
         Submit Verified Review
       </button>
       <div class="submit-hint" id="submitHint">Connect your Proofi wallet to write verified reviews</div>
@@ -650,7 +674,7 @@
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
   <!-- Proofi SDK -->
   <script src="proofi-sdk.js"></script>
@@ -756,10 +780,11 @@
         return;
       }
       try {
-        document.getElementById('walletChipText').textContent = 'Linking...';
+        document.getElementById('walletChipText').innerHTML = '<span class="spinner" style="display:inline-block;vertical-align:middle;margin-right:6px;width:14px;height:14px"></span> Connecting...';
         await proofi.connect();
       } catch (err) {
-        showToast(err.message, true);
+        const msg = err.message === 'User closed wallet' ? 'Connection cancelled' : 'Could not connect. Check that Proofi extension is installed.';
+        showToast(msg, true);
         document.getElementById('walletChipText').textContent = 'Connect Wallet';
       }
     }
@@ -930,10 +955,10 @@
 
             <div class="review-meta">
               <div class="review-actions">
-                <button class="review-action-btn ${r.userLiked ? 'liked' : ''}" onclick="toggleLike(${idx})">
+                <button aria-label="Close" class="review-action-btn ${r.userLiked ? 'liked' : ''}" onclick="toggleLike(${idx})">
                   ${r.userLiked ? '❤️' : '🤍'} ${r.likes}
                 </button>
-                <button class="review-action-btn">💬 Reply</button>
+                <button aria-label="Close" class="review-action-btn">💬 Reply</button>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
                 <span style="color:var(--text-dim)">${timeAgo}</span>
@@ -993,10 +1018,11 @@
     let toastTimeout;
     function showToast(msg, isError = false) {
       const toast = document.getElementById('toast');
-      toast.textContent = msg;
+      const icon = isError ? '\u26A0\uFE0F' : '\u2714\uFE0F';
+      toast.innerHTML = '<span style="margin-right:6px">' + icon + '</span>' + escapeHtml(msg);
       toast.className = 'toast show' + (isError ? ' error' : '');
       clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => toast.className = 'toast', 3000);
+      toastTimeout = setTimeout(() => toast.className = 'toast', 3500);
     }
 
     // Boot

@@ -10,6 +10,27 @@
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :focus-visible {
+      outline: 2px solid #00E5FF;
+      outline-offset: 2px;
+    }
+
+    .skip-to-content {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      z-index: 999;
+      padding: 12px 24px;
+      background: #fff;
+      color: #000;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 0 0 4px 4px;
+    }
+    .skip-to-content:focus {
+      top: 0;
+    }
+
     :root {
       --bg: #000;
       --surface: #0a0a0a;
@@ -506,9 +527,10 @@
   </style>
 </head>
 <body>
+  <a class="skip-to-content" href="#main-content">Skip to content</a>
 
   <!-- Nav -->
-  <nav>
+  <nav role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <div class="nav-left">
         <a class="logo" href="/">
@@ -524,14 +546,15 @@
         </div>
       </div>
       <div class="nav-right" id="navRight">
-        <button class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>
+        <button aria-label="Close" class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>
       </div>
     </div>
   </nav>
 
   <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
+  <main role="main" id="main-content">
   <!-- Hero -->
   <section class="hero">
     <div class="hero-badge fade-up">
@@ -545,7 +568,7 @@
   <!-- Controls -->
   <div class="controls-wrap fade-up delay-3">
     <div class="controls">
-      <input class="search-input" id="searchBox" placeholder="Search apps..." oninput="filterApps()">
+      <input class="search-input" id="searchBox" placeholder="Search apps..." oninput="filterApps()" aria-label="Search ecosystem apps">
       <div class="filters" id="filters"></div>
     </div>
   </div>
@@ -573,8 +596,10 @@
     </div>
   </section>
 
+  </main>
+
   <!-- Footer -->
-  <footer>
+  <footer role="contentinfo">
     <div class="footer-inner">
       <div class="footer-links">
         <a href="https://proofi-virid.vercel.app/app">Wallet</a>
@@ -765,10 +790,10 @@
             <span class="wallet-dot"></span>
             <span class="wallet-addr">${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}</span>
           </div>
-          <button class="connect-btn connected" id="connectBtn" onclick="handleConnect()">Disconnect</button>
+          <button aria-label="Close" class="connect-btn connected" id="connectBtn" onclick="handleConnect()">Disconnect</button>
         `;
       } else {
-        nav.innerHTML = `<button class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>`;
+        nav.innerHTML = `<button aria-label="Close" class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>`;
       }
     }
 

@@ -7,6 +7,28 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     :root {
       --bg: #0a0a0a;
       --surface: #111;
@@ -132,7 +154,9 @@
   </style>
 </head>
 <body>
-  <div class="container">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <div id="main-content" class="container">
     <div class="badge">Live Demo • Real Crypto</div>
     <h1>🏥 Health Analyzer</h1>
     <p>A complete end-to-end demonstration of privacy-preserving health data analysis using real cryptographic operations, capability tokens, and decentralized storage.</p>
@@ -173,7 +197,7 @@
     </a>
   </div>
   
-  <footer>
+  <footer role="contentinfo">
     <a href="/">← Back to Proofi</a> • Built on Cere DDC
   </footer>
 </body>

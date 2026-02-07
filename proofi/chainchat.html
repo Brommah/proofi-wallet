@@ -6,6 +6,27 @@
   <title>ChainChat — Verified Wallet Messaging</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
   <style>
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--green:#00FF88;--emerald:#00FF88;--teal:#00E5FF;--blue:#00E5FF;--bg:#000000;--surface:#0A0A0A;--card:#111111;--border:#1A1A1A;--text:#F0F0F0;--dim:#555555}
@@ -55,10 +76,15 @@
     .footer a{color:var(--dim);text-decoration:none;font-size:8px;letter-spacing:1px;text-transform:uppercase}.footer a:hover{color:var(--green)}
     .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--green);border-radius:2px;padding:10px 20px;font-size:11px;color:var(--green);z-index:10000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
     .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#FF3366;color:#FF3366}
+    .proofi-spinner{display:inline-block;width:24px;height:24px;border:2px solid #1a1a1a;border-top-color:#00E5FF;border-radius:50%;animation:proofi-spin 0.6s linear infinite}
+    .proofi-spinner.sm{width:14px;height:14px;border-width:1.5px}
+    @keyframes proofi-spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
-  <div class="container">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <div id="main-content" class="container">
     <div class="app-header">
       <div>
         <div class="app-title">💬 ChainChat <span class="dot"></span></div>
@@ -87,7 +113,7 @@
 
     <div class="footer"><a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a></div>
   </div>
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
   <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
   <script>
@@ -252,7 +278,7 @@
     }
     async function handleConnect() {
       if(walletAddress){proofi.disconnect();walletAddress=null;isDemoMode=false;updateWalletUI();return}
-      try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){const msg=e.message==='User closed wallet'?'Cancelled':'Could not connect — try demo';toast(msg,true);document.getElementById('connectBtn').textContent='CONNECT'}
+      try{document.getElementById('connectBtn').innerHTML='<span class="proofi-spinner sm" style="display:inline-block;vertical-align:middle;margin-right:4px"></span> Connecting...';await proofi.connect()}catch(e){const msg=e.message==='User closed wallet'?'Cancelled':'Could not connect — try demo';toast(msg,true);document.getElementById('connectBtn').textContent='CONNECT'}
     }
 
     function updateWalletUI() {
@@ -261,7 +287,8 @@
       else{chip.textContent='Not connected';chip.classList.remove('active');btn.textContent='CONNECT';btn.className='btn';document.getElementById('demoBtn').style.display=''}
     }
 
-    let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+    function _esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+    let tt;function toast(m,e=false){const t=document.getElementById('toast');const i=e?'\u26A0\uFE0F':'\u2714\uFE0F';t.innerHTML='<span style="margin-right:6px">'+i+'</span>'+_esc(m);t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3500)}
     // Auto-connect from Proofi Chrome extension
     function checkExtensionConnect() {
       if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {

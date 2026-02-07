@@ -6,6 +6,27 @@
   <title>ArtMint — Pixel Art Creator & Provenance Proof</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
   <style>
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--coral:#FF3366;--yellow:#FFB800;--mint:#00E5FF;--purple:#00E5FF;--bg:#000000;--surface:#0A0A0A;--card:#111111;--border:#1A1A1A;--text:#F0F0F0;--dim:#555555}
@@ -62,6 +83,9 @@
     .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase}.footer a:hover{color:var(--coral)}
     .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--mint);border-radius:2px;padding:10px 20px;font-size:11px;color:var(--mint);z-index:10000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
     .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#FF3366;color:#FF3366}
+    .proofi-spinner{display:inline-block;width:24px;height:24px;border:2px solid #1a1a1a;border-top-color:#00E5FF;border-radius:50%;animation:proofi-spin 0.6s linear infinite}
+    .proofi-spinner.sm{width:14px;height:14px;border-width:1.5px}
+    @keyframes proofi-spin{to{transform:rotate(360deg)}}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000}
     .modal{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:20px;width:90%;max-width:400px}
     .modal canvas{width:100%;image-rendering:pixelated;border-radius:2px;margin-bottom:12px}
@@ -70,7 +94,9 @@
   </style>
 </head>
 <body>
-  <div class="container">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <div id="main-content" class="container">
     <div class="header">
       <div class="logo">🎨 ArtMint</div>
       <div class="tagline">Create pixel art • Prove authorship on-chain</div>
@@ -98,14 +124,14 @@
       </div>
       <div class="tools" id="toolBar">
         <button class="tool active" onclick="setTool(this,'draw')">✏️ Draw</button>
-        <button class="tool" onclick="setTool(this,'erase')">🧹 Erase</button>
-        <button class="tool" onclick="setTool(this,'fill')">🪣 Fill</button>
-        <button class="tool" onclick="clearCanvas()">🗑️ Clear</button>
+        <button aria-label="Close" class="tool" onclick="setTool(this,'erase')">🧹 Erase</button>
+        <button aria-label="Close" class="tool" onclick="setTool(this,'fill')">🪣 Fill</button>
+        <button aria-label="Close" class="tool" onclick="clearCanvas()">🗑️ Clear</button>
       </div>
       <div class="color-palette" id="palette"></div>
       <div class="pixel-canvas" id="pixelGrid"></div>
       <div class="actions">
-        <button class="btn mint" onclick="mintArt()">🎨 Mint on DDC</button>
+        <button aria-label="Close" class="btn mint" onclick="mintArt()">🎨 Mint on DDC</button>
         <button class="btn purple" onclick="downloadArt()">⬇️ Download</button>
       </div>
     </div>
@@ -117,7 +143,7 @@
 
     <div class="footer"><a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a></div>
   </div>
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
   <div id="modalContainer"></div>
 
   <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
@@ -267,7 +293,7 @@
           }});
           art.onChain = true;
           toast('🎨 Art minted with provenance proof on DDC!');
-        } catch (e) { toast(e.message, true); }
+        } catch (e) { toast('Minting failed. Art saved locally, try again later.', true); }
       } else { toast('Saved locally (connect wallet to mint on-chain)'); }
 
       artworks.unshift(art);
@@ -313,7 +339,7 @@
       canvas.style.imageRendering = 'pixelated';
       const date = new Date(art.date).toLocaleDateString();
       document.getElementById('modalContainer').innerHTML = `
-        <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
           <div class="modal">
             <h3 style="font-size:18px;margin-bottom:12px">${art.name}</h3>
             <div id="artCanvas"></div>
@@ -325,8 +351,8 @@
               <div><span class="label">Status:</span> ${art.onChain?'✅ Minted on DDC':'⏳ Local only'}</div>
             </div>
             <div style="display:flex;gap:8px;margin-top:12px">
-              <button class="btn" style="flex:1" onclick="loadToCanvas(${idx});closeModal()">Edit</button>
-              <button class="btn mint" style="flex:1" onclick="closeModal()">Close</button>
+              <button aria-label="Close" class="btn" style="flex:1" onclick="loadToCanvas(${idx});closeModal()">Edit</button>
+              <button aria-label="Close" class="btn mint" style="flex:1" onclick="closeModal()">Close</button>
             </div>
           </div>
         </div>`;
@@ -354,14 +380,15 @@
     }
     async function handleConnect() {
       if(walletAddress){proofi.disconnect();walletAddress=null;isDemoMode=false;updateWalletUI();return}
-      try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){const msg=e.message==='User closed wallet'?'Cancelled':'Could not connect — try demo mode';toast(msg,true);document.getElementById('connectBtn').textContent='CONNECT'}
+      try{document.getElementById('connectBtn').innerHTML='<span class="proofi-spinner sm" style="display:inline-block;vertical-align:middle;margin-right:4px"></span> Connecting...';await proofi.connect()}catch(e){const msg=e.message==='User closed wallet'?'Cancelled':'Could not connect — try demo mode';toast(msg,true);document.getElementById('connectBtn').textContent='CONNECT'}
     }
     function updateWalletUI() {
       const bar=document.getElementById('walletBar'),addr=document.getElementById('walletAddr'),btn=document.getElementById('connectBtn');
       if(walletAddress){bar.classList.add('connected');addr.textContent=(isDemoMode?'🎮 ':'')+walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);btn.textContent='DISCONNECT';btn.className='btn sm red';document.getElementById('demoBtn').style.display='none'}
       else{bar.classList.remove('connected');addr.textContent='Not connected';btn.textContent='CONNECT';btn.className='btn sm';document.getElementById('demoBtn').style.display=''}
     }
-    let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+    function _esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+    let tt;function toast(m,e=false){const t=document.getElementById('toast');const i=e?'\u26A0\uFE0F':'\u2714\uFE0F';t.innerHTML='<span style="margin-right:6px">'+i+'</span>'+_esc(m);t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3500)}
     // Auto-connect from Proofi Chrome extension
     function checkExtensionConnect() {
       if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {

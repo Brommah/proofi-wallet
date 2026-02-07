@@ -8,6 +8,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   :root{
     --g1:#0A0B0E;--g2:#0F1115;--g3:#15181E;--g4:#1C2027;--g5:#24292F;--g6:#2D343D;
@@ -175,9 +196,11 @@
 </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
 
 <!-- HERO -->
-<section class="hero">
+<section id="main-content" class="hero">
 <div class="w">
   <div class="pill"><div class="dot"></div>Brand Guide v4 — Teal · Dark-First · No Purple</div>
   <h1>Build agents,<br>not <em>infrastructure</em></h1>
@@ -319,7 +342,7 @@
       </div>
       <div class="sl" style="margin-top:24px;margin-bottom:12px">Focus Ring</div>
       <div style="display:flex;gap:12px;align-items:center">
-        <button class="btn btn-p" style="box-shadow:0 0 0 2px var(--g2),0 0 0 4px var(--t400)">Focused</button>
+        <button aria-label="Close" class="btn btn-p" style="box-shadow:0 0 0 2px var(--g2),0 0 0 4px var(--t400)">Focused</button>
         <span class="mono" style="font-size:11px;color:var(--g8)">2px bg + 4px accent</span>
       </div>
     </div>
@@ -334,8 +357,8 @@
   <h2 class="sh">Dark-native, teal-accented</h2>
   <div class="cgrid">
     <div class="cc"><h3>Buttons</h3>
-      <div class="cf"><button class="btn btn-p">Deploy Agent</button><button class="btn btn-s">View Logs</button><button class="btn btn-g">Cancel</button><button class="btn btn-d">Destroy</button></div>
-      <div class="cf" style="margin-top:12px"><button class="btn btn-p btn-sm">Small</button><button class="btn btn-p">Default</button><button class="btn btn-p btn-lg">Large</button></div>
+      <div class="cf"><button aria-label="Close" class="btn btn-p">Deploy Agent</button><button aria-label="Close" class="btn btn-s">View Logs</button><button aria-label="Close" class="btn btn-g">Cancel</button><button aria-label="Close" class="btn btn-d">Destroy</button></div>
+      <div class="cf" style="margin-top:12px"><button aria-label="Close" class="btn btn-p btn-sm">Small</button><button aria-label="Close" class="btn btn-p">Default</button><button aria-label="Close" class="btn btn-p btn-lg">Large</button></div>
     </div>
     <div class="cc"><h3>Status Badges</h3>
       <div class="cf">
@@ -361,9 +384,9 @@
     </div>
     <div class="cc full"><h3>Agent Cards</h3>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h4>fraud-detector</h4><span class="badge b-ok"><span class="dot" style="background:var(--green)"></span>Verified</span></div><p>2.4k ev/s · DAC 100% · Last: 4s</p><div style="display:flex;gap:6px;margin-top:12px"><button class="btn btn-p btn-sm">Configure</button><button class="btn btn-s btn-sm">DAC Logs</button></div></div>
-        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h4>content-moderator</h4><span class="badge b-warn"><span class="dot" style="background:var(--amber)"></span>Degraded</span></div><p>CPU 89% · Auto-scaling · 2 DDC migrations</p><div style="display:flex;gap:6px;margin-top:12px"><button class="btn btn-p btn-sm">Configure</button><button class="btn btn-s btn-sm">DAC Logs</button></div></div>
-        <div class="card card-sel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h4>user-profiler</h4><span class="badge b-pri">Selected</span></div><p>4 V8 isolates · 2.1 GB free</p><div style="display:flex;gap:6px;margin-top:12px"><button class="btn btn-p btn-sm">Deploy Here</button><button class="btn btn-g btn-sm">Deselect</button></div></div>
+        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h4>fraud-detector</h4><span class="badge b-ok"><span class="dot" style="background:var(--green)"></span>Verified</span></div><p>2.4k ev/s · DAC 100% · Last: 4s</p><div style="display:flex;gap:6px;margin-top:12px"><button aria-label="Close" class="btn btn-p btn-sm">Configure</button><button aria-label="Close" class="btn btn-s btn-sm">DAC Logs</button></div></div>
+        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h4>content-moderator</h4><span class="badge b-warn"><span class="dot" style="background:var(--amber)"></span>Degraded</span></div><p>CPU 89% · Auto-scaling · 2 DDC migrations</p><div style="display:flex;gap:6px;margin-top:12px"><button aria-label="Close" class="btn btn-p btn-sm">Configure</button><button aria-label="Close" class="btn btn-s btn-sm">DAC Logs</button></div></div>
+        <div class="card card-sel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h4>user-profiler</h4><span class="badge b-pri">Selected</span></div><p>4 V8 isolates · 2.1 GB free</p><div style="display:flex;gap:6px;margin-top:12px"><button aria-label="Close" class="btn btn-p btn-sm">Deploy Here</button><button aria-label="Close" class="btn btn-g btn-sm">Deselect</button></div></div>
       </div>
     </div>
     <div class="cc full"><h3>Pipeline Monitor</h3>
@@ -392,7 +415,7 @@
       <div class="dm">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
           <div><div style="font-size:18px;font-weight:600;color:var(--g12);letter-spacing:-0.01em">Dashboard</div><div style="font-size:12px;color:var(--g9);margin-top:2px">5 agents · 12 nodes · DAC: all verified</div></div>
-          <div style="display:flex;gap:6px"><button class="btn btn-s btn-sm">Export</button><button class="btn btn-p btn-sm">Deploy Agent</button></div>
+          <div style="display:flex;gap:6px"><button aria-label="Close" class="btn btn-s btn-sm">Export</button><button aria-label="Close" class="btn btn-p btn-sm">Deploy Agent</button></div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
           <div style="background:var(--g3);border:1px solid var(--g6);border-radius:var(--r);padding:12px"><div style="font-size:11px;font-weight:500;color:var(--g8);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px">Events/sec</div><div class="mono" style="font-size:22px;font-weight:700;color:var(--g12);letter-spacing:-0.02em">4,507</div><div style="font-size:11px;color:var(--green);margin-top:3px">↑ 12.4%</div></div>
@@ -421,8 +444,8 @@
   <div class="st">06 — Guidelines</div>
   <h2 class="sh">Do's and Don'ts</h2>
   <div class="dd">
-    <div class="ddc"><div class="ddh do">✓ Teal for interactions — the product color</div><div class="ddb"><div style="display:flex;gap:10px;align-items:center"><button class="btn btn-p">Deploy Agent</button><span style="font-size:14px;color:var(--t400);font-weight:500;cursor:pointer">View DAC audit →</span></div></div></div>
-    <div class="ddc"><div class="ddh dont">✗ No purple. No blue. No exceptions.</div><div class="ddb"><div style="display:flex;gap:10px"><button class="btn" style="background:#7B2CBF;color:#FFF">Nope</button><button class="btn" style="background:#6366F1;color:#FFF">Nope</button><button class="btn" style="background:#1976d2;color:#FFF">Nope</button></div></div></div>
+    <div class="ddc"><div class="ddh do">✓ Teal for interactions — the product color</div><div class="ddb"><div style="display:flex;gap:10px;align-items:center"><button aria-label="Close" class="btn btn-p">Deploy Agent</button><span style="font-size:14px;color:var(--t400);font-weight:500;cursor:pointer">View DAC audit →</span></div></div></div>
+    <div class="ddc"><div class="ddh dont">✗ No purple. No blue. No exceptions.</div><div class="ddb"><div style="display:flex;gap:10px"><button aria-label="Close" class="btn" style="background:#7B2CBF;color:#FFF">Nope</button><button aria-label="Close" class="btn" style="background:#6366F1;color:#FFF">Nope</button><button aria-label="Close" class="btn" style="background:#1976d2;color:#FFF">Nope</button></div></div></div>
     <div class="ddc"><div class="ddh do">✓ Color = meaning. Green=verified, Red=broken.</div><div class="ddb"><div style="display:flex;gap:6px"><span class="badge b-ok"><span class="dot" style="background:var(--green)"></span>DAC Verified</span><span class="badge b-err"><span class="dot" style="background:var(--red)"></span>Down</span><span class="badge b-warn"><span class="dot" style="background:var(--amber)"></span>Degraded</span></div></div></div>
     <div class="ddc"><div class="ddh dont">✗ No decorative color — no meaning, no color</div><div class="ddb"><div style="display:flex;gap:6px"><span class="badge" style="background:rgba(164,130,255,0.12);color:#A78BFA">Fancy</span><span class="badge" style="background:rgba(244,114,182,0.12);color:#F472B6">Pretty</span></div></div></div>
     <div class="ddc"><div class="ddh do">✓ Monospace for data — it's a dev tool</div><div class="ddb" style="flex-direction:column;gap:3px;align-items:flex-start"><div class="mono" style="font-size:13px"><span style="color:var(--g9)">events/sec</span> <span style="color:var(--g12)">4,507</span></div><div class="mono" style="font-size:13px"><span style="color:var(--g9)">hash</span> <span style="color:var(--g8)">0x8a3f…c12d</span></div></div></div>
@@ -446,7 +469,7 @@
         <div class="cmpr"><span class="k">Radius</span><span class="v">8px</span></div>
         <div class="cmpr"><span class="k">Depth</span><span class="v">Borders + surface steps</span></div>
         <div class="cmpr"><span class="k">Target</span><span class="v">Developers + enterprise</span></div>
-        <div style="margin-top:12px;display:flex;gap:6px"><button class="btn btn-p btn-sm">Deploy</button><button class="btn btn-s btn-sm">DAC Audit</button></div>
+        <div style="margin-top:12px;display:flex;gap:6px"><button aria-label="Close" class="btn btn-p btn-sm">Deploy</button><button aria-label="Close" class="btn btn-s btn-sm">DAC Audit</button></div>
       </div>
     </div>
     <div class="cmpc">
@@ -459,8 +482,8 @@
         <div class="cmpr"><span class="k">Depth</span><span class="v">Borders only</span></div>
         <div class="cmpr"><span class="k">Target</span><span class="v">Consumers</span></div>
         <div style="margin-top:12px;display:flex;gap:6px">
-          <button class="btn btn-sm" style="background:#3B82F6;color:#FFF;border-radius:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:1px;font-size:11px">Verify</button>
-          <button class="btn btn-sm" style="background:transparent;color:var(--g12);border:2px solid var(--g6);border-radius:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:1px;font-size:11px">Settings</button>
+          <button aria-label="Close" class="btn btn-sm" style="background:#3B82F6;color:#FFF;border-radius:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:1px;font-size:11px">Verify</button>
+          <button aria-label="Close" class="btn btn-sm" style="background:transparent;color:var(--g12);border:2px solid var(--g6);border-radius:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:1px;font-size:11px">Settings</button>
         </div>
       </div>
     </div>
@@ -468,7 +491,7 @@
 </div>
 </section>
 
-<footer>
+<footer role="contentinfo">
   <div class="w">
     <div style="font-weight:500;color:var(--g10);margin-bottom:4px">CEF Brand Guide v4 — Teal · Dark-First · No Purple</div>
     <div>Cere Ecosystem Framework · February 2026</div>

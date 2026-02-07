@@ -9,6 +9,28 @@
     @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
     
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     
     :root {
       --bg: #0a0a0a;
@@ -629,6 +651,8 @@
   </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
   <!-- DDC Status Banner -->
   <div class="ddc-banner" id="ddcBanner">
     <span class="status-dot"></span>
@@ -636,7 +660,7 @@
   </div>
 
   <!-- Nav -->
-  <nav>
+  <nav role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <div class="nav-left">
         <a href="/" class="nav-logo">🏥 Health Analyzer</a>
@@ -650,7 +674,7 @@
   </nav>
 
   <!-- Main -->
-  <main>
+  <main id="main-content">
     <section class="hero">
       <h1>🔐 Privacy-Preserving Health Analysis</h1>
       <p>Production demo with real encryption, capability tokens, and Cere DDC Mainnet decentralized storage.</p>
@@ -670,11 +694,11 @@
         <div class="step-body">
           <div class="form-group">
             <label class="form-label">Seed Phrase (12 words) — Leave empty to generate new</label>
-            <input type="text" class="form-input" id="seedInput" placeholder="word1 word2 word3 ... word12">
+            <input aria-label="word1 word2 word3 ... word12" type="text" class="form-input" id="seedInput" placeholder="word1 word2 word3 ... word12">
           </div>
           <div class="btn-group">
-            <button class="btn btn-primary" onclick="connectWallet()">🔐 Generate New Wallet</button>
-            <button class="btn btn-secondary" onclick="connectWallet(true)">📥 Import Existing</button>
+            <button aria-label="Close" class="btn btn-primary" onclick="connectWallet()">🔐 Generate New Wallet</button>
+            <button aria-label="Close" class="btn btn-secondary" onclick="connectWallet(true)">📥 Import Existing</button>
           </div>
           
           <div id="walletResult" style="margin-top: 20px; display: none;">
@@ -729,7 +753,7 @@
           </div>
           
           <div class="btn-group">
-            <button class="btn btn-primary" id="uploadBtn" onclick="uploadHealthData()" disabled>
+            <button aria-label="Close" class="btn btn-primary" id="uploadBtn" onclick="uploadHealthData()" disabled>
               🔐 Encrypt & Upload to DDC
             </button>
           </div>
@@ -848,7 +872,7 @@
             </select>
           </div>
           
-          <button class="btn btn-primary" id="grantBtn" onclick="grantPermission()" disabled>
+          <button aria-label="Close" class="btn btn-primary" id="grantBtn" onclick="grantPermission()" disabled>
             🎫 Create Capability Token
           </button>
           
@@ -937,7 +961,7 @@
             </div>
           </div>
           
-          <button class="btn btn-primary" id="runAgentBtn" onclick="runAgent()" disabled>
+          <button aria-label="Close" class="btn btn-primary" id="runAgentBtn" onclick="runAgent()" disabled>
             🤖 Run Agent Analysis
           </button>
         </div>
@@ -980,8 +1004,8 @@
           </div>
           
           <div class="btn-group" style="margin-top: 24px;">
-            <button class="btn btn-primary" onclick="downloadAuditLog()">📥 Download Audit Log</button>
-            <button class="btn btn-secondary" onclick="restartDemo()">🔄 Restart Demo</button>
+            <button aria-label="Close" class="btn btn-primary" onclick="downloadAuditLog()">📥 Download Audit Log</button>
+            <button aria-label="Close" class="btn btn-secondary" onclick="restartDemo()">🔄 Restart Demo</button>
           </div>
         </div>
       </div>
@@ -998,7 +1022,7 @@
   <div class="console-panel" id="consolePanel">
     <div class="console-header">
       <h4>🖥️ Development Console</h4>
-      <button class="console-close" onclick="toggleConsole()">×</button>
+      <button aria-label="Close" class="console-close" onclick="toggleConsole()">×</button>
     </div>
     <div class="console-body" id="consoleBody">
       <div class="console-line info">
@@ -1033,7 +1057,9 @@
       // For actual uploads, we'd need a funded wallet
       // This demo uses IndexedDB fallback with DDC-compatible CIDs
     };
-    
+
+    const PROOFI_API = 'https://proofi-api-production.up.railway.app';
+
     // Global State
     const state = {
       userKeyPair: null,        // Ed25519 signing keypair
@@ -1049,7 +1075,10 @@
       auditLog: [],             // Audit trail with hashes
       lastHash: null,           // For hash chain
       ddcConnected: false,      // DDC connection status
-      storageMode: 'indexeddb'  // 'ddc' or 'indexeddb'
+      storageMode: 'indexeddb', // 'ddc' or 'indexeddb'
+      extensionConnected: false, // Proofi extension status
+      walletAddress: null,       // Real Cere SS58 address from extension
+      authToken: null            // JWT for Proofi API auth
     };
     
     // IndexedDB for local storage (DDC fallback)
@@ -1153,46 +1182,67 @@
       const banner = document.getElementById('ddcBanner');
       const statusEl = document.getElementById('ddcStatus');
       const modeBadge = document.getElementById('modeBadge');
-      
-      log('Checking DDC Mainnet connectivity...', 'ddc');
-      
+
+      log('Checking DDC connectivity via Proofi API...', 'ddc');
+
       try {
-        // Try to fetch from DDC CDN (ping check)
+        // Try real Proofi API /ddc/status first
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Check if CDN is reachable
-        const response = await fetch(`${DDC_CONFIG.cdnUrl}/1/health`, {
-          method: 'HEAD',
-          mode: 'no-cors', // CDN might not allow CORS for health checks
+
+        const response = await fetch(`${PROOFI_API}/ddc/status`, {
           signal: controller.signal
-        }).catch(() => null);
-        
+        });
+
         clearTimeout(timeoutId);
-        
-        // Even if no-cors, if we don't get an error, network is reachable
-        state.ddcConnected = true;
-        banner.className = 'ddc-banner';
-        statusEl.textContent = '🟢 Connected to Cere DDC Mainnet (cdn.cere.network)';
-        modeBadge.textContent = 'DDC Mainnet';
-        modeBadge.className = 'nav-badge';
-        log('DDC CDN reachable at ' + DDC_CONFIG.cdnUrl, 'success');
-        
-        // Note: For actual uploads, we'd need wallet integration
-        // This demo uses IndexedDB with DDC-compatible CIDs
-        log('Note: Upload requires wallet with CERE tokens. Using IndexedDB with DDC-compatible format.', 'warn');
-        state.storageMode = 'indexeddb';
-        
+
+        if (response.ok) {
+          const data = await response.json();
+          state.ddcConnected = true;
+          banner.className = 'ddc-banner';
+          const issuerInfo = data.issuerWallet ? ` (Issuer: ${data.issuerWallet.slice(0, 12)}...)` : '';
+          statusEl.textContent = `🟢 Connected to Cere DDC Mainnet via Proofi API${issuerInfo}`;
+          modeBadge.textContent = 'DDC Mainnet';
+          modeBadge.className = 'nav-badge';
+          log('DDC connected via Proofi API: ' + JSON.stringify(data), 'success');
+          return;
+        }
       } catch (err) {
-        state.ddcConnected = false;
-        state.storageMode = 'indexeddb';
-        banner.className = 'ddc-banner offline';
-        statusEl.textContent = '🟠 DDC Offline - Using Local Storage (IndexedDB)';
-        modeBadge.textContent = 'Offline Mode';
-        modeBadge.className = 'nav-badge offline';
-        log('DDC connection failed: ' + err.message, 'warn');
-        log('Falling back to IndexedDB storage', 'info');
+        log('DDC /ddc/status check failed: ' + err.message + '. Trying /health...', 'warn');
       }
+
+      // Fallback: try /health endpoint
+      try {
+        const controller2 = new AbortController();
+        const timeoutId2 = setTimeout(() => controller2.abort(), 5000);
+
+        const healthResponse = await fetch(`${PROOFI_API}/health`, {
+          signal: controller2.signal
+        });
+
+        clearTimeout(timeoutId2);
+
+        if (healthResponse.ok) {
+          state.ddcConnected = true;
+          banner.className = 'ddc-banner';
+          statusEl.textContent = '🟢 Proofi API online — DDC available';
+          modeBadge.textContent = 'DDC Mainnet';
+          modeBadge.className = 'nav-badge';
+          log('Proofi API health check passed', 'success');
+          return;
+        }
+      } catch (err) {
+        log('Proofi API /health check failed: ' + err.message, 'warn');
+      }
+
+      // Offline fallback
+      state.ddcConnected = false;
+      state.storageMode = 'indexeddb';
+      banner.className = 'ddc-banner offline';
+      statusEl.textContent = '🟠 DDC Offline — Using Local Storage (IndexedDB)';
+      modeBadge.textContent = 'Offline Mode';
+      modeBadge.className = 'nav-badge offline';
+      log('DDC connection failed. Falling back to IndexedDB storage.', 'warn');
     }
     
     // ========================================
@@ -1373,42 +1423,52 @@
       async store(bucketId, data) {
         const cid = await generateCID(data);
         const jsonData = JSON.stringify(data);
-        
+
         log(`DDC: Generating CID for ${(jsonData.length / 1024).toFixed(2)}KB of data...`, 'ddc');
         log(`DDC: CID = ${cid}`, 'ddc');
-        
-        // Try DDC first if connected
-        if (state.ddcConnected) {
+
+        // Try real DDC via Proofi API first
+        if (state.authToken) {
           try {
-            // Attempt to store via DDC storage node
-            // Note: This requires proper authentication which needs the full SDK
-            // For demo, we'll show the attempt but fall back to IndexedDB
-            log('DDC: Attempting storage node upload...', 'ddc');
-            
-            // The actual DDC upload requires:
-            // 1. Wallet with CERE tokens
-            // 2. Signed auth token
-            // 3. gRPC or proper HTTP multipart upload
-            
-            // For now, simulate the attempt and fall back
-            throw new Error('Wallet authentication required for DDC upload');
-            
+            log('DDC: Uploading to Cere DDC Mainnet via Proofi API...', 'ddc');
+            const response = await fetch(`${PROOFI_API}/ddc/memo`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${state.authToken}`
+              },
+              body: JSON.stringify({
+                content: jsonData,
+                label: 'health-data-encrypted-v1'
+              })
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              const realCid = result.cid || cid;
+              log(`DDC: Stored on mainnet! CID: ${realCid}`, 'success');
+              this.mode = 'ddc';
+              state.storageMode = 'ddc';
+              return {
+                cid: realCid,
+                bucket: bucketId,
+                mode: 'ddc',
+                cdnUrl: result.cdnUrl || `https://cdn.ddc-dragon.com/1229/${realCid}`
+              };
+            } else {
+              const err = await response.json().catch(() => ({}));
+              throw new Error(err.error || `API returned ${response.status}`);
+            }
           } catch (err) {
-            log(`DDC: Upload requires wallet auth: ${err.message}`, 'warn');
-            log('DDC: Using IndexedDB with DDC-compatible CID format', 'info');
+            log(`DDC: API upload failed: ${err.message}. Falling back to IndexedDB.`, 'warn');
           }
         }
-        
-        // Store in IndexedDB with DDC-compatible format
+
+        // Fallback to IndexedDB
         await this.storeLocal(cid, bucketId, data);
         this.mode = 'indexeddb';
-        
-        return { 
-          cid, 
-          bucket: bucketId,
-          mode: this.mode,
-          cdnUrl: `${DDC_CONFIG.cdnUrl}/${bucketId}/${cid}`
-        };
+        state.storageMode = 'indexeddb';
+        return { cid, bucket: bucketId, mode: 'indexeddb', cdnUrl: `${DDC_CONFIG.cdnUrl}/${bucketId}/${cid}` };
       }
       
       async storeLocal(cid, bucketId, data) {
@@ -1434,34 +1494,29 @@
       }
       
       async fetch(bucketId, cid) {
-        log(`DDC: Fetching CID ${cid.slice(0, 20)}... from bucket ${bucketId}`, 'ddc');
-        
-        // Try DDC CDN first if connected
-        if (state.ddcConnected) {
+        log(`DDC: Fetching CID ${cid.slice(0, 20)}...`, 'ddc');
+
+        // Try Proofi API first
+        if (state.authToken || state.ddcConnected) {
           try {
-            const cdnUrl = `${DDC_CONFIG.cdnUrl}/${bucketId}/${cid}`;
-            log(`DDC: Trying CDN fetch from ${cdnUrl}`, 'ddc');
-            
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
-            
-            const response = await fetch(cdnUrl, {
-              signal: controller.signal
+            log('DDC: Fetching from Proofi API...', 'ddc');
+            const response = await fetch(`${PROOFI_API}/ddc/read/${cid}`, {
+              headers: state.authToken ? { 'Authorization': `Bearer ${state.authToken}` } : {}
             });
-            
-            clearTimeout(timeoutId);
-            
+
             if (response.ok) {
-              const data = await response.json();
-              log('DDC: Successfully fetched from CDN!', 'success');
-              return data;
+              const result = await response.json();
+              log('DDC: Fetched from mainnet!', 'success');
+              // The API returns the stored content -- parse it
+              const content = result.content || result.data || result;
+              return typeof content === 'string' ? JSON.parse(content) : content;
             }
           } catch (err) {
-            log(`DDC: CDN fetch failed, trying local: ${err.message}`, 'warn');
+            log(`DDC: API fetch failed: ${err.message}`, 'warn');
           }
         }
-        
-        // Fall back to IndexedDB
+
+        // Fallback to IndexedDB
         return this.fetchLocal(cid);
       }
       
@@ -1546,6 +1601,27 @@
       
       log('Demo initialized with real TweetNaCl crypto', 'success');
       log(`Agent public key: ${nacl.util.encodeBase64(state.agentKeyPair.publicKey).slice(0, 20)}...`, 'crypto');
+
+      // Check for Proofi extension
+      if (window.__proofi_extension__?.connected) {
+        state.extensionConnected = true;
+        state.walletAddress = window.__proofi_extension__.address;
+        state.authToken = window.__proofi_extension__.token || localStorage.getItem('proofi_token');
+        log(`Proofi extension detected: ${state.walletAddress.slice(0, 12)}...`, 'success');
+      }
+      window.addEventListener('proofi-extension-ready', () => {
+        if (window.__proofi_extension__?.connected) {
+          state.extensionConnected = true;
+          state.walletAddress = window.__proofi_extension__.address;
+          state.authToken = window.__proofi_extension__.token || localStorage.getItem('proofi_token');
+          log(`Proofi extension connected: ${state.walletAddress.slice(0, 12)}...`, 'success');
+          // Update wallet UI if not yet connected via Step 1
+          if (!state.userKeyPair) {
+            document.getElementById('walletDot').classList.add('connected');
+            document.getElementById('walletAddr').textContent = state.walletAddress.slice(0, 8) + '...' + state.walletAddress.slice(-6);
+          }
+        }
+      });
     });
     
     function toggleStep(stepNum) {
@@ -1574,11 +1650,22 @@
     
     // Step 1: Connect Wallet
     async function connectWallet(useExisting = false) {
-      log('Generating Ed25519 + X25519 keypairs...', 'crypto');
-      
+      // --- (a) Check for Proofi wallet extension first ---
+      if (window.__proofi_extension__?.connected && window.__proofi_extension__?.address) {
+        state.walletAddress = window.__proofi_extension__.address;
+        state.authToken = window.__proofi_extension__.token || localStorage.getItem('proofi_token');
+        state.extensionConnected = true;
+        log('Connected to Proofi wallet extension: ' + state.walletAddress, 'success');
+      } else {
+        log('Proofi extension not detected -- using demo keypairs', 'info');
+      }
+
+      // --- (b/c) Generate Ed25519 + X25519 demo keypairs for capability token flow ---
+      log('Generating Ed25519 + X25519 keypairs for capability token demo...', 'crypto');
+
       let seed;
       const seedInput = document.getElementById('seedInput').value.trim();
-      
+
       if (useExisting && seedInput) {
         // Hash the seed phrase to get 32 bytes
         const seedHash = await sha256(seedInput);
@@ -1588,44 +1675,98 @@
         seed = randomBytes(32);
         log('Generated new random seed (32 bytes)', 'crypto');
       }
-      
+
       // Generate signing keypair (Ed25519)
       state.userKeyPair = generateSigningKeyPair(seed);
-      log(`Ed25519 keypair generated`, 'crypto');
-      
+      log('Ed25519 keypair generated', 'crypto');
+
       // Generate encryption keypair (X25519)
       state.userX25519 = nacl.box.keyPair.fromSecretKey(seed);
-      log(`X25519 keypair generated`, 'crypto');
-      
+      log('X25519 keypair generated', 'crypto');
+
       // Derive DID
       const did = deriveDID(state.userKeyPair.publicKey);
-      
+
       // Update UI
       const pubKeyB64 = nacl.util.encodeBase64(state.userKeyPair.publicKey);
       const x25519B64 = nacl.util.encodeBase64(state.userX25519.publicKey);
-      
+
       document.getElementById('userPubKey').textContent = pubKeyB64;
       document.getElementById('userDID').textContent = did;
       document.getElementById('userX25519').textContent = x25519B64;
       document.getElementById('walletResult').style.display = 'block';
-      
-      // Update nav
+
+      // --- (e/f) Update wallet UI with REAL extension address if available ---
       document.getElementById('walletDot').classList.add('connected');
-      document.getElementById('walletAddr').textContent = 
-        pubKeyB64.slice(0, 8) + '...' + pubKeyB64.slice(-6);
-      
+      if (state.extensionConnected && state.walletAddress) {
+        // Show the real Cere SS58 address in the nav
+        document.getElementById('walletAddr').textContent =
+          state.walletAddress.slice(0, 8) + '...' + state.walletAddress.slice(-6);
+
+        // Add a kv-item showing the real Cere address and extension status
+        const walletResultEl = document.getElementById('walletResult');
+        const kvGrid = walletResultEl.querySelector('.kv-grid');
+
+        const extensionItem = document.createElement('div');
+        extensionItem.className = 'kv-item';
+        extensionItem.innerHTML = `
+          <span class="kv-icon">🔌</span>
+          <div class="kv-content">
+            <div class="kv-key">Proofi Extension</div>
+            <div class="kv-value success">Connected via Proofi Extension</div>
+          </div>
+        `;
+        kvGrid.insertBefore(extensionItem, kvGrid.firstChild);
+
+        const cereItem = document.createElement('div');
+        cereItem.className = 'kv-item';
+        cereItem.innerHTML = `
+          <span class="kv-icon">💎</span>
+          <div class="kv-content">
+            <div class="kv-key">Cere Wallet Address (SS58)</div>
+            <div class="kv-value success">${state.walletAddress}</div>
+          </div>
+        `;
+        kvGrid.insertBefore(cereItem, kvGrid.children[1]);
+      } else {
+        // Demo mode -- show the demo public key
+        document.getElementById('walletAddr').textContent =
+          pubKeyB64.slice(0, 8) + '...' + pubKeyB64.slice(-6);
+
+        // Add mode indicator
+        const walletResultEl = document.getElementById('walletResult');
+        const kvGrid = walletResultEl.querySelector('.kv-grid');
+
+        const modeItem = document.createElement('div');
+        modeItem.className = 'kv-item';
+        modeItem.innerHTML = `
+          <span class="kv-icon">🔑</span>
+          <div class="kv-content">
+            <div class="kv-key">Mode</div>
+            <div class="kv-value pending">Demo mode (generated keys)</div>
+          </div>
+        `;
+        kvGrid.insertBefore(modeItem, kvGrid.firstChild);
+      }
+
       // Audit
       await addAuditEntry('WALLET_CONNECTED', {
         publicKey: pubKeyB64,
-        did
+        did,
+        extensionConnected: state.extensionConnected,
+        walletAddress: state.walletAddress || 'none (demo mode)'
       });
-      
+
       // Progress
       updateStep(1, 'completed');
       updateStep(2, 'active');
       document.getElementById('uploadBtn').disabled = false;
-      
-      log(`Wallet connected: ${did}`, 'success');
+
+      if (state.extensionConnected) {
+        log(`Wallet connected via Proofi Extension: ${state.walletAddress}`, 'success');
+      } else {
+        log(`Wallet connected (demo mode): ${did}`, 'success');
+      }
     }
     
     // Step 2: Upload Health Data
@@ -1656,8 +1797,8 @@
       state.dataCid = result.cid;
       
       // Update UI
-      document.getElementById('storageMode').textContent = 
-        result.mode === 'ddc' ? '🌐 Cere DDC Testnet' : '💾 IndexedDB (DDC-compatible format)';
+      document.getElementById('storageMode').textContent =
+        result.mode === 'ddc' ? '🌐 Cere DDC Mainnet (via Proofi API)' : '💾 IndexedDB (offline fallback)';
       document.getElementById('bucketId').textContent = state.bucketId.toString();
       document.getElementById('dataCid').textContent = result.cid;
       document.getElementById('ddcUrl').textContent = result.cdnUrl;

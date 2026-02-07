@@ -9,6 +9,28 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
+
     :root {
       --gold: #FFD700;
       --gold-dim: #B8860B;
@@ -635,7 +657,9 @@
   </style>
 </head>
 <body>
-  <div class="container">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <div id="main-content" class="container">
     <!-- Header -->
     <div class="header">
       <div class="logo">⚔️</div>
@@ -649,7 +673,7 @@
         <div class="label">Proofi Wallet</div>
         <div class="address" id="walletAddress" style="color: var(--text-dim);">Not connected</div>
       </div>
-      <button class="btn btn-sm" id="connectBtn" onclick="handleConnect()">Connect</button>
+      <button aria-label="Close" class="btn btn-sm" id="connectBtn" onclick="handleConnect()">Connect</button>
     </div>
 
     <!-- Phase 1: Character Builder -->
@@ -657,7 +681,7 @@
       <!-- Name -->
       <div class="section">
         <div class="section-title">⚔ Hero Name</div>
-        <input class="name-input" id="charName" type="text" placeholder="Enter your hero's name..." maxlength="20" oninput="updatePreview()" />
+        <input aria-label="Enter your hero's name..." class="name-input" id="charName" type="text" placeholder="Enter your hero's name..." maxlength="20" oninput="updatePreview()" />
       </div>
 
       <!-- Class -->
@@ -717,7 +741,7 @@
       </div>
 
       <!-- Forge button -->
-      <button class="btn btn-purple" id="forgeBtn" onclick="forgeCharacter()" style="width: 100%; padding: 16px; font-size: 14px;" disabled>
+      <button aria-label="Close" class="btn btn-purple" id="forgeBtn" onclick="forgeCharacter()" style="width: 100%; padding: 16px; font-size: 14px;" disabled>
         🔮 Forge Character on DDC
       </button>
       <p style="text-align:center; font-size:10px; color: var(--text-dim); margin-top:8px;" id="forgeHint">Connect wallet & fill all fields to forge</p>
@@ -728,7 +752,7 @@
       <div id="characterCardContainer"></div>
 
       <div style="display: flex; gap: 8px; margin-top: 16px;">
-        <button class="btn btn-green" onclick="createAnother()" style="flex:1;">+ New Character</button>
+        <button aria-label="Close" class="btn btn-green" onclick="createAnother()" style="flex:1;">+ New Character</button>
       </div>
     </div>
 
@@ -745,7 +769,7 @@
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
   <!-- Proofi SDK -->
   <script src="proofi-sdk.js"></script>
@@ -812,10 +836,11 @@
         return;
       }
       try {
-        document.getElementById('connectBtn').textContent = 'Linking...';
+        document.getElementById('connectBtn').innerHTML = '<span class="spinner" style="display:inline-block;vertical-align:middle;margin-right:6px;width:14px;height:14px"></span> Connecting...';
         await proofi.connect();
       } catch (err) {
-        showToast(err.message, true);
+        const msg = err.message === 'User closed wallet' ? 'Connection cancelled' : 'Could not connect. Check that Proofi extension is installed.';
+        showToast(msg, true);
         document.getElementById('connectBtn').textContent = 'Connect';
       }
     }
@@ -1090,13 +1115,16 @@
     }
 
     // ── Helpers ──
+    function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
     let toastTimeout;
     function showToast(msg, isError = false) {
       const toast = document.getElementById('toast');
-      toast.textContent = msg;
+      const icon = isError ? '\u26A0\uFE0F' : '\u2714\uFE0F';
+      toast.innerHTML = '<span style="margin-right:6px">' + icon + '</span>' + escapeHtml(msg);
       toast.className = 'toast show' + (isError ? ' error' : '');
       clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => toast.className = 'toast', 3000);
+      toastTimeout = setTimeout(() => toast.className = 'toast', 3500);
     }
 
     // Boot

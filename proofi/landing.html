@@ -12,10 +12,10 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Proofi — Your credentials. Verified. Permanent.">
   <meta name="twitter:description" content="Decentralized verifiable credentials on Cere Network.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%233B82F6'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='20' font-weight='bold' fill='white'%3E◇%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2300E5FF'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='20' font-weight='bold' fill='white'%3E◇%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #FFFFFF;
@@ -35,6 +35,29 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :focus-visible {
+      outline: 2px solid #00E5FF;
+      outline-offset: 2px;
+    }
+
+    .skip-to-content {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      z-index: 999;
+      padding: 12px 24px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 0 0 4px 4px;
+    }
+    .skip-to-content:focus {
+      top: 0;
+    }
+
     html { scroll-behavior: smooth; }
 
     body {
@@ -1247,9 +1270,10 @@
   </style>
 </head>
 <body>
+  <a class="skip-to-content" href="#hero">Skip to content</a>
 
   <!-- ═══ NAV ═══ -->
-  <nav>
+  <nav role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <a href="#" class="nav-brand">
         <div class="nav-logo">◇</div>
@@ -1265,6 +1289,7 @@
   </nav>
 
   <!-- ═══ HERO ═══ -->
+  <main role="main">
   <section class="hero" id="hero">
     <div class="hero-bg"></div>
     <div class="hero-bg-fade"></div>
@@ -1469,7 +1494,7 @@
         </p>
         <a href="/app" class="cta-btn fade-in" style="text-decoration:none;display:inline-block;">
           ◇ Connect Wallet
-        </button>
+        </a>
         <div class="cta-trust fade-in">
           <div class="cta-trust-item">
             <span class="dot"></span> W3C Verifiable Credentials
@@ -1485,8 +1510,10 @@
     </div>
   </section>
 
+  </main>
+
   <!-- ═══ FOOTER ═══ -->
-  <footer>
+  <footer role="contentinfo">
     <div class="footer-inner">
       <div class="footer-brand">
         <div class="footer-brand-mark">◇</div>
@@ -1504,16 +1531,16 @@
   </footer>
 
   <!-- ═══ WALLET MODAL ═══ -->
-  <div class="modal-overlay" id="walletModal">
+  <div class="modal-overlay" id="walletModal" role="dialog" aria-modal="true" aria-label="Wallet sign in">
     <div class="modal">
-      <button class="modal-close" onclick="closeWalletModal()">✕</button>
+      <button class="modal-close" onclick="closeWalletModal()" aria-label="Close wallet modal">✕</button>
       <div id="walletModalContent">
         <!-- Step 1: Email -->
         <div id="loginStep1">
           <h2>Sign In</h2>
           <div class="modal-sub">Your wallet is derived from your email — no seed phrase needed</div>
           <div style="margin-top: 20px;">
-            <input type="email" id="loginEmail" placeholder="you@example.com"
+            <input type="email" id="loginEmail" placeholder="you@example.com" aria-label="Email address"
               style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border);
                      font-size: 15px; font-family: inherit; background: var(--bg-off); color: var(--text);
                      outline: none; transition: border-color 0.15s;"
@@ -1521,7 +1548,7 @@
               onblur="this.style.borderColor='var(--border)'"
               onkeydown="if(event.key==='Enter') sendProofiOtp()">
           </div>
-          <button onclick="sendProofiOtp()" style="width: 100%; margin-top: 12px; padding: 12px 24px;
+          <button aria-label="Close" onclick="sendProofiOtp()" style="width: 100%; margin-top: 12px; padding: 12px 24px;
             background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px;
             font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s;"
             onmouseover="this.style.background='var(--accent-hover)'"
@@ -1538,33 +1565,33 @@
         <div id="loginStep2" style="display: none;">
           <h2>Verify</h2>
           <div class="modal-sub">Enter the 6-digit code sent to <strong id="otpEmailDisplay"></strong></div>
-          <div style="display: flex; gap: 8px; justify-content: center; margin-top: 20px;" id="otpInputs">
-            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+          <div style="display: flex; gap: 8px; justify-content: center; margin-top: 20px;" id="otpInputs" role="group" aria-label="Verification code">
+            <input type="text" maxlength="1" class="otp-box" aria-label="Digit 1 of 6" style="width: 44px; height: 52px; text-align: center;
               font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
               border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
               oninput="otpNext(this, 0)" onkeydown="otpKeydown(event, 0)">
-            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+            <input type="text" maxlength="1" class="otp-box" aria-label="Digit 2 of 6" style="width: 44px; height: 52px; text-align: center;
               font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
               border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
               oninput="otpNext(this, 1)" onkeydown="otpKeydown(event, 1)">
-            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+            <input type="text" maxlength="1" class="otp-box" aria-label="Digit 3 of 6" style="width: 44px; height: 52px; text-align: center;
               font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
               border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
               oninput="otpNext(this, 2)" onkeydown="otpKeydown(event, 2)">
-            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+            <input type="text" maxlength="1" class="otp-box" aria-label="Digit 4 of 6" style="width: 44px; height: 52px; text-align: center;
               font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
               border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
               oninput="otpNext(this, 3)" onkeydown="otpKeydown(event, 3)">
-            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+            <input type="text" maxlength="1" class="otp-box" aria-label="Digit 5 of 6" style="width: 44px; height: 52px; text-align: center;
               font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
               border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
               oninput="otpNext(this, 4)" onkeydown="otpKeydown(event, 4)">
-            <input type="text" maxlength="1" class="otp-box" style="width: 44px; height: 52px; text-align: center;
+            <input type="text" maxlength="1" class="otp-box" aria-label="Digit 6 of 6" style="width: 44px; height: 52px; text-align: center;
               font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; border-radius: 8px;
               border: 1px solid var(--border); background: var(--bg-off); color: var(--text); outline: none;"
               oninput="otpNext(this, 5)" onkeydown="otpKeydown(event, 5)">
           </div>
-          <button onclick="document.getElementById('loginStep1').style.display=''; document.getElementById('loginStep2').style.display='none';"
+          <button aria-label="Close" onclick="document.getElementById('loginStep1').style.display=''; document.getElementById('loginStep2').style.display='none';"
             style="width: 100%; margin-top: 16px; padding: 10px; background: none; border: 1px solid var(--border);
             border-radius: 8px; color: var(--text-dim); font-size: 13px; cursor: pointer; font-family: inherit;">
             ← Use a different email
@@ -1577,7 +1604,7 @@
           <div class="modal-sub">Choose a 4-6 digit PIN to secure your wallet. Your key is derived locally — the server never sees it.</div>
           <div style="margin-top: 20px;">
             <input type="password" id="pinInput" inputmode="numeric" pattern="[0-9]*" maxlength="6" minlength="4"
-              placeholder="Enter 4-6 digit PIN"
+              placeholder="Enter 4-6 digit PIN" aria-label="Set wallet PIN"
               style="width: 100%; padding: 16px; border-radius: 8px; border: 1px solid var(--border);
                      font-size: 24px; font-family: 'JetBrains Mono', monospace; background: var(--bg-off);
                      color: var(--text); outline: none; text-align: center; letter-spacing: 12px;
@@ -1590,7 +1617,7 @@
               4-6 digits required
             </div>
           </div>
-          <button onclick="deriveAndRegister()" id="pinSubmitBtn" disabled
+          <button aria-label="Close" onclick="deriveAndRegister()" id="pinSubmitBtn" disabled
             style="width: 100%; margin-top: 16px; padding: 14px 24px;
             background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px;
             font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; opacity: 0.5;"
@@ -1611,7 +1638,7 @@
           <div class="modal-sub">Enter your PIN to unlock your wallet</div>
           <div style="margin-top: 20px;">
             <input type="password" id="pinInputExisting" inputmode="numeric" pattern="[0-9]*" maxlength="6" minlength="4"
-              placeholder="Your PIN"
+              placeholder="Your PIN" aria-label="Enter wallet PIN"
               style="width: 100%; padding: 16px; border-radius: 8px; border: 1px solid var(--border);
                      font-size: 24px; font-family: 'JetBrains Mono', monospace; background: var(--bg-off);
                      color: var(--text); outline: none; text-align: center; letter-spacing: 12px;
@@ -1620,7 +1647,7 @@
               onblur="this.style.borderColor='var(--border)'"
               onkeydown="if(event.key==='Enter' && this.value.length >= 4) unlockExisting()">
           </div>
-          <button onclick="unlockExisting()" id="pinUnlockBtn"
+          <button aria-label="Close" onclick="unlockExisting()" id="pinUnlockBtn"
             style="width: 100%; margin-top: 16px; padding: 14px 24px;
             background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px;
             font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s;"
@@ -1630,7 +1657,7 @@
           </button>
         </div>
 
-        <div class="modal-status" id="walletStatus"></div>
+        <div class="modal-status" id="walletStatus" aria-live="polite" role="status"></div>
       </div>
     </div>
   </div>

@@ -9,6 +9,28 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
+
     :root {
       --teal: #0D9488;
       --teal-light: #14B8A6;
@@ -658,7 +680,9 @@
   </style>
 </head>
 <body>
-  <div class="container">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <div id="main-content" class="container">
     <!-- Header -->
     <div class="header">
       <div class="header-icon">🔒</div>
@@ -757,11 +781,11 @@
   </div>
 
   <!-- Decrypt Modal -->
-  <div class="decrypt-modal" id="decryptModal">
+  <div class="decrypt-modal" role="dialog" aria-modal="true" aria-label="Decrypted content" id="decryptModal">
     <div class="decrypt-box">
       <div class="decrypt-header">
         <div class="decrypt-title">🔓 Decrypted Content</div>
-        <button class="close-btn" onclick="closeDecryptModal()">✕</button>
+        <button class="close-btn" onclick="closeDecryptModal()" aria-label="Close">✕</button>
       </div>
       <div class="decrypted-content" id="decryptedContent"></div>
       <div class="decrypt-meta">
@@ -772,7 +796,7 @@
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
   <!-- Proofi SDK -->
   <script src="proofi-sdk.js"></script>
@@ -828,10 +852,11 @@
         return;
       }
       try {
-        document.getElementById('connectBtn').textContent = 'Linking...';
+        document.getElementById('connectBtn').innerHTML = '<span class="spinner" style="display:inline-block;vertical-align:middle;margin-right:6px;width:14px;height:14px"></span> Connecting...';
         await proofi.connect();
       } catch (err) {
-        showToast(err.message, true);
+        const msg = err.message === 'User closed wallet' ? 'Connection cancelled' : 'Could not connect. Check that Proofi extension is installed.';
+        showToast(msg, true);
         document.getElementById('connectBtn').textContent = 'Connect';
       }
     }
@@ -1028,7 +1053,7 @@
 
       } catch (err) {
         showProgress(false);
-        showToast('Encryption failed: ' + err.message, true);
+        showToast('Encryption failed. Try again or reconnect your wallet.', true);
       }
     }
 
@@ -1064,7 +1089,7 @@
           showToast('📥 File decrypted & downloaded');
         }
       } catch (err) {
-        showToast('Decryption failed: ' + err.message, true);
+        showToast('Decryption failed. Only the original wallet can decrypt this item.', true);
       }
     }
 
@@ -1189,10 +1214,11 @@
     let toastTimeout;
     function showToast(msg, isError = false) {
       const toast = document.getElementById('toast');
-      toast.textContent = msg;
+      const icon = isError ? '\u26A0\uFE0F' : '\u2714\uFE0F';
+      toast.innerHTML = '<span style="margin-right:6px">' + icon + '</span>' + escapeHtml(msg);
       toast.className = 'toast show' + (isError ? ' error' : '');
       clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => toast.className = 'toast', 3000);
+      toastTimeout = setTimeout(() => toast.className = 'toast', 3500);
     }
 
     // Boot

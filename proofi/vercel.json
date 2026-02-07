@@ -10,6 +10,7 @@
     { "source": "/dropvault", "destination": "/dropvault.html" },
     { "source": "/app", "destination": "/app/index.html" },
     { "source": "/app/(.*)", "destination": "/app/$1" },
+    { "source": "/verify", "destination": "/verify.html" },
     { "source": "/", "destination": "/landing.html" }
   ],
   "headers": [

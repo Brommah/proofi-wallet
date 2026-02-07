@@ -6,6 +6,27 @@
   <title>SpeedType — Proofi Typing Challenge</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
   <style>
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--cyan:#00E5FF;--green:#00FF88;--magenta:#FF3366;--yellow:#FFE100;--purple:#8B5CF6;--bg:#000;--surface:#0A0A0A;--card:#111;--border:#1A1A1A;--text:#F0F0F0;--dim:#555}
@@ -113,6 +134,9 @@
     .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--surface);border:2px solid var(--green);padding:12px 24px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);letter-spacing:2px;z-index:10000;transition:transform .3s ease;box-shadow:0 0 40px rgba(0,255,136,0.2);border-radius:8px}
     .toast.show{transform:translateX(-50%) translateY(0)}
     .toast.error{border-color:var(--magenta);color:var(--magenta);box-shadow:0 0 40px rgba(255,51,102,0.2)}
+    .proofi-spinner{display:inline-block;width:24px;height:24px;border:2px solid #1a1a1a;border-top-color:#00E5FF;border-radius:50%;animation:proofi-spin 0.6s linear infinite}
+    .proofi-spinner.sm{width:14px;height:14px;border-width:1.5px}
+    @keyframes proofi-spin{to{transform:rotate(360deg)}}
 
     /* Footer */
     .footer{text-align:center;padding:24px 0;margin-top:20px;border-top:1px solid var(--border)}
@@ -139,7 +163,9 @@
   </style>
 </head>
 <body>
-  <div class="container">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <div id="main-content" class="container">
     <!-- Header -->
     <div class="header">
       <div class="title">⌨️ SpeedType</div>
@@ -229,7 +255,7 @@
         </div>
       </div>
       <div class="result-actions">
-        <button class="btn green" onclick="startRound()">▶ NEXT ROUND</button>
+        <button aria-label="Close" class="btn green" onclick="startRound()">▶ NEXT ROUND</button>
         <button class="btn" onclick="resetGame()">↺ RESET</button>
       </div>
     </div>
@@ -254,7 +280,7 @@
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
   <!-- Proofi SDK -->
   <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
@@ -384,7 +410,7 @@
         return;
       }
       try {
-        document.getElementById('connectBtn').textContent = 'LINKING...';
+        document.getElementById('connectBtn').innerHTML = '<span class="proofi-spinner sm" style="display:inline-block;vertical-align:middle;margin-right:4px"></span> LINKING...';
         const addr = await proofi.connect();
         walletAddress = addr;
         updateWalletUI();
@@ -694,7 +720,7 @@
         toast('✓ ' + achievement.name + ' STORED ON DDC');
       } catch (err) {
         console.error('Store failed:', err);
-        toast('Store failed: ' + err.message, true);
+        toast('Could not store on-chain. Achievement saved locally, will retry.', true);
       }
       storingAchievement = false;
       if (achievementQueue.length > 0) storeAchievementOnChain(achievementQueue.shift());
@@ -746,13 +772,16 @@
       }
     }
 
+    function escapeHtmlStr(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
     let toastTimeout;
     function toast(msg, isError = false) {
       const el = document.getElementById('toast');
-      el.textContent = msg;
+      const icon = isError ? '\u26A0\uFE0F' : '\u2714\uFE0F';
+      el.innerHTML = '<span style="margin-right:6px">' + icon + '</span>' + escapeHtmlStr(msg);
       el.className = 'toast show' + (isError ? ' error' : '');
       clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => el.className = 'toast', 3000);
+      toastTimeout = setTimeout(() => el.className = 'toast', 3500);
     }
 
     // ── Extension Auto-Connect ──

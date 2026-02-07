@@ -10,6 +10,27 @@
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :focus-visible {
+      outline: 2px solid #00E5FF;
+      outline-offset: 2px;
+    }
+
+    .skip-to-content {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      z-index: 999;
+      padding: 12px 24px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 0 0 4px 4px;
+    }
+    .skip-to-content:focus {
+      top: 0;
+    }
+
     :root {
       --bg: #000;
       --surface: #0a0a0a;
@@ -703,6 +724,19 @@
     .modal-close:hover { color: var(--text); }
     .modal-body { padding: 20px; }
 
+    /* ===== SPINNER ===== */
+    .proofi-spinner {
+      width: 24px; height: 24px;
+      border: 2px solid #1a1a1a;
+      border-top-color: #00E5FF;
+      border-radius: 50%;
+      animation: proofi-spin 0.6s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .proofi-spinner.sm { width: 14px; height: 14px; border-width: 1.5px; }
+    @keyframes proofi-spin { to { transform: rotate(360deg); } }
+
     /* ===== TOAST ===== */
     .toast {
       position: fixed;
@@ -710,7 +744,7 @@
       left: 50%;
       transform: translateX(-50%) translateY(20px);
       opacity: 0;
-      background: var(--card);
+      background: #111;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 10px 20px;
@@ -720,6 +754,9 @@
       pointer-events: none;
       transition: opacity 0.2s, transform 0.2s;
       max-width: 90vw;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .toast.show {
       opacity: 1;
@@ -727,6 +764,7 @@
       pointer-events: auto;
     }
     .toast.error { border-color: rgba(239,68,68,0.4); }
+    .toast-icon { font-size: 16px; flex-shrink: 0; }
 
     /* ===== FOOTER ===== */
     footer {
@@ -768,9 +806,10 @@
   </style>
 </head>
 <body>
+  <a class="skip-to-content" href="#main-content">Skip to content</a>
 
   <!-- Nav -->
-  <nav>
+  <nav role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <div class="nav-left">
         <div class="nav-logo">🔏</div>
@@ -783,6 +822,7 @@
     </div>
   </nav>
 
+  <main role="main" id="main-content">
   <div class="container">
 
     <!-- Hero -->
@@ -823,7 +863,7 @@
         <span class="wallet-label" id="walletLabel">Wallet</span>
         <span class="wallet-addr" id="walletAddr">Not connected</span>
       </div>
-      <button class="btn" id="walletBtn" onclick="handleConnect()">Connect</button>
+      <button aria-label="Close" class="btn" id="walletBtn" onclick="handleConnect()">Connect</button>
     </div>
 
     <!-- Stamp Card -->
@@ -837,14 +877,14 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab active" data-tab="file" onclick="switchTab('file')">📎 File</button>
-        <button class="tab" data-tab="text" onclick="switchTab('text')">📝 Text</button>
+        <button aria-label="Close" class="tab active" data-tab="file" onclick="switchTab('file')">📎 File</button>
+        <button aria-label="Close" class="tab" data-tab="text" onclick="switchTab('text')">📝 Text</button>
       </div>
 
       <!-- File tab -->
       <div class="tab-content active" id="tab-file">
         <div class="drop-zone" id="dropZone">
-          <input type="file" id="fileInput" onchange="handleFile(this.files[0])">
+          <input type="file" id="fileInput" onchange="handleFile(this.files[0])" aria-label="Choose file to timestamp">
           <div class="drop-icon">📁</div>
           <div class="drop-title">Drop file here or click to browse</div>
           <div class="drop-subtitle">Any file type — images, docs, code, designs, contracts...</div>
@@ -855,16 +895,16 @@
             <div class="file-preview-name" id="fpName"></div>
             <div class="file-preview-size" id="fpSize"></div>
           </div>
-          <button class="file-preview-remove" onclick="clearFile()">✕</button>
+          <button class="file-preview-remove" onclick="clearFile()" aria-label="Remove selected file">✕</button>
         </div>
-        <input class="label-input" id="fileLabelInput" placeholder="Label (optional) — e.g. 'Client deliverable Q1'" maxlength="100">
+        <input class="label-input" id="fileLabelInput" placeholder="Label (optional) — e.g. 'Client deliverable Q1'" maxlength="100" aria-label="File proof label">
         <div class="input-hint">Labels are public. Don't include confidential info.</div>
       </div>
 
       <!-- Text tab -->
       <div class="tab-content" id="tab-text">
-        <textarea class="text-area" id="textInput" placeholder="Type or paste anything — an idea, agreement, invention description, code snippet..."></textarea>
-        <input class="label-input" id="textLabelInput" placeholder="Label (optional) — e.g. 'Patent idea draft'" maxlength="100">
+        <textarea class="text-area" id="textInput" placeholder="Type or paste anything — an idea, agreement, invention description, code snippet..." aria-label="Text content to timestamp"></textarea>
+        <input class="label-input" id="textLabelInput" placeholder="Label (optional) — e.g. 'Patent idea draft'" maxlength="100" aria-label="Text proof label">
         <div class="input-hint">Only the hash is stored. Your text stays on your device.</div>
       </div>
 
@@ -873,7 +913,7 @@
         <div class="progress-track">
           <div class="progress-fill" id="progressFill"></div>
         </div>
-        <div class="progress-text" id="progressText">Computing hash...</div>
+        <div class="progress-text" id="progressText" aria-live="polite" role="status">Computing hash...</div>
       </div>
 
       <!-- Result -->
@@ -889,7 +929,7 @@
         <div class="result-actions">
           <button class="btn btn-primary btn-sm" onclick="copyProofLink()">📋 Copy Proof</button>
           <button class="btn btn-sm" onclick="downloadProof()">⬇ Download</button>
-          <button class="btn btn-ghost btn-sm" onclick="resetStamp()">+ New Proof</button>
+          <button aria-label="Close" class="btn btn-ghost btn-sm" onclick="resetStamp()">+ New Proof</button>
         </div>
       </div>
 
@@ -898,7 +938,7 @@
         <div class="privacy-note">
           🛡️ Zero-knowledge — nothing leaves your browser
         </div>
-        <button class="btn btn-primary" id="stampBtn" onclick="createStamp()" disabled>Create Proof</button>
+        <button aria-label="Close" class="btn btn-primary" id="stampBtn" onclick="createStamp()" disabled>Create Proof</button>
       </div>
     </div>
 
@@ -908,10 +948,10 @@
         <h3>🔍 Verify a Proof</h3>
         <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Paste a proof hash or drop the original file to verify it matches an existing proof.</p>
         <div class="verify-input-row">
-          <input class="verify-input" id="verifyInput" placeholder="Paste SHA-256 hash to verify...">
-          <button class="btn btn-sm" onclick="verifyProof()">Verify</button>
+          <input class="verify-input" id="verifyInput" placeholder="Paste SHA-256 hash to verify..." aria-label="SHA-256 hash to verify">
+          <button aria-label="Close" class="btn btn-sm" onclick="verifyProof()">Verify</button>
         </div>
-        <div class="verify-result" id="verifyResult"></div>
+        <div class="verify-result" id="verifyResult" aria-live="polite" role="status"></div>
       </div>
     </div>
 
@@ -930,22 +970,24 @@
     </div>
   </div>
 
+  </main>
+
   <!-- Detail Modal -->
-  <div class="modal-overlay" id="detailModal">
+  <div class="modal-overlay" id="detailModal" role="dialog" aria-modal="true" aria-label="Proof details">
     <div class="modal-card">
       <div class="modal-header">
         <span class="modal-title">Proof Details</span>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close proof details">✕</button>
       </div>
       <div class="modal-body" id="modalBody"></div>
     </div>
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
   <!-- Footer -->
-  <footer>
+  <footer role="contentinfo">
     <div class="footer-text">
       ProofStamp by <a href="/ecosystem">Proofi</a> — Decentralized identity on <a href="https://cere.network" target="_blank">Cere Network</a>
     </div>
@@ -1037,11 +1079,17 @@
         updateWalletUI();
         return;
       }
+      const btn = document.getElementById('walletBtn');
+      btn.innerHTML = '<span class="proofi-spinner sm" style="display:inline-block;vertical-align:middle;margin-right:6px"></span> Connecting...';
       proofi?.connect().then(addr => {
         walletAddress = addr;
         updateWalletUI();
         loadProofs();
-      }).catch(() => {});
+      }).catch(err => {
+        const msg = err?.message === 'User closed wallet' ? 'Connection cancelled' : 'Could not connect. Check that Proofi extension is installed.';
+        showToast(msg, true);
+        updateWalletUI();
+      });
     }
 
     function updateWalletUI() {
@@ -1251,7 +1299,10 @@
 
       } catch (err) {
         showProgress(false);
-        showToast('Error: ' + err.message, true);
+        const hint = err.message?.includes('network') ? 'Check your connection and try again.' :
+                     err.message?.includes('rejected') ? 'Transaction was rejected. Try again.' :
+                     'Something went wrong. Try again or reconnect your wallet.';
+        showToast(hint, true);
       }
     }
 
@@ -1588,10 +1639,11 @@
     let toastTimeout;
     function showToast(msg, isError = false) {
       const t = document.getElementById('toast');
-      t.textContent = msg;
+      const icon = isError ? '\u26A0\uFE0F' : '\u2714\uFE0F';
+      t.innerHTML = '<span class="toast-icon">' + icon + '</span>' + escapeHtml(msg);
       t.className = 'toast show' + (isError ? ' error' : '');
       clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => t.className = 'toast', 3000);
+      toastTimeout = setTimeout(() => t.className = 'toast', 3500);
     }
 
     // ── Keyboard shortcuts ──

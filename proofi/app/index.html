@@ -16,7 +16,12 @@
     <link rel="stylesheet" crossorigin href="/app/assets/index-KB8AsM1G.css">
   </head>
   <body>
-    <div id="root"></div>
+    <a class="skip-to-content" href="#root" style="position:absolute;top:-100%;left:16px;z-index:999;padding:12px 24px;background:#3B82F6;color:#fff;font-weight:700;text-decoration:none;border-radius:0 0 4px 4px;">Skip to content</a>
+    <style>
+      .skip-to-content:focus { top: 0; }
+      :focus-visible { outline: 2px solid #00E5FF; outline-offset: 2px; }
+    </style>
+    <div id="root" role="main"></div>
     <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});

@@ -10,6 +10,28 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
+
     :root {
       --cyan: #00E5FF;
       --green: #00FF88;
@@ -546,6 +568,9 @@
       color: var(--magenta);
       box-shadow: 0 0 40px rgba(255, 51, 102, 0.2);
     }
+    .proofi-spinner { display:inline-block; width:24px; height:24px; border:2px solid #1a1a1a; border-top-color:#00E5FF; border-radius:50%; animation:proofi-spin 0.6s linear infinite; }
+    .proofi-spinner.sm { width:14px; height:14px; border-width:1.5px; }
+    @keyframes proofi-spin { to { transform:rotate(360deg); } }
 
     /* ── Powered By ── */
     .footer {
@@ -609,7 +634,9 @@
   </style>
 </head>
 <body>
-  <div class="container">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <div id="main-content" class="container">
     <!-- Header -->
     <div class="header">
       <div class="title">NEURAL REFLEX</div>
@@ -630,7 +657,7 @@
 
     <!-- Mode Tabs -->
     <div class="mode-tabs">
-      <button class="mode-tab active" id="tab-reaction" onclick="switchMode('reaction')">⚡ REFLEX</button>
+      <button aria-label="Close" class="mode-tab active" id="tab-reaction" onclick="switchMode('reaction')">⚡ REFLEX</button>
       <button class="mode-tab" id="tab-memory" onclick="switchMode('memory')">🧠 MEMORY</button>
     </div>
 
@@ -690,7 +717,7 @@
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
   <!-- Proofi SDK -->
   <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
@@ -796,7 +823,7 @@
       }
 
       try {
-        document.getElementById('connectBtn').textContent = 'LINKING...';
+        document.getElementById('connectBtn').innerHTML = '<span class="proofi-spinner sm" style="display:inline-block;vertical-align:middle;margin-right:4px"></span> LINKING...';
         const addr = await proofi.connect();
         walletAddress = addr;
         updateWalletUI();
@@ -1175,7 +1202,7 @@
         showToast(`✓ ${achievement.name} STORED ON DDC`);
       } catch (err) {
         console.error('Failed to store achievement:', err);
-        showToast('Failed to store on-chain: ' + err.message, true);
+        showToast('Could not store on-chain. Achievement saved locally, will retry.', true);
       }
 
       storingAchievement = false;
@@ -1215,15 +1242,18 @@
       }));
     }
 
+    function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
     let toastTimeout;
     function showToast(msg, isError = false) {
       const toast = document.getElementById('toast');
-      toast.textContent = msg;
+      const icon = isError ? '\u26A0\uFE0F' : '\u2714\uFE0F';
+      toast.innerHTML = '<span style="margin-right:6px">' + icon + '</span>' + escapeHtml(msg);
       toast.className = 'toast show' + (isError ? ' error' : '');
       clearTimeout(toastTimeout);
       toastTimeout = setTimeout(() => {
         toast.className = 'toast';
-      }, 3000);
+      }, 3500);
     }
 
     // ── Boot ──

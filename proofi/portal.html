@@ -8,6 +8,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     :root {
       --accent: #3B82F6; --accent-hover: #2563EB; --purple: #8B5CF6;
       --bg: #FAFAFA; --surface: #FFFFFF; --border: #E5E7EB;
@@ -105,9 +127,11 @@
   </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
 
   <!-- HEADER -->
-  <div class="header">
+  <div id="main-content" class="header">
     <div class="header-brand"><div class="header-logo">◇</div> Proofi</div>
     <div class="header-user" id="headerUser"></div>
   </div>
@@ -156,10 +180,10 @@
         <div class="form-group">
           <textarea class="form-textarea" id="quickMemo" placeholder="Write something to store on DDC..."></textarea>
         </div>
-        <button class="btn btn-primary" id="quickMemoBtn" onclick="submitQuickMemo()">Store on DDC</button>
+        <button aria-label="Close" class="btn btn-primary" id="quickMemoBtn" onclick="submitQuickMemo()">Store on DDC</button>
       </div>
 
-      <button class="btn btn-outline" onclick="disconnectProofi()" style="margin-top: 8px;">Sign Out</button>
+      <button aria-label="Close" class="btn btn-outline" onclick="disconnectProofi()" style="margin-top: 8px;">Sign Out</button>
     </div>
 
     <!-- ═══ SUBMIT ═══ -->
@@ -167,8 +191,8 @@
       <h2 style="font-size: 22px; margin-bottom: 16px;">Submit Claims</h2>
       
       <div class="tab-row">
-        <button class="tab-btn active" onclick="switchSubmitTab('memo', this)">📝 Memo</button>
-        <button class="tab-btn" onclick="switchSubmitTab('credential', this)">🎓 Credential</button>
+        <button aria-label="Close" class="tab-btn active" onclick="switchSubmitTab('memo', this)">📝 Memo</button>
+        <button aria-label="Close" class="tab-btn" onclick="switchSubmitTab('credential', this)">🎓 Credential</button>
       </div>
 
       <!-- Memo -->
@@ -178,7 +202,7 @@
             <label class="form-label">Memo Content</label>
             <textarea class="form-textarea" id="memoContent" placeholder="Enter your memo..." rows="5"></textarea>
           </div>
-          <button class="btn btn-primary" id="memoBtn" onclick="submitMemo()">📝 Store Memo</button>
+          <button aria-label="Close" class="btn btn-primary" id="memoBtn" onclick="submitMemo()">📝 Store Memo</button>
         </div>
       </div>
 
@@ -200,7 +224,7 @@
             <textarea class="form-textarea" id="credData" placeholder='{"name": "Your Name", "role": "Your Role"}
 or just plain text' style="font-family: 'JetBrains Mono', monospace; font-size: 13px;"></textarea>
           </div>
-          <button class="btn btn-purple" id="credBtn" onclick="submitCredential()">🎓 Issue Credential</button>
+          <button aria-label="Close" class="btn btn-purple" id="credBtn" onclick="submitCredential()">🎓 Issue Credential</button>
         </div>
       </div>
     </div>

@@ -5,6 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proofi Wallet — Demo</title>
   <style>
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -55,39 +76,41 @@
   </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
 
   <h1>🔐 Proofi Wallet Demo</h1>
   <p class="subtitle">Host app integration — this simulates how proofi.ai would embed the wallet</p>
 
   <!-- Connection -->
-  <div class="card">
+  <div id="main-content" class="card">
     <h2>1. Connection</h2>
     <span id="status" class="status disconnected">disconnected</span>
     <div style="margin-top: 0.75rem">
       <p id="address" class="address" style="display:none"></p>
     </div>
     <div class="actions" style="margin-top: 1rem">
-      <button id="btn-connect" onclick="connectWallet()">Connect Wallet</button>
-      <button id="btn-disconnect" class="secondary" onclick="disconnectWallet()" disabled>Disconnect</button>
+      <button aria-label="Close" id="btn-connect" onclick="connectWallet()">Connect Wallet</button>
+      <button aria-label="Close" id="btn-disconnect" class="secondary" onclick="disconnectWallet()" disabled>Disconnect</button>
     </div>
   </div>
 
   <!-- Sign Message -->
   <div class="card">
     <h2>2. Sign Message</h2>
-    <input id="sign-msg" type="text" placeholder="Enter message to sign..." value="Hello from Proofi demo!" />
+    <input aria-label="Enter message to sign..." id="sign-msg" type="text" placeholder="Enter message to sign..." value="Hello from Proofi demo!" />
     <div class="actions">
-      <button id="btn-sign" onclick="signMessage()" disabled>Sign Message</button>
+      <button aria-label="Close" id="btn-sign" onclick="signMessage()" disabled>Sign Message</button>
     </div>
   </div>
 
   <!-- Sign Credential -->
   <div class="card">
     <h2>3. Sign Credential</h2>
-    <input id="cred-type" type="text" placeholder="Credential type" value="EmailVerification" />
-    <input id="cred-subject" type="text" placeholder="Subject (e.g., email)" value="user@example.com" />
+    <input aria-label="Credential type" id="cred-type" type="text" placeholder="Credential type" value="EmailVerification" />
+    <input aria-label="Subject (e.g., email)" id="cred-subject" type="text" placeholder="Subject (e.g., email)" value="user@example.com" />
     <div class="actions">
-      <button id="btn-cred" onclick="signCredential()" disabled>Sign Credential</button>
+      <button aria-label="Close" id="btn-cred" onclick="signCredential()" disabled>Sign Credential</button>
     </div>
   </div>
 

@@ -6,6 +6,27 @@
   <title>ColorDash — Proofi Stroop Challenge</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
   <style>
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--cyan:#00E5FF;--green:#00FF88;--magenta:#FF3366;--yellow:#FFE100;--purple:#8B5CF6;--bg:#000;--surface:#0A0A0A;--card:#111;--border:#1A1A1A;--text:#F0F0F0;--dim:#555}
@@ -153,7 +174,9 @@
   </style>
 </head>
 <body>
-  <div class="container">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <div id="main-content" class="container">
     <!-- Header -->
     <div class="header">
       <div class="title">🎨 ColorDash</div>
@@ -286,7 +309,7 @@
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite" role="status"></div>
 
   <!-- Proofi SDK -->
   <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
@@ -648,7 +671,7 @@
       const shuffled = [...COLORS].sort(() => Math.random() - 0.5);
       const buttonsEl = document.getElementById('colorButtons');
       buttonsEl.innerHTML = shuffled.map(c =>
-        `<button class="color-btn" style="color:${c.hex};border-color:${c.hex}22" onclick="pickColor('${c.name}', this)" data-name="${c.name}">${c.name}</button>`
+        `<button aria-label="Close" class="color-btn" style="color:${c.hex};border-color:${c.hex}22" onclick="pickColor('${c.name}', this)" data-name="${c.name}">${c.name}</button>`
       ).join('');
     }
 

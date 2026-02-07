@@ -10,6 +10,28 @@
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :focus-visible {
+          outline: 2px solid #00E5FF;
+          outline-offset: 2px;
+        }
+    
+        .skip-to-content {
+          position: absolute;
+          top: -100%;
+          left: 16px;
+          z-index: 999;
+          padding: 12px 24px;
+          background: #3B82F6;
+          color: #fff;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 0 0 4px 4px;
+        }
+        .skip-to-content:focus {
+          top: 0;
+        }
+    
+
     :root {
       --cyan: #00E5FF;
       --green: #00FF88;
@@ -1229,9 +1251,11 @@
   </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
 
 <!-- Progress Bar -->
-<div class="progress-track">
+<div id="main-content" class="progress-track">
   <div class="progress-fill" id="progress"></div>
 </div>
 
@@ -1865,7 +1889,7 @@ proofi.<span class="fn">disconnect</span>();</div>
   </div>
   <div class="nav-right">
     <button class="nav-btn" onclick="prevSlide()">← PREV</button>
-    <button class="nav-btn" onclick="nextSlide()">NEXT →</button>
+    <button aria-label="Close" class="nav-btn" onclick="nextSlide()">NEXT →</button>
   </div>
 </div>
 
