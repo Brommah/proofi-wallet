@@ -827,14 +827,28 @@
           <div class="step-num"><span>4</span></div>
           <div class="step-info">
             <div class="step-title">Agent Executes Analysis</div>
-            <div class="step-desc">AI agent validates token, decrypts data, runs analysis</div>
+            <div class="step-desc">AI agent validates token, decrypts data, runs LOCAL AI analysis</div>
           </div>
           <span class="step-status">Locked</span>
         </div>
         <div class="step-body">
+          <!-- WebLLM Status Banner -->
+          <div id="webllmBanner" style="padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 16px; display: none;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+              <span id="webllmIcon">🧠</span>
+              <span id="webllmStatus">Checking WebGPU support...</span>
+            </div>
+            <div id="webllmProgress" style="display: none;">
+              <div style="height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;">
+                <div id="webllmProgressBar" style="height: 100%; width: 0%; background: var(--accent); transition: width 0.3s;"></div>
+              </div>
+              <div id="webllmProgressText" style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Initializing...</div>
+            </div>
+          </div>
+          
           <div id="agentLoading" class="loading">
             <div class="spinner"></div>
-            <span>Agent processing...</span>
+            <span id="agentLoadingText">Agent processing...</span>
           </div>
           
           <div id="agentSteps" style="display: none;">
@@ -870,7 +884,14 @@
               <div class="kv-item" id="agentStep5">
                 <span class="kv-icon">⏳</span>
                 <div class="kv-content">
-                  <div class="kv-key">5. Run Health Analysis</div>
+                  <div class="kv-key">5. Load AI Model (WebLLM)</div>
+                  <div class="kv-value pending">Pending...</div>
+                </div>
+              </div>
+              <div class="kv-item" id="agentStep6">
+                <span class="kv-icon">⏳</span>
+                <div class="kv-content">
+                  <div class="kv-key">6. Run Local AI Inference</div>
                   <div class="kv-value pending">Pending...</div>
                 </div>
               </div>
@@ -878,7 +899,7 @@
           </div>
           
           <button class="btn btn-primary" id="runAgentBtn" onclick="runAgent()" disabled>
-            🤖 Run Agent Analysis
+            🤖 Run Agent Analysis (100% Local AI)
           </button>
         </div>
       </div>
@@ -952,6 +973,12 @@
   <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script>
   
+  <!-- WebLLM for 100% local AI inference -->
+  <script type="module">
+    import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+    window.webllm = webllm;
+  </script>
+  
   <script>
     // ========================================
     // REAL E2E HEALTH DEMO - NO MOCKS
@@ -970,7 +997,12 @@
       dataCid: null,            // Content ID
       capabilityToken: null,    // The actual token
       auditLog: [],             // Audit trail with hashes
-      lastHash: null            // For hash chain
+      lastHash: null,           // For hash chain
+      // WebLLM state
+      webllmEngine: null,       // WebLLM engine instance
+      webllmReady: false,       // Is WebLLM model loaded?
+      webgpuAvailable: false,   // Does browser support WebGPU?
+      modelName: "Llama-3.2-1B-Instruct-q4f16_1-MLC"  // Small, fast model
     };
     
     // Generate 30 days of sleep data + 100 heart rate readings
@@ -1208,6 +1240,184 @@
       
       log(`Audit: ${action} → hash: ${entryHash.slice(0, 16)}...`, 'info');
       return entry;
+    }
+    
+    // ========================================
+    // WEBLLM - 100% LOCAL AI INFERENCE
+    // ========================================
+    
+    // Check if WebGPU is available
+    async function checkWebGPU() {
+      if (!navigator.gpu) {
+        log('WebGPU: Not available in this browser', 'error');
+        return false;
+      }
+      
+      try {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) {
+          log('WebGPU: No adapter found', 'error');
+          return false;
+        }
+        const device = await adapter.requestDevice();
+        if (!device) {
+          log('WebGPU: Could not get device', 'error');
+          return false;
+        }
+        log('WebGPU: Available and ready ✓', 'success');
+        return true;
+      } catch (err) {
+        log(`WebGPU: Check failed - ${err.message}`, 'error');
+        return false;
+      }
+    }
+    
+    // Load WebLLM model with progress
+    async function loadWebLLM(progressCallback) {
+      if (!window.webllm) {
+        log('WebLLM: Library not loaded yet, waiting...', 'info');
+        await sleep(1000);
+        if (!window.webllm) {
+          throw new Error('WebLLM library failed to load');
+        }
+      }
+      
+      log(`WebLLM: Loading model ${state.modelName}...`, 'info');
+      
+      const initProgressCallback = (progress) => {
+        const pct = Math.round(progress.progress * 100);
+        const text = progress.text || 'Loading...';
+        if (progressCallback) {
+          progressCallback(pct, text);
+        }
+        if (pct % 10 === 0 || pct === 100) {
+          log(`WebLLM: ${text} (${pct}%)`, 'info');
+        }
+      };
+      
+      try {
+        const engine = await window.webllm.CreateMLCEngine(state.modelName, {
+          initProgressCallback
+        });
+        
+        state.webllmEngine = engine;
+        state.webllmReady = true;
+        
+        log('WebLLM: Model loaded successfully! ✓', 'success');
+        log('WebLLM: Model cached in IndexedDB - instant next time', 'success');
+        
+        return engine;
+      } catch (err) {
+        log(`WebLLM: Failed to load model - ${err.message}`, 'error');
+        throw err;
+      }
+    }
+    
+    // Run local AI inference
+    async function runLocalAI(healthData) {
+      const prompt = `You are a health advisor. Based on this data, provide personalized health recommendations.
+
+Weight/Body Data: Sleep quality scores averaging ${Math.round(healthData.sleep.reduce((a, s) => a + s.quality, 0) / healthData.sleep.length)}%
+Sleep Duration: ${(healthData.sleep.reduce((a, s) => a + s.duration, 0) / healthData.sleep.length).toFixed(1)} hours average
+Deep Sleep: ${(healthData.sleep.reduce((a, s) => a + s.deep, 0) / healthData.sleep.length).toFixed(1)} hours average
+Heart Rate: ${Math.round(healthData.heartRate.reduce((a, h) => a + h.bpm, 0) / healthData.heartRate.length)} BPM average
+Resting HR: ${Math.round(healthData.heartRate.filter(h => h.context === 'resting').reduce((a, h) => a + h.bpm, 0) / healthData.heartRate.filter(h => h.context === 'resting').length)} BPM
+
+Provide:
+1. Key observations from the data (2-3 points)
+2. 3-4 specific health recommendations
+3. What to focus on for improvement
+
+Keep response concise and actionable. Use emojis for readability.`;
+
+      log('WebLLM: Starting local inference...', 'info');
+      const startTime = performance.now();
+      
+      try {
+        const response = await state.webllmEngine.chat.completions.create({
+          messages: [
+            { role: "system", content: "You are a helpful health advisor. Be concise and practical." },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 512
+        });
+        
+        const endTime = performance.now();
+        const inferenceTime = ((endTime - startTime) / 1000).toFixed(2);
+        
+        log(`WebLLM: Inference completed in ${inferenceTime}s`, 'success');
+        log('WebLLM: ✓ No data sent to external servers', 'success');
+        
+        return {
+          text: response.choices[0].message.content,
+          inferenceTime,
+          tokensGenerated: response.usage?.completion_tokens || 'N/A',
+          model: state.modelName
+        };
+      } catch (err) {
+        log(`WebLLM: Inference failed - ${err.message}`, 'error');
+        throw err;
+      }
+    }
+    
+    // Fallback rule-based analysis when WebGPU not available
+    function ruleBasedAnalysis(healthData) {
+      const recommendations = [];
+      
+      const avgSleep = healthData.sleep.reduce((a, s) => a + s.duration, 0) / healthData.sleep.length;
+      const avgQuality = healthData.sleep.reduce((a, s) => a + s.quality, 0) / healthData.sleep.length;
+      const avgDeep = healthData.sleep.reduce((a, s) => a + s.deep, 0) / healthData.sleep.length;
+      const avgHR = Math.round(healthData.heartRate.reduce((a, h) => a + h.bpm, 0) / healthData.heartRate.length);
+      const restingHRData = healthData.heartRate.filter(h => h.context === 'resting');
+      const avgRestingHR = restingHRData.length > 0 
+        ? Math.round(restingHRData.reduce((a, h) => a + h.bpm, 0) / restingHRData.length)
+        : avgHR;
+      const avgHRV = Math.round(healthData.heartRate.reduce((a, h) => a + h.variability, 0) / healthData.heartRate.length);
+      
+      // Generate recommendations based on rules
+      recommendations.push('📊 **Key Observations:**');
+      recommendations.push(`• Average sleep: ${avgSleep.toFixed(1)} hours/night`);
+      recommendations.push(`• Sleep quality: ${avgQuality.toFixed(0)}%`);
+      recommendations.push(`• Resting heart rate: ${avgRestingHR} BPM`);
+      recommendations.push('');
+      recommendations.push('💡 **Recommendations:**');
+      
+      if (avgSleep < 7) {
+        recommendations.push('💤 Aim for 7-9 hours of sleep. Consider setting a consistent bedtime.');
+      } else {
+        recommendations.push('💤 Great sleep duration! Keep maintaining your sleep schedule.');
+      }
+      
+      if (avgDeep < 1.5) {
+        recommendations.push('🌙 Low deep sleep detected. Avoid caffeine after 2pm and screens before bed.');
+      }
+      
+      if (avgRestingHR > 75) {
+        recommendations.push('🏃 Your resting HR is elevated. Regular cardio can help lower it.');
+      } else if (avgRestingHR < 60) {
+        recommendations.push('🏃 Excellent resting heart rate! Your cardiovascular fitness is good.');
+      }
+      
+      if (avgHRV < 30) {
+        recommendations.push('🧘 Low HRV suggests stress. Try meditation or breathing exercises.');
+      } else {
+        recommendations.push('🧘 Good HRV indicates healthy stress resilience.');
+      }
+      
+      if (avgQuality < 70) {
+        recommendations.push('🛏️ Sleep quality could improve. Consider room temperature, darkness, and noise levels.');
+      }
+      
+      recommendations.push('');
+      recommendations.push('⚠️ *Analysis performed with rule-based system (WebGPU not available)*');
+      
+      return {
+        text: recommendations.join('\n'),
+        inferenceTime: '0.01',
+        tokensGenerated: 'N/A (rule-based)',
+        model: 'rule-based-fallback'
+      };
     }
     
     // ========================================
@@ -1489,8 +1699,23 @@
       
       document.getElementById('agentLoading').style.display = 'flex';
       document.getElementById('agentSteps').style.display = 'block';
+      document.getElementById('webllmBanner').style.display = 'block';
       
       const token = state.capabilityToken;
+      
+      // Check WebGPU availability first
+      document.getElementById('webllmStatus').textContent = 'Checking WebGPU support...';
+      state.webgpuAvailable = await checkWebGPU();
+      
+      if (state.webgpuAvailable) {
+        document.getElementById('webllmIcon').textContent = '✅';
+        document.getElementById('webllmStatus').textContent = 'WebGPU available — Local AI ready!';
+        document.getElementById('webllmBanner').style.borderColor = 'var(--accent)';
+      } else {
+        document.getElementById('webllmIcon').textContent = '⚠️';
+        document.getElementById('webllmStatus').textContent = 'WebGPU not available — Using rule-based fallback';
+        document.getElementById('webllmBanner').style.borderColor = 'var(--orange)';
+      }
       
       // Step 4.1: Validate signature
       await sleep(500);
@@ -1582,27 +1807,88 @@
       
       updateAgentStep(4, true, `${healthData.sleep.length} sleep + ${healthData.heartRate.length} HR records`);
       
-      // Step 4.5: Run analysis
-      await sleep(700);
-      log('Agent: Running health analysis...', 'info');
+      // Step 4.5: Load AI Model (if WebGPU available)
+      let aiResult;
       
+      if (state.webgpuAvailable) {
+        document.getElementById('agentLoadingText').textContent = '🧠 Loading AI Model...';
+        
+        // Show progress bar
+        document.getElementById('webllmProgress').style.display = 'block';
+        
+        try {
+          await loadWebLLM((pct, text) => {
+            document.getElementById('webllmProgressBar').style.width = pct + '%';
+            document.getElementById('webllmProgressText').textContent = text;
+          });
+          
+          updateAgentStep(5, true, `${state.modelName} loaded`);
+          
+          await addAuditEntry('MODEL_LOADED', {
+            model: state.modelName,
+            source: 'WebLLM (local)',
+            cached: 'IndexedDB'
+          });
+          
+          // Step 4.6: Run local AI inference
+          document.getElementById('agentLoadingText').textContent = '🧠 AI Processing locally...';
+          log('Agent: Running local AI inference...', 'info');
+          
+          aiResult = await runLocalAI(healthData);
+          
+          updateAgentStep(6, true, `Done in ${aiResult.inferenceTime}s (${aiResult.tokensGenerated} tokens)`);
+          
+          await addAuditEntry('AI_INFERENCE_COMPLETE', {
+            model: aiResult.model,
+            inferenceTime: aiResult.inferenceTime + 's',
+            tokensGenerated: aiResult.tokensGenerated,
+            dataLocation: 'LOCAL - No data sent to external servers'
+          });
+          
+        } catch (err) {
+          log(`Agent: WebLLM failed, falling back to rules - ${err.message}`, 'error');
+          updateAgentStep(5, false, 'WebLLM failed, using fallback');
+          aiResult = ruleBasedAnalysis(healthData);
+          updateAgentStep(6, true, 'Rule-based analysis complete');
+        }
+      } else {
+        // Fallback to rule-based analysis
+        updateAgentStep(5, true, 'Skipped (no WebGPU)');
+        log('Agent: Using rule-based analysis (WebGPU not available)', 'info');
+        
+        aiResult = ruleBasedAnalysis(healthData);
+        
+        updateAgentStep(6, true, 'Rule-based analysis complete');
+        
+        await addAuditEntry('FALLBACK_ANALYSIS', {
+          reason: 'WebGPU not available',
+          method: 'rule-based',
+          dataLocation: 'LOCAL - No data sent to external servers'
+        });
+      }
+      
+      // Calculate stats for display
       const analysis = analyzeHealthData(healthData);
+      analysis.aiRecommendations = aiResult.text;
+      analysis.aiModel = aiResult.model;
+      analysis.aiInferenceTime = aiResult.inferenceTime;
       
-      updateAgentStep(5, true, 'Analysis complete!');
       log('Agent: Analysis complete!', 'success');
       
       // Audit
       await addAuditEntry('AGENT_EXECUTED', {
         tokenId: token.id,
         recordsAnalyzed: healthData.sleep.length + healthData.heartRate.length,
-        analysisVersion: '1.0'
+        analysisVersion: '2.0-webllm'
       });
       
       await addAuditEntry('ANALYSIS_COMPLETE', {
         avgSleepHours: analysis.avgSleep.toFixed(2),
         avgHeartRate: analysis.avgHR,
         sleepScore: analysis.sleepScore,
-        heartScore: analysis.heartScore
+        heartScore: analysis.heartScore,
+        aiModel: aiResult.model,
+        privacyStatus: '✓ 100% Local Processing'
       });
       
       document.getElementById('agentLoading').style.display = 'none';
@@ -1717,9 +2003,29 @@
       `;
       document.getElementById('analysisResults').innerHTML = resultsHtml;
       
-      // Recommendations
+      // AI Recommendations with model info
+      const aiModelBadge = analysis.aiModel && analysis.aiModel !== 'rule-based-fallback' 
+        ? `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px 12px; background: var(--accent-dim); border-radius: 6px; font-size: 12px;">
+            <span>🧠</span>
+            <span style="color: var(--accent); font-weight: 500;">Powered by ${analysis.aiModel}</span>
+            <span style="color: var(--text-tertiary);">|</span>
+            <span style="color: var(--text-secondary);">Inference: ${analysis.aiInferenceTime}s</span>
+            <span style="color: var(--text-tertiary);">|</span>
+            <span style="color: var(--accent);">✓ 100% Local</span>
+          </div>`
+        : `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px 12px; background: var(--orange); background: rgba(249, 115, 22, 0.15); border-radius: 6px; font-size: 12px;">
+            <span>⚠️</span>
+            <span style="color: var(--orange); font-weight: 500;">Rule-based Analysis</span>
+            <span style="color: var(--text-tertiary);">|</span>
+            <span style="color: var(--text-secondary);">WebGPU not available</span>
+          </div>`;
+      
+      const recommendationsContent = analysis.aiRecommendations 
+        ? analysis.aiRecommendations 
+        : analysis.recommendations.join('\n');
+      
       document.getElementById('recommendations').innerHTML = 
-        '<pre>' + analysis.recommendations.join('\n') + '</pre>';
+        aiModelBadge + '<pre style="white-space: pre-wrap; line-height: 1.6;">' + escapeHtml(recommendationsContent) + '</pre>';
       
       // Audit log
       const auditHtml = state.auditLog.map(entry => `
@@ -1732,6 +2038,18 @@
       document.getElementById('auditLog').innerHTML = auditHtml;
       
       // Verification details
+      const aiVerifyRow = analysis.aiModel && analysis.aiModel !== 'rule-based-fallback'
+        ? `<div class="verify-item">
+            <span class="verify-icon">🧠</span>
+            <span class="verify-label">AI Processing:</span>
+            <span class="verify-value" style="color: var(--accent);">100% Local (${analysis.aiModel})</span>
+          </div>`
+        : `<div class="verify-item">
+            <span class="verify-icon">⚠️</span>
+            <span class="verify-label">AI Processing:</span>
+            <span class="verify-value" style="color: var(--orange);">Rule-based fallback (no WebGPU)</span>
+          </div>`;
+      
       const verifyHtml = `
         <div class="verify-item">
           <span class="verify-icon">✅</span>
@@ -1752,6 +2070,12 @@
           <span class="verify-icon">✅</span>
           <span class="verify-label">Encryption:</span>
           <span class="verify-value">AES-256-GCM + X25519</span>
+        </div>
+        ${aiVerifyRow}
+        <div class="verify-item">
+          <span class="verify-icon">🔒</span>
+          <span class="verify-label">Data Privacy:</span>
+          <span class="verify-value" style="color: var(--accent);">No data sent to external servers</span>
         </div>
         <div class="verify-item">
           <span class="verify-icon">✅</span>
