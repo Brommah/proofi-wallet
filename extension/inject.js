@@ -35,9 +35,10 @@
         const requestId = Date.now() + '-' + Math.random().toString(36).slice(2);
 
         function onResponse(event) {
-          const detail = event.detail;
+          if (event.data?.type !== '__proofi_sign_response__') return;
+          const detail = event.data.detail;
           if (detail?.requestId !== requestId) return;
-          window.removeEventListener('__proofi_sign_response__', onResponse);
+          window.removeEventListener('message', onResponse);
           if (detail.error) {
             reject(new Error(detail.error));
           } else {
@@ -45,7 +46,7 @@
           }
         }
 
-        window.addEventListener('__proofi_sign_response__', onResponse);
+        window.addEventListener('message', onResponse);
 
         window.dispatchEvent(new CustomEvent('__proofi_sign_request__', {
           detail: { requestId, message }
@@ -53,7 +54,7 @@
 
         // Timeout after 2 minutes (user may need to enter PIN)
         setTimeout(() => {
-          window.removeEventListener('__proofi_sign_response__', onResponse);
+          window.removeEventListener('message', onResponse);
           reject(new Error('signMessage timed out'));
         }, 120000);
       });

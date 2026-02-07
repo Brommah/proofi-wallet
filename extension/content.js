@@ -54,11 +54,8 @@ window.addEventListener("__proofi_sign_request__",function(e){
     }else{
       responseDetail={requestId:detail.requestId,error:"No response from wallet"};
     }
-    // Dispatch response back to page context via inline script
-    let s=document.createElement("script");
-    s.textContent="window.dispatchEvent(new CustomEvent('__proofi_sign_response__',{detail:"+JSON.stringify(responseDetail)+"}));";
-    (document.head||document.documentElement).appendChild(s);
-    s.remove();
+    // Dispatch response back to page context via postMessage (CSP-safe)
+    window.postMessage({type:"__proofi_sign_response__",detail:responseDetail},"*");
   });
 });
 })();
