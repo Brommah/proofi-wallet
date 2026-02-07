@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proofi Health Analyzer — Real DDC E2E Demo</title>
+  <title>Proofi Health Analyzer — DDC Mainnet Demo</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
@@ -632,7 +632,7 @@
   <!-- DDC Status Banner -->
   <div class="ddc-banner" id="ddcBanner">
     <span class="status-dot"></span>
-    <span id="ddcStatus">Connecting to Cere DDC Testnet...</span>
+    <span id="ddcStatus">Connecting to Cere DDC Mainnet...</span>
   </div>
 
   <!-- Nav -->
@@ -640,7 +640,7 @@
     <div class="nav-inner">
       <div class="nav-left">
         <a href="/" class="nav-logo">🏥 Health Analyzer</a>
-        <span class="nav-badge" id="modeBadge">DDC Testnet</span>
+        <span class="nav-badge" id="modeBadge">DDC Mainnet</span>
       </div>
       <div class="wallet-status" id="walletStatus">
         <span class="wallet-dot" id="walletDot"></span>
@@ -653,7 +653,7 @@
   <main>
     <section class="hero">
       <h1>🔐 Privacy-Preserving Health Analysis</h1>
-      <p>Complete end-to-end demo with real encryption, capability tokens, and Cere DDC decentralized storage.</p>
+      <p>Production demo with real encryption, capability tokens, and Cere DDC Mainnet decentralized storage.</p>
     </section>
 
     <div class="steps">
@@ -1003,7 +1003,7 @@
     <div class="console-body" id="consoleBody">
       <div class="console-line info">
         <span class="console-time">[init]</span>
-        Proofi Health Demo initializing with Cere DDC integration...
+        Proofi Health Demo initializing with Cere DDC Mainnet integration...
       </div>
     </div>
   </div>
@@ -1018,18 +1018,18 @@
     // Using Cere DDC Testnet
     // ========================================
     
-    // DDC Configuration
+    // DDC Configuration - MAINNET
     const DDC_CONFIG = {
-      // Testnet CDN endpoints
-      cdnUrl: 'https://cdn.testnet.cere.network',
-      // Storage node endpoints (for direct uploads)
+      // Mainnet CDN endpoint
+      cdnUrl: 'https://cdn.cere.network',
+      // Mainnet storage node endpoints
       storageNodes: [
-        'https://storage-1.testnet.cere.network',
-        'https://storage-2.testnet.cere.network',
-        'https://storage-3.testnet.cere.network',
+        'https://storage-1.cere.network',
+        'https://storage-2.cere.network',
+        'https://storage-3.cere.network',
       ],
-      // Public demo bucket (read-only access without tokens)
-      demoBucketId: 1n,
+      // Network identifier
+      network: 'mainnet',
       // For actual uploads, we'd need a funded wallet
       // This demo uses IndexedDB fallback with DDC-compatible CIDs
     };
@@ -1154,7 +1154,7 @@
       const statusEl = document.getElementById('ddcStatus');
       const modeBadge = document.getElementById('modeBadge');
       
-      log('Checking DDC Testnet connectivity...', 'ddc');
+      log('Checking DDC Mainnet connectivity...', 'ddc');
       
       try {
         // Try to fetch from DDC CDN (ping check)
@@ -1173,8 +1173,8 @@
         // Even if no-cors, if we don't get an error, network is reachable
         state.ddcConnected = true;
         banner.className = 'ddc-banner';
-        statusEl.textContent = '🟢 Connected to Cere DDC Testnet (cdn.testnet.cere.network)';
-        modeBadge.textContent = 'DDC Testnet';
+        statusEl.textContent = '🟢 Connected to Cere DDC Mainnet (cdn.cere.network)';
+        modeBadge.textContent = 'DDC Mainnet';
         modeBadge.className = 'nav-badge';
         log('DDC CDN reachable at ' + DDC_CONFIG.cdnUrl, 'success');
         
@@ -2067,7 +2067,7 @@
       const auditData = {
         version: '1.0',
         demo: 'proofi-health-analyzer',
-        network: 'cere-testnet',
+        network: 'cere-mainnet',
         exportedAt: new Date().toISOString(),
         storageMode: state.storageMode,
         bucketId: state.bucketId?.toString(),
