@@ -1,20 +1,27 @@
 /**
- * Proofi SDK v1.2
- * 
+ * Proofi SDK v1.3
+ *
  * Lightweight JavaScript SDK for integrating Proofi wallet into any web app.
  * Opens wallet as an in-page modal overlay (iframe), not a popup/new tab.
- * 
+ *
+ * v1.3 Changes:
+ * - Added signMessage() for requesting Sr25519 signatures from the wallet
+ * - PROOFI_SIGN_RESPONSE handler for receiving signature results
+ * - Extension-first signing: tries window.__proofi_extension__ before iframe
+ * - 2-minute timeout with automatic cleanup for sign requests
+ *
  * v1.2 Changes:
  * - Robust error handling: all fetch calls wrapped in try/catch
  * - Retry logic: 1 retry with 1s delay on API failures
  * - localStorage caching: achievements cached as fallback
  * - Graceful defaults: storeAchievement returns local result on failure
  * - Better error messages: no more raw "Failed to fetch" errors
- * 
+ *
  * Usage:
  *   const proofi = new ProofiSDK({ walletUrl: 'https://proofi-virid.vercel.app/app' });
  *   const address = await proofi.connect();
  *   await proofi.storeAchievement({ game: 'snake', score: 100, achievement: 'First Kill' });
+ *   const signature = await proofi.signMessage('Hello Proofi');
  */
 
 class ProofiSDK {
@@ -135,6 +142,75 @@ class ProofiSDK {
   }
 
   /**
+   * Request the wallet to sign a message with the user's Sr25519 key.
+   * Opens the wallet overlay if needed for user approval.
+   * Returns the signature as a hex string.
+   */
+  async signMessage(message, options = {}) {
+    if (!this.connected && !this.address) {
+      throw new Error('Not connected. Call connect() first.');
+    }
+
+    // Try extension direct signing first
+    if (window.__proofi_extension__?.signMessage) {
+      try {
+        const sig = await window.__proofi_extension__.signMessage(message);
+        if (sig) return sig;
+      } catch (e) { /* extension signing not available, fall back to iframe */ }
+    }
+
+    // Fall back to wallet iframe signing
+    return new Promise((resolve, reject) => {
+      const requestId = crypto.randomUUID();
+
+      // Show wallet overlay for user approval
+      this.showWallet();
+
+      // Send sign request to wallet iframe
+      const sendRequest = () => {
+        if (this._iframe?.contentWindow) {
+          this._iframe.contentWindow.postMessage({
+            type: 'PROOFI_SIGN_REQUEST',
+            id: requestId,
+            appName: this.appName,
+            origin: window.location.origin,
+            category: options.category || 'credential',
+            method: options.method || 'signMessage',
+            data: typeof message === 'string' ? message : JSON.stringify(message),
+          }, this._walletOrigin);
+        }
+      };
+
+      // Retry sending until wallet is ready
+      const checkReady = setInterval(sendRequest, 500);
+      // Send immediately too
+      sendRequest();
+
+      this._pendingRequests.set(requestId, {
+        resolve: (signature) => {
+          clearInterval(checkReady);
+          this._emit('signed', { signature, address: this.address });
+          setTimeout(() => this.hideWallet(), 800);
+          resolve(signature);
+        },
+        reject: (err) => {
+          clearInterval(checkReady);
+          reject(err);
+        },
+        type: 'sign',
+        _interval: checkReady,
+      });
+
+      // Timeout after 2 minutes
+      setTimeout(() => {
+        clearInterval(checkReady);
+        this._pendingRequests.delete(requestId);
+        reject(new Error('Signing timed out. User may have dismissed the wallet.'));
+      }, 120000);
+    });
+  }
+
+  /**
    * Store a game achievement on DDC via the Proofi API.
    * On API failure, stores locally and returns a local result.
    * Never throws network errors to the caller.
@@ -198,7 +274,7 @@ class ProofiSDK {
   }
 
   /**
-   * Listen for events: 'connected', 'disconnected', 'achievement'
+   * Listen for events: 'connected', 'disconnected', 'achievement', 'signed'
    */
   on(event, callback) {
     if (!this._listeners[event]) this._listeners[event] = [];
@@ -428,15 +504,29 @@ class ProofiSDK {
           clearInterval(approvedReq._interval);
           approvedReq._interval = null;
         }
+        // If this is a sign approval with signature data, resolve it
+        if (data.signature) {
+          const signReq = this._pendingRequests.get(data.requestId);
+          if (signReq && signReq.type === 'sign') {
+            signReq.resolve(data.signature);
+            this._pendingRequests.delete(data.requestId);
+          }
+        }
         break;
       }
 
       case 'PROOFI_REQUEST_REJECTED': {
         const pending = this._pendingRequests.get(data.requestId);
         if (pending) {
+          if (pending._interval) clearInterval(pending._interval);
           pending.reject(new Error('User rejected the request'));
           this._pendingRequests.delete(data.requestId);
-          this._removeOverlay();
+          // For sign rejections, just hide overlay (stay connected); for connect, remove entirely
+          if (pending.type === 'sign') {
+            this.hideWallet();
+          } else {
+            this._removeOverlay();
+          }
         }
         break;
       }
@@ -464,6 +554,19 @@ class ProofiSDK {
             }
           }
           setTimeout(() => this.hideWallet(), 800);
+        }
+        break;
+      }
+
+      case 'PROOFI_SIGN_RESPONSE': {
+        const pending = this._pendingRequests.get(data.requestId);
+        if (pending && pending.type === 'sign') {
+          if (data.signature) {
+            pending.resolve(data.signature);
+          } else {
+            pending.reject(new Error(data.error || 'Signing failed'));
+          }
+          this._pendingRequests.delete(data.requestId);
         }
         break;
       }
