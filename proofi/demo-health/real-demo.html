@@ -1696,6 +1696,12 @@
         state.walletAddress = window.__proofi_extension__.address;
         state.authToken = window.__proofi_extension__.token || localStorage.getItem('proofi_token');
         log(`Proofi extension detected: ${state.walletAddress.slice(0, 12)}...`, 'success');
+        // Sync SDK state so signMessage() works without separate connect()
+        if (proofiSDK) {
+          proofiSDK.address = state.walletAddress;
+          proofiSDK.connected = true;
+          log('ProofiSDK synced with extension wallet', 'success');
+        }
       }
       window.addEventListener('proofi-extension-ready', () => {
         if (window.__proofi_extension__?.connected) {
@@ -1703,6 +1709,12 @@
           state.walletAddress = window.__proofi_extension__.address;
           state.authToken = window.__proofi_extension__.token || localStorage.getItem('proofi_token');
           log(`Proofi extension connected: ${state.walletAddress.slice(0, 12)}...`, 'success');
+          // Sync SDK state so signMessage() works without separate connect()
+          if (proofiSDK) {
+            proofiSDK.address = state.walletAddress;
+            proofiSDK.connected = true;
+            log('ProofiSDK synced with extension wallet', 'success');
+          }
           // Update wallet UI if not yet connected via Step 1
           if (!state.userKeyPair) {
             document.getElementById('walletDot').classList.add('connected');
@@ -1744,6 +1756,11 @@
         state.authToken = window.__proofi_extension__.token || localStorage.getItem('proofi_token');
         state.extensionConnected = true;
         log('Connected to Proofi wallet extension: ' + state.walletAddress, 'success');
+        // Sync SDK state so signMessage() works
+        if (state.proofiSDK) {
+          state.proofiSDK.address = state.walletAddress;
+          state.proofiSDK.connected = true;
+        }
       } else {
         log('Proofi extension not detected -- using demo keypairs', 'info');
       }
