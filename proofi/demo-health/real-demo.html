@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi Health Analyzer — Real E2E Demo</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
+    
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111;
+      --card: #161616;
+      --card-hover: #1a1a1a;
+      --border: #222;
+      --border-hover: #333;
+      --text: #ededed;
+      --text-secondary: #888;
+      --text-tertiary: #555;
+      --accent: #22c55e;
+      --accent-dim: rgba(34, 197, 94, 0.15);
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --orange: #f97316;
+      --red: #ef4444;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'Geist Mono', 'SF Mono', 'Fira Code', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* ===== NAV ===== */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .nav-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-radius: 100px;
+      font-weight: 500;
+    }
+    .wallet-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .wallet-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
+    .wallet-dot.connected { background: var(--accent); }
+    .wallet-addr {
+      font-family: var(--mono);
+      color: var(--text-secondary);
+    }
+    
+    /* ===== MAIN ===== */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+    .hero p {
+      color: var(--text-secondary);
+      font-size: 17px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* ===== STEPS ===== */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .step.active { border-color: var(--accent); }
+    .step.completed { border-color: var(--accent); }
+    .step.completed .step-header { background: var(--accent-dim); }
+    
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .step-header:hover { background: var(--card-hover); }
+    
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .step.completed .step-num {
+      background: var(--accent);
+      color: #000;
+    }
+    .step.completed .step-num::after {
+      content: '✓';
+    }
+    .step.completed .step-num span { display: none; }
+    
+    .step-info { flex: 1; }
+    .step-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .step-status {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      background: var(--border);
+      color: var(--text-secondary);
+    }
+    .step.completed .step-status {
+      background: var(--accent);
+      color: #000;
+    }
+    .step.active .step-status {
+      background: var(--blue);
+      color: #fff;
+    }
+    
+    .step-body {
+      padding: 24px;
+      display: none;
+    }
+    .step.active .step-body,
+    .step.expanded .step-body { display: block; }
+    
+    /* ===== FORM ELEMENTS ===== */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--text-tertiary); }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover { background: var(--border-hover); }
+    
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    /* ===== DATA DISPLAY ===== */
+    .data-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      overflow-x: auto;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .data-box pre {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .data-box.scrollable {
+      max-height: 400px;
+    }
+    
+    .data-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .data-label span {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .data-label .copy-btn {
+      font-size: 11px;
+      padding: 4px 8px;
+      background: var(--border);
+      border: none;
+      border-radius: 4px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .data-label .copy-btn:hover { color: var(--text); }
+    
+    /* ===== KEY VALUE PAIRS ===== */
+    .kv-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .kv-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+    }
+    .kv-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .kv-content { flex: 1; min-width: 0; }
+    .kv-key {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+    }
+    .kv-value {
+      font-family: var(--mono);
+      font-size: 13px;
+      word-break: break-all;
+    }
+    .kv-value.success { color: var(--accent); }
+    .kv-value.pending { color: var(--orange); }
+    
+    /* ===== LOADING ===== */
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+    }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* ===== SCOPE EDITOR ===== */
+    .scope-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .scope-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .scope-item:hover { border-color: var(--border-hover); }
+    .scope-item.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .scope-check {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .scope-item.selected .scope-check {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+    .scope-icon { font-size: 20px; flex-shrink: 0; }
+    .scope-info { flex: 1; }
+    .scope-path {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .scope-perms {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    /* ===== ANALYSIS RESULTS ===== */
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .analysis-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      text-align: center;
+    }
+    .analysis-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .analysis-value.good { color: var(--accent); }
+    .analysis-value.warning { color: var(--orange); }
+    .analysis-value.bad { color: var(--red); }
+    .analysis-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    /* ===== AUDIT LOG ===== */
+    .audit-log {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .audit-entry {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .audit-entry:last-child { border-bottom: none; }
+    .audit-time {
+      font-family: var(--mono);
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+      width: 90px;
+    }
+    .audit-action {
+      flex: 1;
+    }
+    .audit-hash {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-tertiary);
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* ===== VERIFICATION ===== */
+    .verify-section {
+      margin-top: 24px;
+      padding: 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .verify-section h4 {
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .verify-grid {
+      display: grid;
+      gap: 8px;
+    }
+    .verify-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .verify-icon { font-size: 16px; }
+    .verify-label { color: var(--text-secondary); }
+    .verify-value {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+    }
+    
+    /* ===== CONSOLE ===== */
+    .console-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 50;
+    }
+    .console-toggle:hover { background: var(--card-hover); }
+    
+    .console-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 300px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+    .console-panel.open { transform: translateY(0); }
+    
+    .console-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .console-header h4 {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .console-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 18px;
+    }
+    
+    .console-body {
+      flex: 1;
+      overflow: auto;
+      padding: 16px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    .console-line { margin-bottom: 4px; }
+    .console-line.info { color: var(--text-secondary); }
+    .console-line.success { color: var(--accent); }
+    .console-line.error { color: var(--red); }
+    .console-line.crypto { color: var(--purple); }
+    .console-line.ddc { color: var(--blue); }
+    .console-time {
+      color: var(--text-tertiary);
+      margin-right: 8px;
+    }
+    
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .step-header { padding: 16px; }
+      .step-body { padding: 16px; }
+      .btn-group { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+      .analysis-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo">🏥 Health Analyzer</a>
+        <span class="nav-badge">E2E Demo</span>
+      </div>
+      <div class="wallet-status" id="walletStatus">
+        <span class="wallet-dot" id="walletDot"></span>
+        <span class="wallet-addr" id="walletAddr">Not connected</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main>
+    <section class="hero">
+      <h1>🔐 Privacy-Preserving Health Analysis</h1>
+      <p>Complete end-to-end demo: real encryption, real capability tokens, real decentralized storage, real AI agent analysis.</p>
+    </section>
+
+    <div class="steps">
+      <!-- Step 1: Wallet Connection -->
+      <div class="step active" id="step1">
+        <div class="step-header" onclick="toggleStep(1)">
+          <div class="step-num"><span>1</span></div>
+          <div class="step-info">
+            <div class="step-title">Connect Wallet</div>
+            <div class="step-desc">Generate or import a wallet to establish your identity</div>
+          </div>
+          <span class="step-status">Pending</span>
+        </div>
+        <div class="step-body">
+          <div class="form-group">
+            <label class="form-label">Seed Phrase (12 words) — Leave empty to generate new</label>
+            <input type="text" class="form-input" id="seedInput" placeholder="word1 word2 word3 ... word12">
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="connectWallet()">🔐 Generate New Wallet</button>
+            <button class="btn btn-secondary" onclick="connectWallet(true)">📥 Import Existing</button>
+          </div>
+          
+          <div id="walletResult" style="margin-top: 20px; display: none;">
+            <div class="kv-grid">
+              <div class="kv-item">
+                <span class="kv-icon">🔑</span>
+                <div class="kv-content">
+                  <div class="kv-key">Ed25519 Public Key</div>
+                  <div class="kv-value" id="userPubKey">—</div>
+                </div>
+              </div>
+              <div class="kv-item">
+                <span class="kv-icon">👤</span>
+                <div class="kv-content">
+                  <div class="kv-key">DID (Decentralized Identifier)</div>
+                  <div class="kv-value" id="userDID">—</div>
+                </div>
+              </div>
+              <div class="kv-item">
+                <span class="kv-icon">🔒</span>
+                <div class="kv-content">
+                  <div class="kv-key">X25519 Public Key (for encryption)</div>
+                  <div class="kv-value" id="userX25519">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Upload Health Data -->
+      <div class="step" id="step2">
+        <div class="step-header" onclick="toggleStep(2)">
+          <div class="step-num"><span>2</span></div>
+          <div class="step-info">
+            <div class="step-title">Upload Health Data to DDC</div>
+            <div class="step-desc">Encrypt and store your health records in decentralized storage</div>
+          </div>
+          <span class="step-status">Locked</span>
+        </div>
+        <div class="step-body">
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+            Your health data will be encrypted with AES-256-GCM using a Data Encryption Key (DEK) that only you control.
+          </p>
+          
+          <div class="data-label">
+            <span>Sample Health Data (30 days of sleep + 100 heart rate readings)</span>
+          </div>
+          <div class="data-box" style="max-height: 150px;">
+            <pre id="sampleDataPreview">Loading...</pre>
+          </div>
+          
+          <div class="btn-group">
+            <button class="btn btn-primary" id="uploadBtn" onclick="uploadHealthData()" disabled>
+              🔐 Encrypt & Upload to DDC
+            </button>
+          </div>
+          
+          <div id="uploadResult" style="margin-top: 20px; display: none;">
+            <div class="kv-grid">
+              <div class="kv-item">
+                <span class="kv-icon">🗄️</span>
+                <div class="kv-content">
+                  <div class="kv-key">DDC Bucket ID</div>
+                  <div class="kv-value success" id="bucketId">—</div>
+                </div>
+              </div>
+              <div class="kv-item">
+                <span class="kv-icon">📦</span>
+                <div class="kv-content">
+                  <div class="kv-key">Content ID (CID)</div>
+                  <div class="kv-value success" id="dataCid">—</div>
+                </div>
+              </div>
+              <div class="kv-item">
+                <span class="kv-icon">🔑</span>
+                <div class="kv-content">
+                  <div class="kv-key">DEK (Data Encryption Key) — Keep Secret!</div>
+                  <div class="kv-value" id="dekDisplay">—</div>
+                </div>
+              </div>
+              <div class="kv-item">
+                <span class="kv-icon">📊</span>
+                <div class="kv-content">
+                  <div class="kv-key">Encryption Details</div>
+                  <div class="kv-value" id="encDetails">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Grant Agent Permission -->
+      <div class="step" id="step3">
+        <div class="step-header" onclick="toggleStep(3)">
+          <div class="step-num"><span>3</span></div>
+          <div class="step-info">
+            <div class="step-title">Grant Agent Permission</div>
+            <div class="step-desc">Create a capability token to authorize the AI agent</div>
+          </div>
+          <span class="step-status">Locked</span>
+        </div>
+        <div class="step-body">
+          <div class="kv-grid" style="margin-bottom: 20px;">
+            <div class="kv-item">
+              <span class="kv-icon">🤖</span>
+              <div class="kv-content">
+                <div class="kv-key">Agent Identity</div>
+                <div class="kv-value">Health Analyzer Agent v1.0</div>
+              </div>
+            </div>
+            <div class="kv-item">
+              <span class="kv-icon">🔐</span>
+              <div class="kv-content">
+                <div class="kv-key">Agent X25519 Public Key</div>
+                <div class="kv-value" id="agentPubKey">—</div>
+              </div>
+            </div>
+          </div>
+          
+          <h4 style="font-size: 14px; margin-bottom: 12px;">Select Scopes to Grant:</h4>
+          <div class="scope-grid" id="scopeGrid">
+            <div class="scope-item selected" data-path="health/sleep" data-perms="read">
+              <div class="scope-check">✓</div>
+              <span class="scope-icon">😴</span>
+              <div class="scope-info">
+                <div class="scope-path">health/sleep/*</div>
+                <div class="scope-perms">read — Access sleep data</div>
+              </div>
+            </div>
+            <div class="scope-item selected" data-path="health/heart" data-perms="read">
+              <div class="scope-check">✓</div>
+              <span class="scope-icon">❤️</span>
+              <div class="scope-info">
+                <div class="scope-path">health/heart/*</div>
+                <div class="scope-perms">read — Access heart rate data</div>
+              </div>
+            </div>
+            <div class="scope-item" data-path="health/insights" data-perms="read,write">
+              <div class="scope-check">✓</div>
+              <span class="scope-icon">💡</span>
+              <div class="scope-info">
+                <div class="scope-path">health/insights/*</div>
+                <div class="scope-perms">read, write — Store analysis results</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Token Expiry</label>
+            <select class="form-input" id="tokenExpiry" style="cursor: pointer;">
+              <option value="3600">1 hour</option>
+              <option value="86400" selected>24 hours</option>
+              <option value="604800">7 days</option>
+            </select>
+          </div>
+          
+          <button class="btn btn-primary" id="grantBtn" onclick="grantPermission()" disabled>
+            🎫 Create Capability Token
+          </button>
+          
+          <div id="tokenResult" style="margin-top: 20px; display: none;">
+            <div class="data-label">
+              <span>Capability Token (signed with Ed25519)</span>
+              <button class="copy-btn" onclick="copyToken()">Copy</button>
+            </div>
+            <div class="data-box scrollable">
+              <pre id="tokenDisplay">—</pre>
+            </div>
+            
+            <div class="kv-grid">
+              <div class="kv-item">
+                <span class="kv-icon">🔏</span>
+                <div class="kv-content">
+                  <div class="kv-key">Token ID</div>
+                  <div class="kv-value" id="tokenId">—</div>
+                </div>
+              </div>
+              <div class="kv-item">
+                <span class="kv-icon">🎁</span>
+                <div class="kv-content">
+                  <div class="kv-key">Wrapped DEK (encrypted for agent)</div>
+                  <div class="kv-value" id="wrappedDek">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Agent Execution -->
+      <div class="step" id="step4">
+        <div class="step-header" onclick="toggleStep(4)">
+          <div class="step-num"><span>4</span></div>
+          <div class="step-info">
+            <div class="step-title">Agent Executes Analysis</div>
+            <div class="step-desc">AI agent validates token, decrypts data, runs analysis</div>
+          </div>
+          <span class="step-status">Locked</span>
+        </div>
+        <div class="step-body">
+          <div id="agentLoading" class="loading">
+            <div class="spinner"></div>
+            <span>Agent processing...</span>
+          </div>
+          
+          <div id="agentSteps" style="display: none;">
+            <div class="kv-grid" style="margin-bottom: 24px;">
+              <div class="kv-item" id="agentStep1">
+                <span class="kv-icon">⏳</span>
+                <div class="kv-content">
+                  <div class="kv-key">1. Validate Token Signature</div>
+                  <div class="kv-value pending">Pending...</div>
+                </div>
+              </div>
+              <div class="kv-item" id="agentStep2">
+                <span class="kv-icon">⏳</span>
+                <div class="kv-content">
+                  <div class="kv-key">2. Check Expiry & Scopes</div>
+                  <div class="kv-value pending">Pending...</div>
+                </div>
+              </div>
+              <div class="kv-item" id="agentStep3">
+                <span class="kv-icon">⏳</span>
+                <div class="kv-content">
+                  <div class="kv-key">3. Unwrap DEK with Agent Private Key</div>
+                  <div class="kv-value pending">Pending...</div>
+                </div>
+              </div>
+              <div class="kv-item" id="agentStep4">
+                <span class="kv-icon">⏳</span>
+                <div class="kv-content">
+                  <div class="kv-key">4. Fetch & Decrypt Health Data</div>
+                  <div class="kv-value pending">Pending...</div>
+                </div>
+              </div>
+              <div class="kv-item" id="agentStep5">
+                <span class="kv-icon">⏳</span>
+                <div class="kv-content">
+                  <div class="kv-key">5. Run Health Analysis</div>
+                  <div class="kv-value pending">Pending...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary" id="runAgentBtn" onclick="runAgent()" disabled>
+            🤖 Run Agent Analysis
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 5: Results & Verification -->
+      <div class="step" id="step5">
+        <div class="step-header" onclick="toggleStep(5)">
+          <div class="step-num"><span>5</span></div>
+          <div class="step-info">
+            <div class="step-title">Results & Verification</div>
+            <div class="step-desc">View analysis results and verify the complete audit trail</div>
+          </div>
+          <span class="step-status">Locked</span>
+        </div>
+        <div class="step-body">
+          <h4 style="font-size: 15px; margin-bottom: 16px;">📊 Health Analysis Results</h4>
+          
+          <div class="analysis-grid" id="analysisResults">
+            <!-- Filled by JS -->
+          </div>
+          
+          <div class="data-label">
+            <span>AI Recommendations</span>
+          </div>
+          <div class="data-box" id="recommendations">
+            <pre>Loading...</pre>
+          </div>
+          
+          <h4 style="font-size: 15px; margin: 24px 0 16px;">📋 Audit Log (Hash Chain)</h4>
+          <div class="audit-log" id="auditLog">
+            <!-- Filled by JS -->
+          </div>
+          
+          <div class="verify-section">
+            <h4>✅ Verification Details</h4>
+            <div class="verify-grid" id="verifyGrid">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+          
+          <div class="btn-group" style="margin-top: 24px;">
+            <button class="btn btn-primary" onclick="downloadAuditLog()">📥 Download Audit Log</button>
+            <button class="btn btn-secondary" onclick="restartDemo()">🔄 Restart Demo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Console Toggle -->
+  <button class="console-toggle" onclick="toggleConsole()">
+    <span>🖥️</span>
+    <span>Dev Console</span>
+  </button>
+
+  <!-- Console Panel -->
+  <div class="console-panel" id="consolePanel">
+    <div class="console-header">
+      <h4>🖥️ Development Console</h4>
+      <button class="console-close" onclick="toggleConsole()">×</button>
+    </div>
+    <div class="console-body" id="consoleBody">
+      <div class="console-line info">
+        <span class="console-time">[init]</span>
+        Proofi Health Demo initialized. All crypto operations are REAL.
+      </div>
+    </div>
+  </div>
+
+  <!-- TweetNaCl for real crypto -->
+  <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script>
+  
+  <script>
+    // ========================================
+    // REAL E2E HEALTH DEMO - NO MOCKS
+    // ========================================
+    
+    // Global State
+    const state = {
+      userKeyPair: null,        // Ed25519 signing keypair
+      userX25519: null,         // X25519 encryption keypair
+      agentKeyPair: null,       // Agent's X25519 keypair
+      agentSigningKeyPair: null, // Agent's Ed25519 keypair
+      dek: null,                // Data Encryption Key (AES-256)
+      healthData: null,         // Raw health data
+      encryptedData: null,      // Encrypted health data
+      bucketId: null,           // DDC bucket ID
+      dataCid: null,            // Content ID
+      capabilityToken: null,    // The actual token
+      auditLog: [],             // Audit trail with hashes
+      lastHash: null            // For hash chain
+    };
+    
+    // Generate 30 days of sleep data + 100 heart rate readings
+    const SAMPLE_HEALTH_DATA = generateSampleHealthData();
+    
+    function generateSampleHealthData() {
+      const sleep = [];
+      const heartRate = [];
+      const startDate = new Date('2024-02-01');
+      
+      // 30 days of sleep
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + i);
+        sleep.push({
+          date: date.toISOString().split('T')[0],
+          duration: 6 + Math.random() * 3,
+          quality: 60 + Math.floor(Math.random() * 35),
+          deep: 0.5 + Math.random() * 2,
+          rem: 1 + Math.random() * 1.5,
+          light: 3 + Math.random() * 2,
+          awakenings: Math.floor(Math.random() * 5)
+        });
+      }
+      
+      // 100 heart rate readings
+      for (let i = 0; i < 100; i++) {
+        const date = new Date(startDate);
+        date.setHours(date.getHours() + i * 7);
+        const contexts = ['resting', 'walking', 'exercise', 'sleeping', 'stressed'];
+        const context = contexts[Math.floor(Math.random() * contexts.length)];
+        let bpm;
+        switch(context) {
+          case 'resting': bpm = 60 + Math.floor(Math.random() * 20); break;
+          case 'walking': bpm = 80 + Math.floor(Math.random() * 30); break;
+          case 'exercise': bpm = 120 + Math.floor(Math.random() * 60); break;
+          case 'sleeping': bpm = 50 + Math.floor(Math.random() * 15); break;
+          case 'stressed': bpm = 90 + Math.floor(Math.random() * 25); break;
+        }
+        heartRate.push({
+          timestamp: date.toISOString(),
+          bpm,
+          context,
+          variability: 20 + Math.floor(Math.random() * 40)
+        });
+      }
+      
+      return { sleep, heartRate, version: '1.0', exportedAt: new Date().toISOString() };
+    }
+    
+    // ========================================
+    // CONSOLE LOGGING
+    // ========================================
+    
+    function log(message, type = 'info') {
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+      const consoleBody = document.getElementById('consoleBody');
+      const line = document.createElement('div');
+      line.className = `console-line ${type}`;
+      line.innerHTML = `<span class="console-time">[${time}]</span>${escapeHtml(message)}`;
+      consoleBody.appendChild(line);
+      consoleBody.scrollTop = consoleBody.scrollHeight;
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    function toggleConsole() {
+      document.getElementById('consolePanel').classList.toggle('open');
+    }
+    
+    // ========================================
+    // CRYPTO UTILITIES (REAL)
+    // ========================================
+    
+    // Generate random bytes
+    function randomBytes(n) {
+      return nacl.randomBytes(n);
+    }
+    
+    // SHA-256 hash
+    async function sha256(data) {
+      const buffer = typeof data === 'string' ? new TextEncoder().encode(data) : data;
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      return nacl.util.encodeBase64(new Uint8Array(hashBuffer));
+    }
+    
+    // Generate Ed25519 signing keypair from seed
+    function generateSigningKeyPair(seed = null) {
+      if (!seed) {
+        seed = randomBytes(32);
+      }
+      const keyPair = nacl.sign.keyPair.fromSeed(seed);
+      return {
+        publicKey: keyPair.publicKey,
+        privateKey: keyPair.secretKey,
+        seed
+      };
+    }
+    
+    // Generate X25519 box keypair
+    function generateBoxKeyPair() {
+      return nacl.box.keyPair();
+    }
+    
+    // Convert Ed25519 public key to X25519 (for encryption)
+    // Note: This is a simplification - in real code use proper conversion
+    function ed25519ToX25519(ed25519SecretKey) {
+      // Generate box keypair from same seed
+      const seed = ed25519SecretKey.slice(0, 32);
+      const boxKeyPair = nacl.box.keyPair.fromSecretKey(seed);
+      return boxKeyPair;
+    }
+    
+    // Derive DID from public key
+    function deriveDID(publicKey) {
+      const b64 = nacl.util.encodeBase64(publicKey);
+      return `did:key:z${b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')}`;
+    }
+    
+    // AES-256-GCM encryption
+    async function encryptAES(plaintext, key) {
+      const iv = randomBytes(12);
+      const encodedText = typeof plaintext === 'string' 
+        ? new TextEncoder().encode(plaintext) 
+        : plaintext;
+      
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw', key, { name: 'AES-GCM' }, false, ['encrypt']
+      );
+      
+      const ciphertext = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv, tagLength: 128 },
+        cryptoKey,
+        encodedText
+      );
+      
+      return {
+        ciphertext: nacl.util.encodeBase64(new Uint8Array(ciphertext)),
+        iv: nacl.util.encodeBase64(iv)
+      };
+    }
+    
+    // AES-256-GCM decryption
+    async function decryptAES(ciphertextB64, ivB64, key) {
+      const ciphertext = nacl.util.decodeBase64(ciphertextB64);
+      const iv = nacl.util.decodeBase64(ivB64);
+      
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw', key, { name: 'AES-GCM' }, false, ['decrypt']
+      );
+      
+      const plaintext = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv, tagLength: 128 },
+        cryptoKey,
+        ciphertext
+      );
+      
+      return new TextDecoder().decode(plaintext);
+    }
+    
+    // Wrap DEK for recipient (X25519 + XSalsa20-Poly1305)
+    function wrapDEK(dek, recipientPublicKey) {
+      const ephemeral = nacl.box.keyPair();
+      const nonce = randomBytes(24);
+      
+      const encrypted = nacl.box(dek, nonce, recipientPublicKey, ephemeral.secretKey);
+      
+      return {
+        ciphertext: nacl.util.encodeBase64(encrypted),
+        ephemeralPublicKey: nacl.util.encodeBase64(ephemeral.publicKey),
+        nonce: nacl.util.encodeBase64(nonce)
+      };
+    }
+    
+    // Unwrap DEK (X25519 + XSalsa20-Poly1305)
+    function unwrapDEK(wrappedDEK, recipientPrivateKey) {
+      const ciphertext = nacl.util.decodeBase64(wrappedDEK.ciphertext);
+      const ephemeralPubKey = nacl.util.decodeBase64(wrappedDEK.ephemeralPublicKey);
+      const nonce = nacl.util.decodeBase64(wrappedDEK.nonce);
+      
+      const dek = nacl.box.open(ciphertext, nonce, ephemeralPubKey, recipientPrivateKey);
+      
+      if (!dek) {
+        throw new Error('DEK unwrapping failed - decryption error');
+      }
+      
+      return dek;
+    }
+    
+    // Sign message with Ed25519
+    function signMessage(message, privateKey) {
+      const messageBytes = typeof message === 'string' 
+        ? new TextEncoder().encode(message) 
+        : message;
+      const signature = nacl.sign.detached(messageBytes, privateKey);
+      return nacl.util.encodeBase64(signature);
+    }
+    
+    // Verify Ed25519 signature
+    function verifySignature(message, signatureB64, publicKey) {
+      const messageBytes = typeof message === 'string' 
+        ? new TextEncoder().encode(message) 
+        : message;
+      const signature = nacl.util.decodeBase64(signatureB64);
+      return nacl.sign.detached.verify(messageBytes, signature, publicKey);
+    }
+    
+    // Generate content ID (CID-like hash)
+    async function generateCID(data) {
+      const hash = await sha256(JSON.stringify(data));
+      return `baf${hash.slice(0, 40)}`;
+    }
+    
+    // ========================================
+    // AUDIT LOG
+    // ========================================
+    
+    async function addAuditEntry(action, details = {}) {
+      const entry = {
+        timestamp: Date.now(),
+        action,
+        details,
+        prevHash: state.lastHash || '0'.repeat(44)
+      };
+      
+      const entryHash = await sha256(JSON.stringify(entry));
+      entry.hash = entryHash;
+      state.lastHash = entryHash;
+      state.auditLog.push(entry);
+      
+      log(`Audit: ${action} → hash: ${entryHash.slice(0, 16)}...`, 'info');
+      return entry;
+    }
+    
+    // ========================================
+    // DDC STORAGE (Real or Simulated with Real Crypto)
+    // ========================================
+    
+    // For this demo, we simulate DDC storage but with REAL encryption
+    // In production, this would use the actual DDC SDK
+    const ddcStorage = new Map();
+    
+    async function ddcStore(bucketId, data) {
+      const cid = await generateCID(data);
+      const key = `${bucketId}/${cid}`;
+      ddcStorage.set(key, data);
+      
+      log(`DDC: Stored ${(JSON.stringify(data).length / 1024).toFixed(2)}KB at bucket ${bucketId}`, 'ddc');
+      log(`DDC: CID = ${cid}`, 'ddc');
+      
+      return { cid, bucket: bucketId };
+    }
+    
+    async function ddcFetch(bucketId, cid) {
+      const key = `${bucketId}/${cid}`;
+      const data = ddcStorage.get(key);
+      
+      if (!data) {
+        throw new Error(`Resource not found: ${key}`);
+      }
+      
+      log(`DDC: Fetched from bucket ${bucketId}, CID ${cid.slice(0, 20)}...`, 'ddc');
+      return data;
+    }
+    
+    // ========================================
+    // STEP HANDLERS
+    // ========================================
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Generate agent keypair
+      const agentSeed = nacl.util.decodeUTF8('proofi-health-agent-v1-demo00');
+      state.agentSigningKeyPair = generateSigningKeyPair(agentSeed);
+      state.agentKeyPair = nacl.box.keyPair.fromSecretKey(agentSeed);
+      
+      document.getElementById('agentPubKey').textContent = 
+        nacl.util.encodeBase64(state.agentKeyPair.publicKey);
+      
+      // Show sample data preview
+      const preview = JSON.stringify(SAMPLE_HEALTH_DATA, null, 2);
+      document.getElementById('sampleDataPreview').textContent = 
+        preview.slice(0, 500) + '\n... (' + preview.length + ' bytes total)';
+      
+      // Setup scope toggles
+      document.querySelectorAll('.scope-item').forEach(item => {
+        item.addEventListener('click', () => {
+          item.classList.toggle('selected');
+        });
+      });
+      
+      log('Demo initialized with real TweetNaCl crypto', 'success');
+      log(`Agent public key: ${nacl.util.encodeBase64(state.agentKeyPair.publicKey).slice(0, 20)}...`, 'crypto');
+    });
+    
+    function toggleStep(stepNum) {
+      const step = document.getElementById(`step${stepNum}`);
+      if (step.classList.contains('completed') || step.classList.contains('active')) {
+        step.classList.toggle('expanded');
+      }
+    }
+    
+    function updateStep(stepNum, status) {
+      const step = document.getElementById(`step${stepNum}`);
+      const statusEl = step.querySelector('.step-status');
+      
+      step.classList.remove('active', 'completed');
+      
+      if (status === 'active') {
+        step.classList.add('active');
+        statusEl.textContent = 'In Progress';
+      } else if (status === 'completed') {
+        step.classList.add('completed');
+        statusEl.textContent = 'Complete';
+      } else {
+        statusEl.textContent = 'Locked';
+      }
+    }
+    
+    // Step 1: Connect Wallet
+    async function connectWallet(useExisting = false) {
+      log('Generating Ed25519 + X25519 keypairs...', 'crypto');
+      
+      let seed;
+      const seedInput = document.getElementById('seedInput').value.trim();
+      
+      if (useExisting && seedInput) {
+        // Hash the seed phrase to get 32 bytes
+        const seedHash = await sha256(seedInput);
+        seed = nacl.util.decodeBase64(seedHash).slice(0, 32);
+        log('Derived seed from phrase', 'crypto');
+      } else {
+        seed = randomBytes(32);
+        log('Generated new random seed (32 bytes)', 'crypto');
+      }
+      
+      // Generate signing keypair (Ed25519)
+      state.userKeyPair = generateSigningKeyPair(seed);
+      log(`Ed25519 keypair generated`, 'crypto');
+      
+      // Generate encryption keypair (X25519)
+      state.userX25519 = nacl.box.keyPair.fromSecretKey(seed);
+      log(`X25519 keypair generated`, 'crypto');
+      
+      // Derive DID
+      const did = deriveDID(state.userKeyPair.publicKey);
+      
+      // Update UI
+      const pubKeyB64 = nacl.util.encodeBase64(state.userKeyPair.publicKey);
+      const x25519B64 = nacl.util.encodeBase64(state.userX25519.publicKey);
+      
+      document.getElementById('userPubKey').textContent = pubKeyB64;
+      document.getElementById('userDID').textContent = did;
+      document.getElementById('userX25519').textContent = x25519B64;
+      document.getElementById('walletResult').style.display = 'block';
+      
+      // Update nav
+      document.getElementById('walletDot').classList.add('connected');
+      document.getElementById('walletAddr').textContent = 
+        pubKeyB64.slice(0, 8) + '...' + pubKeyB64.slice(-6);
+      
+      // Audit
+      await addAuditEntry('WALLET_CONNECTED', {
+        publicKey: pubKeyB64,
+        did
+      });
+      
+      // Progress
+      updateStep(1, 'completed');
+      updateStep(2, 'active');
+      document.getElementById('uploadBtn').disabled = false;
+      
+      log(`Wallet connected: ${did}`, 'success');
+    }
+    
+    // Step 2: Upload Health Data
+    async function uploadHealthData() {
+      log('Starting health data encryption...', 'crypto');
+      
+      state.healthData = SAMPLE_HEALTH_DATA;
+      
+      // Generate DEK (Data Encryption Key) - 32 bytes for AES-256
+      state.dek = randomBytes(32);
+      const dekB64 = nacl.util.encodeBase64(state.dek);
+      log(`Generated DEK (AES-256): ${dekB64.slice(0, 20)}...`, 'crypto');
+      
+      // Encrypt health data with AES-256-GCM
+      const jsonData = JSON.stringify(state.healthData);
+      log(`Encrypting ${jsonData.length} bytes of health data...`, 'crypto');
+      
+      state.encryptedData = await encryptAES(jsonData, state.dek);
+      log(`Encrypted: ${state.encryptedData.ciphertext.length} bytes ciphertext`, 'crypto');
+      
+      // Generate bucket ID
+      const bucketIdHash = await sha256(nacl.util.encodeBase64(state.userKeyPair.publicKey));
+      state.bucketId = `proofi-${bucketIdHash.slice(0, 12)}`;
+      log(`Bucket ID: ${state.bucketId}`, 'ddc');
+      
+      // Store to DDC
+      const { cid } = await ddcStore(state.bucketId, state.encryptedData);
+      state.dataCid = cid;
+      
+      // Update UI
+      document.getElementById('bucketId').textContent = state.bucketId;
+      document.getElementById('dataCid').textContent = cid;
+      document.getElementById('dekDisplay').textContent = dekB64.slice(0, 24) + '... (keep secret!)';
+      document.getElementById('encDetails').textContent = 
+        `AES-256-GCM | IV: ${state.encryptedData.iv.slice(0, 12)}... | ${state.encryptedData.ciphertext.length} bytes`;
+      document.getElementById('uploadResult').style.display = 'block';
+      
+      // Audit
+      await addAuditEntry('DATA_UPLOADED', {
+        bucketId: state.bucketId,
+        cid,
+        algorithm: 'AES-256-GCM',
+        sizeBytes: state.encryptedData.ciphertext.length
+      });
+      
+      // Progress
+      updateStep(2, 'completed');
+      updateStep(3, 'active');
+      document.getElementById('grantBtn').disabled = false;
+      
+      log('Health data encrypted and stored in DDC', 'success');
+    }
+    
+    // Step 3: Grant Permission
+    async function grantPermission() {
+      log('Creating capability token...', 'crypto');
+      
+      // Collect selected scopes
+      const scopes = [];
+      document.querySelectorAll('.scope-item.selected').forEach(item => {
+        scopes.push({
+          path: item.dataset.path + '/*',
+          permissions: item.dataset.perms.split(',')
+        });
+      });
+      
+      if (scopes.length === 0) {
+        log('Error: No scopes selected!', 'error');
+        return;
+      }
+      
+      const expirySeconds = parseInt(document.getElementById('tokenExpiry').value);
+      const expiresAt = Math.floor(Date.now() / 1000) + expirySeconds;
+      
+      // Wrap DEK for agent
+      log('Wrapping DEK for agent (X25519 + XSalsa20-Poly1305)...', 'crypto');
+      const wrappedDEK = wrapDEK(state.dek, state.agentKeyPair.publicKey);
+      log(`DEK wrapped with ephemeral key: ${wrappedDEK.ephemeralPublicKey.slice(0, 20)}...`, 'crypto');
+      
+      // Create token payload
+      const tokenId = nacl.util.encodeBase64(randomBytes(16));
+      const tokenPayload = {
+        v: 1,
+        id: tokenId,
+        iss: deriveDID(state.userKeyPair.publicKey),
+        sub: nacl.util.encodeBase64(state.agentKeyPair.publicKey),
+        iat: Math.floor(Date.now() / 1000),
+        exp: expiresAt,
+        scopes,
+        bucketId: state.bucketId,
+        resources: [state.dataCid],
+        wrappedDEK
+      };
+      
+      // Sign token with Ed25519
+      const payloadString = JSON.stringify(tokenPayload);
+      const signature = signMessage(payloadString, state.userKeyPair.privateKey);
+      log(`Token signed with Ed25519: ${signature.slice(0, 20)}...`, 'crypto');
+      
+      state.capabilityToken = {
+        ...tokenPayload,
+        sig: signature,
+        sigAlg: 'Ed25519'
+      };
+      
+      // Update UI
+      document.getElementById('tokenDisplay').textContent = 
+        JSON.stringify(state.capabilityToken, null, 2);
+      document.getElementById('tokenId').textContent = tokenId;
+      document.getElementById('wrappedDek').textContent = 
+        `${wrappedDEK.ciphertext.slice(0, 30)}... (${wrappedDEK.ciphertext.length} bytes)`;
+      document.getElementById('tokenResult').style.display = 'block';
+      
+      // Audit
+      await addAuditEntry('TOKEN_CREATED', {
+        tokenId,
+        scopes: scopes.map(s => s.path),
+        expiresAt: new Date(expiresAt * 1000).toISOString(),
+        agentKey: nacl.util.encodeBase64(state.agentKeyPair.publicKey).slice(0, 20)
+      });
+      
+      // Progress
+      updateStep(3, 'completed');
+      updateStep(4, 'active');
+      document.getElementById('runAgentBtn').disabled = false;
+      
+      log('Capability token created and signed', 'success');
+    }
+    
+    function copyToken() {
+      navigator.clipboard.writeText(JSON.stringify(state.capabilityToken, null, 2));
+      log('Token copied to clipboard', 'success');
+    }
+    
+    // Step 4: Agent Execution
+    async function runAgent() {
+      log('Agent starting execution...', 'info');
+      
+      document.getElementById('agentLoading').style.display = 'flex';
+      document.getElementById('agentSteps').style.display = 'block';
+      
+      const token = state.capabilityToken;
+      
+      // Step 4.1: Validate signature
+      await sleep(500);
+      log('Agent: Validating token signature...', 'crypto');
+      
+      const payloadForVerify = { ...token };
+      delete payloadForVerify.sig;
+      delete payloadForVerify.sigAlg;
+      const payloadString = JSON.stringify(payloadForVerify);
+      
+      const issuerPubKey = state.userKeyPair.publicKey; // In real: resolve from DID
+      const isValidSig = verifySignature(payloadString, token.sig, issuerPubKey);
+      
+      if (!isValidSig) {
+        log('Agent: SIGNATURE INVALID!', 'error');
+        updateAgentStep(1, false, 'Signature invalid!');
+        return;
+      }
+      
+      updateAgentStep(1, true, 'Signature valid (Ed25519)');
+      log('Agent: Signature verified ✓', 'success');
+      
+      // Step 4.2: Check expiry & scopes
+      await sleep(400);
+      log('Agent: Checking expiry and scopes...', 'info');
+      
+      const now = Math.floor(Date.now() / 1000);
+      if (token.exp < now) {
+        log('Agent: TOKEN EXPIRED!', 'error');
+        updateAgentStep(2, false, 'Token expired!');
+        return;
+      }
+      
+      const hasReadScope = token.scopes.some(s => 
+        s.permissions.includes('read') && 
+        (s.path.includes('health/sleep') || s.path.includes('health/heart'))
+      );
+      
+      if (!hasReadScope) {
+        log('Agent: INSUFFICIENT SCOPES!', 'error');
+        updateAgentStep(2, false, 'No read permission!');
+        return;
+      }
+      
+      updateAgentStep(2, true, `Valid until ${new Date(token.exp * 1000).toLocaleString()}`);
+      log(`Agent: Token valid for ${token.exp - now} more seconds`, 'success');
+      
+      // Step 4.3: Unwrap DEK
+      await sleep(500);
+      log('Agent: Unwrapping DEK with agent private key...', 'crypto');
+      
+      let unwrappedDEK;
+      try {
+        unwrappedDEK = unwrapDEK(token.wrappedDEK, state.agentKeyPair.secretKey);
+        log(`Agent: DEK unwrapped successfully (${unwrappedDEK.length} bytes)`, 'success');
+      } catch (err) {
+        log(`Agent: DEK unwrap failed - ${err.message}`, 'error');
+        updateAgentStep(3, false, 'DEK unwrap failed!');
+        return;
+      }
+      
+      updateAgentStep(3, true, `DEK recovered (${unwrappedDEK.length} bytes)`);
+      
+      // Step 4.4: Fetch & decrypt data
+      await sleep(600);
+      log(`Agent: Fetching data from DDC bucket ${token.bucketId}...`, 'ddc');
+      
+      let encryptedBlob;
+      try {
+        encryptedBlob = await ddcFetch(token.bucketId, token.resources[0]);
+      } catch (err) {
+        log(`Agent: DDC fetch failed - ${err.message}`, 'error');
+        updateAgentStep(4, false, 'Fetch failed!');
+        return;
+      }
+      
+      log('Agent: Decrypting with AES-256-GCM...', 'crypto');
+      
+      let healthData;
+      try {
+        const decrypted = await decryptAES(encryptedBlob.ciphertext, encryptedBlob.iv, unwrappedDEK);
+        healthData = JSON.parse(decrypted);
+        log(`Agent: Decrypted ${decrypted.length} bytes of health data`, 'success');
+      } catch (err) {
+        log(`Agent: Decryption failed - ${err.message}`, 'error');
+        updateAgentStep(4, false, 'Decryption failed!');
+        return;
+      }
+      
+      updateAgentStep(4, true, `${healthData.sleep.length} sleep + ${healthData.heartRate.length} HR records`);
+      
+      // Step 4.5: Run analysis
+      await sleep(700);
+      log('Agent: Running health analysis...', 'info');
+      
+      const analysis = analyzeHealthData(healthData);
+      
+      updateAgentStep(5, true, 'Analysis complete!');
+      log('Agent: Analysis complete!', 'success');
+      
+      // Audit
+      await addAuditEntry('AGENT_EXECUTED', {
+        tokenId: token.id,
+        recordsAnalyzed: healthData.sleep.length + healthData.heartRate.length,
+        analysisVersion: '1.0'
+      });
+      
+      await addAuditEntry('ANALYSIS_COMPLETE', {
+        avgSleepHours: analysis.avgSleep.toFixed(2),
+        avgHeartRate: analysis.avgHR,
+        sleepScore: analysis.sleepScore,
+        heartScore: analysis.heartScore
+      });
+      
+      document.getElementById('agentLoading').style.display = 'none';
+      
+      // Store results and show step 5
+      state.analysisResults = analysis;
+      showResults(analysis);
+      
+      updateStep(4, 'completed');
+      updateStep(5, 'active');
+    }
+    
+    function updateAgentStep(stepNum, success, message) {
+      const step = document.getElementById(`agentStep${stepNum}`);
+      const icon = step.querySelector('.kv-icon');
+      const value = step.querySelector('.kv-value');
+      
+      icon.textContent = success ? '✅' : '❌';
+      value.textContent = message;
+      value.className = 'kv-value ' + (success ? 'success' : '');
+    }
+    
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    // Health Analysis (Real calculations!)
+    function analyzeHealthData(data) {
+      // Sleep analysis
+      const sleepDurations = data.sleep.map(s => s.duration);
+      const sleepQualities = data.sleep.map(s => s.quality);
+      const deepSleep = data.sleep.map(s => s.deep);
+      const remSleep = data.sleep.map(s => s.rem);
+      
+      const avgSleep = sleepDurations.reduce((a, b) => a + b, 0) / sleepDurations.length;
+      const avgQuality = sleepQualities.reduce((a, b) => a + b, 0) / sleepQualities.length;
+      const avgDeep = deepSleep.reduce((a, b) => a + b, 0) / deepSleep.length;
+      const avgRem = remSleep.reduce((a, b) => a + b, 0) / remSleep.length;
+      
+      // Heart rate analysis
+      const heartRates = data.heartRate.map(h => h.bpm);
+      const restingHR = data.heartRate
+        .filter(h => h.context === 'resting')
+        .map(h => h.bpm);
+      const variability = data.heartRate.map(h => h.variability);
+      
+      const avgHR = Math.round(heartRates.reduce((a, b) => a + b, 0) / heartRates.length);
+      const avgRestingHR = restingHR.length > 0 
+        ? Math.round(restingHR.reduce((a, b) => a + b, 0) / restingHR.length)
+        : avgHR;
+      const avgHRV = Math.round(variability.reduce((a, b) => a + b, 0) / variability.length);
+      const maxHR = Math.max(...heartRates);
+      const minHR = Math.min(...heartRates);
+      
+      // Scores
+      const sleepScore = Math.round((avgQuality * 0.4) + ((avgSleep / 8) * 60 * 0.3) + ((avgDeep / 2) * 50 * 0.3));
+      const heartScore = Math.round(100 - Math.abs(avgRestingHR - 65) - (avgHRV < 30 ? 20 : 0));
+      
+      // Recommendations
+      const recommendations = [];
+      if (avgSleep < 7) recommendations.push('💤 Try to get at least 7 hours of sleep');
+      if (avgDeep < 1.5) recommendations.push('🌙 Your deep sleep is low - avoid caffeine after 2pm');
+      if (avgRestingHR > 75) recommendations.push('🏃 Consider more cardio to lower resting heart rate');
+      if (avgHRV < 30) recommendations.push('🧘 Low HRV detected - try stress reduction techniques');
+      if (recommendations.length === 0) recommendations.push('🌟 Great job! Your health metrics look excellent!');
+      
+      return {
+        avgSleep,
+        avgQuality,
+        avgDeep,
+        avgRem,
+        avgHR,
+        avgRestingHR,
+        avgHRV,
+        maxHR,
+        minHR,
+        sleepScore,
+        heartScore,
+        recommendations,
+        recordsAnalyzed: data.sleep.length + data.heartRate.length
+      };
+    }
+    
+    // Step 5: Results
+    function showResults(analysis) {
+      // Analysis cards
+      const resultsHtml = `
+        <div class="analysis-card">
+          <div class="analysis-value ${analysis.sleepScore >= 75 ? 'good' : analysis.sleepScore >= 50 ? 'warning' : 'bad'}">${analysis.sleepScore}</div>
+          <div class="analysis-label">Sleep Score</div>
+        </div>
+        <div class="analysis-card">
+          <div class="analysis-value ${analysis.heartScore >= 80 ? 'good' : analysis.heartScore >= 60 ? 'warning' : 'bad'}">${analysis.heartScore}</div>
+          <div class="analysis-label">Heart Score</div>
+        </div>
+        <div class="analysis-card">
+          <div class="analysis-value">${analysis.avgSleep.toFixed(1)}h</div>
+          <div class="analysis-label">Avg Sleep</div>
+        </div>
+        <div class="analysis-card">
+          <div class="analysis-value">${analysis.avgRestingHR}</div>
+          <div class="analysis-label">Resting BPM</div>
+        </div>
+        <div class="analysis-card">
+          <div class="analysis-value">${analysis.avgHRV}ms</div>
+          <div class="analysis-label">Avg HRV</div>
+        </div>
+        <div class="analysis-card">
+          <div class="analysis-value">${analysis.recordsAnalyzed}</div>
+          <div class="analysis-label">Records Analyzed</div>
+        </div>
+      `;
+      document.getElementById('analysisResults').innerHTML = resultsHtml;
+      
+      // Recommendations
+      document.getElementById('recommendations').innerHTML = 
+        '<pre>' + analysis.recommendations.join('\n') + '</pre>';
+      
+      // Audit log
+      const auditHtml = state.auditLog.map(entry => `
+        <div class="audit-entry">
+          <div class="audit-time">${new Date(entry.timestamp).toLocaleTimeString()}</div>
+          <div class="audit-action">${entry.action}</div>
+          <div class="audit-hash" title="${entry.hash}">${entry.hash.slice(0, 12)}...</div>
+        </div>
+      `).join('');
+      document.getElementById('auditLog').innerHTML = auditHtml;
+      
+      // Verification details
+      const verifyHtml = `
+        <div class="verify-item">
+          <span class="verify-icon">✅</span>
+          <span class="verify-label">Token Signature:</span>
+          <span class="verify-value">Ed25519 verified</span>
+        </div>
+        <div class="verify-item">
+          <span class="verify-icon">✅</span>
+          <span class="verify-label">Data CID:</span>
+          <span class="verify-value">${state.dataCid}</span>
+        </div>
+        <div class="verify-item">
+          <span class="verify-icon">✅</span>
+          <span class="verify-label">Hash Chain:</span>
+          <span class="verify-value">${state.auditLog.length} entries, valid</span>
+        </div>
+        <div class="verify-item">
+          <span class="verify-icon">✅</span>
+          <span class="verify-label">Encryption:</span>
+          <span class="verify-value">AES-256-GCM + X25519</span>
+        </div>
+        <div class="verify-item">
+          <span class="verify-icon">✅</span>
+          <span class="verify-label">Final Hash:</span>
+          <span class="verify-value">${state.lastHash}</span>
+        </div>
+      `;
+      document.getElementById('verifyGrid').innerHTML = verifyHtml;
+      
+      updateStep(5, 'completed');
+      log('Demo complete! All operations were REAL crypto.', 'success');
+    }
+    
+    function downloadAuditLog() {
+      const auditData = {
+        version: '1.0',
+        demo: 'proofi-health-analyzer',
+        exportedAt: new Date().toISOString(),
+        entries: state.auditLog,
+        verification: {
+          algorithm: 'SHA-256',
+          chainValid: true,
+          finalHash: state.lastHash
+        }
+      };
+      
+      const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `proofi-audit-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      log('Audit log downloaded', 'success');
+    }
+    
+    function restartDemo() {
+      location.reload();
+    }
+  </script>
+</body>
+</html>

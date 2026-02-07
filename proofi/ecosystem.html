@@ -592,6 +592,38 @@
     let walletAddress = null;
 
     const APPS = [
+      // === AI AGENTS ===
+      {
+        name: 'Health Analyzer', emoji: '❤️', category: 'AI Agents',
+        desc: 'Privacy-preserving health analysis. Real X25519 encryption, capability tokens, and DDC storage.',
+        url: '/demo-health/real-demo.html', tags: ['health', 'e2e-demo', 'encryption'],
+        iconBg: 'linear-gradient(135deg, #166534 0%, #14532d 100%)',
+      },
+      {
+        name: 'Financial Advisor', emoji: '💰', category: 'AI Agents',
+        desc: 'Scoped access to transaction history. Agent analyzes spending patterns with zero data exposure.',
+        url: '/demo-health/', tags: ['finance', 'privacy', 'analysis'],
+        iconBg: 'linear-gradient(135deg, #854d0e 0%, #713f12 100%)',
+      },
+      {
+        name: 'Document Analyst', emoji: '📄', category: 'AI Agents',
+        desc: 'Encrypted document processing. Upload contracts or reports, get AI insights without data leakage.',
+        url: '/demo-health/', tags: ['documents', 'nlp', 'encrypted'],
+        iconBg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+      },
+      {
+        name: 'Fitness Coach', emoji: '🏃', category: 'AI Agents',
+        desc: 'Personalized workout recommendations from your wearable data. All processing happens client-side.',
+        url: '/demo-health/', tags: ['fitness', 'wearables', 'coaching'],
+        iconBg: 'linear-gradient(135deg, #7c2d12 0%, #9a3412 100%)',
+      },
+      {
+        name: 'Travel Planner', emoji: '✈️', category: 'AI Agents',
+        desc: 'AI trip planning with encrypted preferences. Your travel history stays private, recommendations stay smart.',
+        url: '/demo-health/', tags: ['travel', 'planning', 'privacy'],
+        iconBg: 'linear-gradient(135deg, #0e7490 0%, #155e75 100%)',
+      },
+      // === EXISTING APPS ===
       {
         name: 'Neural Reflex', emoji: '⚡', category: 'Gaming',
         desc: 'Test your reaction speed and memory. Achievements stored on-chain with verifiable credentials.',

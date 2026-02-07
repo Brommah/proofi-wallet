@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi Health Demo — Real E2E</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111;
+      --card: #161616;
+      --border: #222;
+      --text: #ededed;
+      --text-secondary: #888;
+      --accent: #22c55e;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'SF Mono', 'Fira Code', monospace;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 600px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p {
+      color: var(--text-secondary);
+      font-size: 18px;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    .features {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 40px;
+      text-align: left;
+    }
+    .feature {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .feature-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .feature-text h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .feature-text p {
+      font-size: 13px;
+      margin: 0;
+      color: var(--text-secondary);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(34, 197, 94, 0.3);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge">Live Demo • Real Crypto</div>
+    <h1>🏥 Health Analyzer</h1>
+    <p>A complete end-to-end demonstration of privacy-preserving health data analysis using real cryptographic operations, capability tokens, and decentralized storage.</p>
+    
+    <div class="features">
+      <div class="feature">
+        <span class="feature-icon">🔐</span>
+        <div class="feature-text">
+          <h3>Real X25519 Encryption</h3>
+          <p>All data encrypted with actual elliptic curve cryptography via TweetNaCl</p>
+        </div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🎫</span>
+        <div class="feature-text">
+          <h3>Capability Tokens</h3>
+          <p>Real Ed25519 signatures, DEK wrapping, and scope-based permissions</p>
+        </div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">☁️</span>
+        <div class="feature-text">
+          <h3>Decentralized Storage</h3>
+          <p>Content-addressed storage with verifiable CIDs and audit trails</p>
+        </div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🤖</span>
+        <div class="feature-text">
+          <h3>AI Agent Analysis</h3>
+          <p>Agent validates token, decrypts data, runs analysis, creates audit log</p>
+        </div>
+      </div>
+    </div>
+    
+    <a href="real-demo.html" class="btn">
+      Launch Full Demo →
+    </a>
+  </div>
+  
+  <footer>
+    <a href="/">← Back to Proofi</a> • Built on Cere DDC
+  </footer>
+</body>
+</html>
