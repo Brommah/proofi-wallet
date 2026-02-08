@@ -16,5 +16,9 @@
   "funda_89641005": {"first_seen": "2026-01-26T21:05:00", "address": "Assendorperstraat 55-A", "rejected": true},
   "funda_89673633": {"first_seen": "2026-01-26T21:05:00", "address": "Bitterstraat 65", "rejected": true},
   "funda_89628873": {"first_seen": "2026-01-26T21:05:00", "address": "Vechtstraat 55", "rejected": true},
-  "funda_43203283": {"first_seen": "2026-01-26T21:05:00", "address": "Kerkstraat 11", "rejected": true}
+  "funda_43203283": {"first_seen": "2026-01-26T21:05:00", "address": "Kerkstraat 11", "rejected": true},
+  "par_a995f664": {"first_seen": "2026-02-08T18:00:00", "address": "Houtingkolk"},
+  "par_f06cad0c": {"first_seen": "2026-02-08T18:00:00", "address": "Sterrenkroos"},
+  "par_0dec5838": {"first_seen": "2026-02-08T18:00:00", "address": "Slotenhagenstraat"},
+  "funda_89692050": {"first_seen": "2026-02-08T18:00:00", "address": "Slotenhagenstraat 17"}
 }

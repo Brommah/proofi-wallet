@@ -1,866 +1,527 @@
 # Proofi Deployment Guide
 
-This guide covers deploying Proofi agents for production use, including self-hosting DDC and Cere nodes for true 100% trustless operation.
+> How to deploy and run all Proofi components.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-1. [Deployment Options](#deployment-options)
-2. [Quick Start (Using Public Infrastructure)](#quick-start-using-public-infrastructure)
-3. [Self-Hosted Agent](#self-hosted-agent)
-4. [Self-Hosted DDC Node](#self-hosted-ddc-node)
-5. [Self-Hosted Cere Node](#self-hosted-cere-node)
-6. [100% Trustless Setup](#100-trustless-setup)
-7. [Monitoring & Operations](#monitoring--operations)
-8. [Backup & Recovery](#backup--recovery)
+1. [Architecture Overview](#architecture-overview)
+2. [Prerequisites](#prerequisites)
+3. [Frontend (Vercel)](#frontend-vercel)
+4. [API Endpoints (Vercel Serverless)](#api-endpoints-vercel-serverless)
+5. [Agent SDK (NPM)](#agent-sdk-npm)
+6. [Health Analyzer Agent](#health-analyzer-agent)
+7. [Chrome Extension](#chrome-extension)
+8. [Mac Mini Health Scripts](#mac-mini-health-scripts)
+9. [Environment Variables](#environment-variables)
+10. [DNS & Domains](#dns--domains)
 
 ---
 
-## Deployment Options
-
-| Level | What You Host | Trust Required | Complexity |
-|-------|---------------|----------------|------------|
-| **Level 1** | Agent only | DDC + Cere mainnet | Low |
-| **Level 2** | Agent + DDC node | Cere mainnet only | Medium |
-| **Level 3** | Everything | None (100% trustless) | High |
+## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         DEPLOYMENT LEVELS                                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  Level 1: Agent Only (Quick Start)                                          │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                                                                     │   │
-│  │  YOUR INFRASTRUCTURE          PUBLIC INFRASTRUCTURE                │   │
-│  │  ┌──────────────────┐        ┌─────────────┐   ┌─────────────┐    │   │
-│  │  │                  │        │             │   │             │    │   │
-│  │  │  Health Analyzer │───────▶│  DDC CDN    │   │ Cere Chain  │    │   │
-│  │  │  Agent           │        │  (public)   │   │ (mainnet)   │    │   │
-│  │  │                  │        │             │   │             │    │   │
-│  │  └──────────────────┘        └─────────────┘   └─────────────┘    │   │
-│  │                                                                     │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  Level 2: Agent + DDC Node                                                  │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                                                                     │   │
-│  │  YOUR INFRASTRUCTURE                          PUBLIC                │   │
-│  │  ┌──────────────────┐    ┌──────────────────┐ ┌─────────────┐      │   │
-│  │  │                  │    │                  │ │             │      │   │
-│  │  │  Health Analyzer │───▶│  DDC Node        │ │ Cere Chain  │      │   │
-│  │  │  Agent           │    │  (self-hosted)   │ │ (mainnet)   │      │   │
-│  │  │                  │    │                  │ │             │      │   │
-│  │  └──────────────────┘    └──────────────────┘ └─────────────┘      │   │
-│  │                                                                     │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  Level 3: 100% Trustless                                                    │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                                                                     │   │
-│  │  YOUR INFRASTRUCTURE (Everything self-hosted)                       │   │
-│  │  ┌──────────────────┐    ┌──────────────────┐  ┌──────────────────┐│   │
-│  │  │                  │    │                  │  │                  ││   │
-│  │  │  Health Analyzer │───▶│  DDC Node        │  │  Cere Node       ││   │
-│  │  │  Agent           │    │                  │  │  (validator/     ││   │
-│  │  │                  │    │                  │  │   archive)       ││   │
-│  │  └──────────────────┘    └──────────────────┘  └──────────────────┘│   │
-│  │                                                                     │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          PROOFI ARCHITECTURE                            │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────────────────┐  │
+│  │   Frontend   │    │  API Routes  │    │    Cere DDC Storage      │  │
+│  │   (Vercel)   │◀──▶│   (Vercel)   │◀──▶│  (Decentralized Cloud)   │  │
+│  │              │    │              │    │                          │  │
+│  │ • landing    │    │ • /api/ddc   │    │ • Encrypted blobs        │  │
+│  │ • /app       │    │ • /api/drop  │    │ • User buckets           │  │
+│  │ • /portal    │    │ • /api/photos│    │ • Agent data access      │  │
+│  │ • demos      │    │              │    │                          │  │
+│  └──────────────┘    └──────────────┘    └──────────────────────────┘  │
+│         │                   │                                          │
+│         │                   │                                          │
+│         ▼                   ▼                                          │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────────────────┐  │
+│  │   Chrome     │    │   Agent SDK  │    │   Health Analyzer        │  │
+│  │  Extension   │    │   (@proofi/  │    │       Agent              │  │
+│  │              │    │  agent-sdk)  │    │                          │  │
+│  │ • Wallet UI  │    │              │    │ • Local or hosted        │  │
+│  │ • Token mgmt │    │ • Token      │    │ • Ollama or OpenAI       │  │
+│  │ • Signing    │    │   parsing    │    │ • Audit logging          │  │
+│  └──────────────┘    │ • Crypto     │    └──────────────────────────┘  │
+│                      │ • DDC access │                                  │
+│                      └──────────────┘                                  │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Quick Start (Using Public Infrastructure)
+## Prerequisites
 
-The fastest way to get started. Uses public DDC CDN and Cere mainnet.
+### Required
+- **Node.js** v18+ (v22 recommended)
+- **npm** v9+
+- **Vercel CLI** (`npm i -g vercel`)
+- **Git**
 
-### Prerequisites
+### For Health Scripts
+- **macOS** (Apple Silicon preferred)
+- **Ollama** (for local AI)
+- **tsx** (`npm i -g tsx`)
 
-- Linux server (Ubuntu 22.04+ recommended)
-- Node.js 18+
-- 4GB RAM minimum
-- Docker (optional)
+### Accounts
+- [Vercel](https://vercel.com) account (linked to GitHub)
+- [Cere DDC](https://cere.network) testnet/mainnet access
+- (Optional) [Upstash](https://upstash.com) for Redis/KV
 
-### Option A: Direct Installation
+---
+
+## Frontend (Vercel)
+
+### Initial Setup
 
 ```bash
-# 1. Clone and install
-git clone https://github.com/proofi/agents.git
-cd agents/health-analyzer
+cd ~/clawd/proofi
+
+# Login to Vercel
+vercel login
+
+# Link to existing project (or create new)
+vercel link
+
+# Pull environment variables
+vercel env pull .env.local
+```
+
+### Deploy to Production
+
+```bash
+# Deploy to production
+vercel --prod
+
+# Or push to main branch for auto-deploy
+git push origin main
+```
+
+### Deploy Preview
+
+```bash
+# Create preview deployment
+vercel
+
+# Or push to any non-main branch
+git push origin feature/my-feature
+```
+
+### Manual Build (Local)
+
+```bash
+# Install dependencies
 npm install
-npm run build
 
-# 2. Install Ollama (for local AI)
-curl -fsSL https://ollama.ai/install.sh | sh
-ollama pull llama3.2:3b
+# Vercel dev server (includes serverless functions)
+vercel dev
 
-# 3. Create Cere wallet
-# Visit https://portal.cere.network to create a wallet
-# Fund it with CERE tokens for transaction fees
-
-# 4. Configure environment
-cat > .env << 'EOF'
-WALLET_PATH=./cere-wallet.json
-WALLET_PASSPHRASE=your-secure-passphrase
-DDC_BUCKET_ID=1229
-PORT=3100
-OLLAMA_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.2:3b
-EOF
-
-# 5. Start the agent
-npm start
+# Access at http://localhost:3000
 ```
 
-### Option B: Docker
+### URL Rewrites
 
-```dockerfile
-# Dockerfile
-FROM node:20-slim
+Routes are configured in `vercel.json`:
 
-WORKDIR /app
-
-# Install Ollama (for local AI)
-RUN curl -fsSL https://ollama.ai/install.sh | sh
-
-# Copy application
-COPY package*.json ./
-RUN npm ci --only=production
-
-COPY dist/ ./dist/
-
-# Don't run as root
-USER node
-
-EXPOSE 3100
-
-CMD ["node", "dist/server.js"]
-```
-
-```yaml
-# docker-compose.yml
-version: '3.8'
-
-services:
-  ollama:
-    image: ollama/ollama:latest
-    volumes:
-      - ollama_data:/root/.ollama
-    ports:
-      - "11434:11434"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  health-analyzer:
-    build: .
-    ports:
-      - "3100:3100"
-    environment:
-      - WALLET_PATH=/run/secrets/cere_wallet
-      - WALLET_PASSPHRASE_FILE=/run/secrets/wallet_passphrase
-      - DDC_BUCKET_ID=1229
-      - OLLAMA_URL=http://ollama:11434
-      - OLLAMA_MODEL=llama3.2:3b
-    secrets:
-      - cere_wallet
-      - wallet_passphrase
-    depends_on:
-      ollama:
-        condition: service_healthy
-
-secrets:
-  cere_wallet:
-    file: ./secrets/cere-wallet.json
-  wallet_passphrase:
-    file: ./secrets/wallet-passphrase.txt
-
-volumes:
-  ollama_data:
-```
-
-```bash
-# Deploy with Docker Compose
-docker-compose up -d
-
-# Pull Ollama model (first time only)
-docker-compose exec ollama ollama pull llama3.2:3b
-
-# Check logs
-docker-compose logs -f health-analyzer
-```
+| Path | Destination |
+|------|-------------|
+| `/` | `/landing.html` |
+| `/app` | `/app/index.html` |
+| `/portal` | `/portal.html` |
+| `/ecosystem` | `/ecosystem.html` |
+| `/verify` | `/verify.html` |
+| `/health` | `/health.html` |
+| `/game` | `/game.html` |
+| `/api/*` | Serverless functions |
 
 ---
 
-## Self-Hosted Agent
+## API Endpoints (Vercel Serverless)
 
-### System Requirements
+### Structure
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| CPU | 2 cores | 4+ cores (for local AI) |
-| RAM | 4GB | 16GB (for 7B+ models) |
-| Disk | 20GB | 100GB SSD |
-| Network | 10 Mbps | 100 Mbps |
+```
+api/
+├── ddc/
+│   └── revoke.js      # Token revocation
+├── drop/
+│   ├── [dropId].js    # Get drop by ID
+│   ├── inbox/         # Inbox management
+│   └── upload.js      # Upload drops
+└── photos/
+    ├── chunk.js       # Chunked upload
+    ├── stream-upload.js
+    └── upload.js      # Photo upload
+```
 
-### Production Configuration
+### Deploy API Only
+
+API functions deploy automatically with the frontend. No separate deployment needed.
+
+### Testing Locally
 
 ```bash
-# /etc/systemd/system/proofi-health-analyzer.service
-[Unit]
-Description=Proofi Health Analyzer Agent
-After=network.target ollama.service
+vercel dev
 
-[Service]
-Type=simple
-User=proofi
-Group=proofi
-WorkingDirectory=/opt/proofi/health-analyzer
-EnvironmentFile=/opt/proofi/health-analyzer/.env
-ExecStart=/usr/bin/node dist/server.js
-Restart=always
-RestartSec=10
-
-# Security hardening
-NoNewPrivileges=true
-ProtectSystem=strict
-ProtectHome=true
-PrivateTmp=true
-ReadWritePaths=/opt/proofi/health-analyzer/audit-logs
-ReadWritePaths=/opt/proofi/health-analyzer/keys
-
-[Install]
-WantedBy=multi-user.target
+# Test endpoints
+curl http://localhost:3000/api/ddc/revoke?tokenId=test
+curl -X POST http://localhost:3000/api/drop/upload
 ```
 
-```bash
-# Enable and start
-sudo systemctl daemon-reload
-sudo systemctl enable proofi-health-analyzer
-sudo systemctl start proofi-health-analyzer
-sudo systemctl status proofi-health-analyzer
-```
+### CORS Configuration
 
-### Reverse Proxy (nginx)
-
-```nginx
-# /etc/nginx/sites-available/proofi-agent
-server {
-    listen 443 ssl http2;
-    server_name agent.yourdomain.com;
-
-    ssl_certificate /etc/letsencrypt/live/agent.yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/agent.yourdomain.com/privkey.pem;
-
-    # Security headers
-    add_header X-Frame-Options DENY;
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-    add_header Strict-Transport-Security "max-age=31536000" always;
-
-    # Rate limiting
-    limit_req zone=api burst=20 nodelay;
-    limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
-
-    location / {
-        proxy_pass http://127.0.0.1:3100;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
----
-
-## Self-Hosted DDC Node
-
-Running your own DDC node ensures your data never touches third-party infrastructure.
-
-### Hardware Requirements
-
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| CPU | 4 cores | 8+ cores |
-| RAM | 16GB | 32GB |
-| Disk | 500GB SSD | 2TB NVMe |
-| Network | 100 Mbps | 1 Gbps |
-
-### Installation
-
-```bash
-# 1. Install Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source ~/.cargo/env
-
-# 2. Clone DDC node
-git clone https://github.com/Cerebellum-Network/ddc-node.git
-cd ddc-node
-
-# 3. Build
-cargo build --release
-
-# 4. Configure
-cat > config.toml << 'EOF'
-[node]
-role = "storage"
-p2p_port = 9944
-rpc_port = 9933
-data_dir = "/var/lib/ddc-node"
-
-[storage]
-max_size = "500GB"
-replication_factor = 3
-
-[network]
-bootstrap_nodes = [
-    "/ip4/34.93.91.XXX/tcp/9944/p2p/12D3KooWXXX...",
-]
-
-[blockchain]
-endpoint = "wss://archive.mainnet.cere.network/ws"
-EOF
-
-# 5. Start node
-./target/release/ddc-node --config config.toml
-```
-
-### Systemd Service
-
-```bash
-# /etc/systemd/system/ddc-node.service
-[Unit]
-Description=Cere DDC Storage Node
-After=network.target
-
-[Service]
-Type=simple
-User=ddc
-Group=ddc
-WorkingDirectory=/opt/ddc-node
-ExecStart=/opt/ddc-node/target/release/ddc-node --config /etc/ddc-node/config.toml
-Restart=always
-RestartSec=10
-
-LimitNOFILE=65535
-LimitNPROC=65535
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### Connecting Agent to Self-Hosted DDC
-
-```bash
-# Update agent environment
-cat >> .env << 'EOF'
-DDC_CLUSTER_URL=http://localhost:9933
-DDC_BOOTSTRAP_NODES=/ip4/127.0.0.1/tcp/9944/p2p/YOUR_PEER_ID
-EOF
-```
-
----
-
-## Self-Hosted Cere Node
-
-For true trustless operation, run your own Cere blockchain node.
-
-### Node Types
-
-| Type | Purpose | Resources |
-|------|---------|-----------|
-| **Light** | Query only, no validation | 2GB RAM, 50GB disk |
-| **Full** | Full state, no validation | 8GB RAM, 200GB disk |
-| **Archive** | Full history, all data | 32GB RAM, 2TB+ disk |
-| **Validator** | Block production | 16GB RAM, 500GB disk |
-
-### Archive Node Setup (Recommended for Agents)
-
-```bash
-# 1. Clone Cere node
-git clone https://github.com/Cerebellum-Network/cere-node.git
-cd cere-node
-
-# 2. Build
-cargo build --release
-
-# 3. Download chain spec
-curl -O https://cere.network/specs/mainnet.json
-
-# 4. Start archive node
-./target/release/cere-node \
-  --chain mainnet.json \
-  --name "my-proofi-node" \
-  --pruning archive \
-  --rpc-external \
-  --rpc-cors all \
-  --rpc-methods Unsafe \
-  --base-path /var/lib/cere-node
-```
-
-### Docker Deployment
-
-```yaml
-# docker-compose.cere-node.yml
-version: '3.8'
-
-services:
-  cere-node:
-    image: cerebellumnetwork/cere-node:latest
-    command:
-      - --chain=mainnet
-      - --name=proofi-archive
-      - --pruning=archive
-      - --rpc-external
-      - --rpc-cors=all
-      - --rpc-port=9933
-      - --ws-port=9944
-      - --ws-external
-    volumes:
-      - cere_data:/data
-    ports:
-      - "9933:9933"  # RPC
-      - "9944:9944"  # WebSocket
-      - "30333:30333"  # P2P
-    restart: unless-stopped
-
-volumes:
-  cere_data:
-```
-
-### Connecting Agent to Self-Hosted Cere Node
-
-```typescript
-// src/attestation.ts
-const CERE_RPC = process.env.CERE_RPC || 'ws://localhost:9944';
-
-// Update .env
-// CERE_RPC=ws://localhost:9944
-```
-
----
-
-## 100% Trustless Setup
-
-Complete self-hosted infrastructure with zero external dependencies.
-
-### Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                        100% TRUSTLESS INFRASTRUCTURE                                │
-├─────────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                     │
-│  ┌───────────────────────────────────────────────────────────────────────────────┐ │
-│  │                          YOUR PRIVATE NETWORK                                 │ │
-│  │                                                                               │ │
-│  │  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    │ │
-│  │  │             │    │             │    │             │    │             │    │ │
-│  │  │   Ollama    │    │   Health    │    │    DDC      │    │   Cere      │    │ │
-│  │  │   Server    │◀───│   Analyzer  │───▶│   Node      │    │   Node      │    │ │
-│  │  │             │    │   Agent     │    │             │    │  (archive)  │    │ │
-│  │  │             │    │             │───▶│             │◀───│             │    │ │
-│  │  └─────────────┘    └─────────────┘    └──────┬──────┘    └──────┬──────┘    │ │
-│  │     :11434            :3100               :9933            :9944            │ │
-│  │                                               │                  │            │ │
-│  │                                               └──────────────────┘            │ │
-│  │                                                  P2P Network                  │ │
-│  │                                                                               │ │
-│  └───────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                     │
-│  External connections (optional, for network participation):                        │
-│  • DDC node peers with mainnet DDC network                                          │
-│  • Cere node syncs with mainnet validators                                          │
-│                                                                                     │
-│  Data flow:                                                                         │
-│  1. User uploads encrypted data → Your DDC node                                     │
-│  2. Agent fetches from your DDC → Decrypts locally                                  │
-│  3. Ollama runs inference → 100% local                                              │
-│  4. Agent stores encrypted output → Your DDC                                        │
-│  5. Attestation → Your Cere node → Propagates to network                            │
-│                                                                                     │
-└─────────────────────────────────────────────────────────────────────────────────────┘
-```
-
-### Docker Compose (Full Stack)
-
-```yaml
-# docker-compose.full.yml
-version: '3.8'
-
-services:
-  # Local AI
-  ollama:
-    image: ollama/ollama:latest
-    volumes:
-      - ollama_data:/root/.ollama
-    ports:
-      - "11434:11434"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]  # If you have NVIDIA GPU
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # DDC Storage Node
-  ddc-node:
-    image: cerebellumnetwork/ddc-node:latest
-    volumes:
-      - ddc_data:/data
-    ports:
-      - "9933:9933"   # RPC
-      - "9944:9944"   # P2P
-    environment:
-      - RUST_LOG=info
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9933/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Cere Blockchain Node (Archive)
-  cere-node:
-    image: cerebellumnetwork/cere-node:latest
-    command:
-      - --chain=mainnet
-      - --pruning=archive
-      - --rpc-external
-      - --rpc-cors=all
-      - --ws-external
-    volumes:
-      - cere_data:/data
-    ports:
-      - "9945:9944"   # WebSocket
-      - "9934:9933"   # RPC
-      - "30333:30333" # P2P
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9933/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  # Health Analyzer Agent
-  health-analyzer:
-    build: ./health-analyzer
-    ports:
-      - "3100:3100"
-    environment:
-      - WALLET_PATH=/run/secrets/cere_wallet
-      - WALLET_PASSPHRASE_FILE=/run/secrets/wallet_passphrase
-      - DDC_CLUSTER_URL=http://ddc-node:9933
-      - CERE_RPC=ws://cere-node:9944
-      - OLLAMA_URL=http://ollama:11434
-      - OLLAMA_MODEL=llama3.2:3b
-    secrets:
-      - cere_wallet
-      - wallet_passphrase
-    depends_on:
-      ollama:
-        condition: service_healthy
-      ddc-node:
-        condition: service_healthy
-      cere-node:
-        condition: service_healthy
-
-secrets:
-  cere_wallet:
-    file: ./secrets/cere-wallet.json
-  wallet_passphrase:
-    file: ./secrets/wallet-passphrase.txt
-
-volumes:
-  ollama_data:
-  ddc_data:
-  cere_data:
-```
-
-### Startup Script
-
-```bash
-#!/bin/bash
-# start-trustless.sh
-
-set -e
-
-echo "Starting 100% Trustless Proofi Stack..."
-
-# 1. Start infrastructure
-docker-compose -f docker-compose.full.yml up -d cere-node ddc-node ollama
-
-# 2. Wait for services
-echo "Waiting for services to be healthy..."
-sleep 30
-
-# 3. Pull Ollama model (if not exists)
-docker-compose exec ollama ollama pull llama3.2:3b
-
-# 4. Check Cere node sync status
-echo "Checking Cere node sync status..."
-curl -s http://localhost:9934 -H "Content-Type: application/json" \
-  -d '{"id":1, "jsonrpc":"2.0", "method":"system_syncState"}' | jq
-
-# 5. Start agent
-docker-compose -f docker-compose.full.yml up -d health-analyzer
-
-# 6. Verify
-echo "Verifying setup..."
-curl http://localhost:3100/status | jq
-
-echo "✅ Trustless stack is running!"
-echo "   Agent:      http://localhost:3100"
-echo "   DDC RPC:    http://localhost:9933"
-echo "   Cere WS:    ws://localhost:9945"
-```
-
----
-
-## Monitoring & Operations
-
-### Prometheus Metrics
-
-Add to agent:
-
-```typescript
-// src/metrics.ts
-import { collectDefaultMetrics, Registry, Counter, Histogram } from 'prom-client';
-
-export const registry = new Registry();
-collectDefaultMetrics({ register: registry });
-
-export const analysisCounter = new Counter({
-  name: 'proofi_analyses_total',
-  help: 'Total number of health analyses',
-  labelNames: ['status'],
-  registers: [registry],
-});
-
-export const analysisDuration = new Histogram({
-  name: 'proofi_analysis_duration_seconds',
-  help: 'Duration of health analysis',
-  buckets: [0.1, 0.5, 1, 2, 5, 10, 30],
-  registers: [registry],
-});
-
-// In server.ts
-app.get('/metrics', async (c) => {
-  return c.text(await registry.metrics());
-});
-```
-
-### Grafana Dashboard
+CORS headers are set in `vercel.json`:
 
 ```json
 {
-  "dashboard": {
-    "title": "Proofi Health Analyzer",
-    "panels": [
-      {
-        "title": "Analyses per Hour",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(proofi_analyses_total[1h])",
-            "legendFormat": "{{status}}"
-          }
-        ]
-      },
-      {
-        "title": "Analysis Duration",
-        "type": "heatmap",
-        "targets": [
-          {
-            "expr": "rate(proofi_analysis_duration_seconds_bucket[5m])"
-          }
-        ]
-      }
-    ]
-  }
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://proofi.ai, https://proofi-virid.vercel.app" }
+      ]
+    }
+  ]
 }
 ```
 
-### Health Checks
+Update allowed origins when adding new domains.
+
+---
+
+## Agent SDK (NPM)
+
+### Build & Publish
 
 ```bash
-# Check all services
-curl http://localhost:3100/status          # Agent
-curl http://localhost:9933/health           # DDC node
-curl http://localhost:9934/health           # Cere node
-curl http://localhost:11434/api/tags        # Ollama
+cd ~/clawd/proofi/agent-sdk
+
+# Install dependencies
+npm install
+
+# Build (creates dist/)
+npm run build
+
+# Run tests
+npm test
+
+# Publish to NPM (requires npm login)
+npm publish --access public
 ```
 
-### Log Aggregation
+### Package Details
 
-```yaml
-# docker-compose.logging.yml
-services:
-  loki:
-    image: grafana/loki:latest
-    ports:
-      - "3100:3100"
-    volumes:
-      - loki_data:/loki
+- **Name:** `@proofi/agent-sdk`
+- **Main exports:** `ProofiAgent`, token utils, crypto utils
+- **Formats:** CJS, ESM, TypeScript declarations
 
-  promtail:
-    image: grafana/promtail:latest
-    volumes:
-      - /var/log:/var/log
-      - ./promtail-config.yml:/etc/promtail/config.yml
-    command: -config.file=/etc/promtail/config.yml
+### Development
 
-volumes:
-  loki_data:
+```bash
+# Watch mode for development
+npm run dev
+
+# Run tests in watch mode
+npm run test:watch
 ```
 
 ---
 
-## Backup & Recovery
+## Health Analyzer Agent
 
-### What to Back Up
-
-| Data | Location | Frequency | Retention |
-|------|----------|-----------|-----------|
-| Agent keypair | `./keys/agent-keypair.json` | On change | Forever |
-| Wallet | `./cere-wallet.json` | On change | Forever |
-| Audit logs | `./audit-logs/` | Daily | 90 days |
-| DDC data | `/var/lib/ddc-node/` | Daily | As needed |
-| Cere chain | `/var/lib/cere-node/` | Weekly | As needed |
-
-### Backup Script
+### Local Development
 
 ```bash
-#!/bin/bash
-# backup-proofi.sh
+cd ~/clawd/proofi/agents/health-analyzer
 
-BACKUP_DIR="/backup/proofi/$(date +%Y-%m-%d)"
-mkdir -p "$BACKUP_DIR"
+# Install dependencies
+npm install
 
-# 1. Agent keys (encrypted backup)
-gpg --symmetric --cipher-algo AES256 \
-    -o "$BACKUP_DIR/agent-keypair.json.gpg" \
-    ./keys/agent-keypair.json
+# Copy environment template
+cp .env.example .env
+# Edit .env with your settings
 
-# 2. Wallet (encrypted backup)
-gpg --symmetric --cipher-algo AES256 \
-    -o "$BACKUP_DIR/cere-wallet.json.gpg" \
-    ./cere-wallet.json
+# Run in development
+npm run dev
 
-# 3. Audit logs
-tar -czf "$BACKUP_DIR/audit-logs.tar.gz" ./audit-logs/
-
-# 4. DDC data (if self-hosted)
-docker-compose exec ddc-node tar -czf - /data > "$BACKUP_DIR/ddc-data.tar.gz"
-
-# 5. Verify backup
-echo "Backup complete. Verify integrity:"
-ls -la "$BACKUP_DIR"
-sha256sum "$BACKUP_DIR"/*
-
-# 6. Upload to off-site storage (optional)
-# aws s3 sync "$BACKUP_DIR" s3://your-bucket/proofi-backups/
+# Or run in pure local mode
+npm run local
 ```
 
-### Recovery Procedure
+### Production Deployment
+
+#### Option 1: Docker
 
 ```bash
-#!/bin/bash
-# recover-proofi.sh
+# Build image
+docker build -t proofi/health-analyzer .
 
-BACKUP_DIR="/backup/proofi/2024-02-08"
+# Run container
+docker run -d \
+  --name health-analyzer \
+  -p 3001:3001 \
+  -e OPENAI_API_KEY=sk-... \
+  -e DDC_RPC_URL=wss://... \
+  proofi/health-analyzer
+```
 
-# 1. Stop services
-docker-compose down
+#### Option 2: Node.js Direct
 
-# 2. Restore agent keypair
-gpg --decrypt "$BACKUP_DIR/agent-keypair.json.gpg" > ./keys/agent-keypair.json
-chmod 600 ./keys/agent-keypair.json
+```bash
+npm run build
+npm start
+```
 
-# 3. Restore wallet
-gpg --decrypt "$BACKUP_DIR/cere-wallet.json.gpg" > ./cere-wallet.json
-chmod 600 ./cere-wallet.json
+#### Option 3: Railway/Render/Fly.io
 
-# 4. Restore audit logs
-tar -xzf "$BACKUP_DIR/audit-logs.tar.gz" -C ./
+Push to connected repo → auto-deploy.
 
-# 5. Restart services
-docker-compose up -d
+### Endpoints
 
-# 6. Verify
-curl http://localhost:3100/agent-info | jq '.publicKey'
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/status` | GET | Health check |
+| `/agent-info` | GET | Public key & capabilities |
+| `/analyze` | POST | Analyze health data with token |
+
+---
+
+## Chrome Extension
+
+### Build Extension
+
+```bash
+cd ~/clawd/proofi/chrome-ext
+
+# No build step needed - pure JS
+# Files are ready to load
+```
+
+### Load in Chrome (Development)
+
+1. Open `chrome://extensions/`
+2. Enable "Developer mode" (top right)
+3. Click "Load unpacked"
+4. Select `~/clawd/proofi/chrome-ext` folder
+
+### Package for Distribution
+
+```bash
+# Create zip for Chrome Web Store
+cd ~/clawd/proofi
+zip -r proofi-extension.zip chrome-ext/ \
+  -x "*.git*" \
+  -x "*node_modules*"
+```
+
+### Update Extension
+
+1. Bump version in `chrome-ext/manifest.json`
+2. Reload extension in `chrome://extensions/`
+3. For Web Store: upload new zip
+
+---
+
+## Mac Mini Health Scripts
+
+### Initial Setup
+
+```bash
+cd ~/clawd/proofi/scripts
+
+# Run setup script (installs everything)
+chmod +x setup-mac-mini.sh
+./setup-mac-mini.sh
+
+# This installs:
+# - Homebrew (if needed)
+# - Node.js & tsx
+# - Ollama with llama3.2:3b model
+# - Directory structure at ~/.proofi/
+```
+
+### Directory Structure Created
+
+```
+~/.proofi/
+├── health/
+│   ├── raw/          # Place export.xml here
+│   └── parsed/       # Parsed JSON
+├── encrypted/        # Encrypted scope data
+├── config/
+│   ├── proofi.json
+│   ├── scopes.json
+│   └── user-preferences.json
+└── logs/
+```
+
+### Import Health Data
+
+```bash
+cd ~/clawd/proofi/scripts
+npm install
+
+# Import from Apple Health export
+npm run import -- --file ~/.proofi/health/raw/export.xml
+
+# Import specific scopes only
+npm run import -- --file export.xml --scopes steps,heartRate,sleep
+
+# Preview without storing
+npm run import -- --file export.xml --preview
+```
+
+### Manage Scope Sharing
+
+```bash
+# Interactive scope management
+npm run scopes
+
+# CLI options
+npm run scopes -- --list
+npm run scopes -- --enable steps,heartRate
+npm run scopes -- --disable bodyMass
+npm run scopes -- --status
 ```
 
 ---
 
-## Security Hardening
+## Environment Variables
 
-### Firewall Rules
+### Required Variables
 
-```bash
-# Allow only necessary ports
-ufw default deny incoming
-ufw default allow outgoing
+| Variable | Description | Where Used |
+|----------|-------------|------------|
+| `DDC_RPC_URL` | Cere DDC websocket URL | API, Agents |
+| `DDC_BUCKET_ID` | Default bucket ID | API |
+| `UPSTASH_REDIS_REST_URL` | Redis URL | API (caching) |
+| `UPSTASH_REDIS_REST_TOKEN` | Redis auth token | API |
 
-# SSH (restrict to specific IPs)
-ufw allow from 192.168.1.0/24 to any port 22
+### Optional Variables
 
-# Agent API (if exposing publicly)
-ufw allow 443/tcp
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `OPENAI_API_KEY` | For AI analysis | (use Ollama instead) |
+| `VERCEL_ENV` | Environment name | `development` |
+| `LOG_LEVEL` | Logging verbosity | `info` |
 
-# Internal services (localhost only)
-# DDC, Cere, Ollama should not be exposed
-
-ufw enable
-```
-
-### SELinux Policy
+### Setting Variables
 
 ```bash
-# /etc/selinux/proofi.te
-policy_module(proofi, 1.0)
+# Local development
+cp .env.example .env.local
+# Edit .env.local
 
-require {
-    type httpd_t;
-    type httpd_sys_content_t;
-    class file { read write create };
-}
+# Vercel
+vercel env add DDC_RPC_URL production
+# Or use Vercel dashboard: Project Settings → Environment Variables
 
-allow httpd_t httpd_sys_content_t:file { read write create };
-```
-
-### Secrets Management
-
-For production, use a secrets manager instead of files:
-
-```bash
-# HashiCorp Vault
-vault kv put secret/proofi/wallet @cere-wallet.json
-vault kv put secret/proofi/passphrase value="your-passphrase"
-
-# In Docker
-environment:
-  - VAULT_ADDR=https://vault.yourdomain.com
-  - VAULT_TOKEN_FILE=/run/secrets/vault_token
+# Mac Mini scripts
+export OPENAI_API_KEY=sk-...
+# Or add to ~/.zshrc
 ```
 
 ---
 
-## Next Steps
+## DNS & Domains
 
-- [SECURITY.md](./SECURITY.md) — Security best practices
-- [CLI.md](./CLI.md) — Command reference
-- [EXAMPLES.md](./EXAMPLES.md) — Usage examples
+### Current Domains
+
+| Domain | Points To |
+|--------|-----------|
+| `proofi.ai` | Vercel (production) |
+| `proofi-virid.vercel.app` | Vercel (auto) |
+
+### Adding Custom Domain
+
+1. Go to Vercel Dashboard → Project → Settings → Domains
+2. Add domain
+3. Configure DNS:
+   - **A record:** `76.76.21.21`
+   - **CNAME:** `cname.vercel-dns.com` (for subdomains)
+4. Wait for SSL certificate (automatic)
+
+### Subdomain Setup
+
+```
+app.proofi.ai   → CNAME → cname.vercel-dns.com
+api.proofi.ai   → CNAME → cname.vercel-dns.com
+docs.proofi.ai  → (future documentation site)
+```
+
+---
+
+## Deployment Checklist
+
+### Before Production Deploy
+
+- [ ] All tests passing (`npm test`)
+- [ ] Environment variables set in Vercel
+- [ ] CORS origins updated if adding domains
+- [ ] Version bumped in package.json
+- [ ] No secrets in code or logs
+- [ ] Changelog updated
+
+### After Production Deploy
+
+- [ ] Verify landing page loads
+- [ ] Test wallet connection flow
+- [ ] Test API endpoints
+- [ ] Check browser console for errors
+- [ ] Monitor logs in Vercel dashboard
+- [ ] Test on mobile
+
+---
+
+## Rollback
+
+### Vercel Rollback
+
+```bash
+# List deployments
+vercel ls
+
+# Promote previous deployment
+vercel promote <deployment-url>
+```
+
+Or in Vercel Dashboard: Deployments → Click deployment → ⋮ → Promote to Production
+
+### Git Rollback
+
+```bash
+git revert HEAD
+git push origin main
+```
+
+---
+
+## Quick Commands Reference
+
+```bash
+# Deploy to Vercel production
+vercel --prod
+
+# Local development with API
+vercel dev
+
+# Build agent SDK
+cd agent-sdk && npm run build
+
+# Run health analyzer locally
+cd agents/health-analyzer && npm run local
+
+# Import health data
+cd scripts && npm run import -- --file export.xml
+
+# Package Chrome extension
+zip -r proofi-extension.zip chrome-ext/
+```
+
+---
+
+*Last updated: 2025-02-08*

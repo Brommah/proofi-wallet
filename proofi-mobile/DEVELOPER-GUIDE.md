@@ -208,12 +208,38 @@ GET  /balance/:address
 ## Running Tests
 
 ```bash
-# Unit tests
+# Run all tests
 npm test
 
-# E2E tests (requires simulator)
-npm run test:e2e
+# Run tests in watch mode
+npm test -- --watch
+
+# Run specific test file
+npm test -- __tests__/HealthScopesScreen.test.tsx
+
+# Run with coverage
+npm test -- --coverage
 ```
+
+### Test Structure
+
+Tests are located in `__tests__/` and cover:
+
+- **Screen tests**: UI rendering and interactions
+  - `HealthScopesScreen.test.tsx` - Health data scope selection
+  - `CapabilityTokensScreen.test.tsx` - Agent access tokens
+  - `AuditChainScreen.test.tsx` - Audit log visualization
+  - `ProofiScreen.test.tsx` - Main Proofi hub
+- **Store tests**: State management
+  - `walletStore.test.ts` - Wallet connection and balance
+- **Crypto tests**: Security utilities
+  - `crypto.test.ts` - AES-GCM encryption, key derivation
+
+### Test Dependencies
+
+- **Jest** - Test runner
+- **jest-expo** - Expo-specific test preset
+- **@testing-library/react-native** - React Native testing utilities
 
 ## Building for Production
 
@@ -250,6 +276,35 @@ EXPO_PUBLIC_CERE_RPC=https://archive.mainnet.cere.network
 - Health data never leaves the device
 - AI analysis runs locally (via Ollama on desktop, future mobile ML)
 - Only cryptographic proofs stored on-chain
+
+### Cryptography
+
+The app uses industry-standard cryptography via `@noble/hashes` and `@noble/ciphers`:
+
+**Key Derivation:**
+- PBKDF2-HMAC-SHA256 with 100,000 iterations
+- Matches web wallet implementation exactly
+- 32-byte keys derived from PIN + salt
+
+**Seed Encryption:**
+- AES-256-GCM for authenticated encryption
+- Random 16-byte salt per encryption
+- Random 12-byte IV (nonce) per encryption
+- Automatic authentication tag verification
+- Format: `base64(salt || iv || ciphertext || authTag)`
+
+```typescript
+import { encryptSeed, decryptSeed, verifyPin } from './src/lib/crypto';
+
+// Encrypt seed with PIN
+const encrypted = await encryptSeed(seedHex, pin);
+
+// Decrypt seed with PIN (throws if wrong PIN)
+const decrypted = await decryptSeed(encrypted, pin);
+
+// Verify PIN without decrypting
+const isValid = await verifyPin(encrypted, pin);
+```
 
 ### Capability Token Model
 
