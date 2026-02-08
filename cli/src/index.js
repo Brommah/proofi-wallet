@@ -512,6 +512,253 @@ cred
   });
 
 // ══════════════════════════════════════════════════════════════════
+// MEMORY commands — Granular access control for memory files
+// ══════════════════════════════════════════════════════════════════
+const memory = program.command('memory').description('Manage memory file access');
+
+const MEMORY_FILE = path.join(CONFIG_DIR, 'memory-registry.json');
+
+function loadMemoryRegistry() {
+  if (!fs.existsSync(MEMORY_FILE)) return { files: {}, grants: [] };
+  return JSON.parse(fs.readFileSync(MEMORY_FILE, 'utf8'));
+}
+
+function saveMemoryRegistry(registry) {
+  fs.writeFileSync(MEMORY_FILE, JSON.stringify(registry, null, 2));
+}
+
+function parseMemorySections(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const sections = {};
+  let currentSection = '_root';
+  let currentContent = [];
+  
+  content.split('\n').forEach(line => {
+    const headerMatch = line.match(/^##\s+(.+)$/);
+    if (headerMatch) {
+      if (currentContent.length > 0) {
+        sections[currentSection] = currentContent.join('\n').trim();
+      }
+      currentSection = headerMatch[1].toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      currentContent = [];
+    } else {
+      currentContent.push(line);
+    }
+  });
+  
+  if (currentContent.length > 0) {
+    sections[currentSection] = currentContent.join('\n').trim();
+  }
+  
+  return sections;
+}
+
+memory
+  .command('register <file>')
+  .description('Register a memory file for access control')
+  .action((file) => {
+    requireWallet();
+    
+    const filePath = path.resolve(file);
+    if (!fs.existsSync(filePath)) {
+      console.log(chalk.red(`\n❌ File not found: ${file}\n`));
+      process.exit(1);
+    }
+    
+    const sections = parseMemorySections(filePath);
+    const registry = loadMemoryRegistry();
+    
+    registry.files[filePath] = {
+      registeredAt: Date.now(),
+      sections: Object.keys(sections),
+      hash: crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex').slice(0, 16)
+    };
+    
+    saveMemoryRegistry(registry);
+    auditLog('cli', 'memory:register', path.basename(filePath), 'SUCCESS');
+    
+    console.log(chalk.green(`\n✅ Memory file registered\n`));
+    console.log(chalk.white('File:     '), chalk.gray(filePath));
+    console.log(chalk.white('Sections: '), chalk.yellow(Object.keys(sections).length));
+    console.log('');
+    console.log(chalk.cyan('Available sections:'));
+    Object.keys(sections).forEach(s => {
+      const preview = sections[s].slice(0, 50).replace(/\n/g, ' ');
+      console.log(chalk.gray(`  • ${s}: "${preview}..."`));
+    });
+    console.log('');
+    console.log(chalk.gray('Grant access with: proofi memory grant <agent> <file> --sections "section1,section2"'));
+    console.log('');
+  });
+
+memory
+  .command('grant <agent> <file>')
+  .description('Grant agent access to memory sections')
+  .option('-s, --sections <list>', 'Comma-separated sections (or "all")', 'all')
+  .option('-e, --expires <hours>', 'Expiry in hours', '24')
+  .action((agent, file, opts) => {
+    requireWallet();
+    
+    const filePath = path.resolve(file);
+    const registry = loadMemoryRegistry();
+    
+    if (!registry.files[filePath]) {
+      console.log(chalk.red(`\n❌ File not registered. Run: proofi memory register ${file}\n`));
+      process.exit(1);
+    }
+    
+    const agents = loadAgents();
+    const agentRecord = agents.find(a => a.name === agent);
+    if (!agentRecord) {
+      console.log(chalk.red(`\n❌ Agent "${agent}" not authorized. Run: proofi agent add ${agent}\n`));
+      process.exit(1);
+    }
+    
+    const availableSections = registry.files[filePath].sections;
+    let grantedSections;
+    
+    if (opts.sections === 'all') {
+      grantedSections = availableSections;
+    } else {
+      grantedSections = opts.sections.split(',').map(s => s.trim());
+      const invalid = grantedSections.filter(s => !availableSections.includes(s));
+      if (invalid.length > 0) {
+        console.log(chalk.red(`\n❌ Unknown sections: ${invalid.join(', ')}\n`));
+        console.log(chalk.gray(`Available: ${availableSections.join(', ')}`));
+        process.exit(1);
+      }
+    }
+    
+    const grant = {
+      id: `grant-${Date.now()}`,
+      agent,
+      file: filePath,
+      sections: grantedSections,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + parseInt(opts.expires) * 60 * 60 * 1000
+    };
+    
+    // Remove existing grant for same agent+file
+    registry.grants = registry.grants.filter(g => !(g.agent === agent && g.file === filePath));
+    registry.grants.push(grant);
+    saveMemoryRegistry(registry);
+    
+    auditLog('cli', 'memory:grant', `${agent}:${grantedSections.length} sections`, 'SUCCESS');
+    
+    console.log(chalk.green(`\n✅ Access granted\n`));
+    console.log(chalk.white('Agent:    '), chalk.yellow(agent));
+    console.log(chalk.white('File:     '), chalk.gray(path.basename(filePath)));
+    console.log(chalk.white('Sections: '), chalk.cyan(grantedSections.join(', ')));
+    console.log(chalk.white('Expires:  '), chalk.gray(new Date(grant.expiresAt).toLocaleString()));
+    console.log('');
+  });
+
+memory
+  .command('revoke <agent> <file>')
+  .description('Revoke agent access to memory')
+  .action((agent, file) => {
+    requireWallet();
+    
+    const filePath = path.resolve(file);
+    const registry = loadMemoryRegistry();
+    
+    const before = registry.grants.length;
+    registry.grants = registry.grants.filter(g => !(g.agent === agent && g.file === filePath));
+    
+    if (registry.grants.length === before) {
+      console.log(chalk.yellow(`\n⚠️  No grant found for ${agent} on ${path.basename(filePath)}\n`));
+      return;
+    }
+    
+    saveMemoryRegistry(registry);
+    auditLog('cli', 'memory:revoke', `${agent}:${path.basename(filePath)}`, 'SUCCESS');
+    
+    console.log(chalk.green(`\n✅ Access revoked for ${agent}\n`));
+  });
+
+memory
+  .command('list')
+  .description('List memory grants')
+  .action(() => {
+    requireWallet();
+    
+    const registry = loadMemoryRegistry();
+    
+    if (registry.grants.length === 0) {
+      console.log(chalk.yellow('\n⚠️  No memory grants\n'));
+      return;
+    }
+    
+    console.log(chalk.cyan('\n═══ MEMORY ACCESS GRANTS ═══\n'));
+    
+    registry.grants.forEach(g => {
+      const expired = Date.now() > g.expiresAt;
+      const status = expired ? chalk.red('[EXPIRED]') : chalk.green('[ACTIVE]');
+      
+      console.log(`${status} ${chalk.yellow(g.agent)} → ${chalk.white(path.basename(g.file))}`);
+      console.log(chalk.gray(`   Sections: ${g.sections.join(', ')}`));
+      console.log(chalk.gray(`   Expires: ${new Date(g.expiresAt).toLocaleString()}`));
+      console.log('');
+    });
+  });
+
+memory
+  .command('read <file>')
+  .description('Read memory as an agent (for testing)')
+  .option('-a, --agent <name>', 'Agent name', 'test-agent')
+  .option('-s, --section <name>', 'Specific section')
+  .action((file, opts) => {
+    requireWallet();
+    
+    const filePath = path.resolve(file);
+    const registry = loadMemoryRegistry();
+    
+    // Check grant
+    const grant = registry.grants.find(g => 
+      g.agent === opts.agent && 
+      g.file === filePath &&
+      Date.now() < g.expiresAt
+    );
+    
+    if (!grant) {
+      auditLog(opts.agent, 'memory:read', path.basename(filePath), 'DENIED');
+      console.log(chalk.red(`\n❌ Access denied for agent "${opts.agent}"\n`));
+      console.log(chalk.gray('No valid grant found. Request access from wallet owner.'));
+      process.exit(1);
+    }
+    
+    const sections = parseMemorySections(filePath);
+    
+    if (opts.section) {
+      if (!grant.sections.includes(opts.section)) {
+        auditLog(opts.agent, 'memory:read', `${opts.section}`, 'DENIED (scope)');
+        console.log(chalk.red(`\n❌ Section "${opts.section}" not in grant\n`));
+        console.log(chalk.gray(`Granted sections: ${grant.sections.join(', ')}`));
+        process.exit(1);
+      }
+      
+      auditLog(opts.agent, 'memory:read', opts.section, 'SUCCESS');
+      console.log(chalk.cyan(`\n═══ ${opts.section.toUpperCase()} ═══\n`));
+      console.log(sections[opts.section] || '(empty)');
+      console.log('');
+    } else {
+      // Return all granted sections
+      auditLog(opts.agent, 'memory:read', `${grant.sections.length} sections`, 'SUCCESS');
+      
+      console.log(chalk.cyan(`\n═══ MEMORY (${opts.agent}) ═══\n`));
+      console.log(chalk.gray(`Granted sections: ${grant.sections.join(', ')}\n`));
+      
+      grant.sections.forEach(s => {
+        if (sections[s]) {
+          console.log(chalk.yellow(`## ${s}`));
+          console.log(sections[s]);
+          console.log('');
+        }
+      });
+    }
+  });
+
+// ══════════════════════════════════════════════════════════════════
 // HELPERS
 // ══════════════════════════════════════════════════════════════════
 

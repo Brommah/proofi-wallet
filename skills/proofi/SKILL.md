@@ -115,3 +115,43 @@ proofi:
 ```
 
 No external API calls. All processing local.
+
+## Memory Access Control
+
+Grant third party agents access to specific sections of your memory:
+
+```bash
+# Register memory file (parses ## sections)
+proofi memory register ~/clawd/MEMORY.md
+
+# Grant agent access to specific sections
+proofi memory grant fred-assistant ~/clawd/MEMORY.md --sections "projects,work"
+
+# View all grants
+proofi memory list
+
+# Revoke access
+proofi memory revoke fred-assistant ~/clawd/MEMORY.md
+
+# Agent reads (only permitted sections)
+proofi memory read ~/clawd/MEMORY.md --agent fred-assistant
+```
+
+### How It Works
+
+1. **Register**: Parse MEMORY.md into sections (## headers)
+2. **Grant**: Give agent access to specific sections only
+3. **Read**: Agent can only read granted sections
+4. **Audit**: Every read logged with agent, section, timestamp
+5. **Expire**: Grants auto-expire (default 24h)
+6. **Revoke**: Instant revocation
+
+### Audit Example
+
+```
+proofi audit
+
+2026-02-08T12:00:00Z | cli            | memory:grant | 2 sections | SUCCESS
+2026-02-08T12:00:05Z | fred-assistant | memory:read  | projects   | SUCCESS
+2026-02-08T12:00:06Z | fred-assistant | memory:read  | personal   | DENIED (scope)
+```
