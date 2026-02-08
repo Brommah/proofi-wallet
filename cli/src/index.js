@@ -29,7 +29,14 @@ const CONFIG_DIR = path.join(os.homedir(), '.proofi');
 const WALLET_FILE = path.join(CONFIG_DIR, 'wallet.json');
 const AGENTS_FILE = path.join(CONFIG_DIR, 'agents.json');
 const CREDS_DIR = path.join(CONFIG_DIR, 'credentials');
+const AUDIT_FILE = path.join(CONFIG_DIR, 'audit.log');
 const API_URL = process.env.PROOFI_API || 'https://proofi-api-production.up.railway.app';
+
+// Audit log helper
+function auditLog(agent, action, details, status) {
+  const entry = `${new Date().toISOString()} | ${agent} | ${action} | ${details} | ${status}\n`;
+  fs.appendFileSync(AUDIT_FILE, entry);
+}
 
 // Ensure dirs exist
 [CONFIG_DIR, CREDS_DIR].forEach(dir => {
@@ -394,6 +401,9 @@ program
       signature: `sig:${proofHash.slice(32)}`
     };
 
+    // Audit log
+    auditLog(opts.agent, `proof:${type}`, opts.predicate || '-', 'SUCCESS');
+
     console.log(chalk.green('\n✅ Proof generated!\n'));
     console.log(chalk.gray(JSON.stringify(proof, null, 2)));
     console.log('');
@@ -575,5 +585,117 @@ function askHidden(prompt) {
     }
   });
 }
+
+// ══════════════════════════════════════════════════════════════════
+// ENCRYPT command
+// ══════════════════════════════════════════════════════════════════
+program
+  .command('encrypt <file>')
+  .description('Encrypt a file with wallet key')
+  .option('-o, --output <path>', 'Output path')
+  .action(async (file, opts) => {
+    requireWallet();
+    
+    if (!fs.existsSync(file)) {
+      console.log(chalk.red(`\n❌ File not found: ${file}\n`));
+      process.exit(1);
+    }
+    
+    const wallet = JSON.parse(fs.readFileSync(WALLET_FILE, 'utf8'));
+    const pin = await askHidden('Enter PIN: ');
+    
+    // Derive key
+    const salt = Buffer.from(wallet.salt, 'hex');
+    const key = crypto.pbkdf2Sync(`${wallet.email}:${pin}`, salt, 100000, 32, 'sha512');
+    
+    // Read and encrypt
+    const plaintext = fs.readFileSync(file);
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+    const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
+    const tag = cipher.getAuthTag();
+    
+    // Output: iv (12) + tag (16) + ciphertext
+    const output = Buffer.concat([iv, tag, encrypted]);
+    const outPath = opts.output || file + '.enc';
+    fs.writeFileSync(outPath, output);
+    
+    auditLog('cli', 'encrypt', path.basename(file), 'SUCCESS');
+    console.log(chalk.green(`\n✅ Encrypted: ${outPath}\n`));
+  });
+
+// ══════════════════════════════════════════════════════════════════
+// DECRYPT command
+// ══════════════════════════════════════════════════════════════════
+program
+  .command('decrypt <file>')
+  .description('Decrypt a file with wallet key')
+  .option('-o, --output <path>', 'Output path')
+  .action(async (file, opts) => {
+    requireWallet();
+    
+    if (!fs.existsSync(file)) {
+      console.log(chalk.red(`\n❌ File not found: ${file}\n`));
+      process.exit(1);
+    }
+    
+    const wallet = JSON.parse(fs.readFileSync(WALLET_FILE, 'utf8'));
+    const pin = await askHidden('Enter PIN: ');
+    
+    // Derive key
+    const salt = Buffer.from(wallet.salt, 'hex');
+    const key = crypto.pbkdf2Sync(`${wallet.email}:${pin}`, salt, 100000, 32, 'sha512');
+    
+    // Read and decrypt
+    const data = fs.readFileSync(file);
+    const iv = data.slice(0, 12);
+    const tag = data.slice(12, 28);
+    const ciphertext = data.slice(28);
+    
+    try {
+      const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+      decipher.setAuthTag(tag);
+      const decrypted = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+      
+      const outPath = opts.output || file.replace('.enc', '');
+      fs.writeFileSync(outPath, decrypted);
+      
+      auditLog('cli', 'decrypt', path.basename(file), 'SUCCESS');
+      console.log(chalk.green(`\n✅ Decrypted: ${outPath}\n`));
+    } catch {
+      auditLog('cli', 'decrypt', path.basename(file), 'FAILED');
+      console.log(chalk.red('\n❌ Decryption failed (wrong PIN or corrupted file)\n'));
+      process.exit(1);
+    }
+  });
+
+// ══════════════════════════════════════════════════════════════════
+// AUDIT command
+// ══════════════════════════════════════════════════════════════════
+program
+  .command('audit')
+  .description('Show audit log')
+  .option('-n, --lines <n>', 'Number of lines', '20')
+  .action((opts) => {
+    if (!fs.existsSync(AUDIT_FILE)) {
+      console.log(chalk.yellow('\n⚠️  No audit log yet\n'));
+      return;
+    }
+    
+    const lines = fs.readFileSync(AUDIT_FILE, 'utf8').trim().split('\n');
+    const n = parseInt(opts.lines);
+    const recent = lines.slice(-n);
+    
+    console.log(chalk.cyan('\n═══ AUDIT LOG ═══\n'));
+    console.log(chalk.gray('Timestamp                    | Agent      | Action         | Details    | Status'));
+    console.log(chalk.gray('─'.repeat(90)));
+    
+    recent.forEach(line => {
+      const [ts, agent, action, details, status] = line.split(' | ');
+      const statusColor = status === 'SUCCESS' ? chalk.green : chalk.red;
+      console.log(`${chalk.gray(ts)} | ${chalk.yellow(agent.padEnd(10))} | ${action.padEnd(14)} | ${details.padEnd(10)} | ${statusColor(status)}`);
+    });
+    console.log('');
+  });
 
 program.parse();

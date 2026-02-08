@@ -90,9 +90,32 @@ proofi proof age --predicate ">=18" --agent clawdbot
     └── ...
 ```
 
+## Encryption
+
+```bash
+# Encrypt any file with wallet key
+proofi encrypt ~/clawd/MEMORY.md
+# → ~/.proofi/MEMORY.md.enc
+
+# Decrypt
+proofi decrypt MEMORY.md.enc -o MEMORY.md
+```
+
+## Audit Log
+
+```bash
+# View recent activity
+proofi audit
+
+# Output:
+# 2026-02-08T11:55:00Z | clawdbot | proof:age | >=18 | SUCCESS
+# 2026-02-08T11:56:00Z | cli      | encrypt   | MEMORY.md | SUCCESS
+```
+
 ## Security
 
 - Private key encrypted with PIN-derived key (PBKDF2 + AES-256-GCM)
 - Keys never leave your device
 - PIN required for signing
 - Each proof cryptographically signed
+- Full audit trail of all operations
