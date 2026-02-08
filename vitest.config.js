@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: ['tests/unit/**/*.test.js', 'tests/integration/**/*.test.js'],
+    include: ['tests/unit/**/*.test.js', 'tests/integration/**/*.test.js', 'tests/openclaw-e2e/**/*.test.ts'],
     exclude: ['tests/e2e/**'],
     setupFiles: ['tests/setup.js'],
     coverage: {
