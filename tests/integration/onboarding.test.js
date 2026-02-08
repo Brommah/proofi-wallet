@@ -167,13 +167,13 @@ describe('Onboarding Flow', () => {
 
     it('should call crypto.subtle.importKey', async () => {
       await setPassword('password123', 'password123');
-      expect(crypto.subtle.importKey).toHaveBeenCalledWith(
-        'raw',
-        expect.any(Uint8Array),
-        'PBKDF2',
-        false,
-        ['deriveBits']
-      );
+      expect(crypto.subtle.importKey).toHaveBeenCalled();
+      const call = crypto.subtle.importKey.mock.calls[0];
+      expect(call[0]).toBe('raw');
+      expect(ArrayBuffer.isView(call[1])).toBe(true); // Cross-realm Uint8Array check
+      expect(call[2]).toBe('PBKDF2');
+      expect(call[3]).toBe(false);
+      expect(call[4]).toEqual(['deriveBits']);
     });
   });
 
