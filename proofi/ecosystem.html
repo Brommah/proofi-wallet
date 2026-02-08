@@ -499,17 +499,220 @@
       color: var(--text-tertiary);
     }
 
-    /* ===== RESPONSIVE ===== */
+    /* ===== MOBILE MENU ===== */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      padding: 12px;
+      cursor: pointer;
+      min-width: 44px;
+      min-height: 44px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mobile-menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text);
+      transition: all 0.3s;
+    }
+
+    .mobile-menu-btn.active span:nth-child(1) {
+      transform: rotate(45deg) translate(4px, 4px);
+    }
+
+    .mobile-menu-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-menu-btn.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(4px, -4px);
+    }
+
+    .mobile-nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      top: 64px;
+      background: rgba(0, 0, 0, 0.98);
+      z-index: 99;
+      padding: 24px;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobile-nav-overlay.active {
+      display: flex;
+    }
+
+    .mobile-nav-overlay a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 16px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+    }
+
+    .mobile-nav-overlay .connect-btn {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    /* ===== RESPONSIVE - 1024px ===== */
+    @media (max-width: 1024px) {
+      .app-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+
+    /* ===== RESPONSIVE - 768px ===== */
     @media (max-width: 768px) {
       .nav-links { display: none; }
+      .mobile-menu-btn { display: flex; }
       .hero { padding: 48px 20px 32px; }
       .app-grid { grid-template-columns: 1fr; }
       .controls { flex-direction: column; align-items: stretch; }
-      .search-input { max-width: none; }
+      .search-input { max-width: none; min-height: 44px; }
       .cta-top { padding: 32px 24px 24px; }
       .cta-code { margin: 0 20px; font-size: 11px; }
       .cta-actions { padding: 24px 20px 32px; }
       .footer-inner { flex-direction: column; gap: 12px; }
+
+      body.nav-open {
+        overflow: hidden;
+      }
+
+      .filter-btn {
+        min-height: 44px;
+        padding: 10px 16px;
+      }
+    }
+
+    /* ===== RESPONSIVE - 414px ===== */
+    @media (max-width: 414px) {
+      .nav-inner {
+        padding: 0 16px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .app-card {
+        padding: 20px;
+      }
+
+      .app-name {
+        font-size: 14px;
+      }
+
+      .app-desc {
+        font-size: 13px;
+      }
+
+      .cta-top h2 {
+        font-size: 20px;
+      }
+
+      .cta-btn {
+        padding: 12px 16px;
+        font-size: 12px;
+        min-height: 44px;
+      }
+    }
+
+    /* ===== RESPONSIVE - 375px ===== */
+    @media (max-width: 375px) {
+      .controls-wrap {
+        padding: 0 16px 24px;
+      }
+
+      .grid-wrap {
+        padding: 0 16px 48px;
+      }
+
+      .hero {
+        padding: 40px 16px 28px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .filters {
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        text-align: center;
+      }
+    }
+
+    /* ===== RESPONSIVE - 320px ===== */
+    @media (max-width: 320px) {
+      .hero h1 {
+        font-size: 24px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .logo-text {
+        font-size: 14px;
+      }
+
+      .app-card {
+        padding: 16px;
+      }
+
+      .cta-code {
+        font-size: 10px;
+        padding: 14px 16px;
+      }
+    }
+
+    /* ===== TOUCH TARGETS ===== */
+    @media (hover: none) and (pointer: coarse) {
+      .app-card {
+        min-height: 48px;
+      }
+
+      .connect-btn,
+      .cta-btn,
+      .filter-btn {
+        min-height: 44px;
+      }
+
+      .footer-links a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    /* ===== PREVENT OVERFLOW ===== */
+    html, body {
+      overflow-x: hidden;
+    }
+
+    .cta-code {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* ===== ANIMATIONS ===== */
@@ -547,9 +750,22 @@
       </div>
       <div class="nav-right" id="navRight">
         <button aria-label="Close" class="connect-btn" id="connectBtn" onclick="handleConnect()">Connect Wallet</button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
     </div>
   </nav>
+
+  <!-- Mobile Navigation Overlay -->
+  <div class="mobile-nav-overlay" id="mobileNavOverlay">
+    <a href="/app" class="mobile-nav-link">Wallet</a>
+    <a href="/" class="mobile-nav-link">Ecosystem</a>
+    <a href="https://proofi-virid.vercel.app/proofi-sdk.js" target="_blank" class="mobile-nav-link">SDK</a>
+    <button class="connect-btn" onclick="handleConnect()">Connect Wallet</button>
+  </div>
 
   <!-- Toast -->
   <div class="toast" id="toast" aria-live="polite" role="status"></div>
@@ -853,6 +1069,39 @@
     }
 
     init();
+
+    // Mobile menu functionality
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+    
+    function toggleMobileMenu() {
+      const isOpen = mobileMenuBtn.classList.toggle('active');
+      mobileNavOverlay.classList.toggle('active');
+      document.body.classList.toggle('nav-open');
+      mobileMenuBtn.setAttribute('aria-expanded', isOpen);
+      mobileMenuBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+    }
+    
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenuBtn.classList.remove('active');
+        mobileNavOverlay.classList.remove('active');
+        document.body.classList.remove('nav-open');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Close mobile menu on resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        mobileMenuBtn.classList.remove('active');
+        mobileNavOverlay.classList.remove('active');
+        document.body.classList.remove('nav-open');
+      }
+    });
   </script>
 </body>
 </html>
