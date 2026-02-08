@@ -1318,6 +1318,7 @@
             <div class="data-label">
               <span>Capability Token (signed with Ed25519)</span>
               <button class="copy-btn" onclick="copyToken()">Copy</button>
+              <button class="copy-btn" onclick="exportForCLI()" style="margin-left: 8px; background: var(--accent);">📦 Export for CLI</button>
             </div>
             <div class="data-box scrollable">
               <pre id="tokenDisplay">—</pre>
@@ -2501,6 +2502,49 @@
     function copyToken() {
       navigator.clipboard.writeText(JSON.stringify(state.capabilityToken, null, 2));
       log('Token copied to clipboard', 'success');
+    }
+    
+    // Export token + agent key for CLI usage
+    function exportForCLI() {
+      if (!state.capabilityToken || !state.agentKeyPair) {
+        log('No token or agent key to export!', 'error');
+        return;
+      }
+      
+      // Create a zip-like bundle as separate downloads
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+      
+      // 1. Export capability token
+      const tokenBlob = new Blob([JSON.stringify(state.capabilityToken, null, 2)], { type: 'application/json' });
+      const tokenUrl = URL.createObjectURL(tokenBlob);
+      const tokenLink = document.createElement('a');
+      tokenLink.href = tokenUrl;
+      tokenLink.download = `proofi-token-${timestamp}.json`;
+      tokenLink.click();
+      URL.revokeObjectURL(tokenUrl);
+      
+      // 2. Export agent private key (X25519 secret key for DEK unwrapping)
+      const agentKeyExport = {
+        type: 'proofi-agent-key-v1',
+        algorithm: 'X25519',
+        secretKey: nacl.util.encodeBase64(state.agentKeyPair.secretKey),
+        publicKey: nacl.util.encodeBase64(state.agentKeyPair.publicKey),
+        exportedAt: new Date().toISOString(),
+        warning: 'Keep this file secure! Anyone with this key can decrypt data from tokens issued to this agent.'
+      };
+      
+      const keyBlob = new Blob([JSON.stringify(agentKeyExport, null, 2)], { type: 'application/json' });
+      const keyUrl = URL.createObjectURL(keyBlob);
+      const keyLink = document.createElement('a');
+      keyLink.href = keyUrl;
+      keyLink.download = `proofi-agent-key-${timestamp}.json`;
+      setTimeout(() => {
+        keyLink.click();
+        URL.revokeObjectURL(keyUrl);
+      }, 500);
+      
+      log('Exported token + agent key for CLI usage', 'success');
+      log('Usage: npm run local -- --bucket 1229 --cid <your-cid> --token proofi-token-*.json --agent-key proofi-agent-key-*.json', 'info');
     }
     
     // Step 4: Agent Execution
