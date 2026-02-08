@@ -1914,9 +1914,8 @@
       state.encryptedData = await encryptAES(jsonData, state.dek);
       log(`Encrypted: ${state.encryptedData.ciphertext.length} bytes ciphertext`, 'crypto');
       
-      // Generate bucket ID based on user's public key
-      const bucketIdHash = await sha256Base64(nacl.util.encodeBase64(state.userKeyPair.publicKey));
-      state.bucketId = BigInt('0x' + [...await sha256(bucketIdHash)].slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('')) % 1000000n;
+      // Use Proofi's DDC bucket 1229 (paid by issuer wallet)
+      state.bucketId = 1229n;
       log(`Bucket ID: ${state.bucketId}`, 'ddc');
       
       // Store to DDC (or IndexedDB fallback)
