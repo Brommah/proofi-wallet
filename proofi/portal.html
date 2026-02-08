@@ -124,6 +124,138 @@
     .toast-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
     .toast-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ═══ RESPONSIVE - 414px ═══ */
+    @media (max-width: 414px) {
+      .header {
+        padding: 14px 16px;
+      }
+
+      .header-brand {
+        font-size: 16px;
+      }
+
+      .content {
+        padding: 16px 12px;
+      }
+
+      .status-card {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .btn {
+        padding: 12px;
+        font-size: 14px;
+      }
+    }
+
+    /* ═══ RESPONSIVE - 375px ═══ */
+    @media (max-width: 375px) {
+      h2 {
+        font-size: 18px;
+      }
+
+      .header-brand {
+        font-size: 15px;
+        gap: 6px;
+      }
+
+      .header-logo {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+      }
+
+      .status-label {
+        font-size: 10px;
+      }
+
+      .status-value {
+        font-size: 12px;
+      }
+
+      .form-input,
+      .form-select,
+      .form-textarea {
+        padding: 12px;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+
+      .tab-btn {
+        padding: 8px;
+        font-size: 12px;
+      }
+    }
+
+    /* ═══ RESPONSIVE - 320px ═══ */
+    @media (max-width: 320px) {
+      .header-brand {
+        font-size: 14px;
+      }
+
+      .content {
+        padding: 12px 10px;
+      }
+
+      .card-title {
+        font-size: 14px;
+      }
+
+      .item-header {
+        gap: 8px;
+      }
+
+      .item-type {
+        font-size: 12px;
+      }
+
+      .item-cid {
+        font-size: 10px;
+      }
+    }
+
+    /* ═══ TOUCH TARGETS ═══ */
+    @media (hover: none) and (pointer: coarse) {
+      .btn,
+      .tab-btn,
+      .nav-item {
+        min-height: 44px;
+      }
+
+      .form-input,
+      .form-select,
+      .form-textarea {
+        min-height: 48px;
+      }
+
+      .item {
+        min-height: 48px;
+      }
+    }
+
+    /* ═══ SAFE AREA ═══ */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      body {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom));
+      }
+
+      .bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+    }
+
+    /* ═══ PREVENT OVERFLOW ═══ */
+    html, body {
+      overflow-x: hidden;
+    }
+
+    .mono {
+      word-break: break-all;
+    }
   </style>
 </head>
 <body>
