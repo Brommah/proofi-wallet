@@ -1494,7 +1494,8 @@
   <script>
     // ========================================
     // REAL DDC E2E HEALTH DEMO
-    // Using Cere DDC Testnet
+    // Using Cere DDC Mainnet
+    // DDC REQUIRED - NO LOCAL STORAGE FALLBACK
     // ========================================
     
     // DDC Configuration - MAINNET
@@ -1509,8 +1510,8 @@
       ],
       // Network identifier
       network: 'mainnet',
-      // For actual uploads, we'd need a funded wallet
-      // This demo uses IndexedDB fallback with DDC-compatible CIDs
+      // Bucket 1229 is used via Proofi API (issuer-funded)
+      defaultBucket: 1229
     };
 
     const PROOFI_API = 'https://proofi-api-production.up.railway.app';
@@ -1530,36 +1531,15 @@
       auditLog: [],             // Audit trail with hashes
       lastHash: null,           // For hash chain
       ddcConnected: false,      // DDC connection status
-      storageMode: 'indexeddb', // 'ddc' or 'indexeddb'
-      tokenRevoked: false,       // Whether current token has been revoked
-      revocationCid: null,       // CID of revocation record on DDC
+      tokenRevoked: false,      // Whether current token has been revoked
+      revocationCid: null,      // CID of revocation record on DDC
       extensionConnected: false, // Proofi extension status
-      walletAddress: null,       // Real Cere SS58 address from extension
-      authToken: null            // JWT for Proofi API auth
+      walletAddress: null,      // Real Cere SS58 address from extension
+      authToken: null           // JWT for Proofi API auth
     };
     
-    // IndexedDB for local storage (DDC fallback)
-    let ddcDB = null;
-    
-    async function initIndexedDB() {
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open('ProofiDDC', 2);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          ddcDB = request.result;
-          resolve(ddcDB);
-        };
-        request.onupgradeneeded = (event) => {
-          const db = event.target.result;
-          if (!db.objectStoreNames.contains('pieces')) {
-            db.createObjectStore('pieces', { keyPath: 'cid' });
-          }
-          if (!db.objectStoreNames.contains('revocations')) {
-            db.createObjectStore('revocations', { keyPath: 'tokenId' });
-          }
-        };
-      });
-    }
+    // DDC Storage - NO LOCAL FALLBACK
+    // This demo requires real DDC storage. If DDC fails, the demo stops.
     
     // Generate 30 days of sleep data + 100 heart rate readings
     const SAMPLE_HEALTH_DATA = generateSampleHealthData();
@@ -1695,14 +1675,13 @@
         log('Proofi API /health check failed: ' + err.message, 'warn');
       }
 
-      // Offline fallback
+      // DDC REQUIRED - No fallback to local storage
       state.ddcConnected = false;
-      state.storageMode = 'indexeddb';
-      banner.className = 'ddc-banner offline';
-      statusEl.textContent = 'DDC Offline — Using Local Storage (IndexedDB)';
-      modeBadge.textContent = 'Offline Mode';
+      banner.className = 'ddc-banner error';
+      statusEl.textContent = 'DDC Required — Connect wallet and check your connection';
+      modeBadge.textContent = 'DDC Offline';
       modeBadge.className = 'nav-badge offline';
-      log('DDC connection failed. Falling back to IndexedDB storage.', 'warn');
+      log('DDC connection failed. This demo requires real DDC storage — no local fallback.', 'error');
     }
     
     // ========================================
@@ -1877,7 +1856,7 @@
     
     class DDCStorage {
       constructor() {
-        this.mode = 'indexeddb'; // 'ddc' or 'indexeddb'
+        this.mode = 'ddc'; // Always DDC - no fallback
       }
       
       async store(bucketId, data) {
@@ -1887,69 +1866,48 @@
         log(`DDC: Generating CID for ${(jsonData.length / 1024).toFixed(2)}KB of data...`, 'ddc');
         log(`DDC: CID = ${cid}`, 'ddc');
 
-        // Try real DDC via Proofi API first
-        if (state.authToken) {
-          try {
-            log('DDC: Uploading encrypted data to Cere DDC Mainnet bucket 1229...', 'ddc');
-            const response = await fetch(`${PROOFI_API}/ddc/memo`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${state.authToken}`
-              },
-              body: JSON.stringify({
-                memo: jsonData
-              })
-            });
-
-            if (response.ok) {
-              const result = await response.json();
-              const realCid = result.cid || cid;
-              log(`DDC: Stored on mainnet! CID: ${realCid}`, 'success');
-              this.mode = 'ddc';
-              state.storageMode = 'ddc';
-              return {
-                cid: realCid,
-                bucket: bucketId,
-                mode: 'ddc',
-                cdnUrl: result.cdnUrl || `https://cdn.ddc-dragon.com/1229/${realCid}`
-              };
-            } else {
-              const err = await response.json().catch(() => ({}));
-              throw new Error(err.error || `API returned ${response.status}`);
-            }
-          } catch (err) {
-            log(`DDC: API upload failed: ${err.message}. Falling back to IndexedDB.`, 'warn');
-          }
+        // DDC upload via Proofi API - REQUIRED
+        if (!state.authToken) {
+          const errMsg = 'Authorization required. Connect Proofi wallet extension.';
+          log(`DDC: ${errMsg}`, 'error');
+          throw new Error(errMsg);
         }
 
-        // Fallback to IndexedDB
-        await this.storeLocal(cid, bucketId, data);
-        this.mode = 'indexeddb';
-        state.storageMode = 'indexeddb';
-        return { cid, bucket: bucketId, mode: 'indexeddb', cdnUrl: `${DDC_CONFIG.cdnUrl}/${bucketId}/${cid}` };
-      }
-      
-      async storeLocal(cid, bucketId, data) {
-        return new Promise((resolve, reject) => {
-          const tx = ddcDB.transaction(['pieces'], 'readwrite');
-          const store = tx.objectStore('pieces');
-          
-          const piece = {
-            cid,
-            bucketId: bucketId.toString(),
-            data: JSON.stringify(data),
-            timestamp: Date.now(),
-            version: '1.0'
-          };
-          
-          const request = store.put(piece);
-          request.onsuccess = () => {
-            log(`IndexedDB: Stored piece with CID ${cid.slice(0, 20)}...`, 'info');
-            resolve();
-          };
-          request.onerror = () => reject(request.error);
+        log('DDC: Uploading encrypted data to Cere DDC Mainnet bucket 1229...', 'ddc');
+        const response = await fetch(`${PROOFI_API}/ddc/memo`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${state.authToken}`
+          },
+          body: JSON.stringify({
+            memo: jsonData
+          })
         });
+
+        if (response.status === 401) {
+          const errMsg = 'Authorization failed. Connect Proofi wallet extension.';
+          log(`DDC: ${errMsg}`, 'error');
+          throw new Error(errMsg);
+        }
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          const errMsg = `DDC upload failed: ${err.error || `API returned ${response.status}`}. Please check your connection.`;
+          log(`DDC: ${errMsg}`, 'error');
+          throw new Error(errMsg);
+        }
+
+        const result = await response.json();
+        const realCid = result.cid || cid;
+        log(`DDC: Stored on mainnet! CID: ${realCid}`, 'success');
+        
+        return {
+          cid: realCid,
+          bucket: bucketId,
+          mode: 'ddc',
+          cdnUrl: result.cdnUrl || `https://cdn.ddc-dragon.com/1229/${realCid}`
+        };
       }
       
       async fetch(bucketId, cid) {
@@ -1974,51 +1932,37 @@
             throw new Error(`CDN returned ${response.status}`);
           }
         } catch (err) {
-          log(`DDC: CDN fetch failed: ${err.message}. Trying API fallback...`, 'warn');
+          log(`DDC: CDN fetch failed: ${err.message}. Trying API...`, 'warn');
         }
 
-        // Fallback: try Proofi API
+        // Try Proofi API
         if (state.authToken || state.ddcConnected) {
-          try {
-            const response = await fetch(`${PROOFI_API}/ddc/read/${cid}`, {
-              headers: state.authToken ? { 'Authorization': `Bearer ${state.authToken}` } : {}
-            });
+          const response = await fetch(`${PROOFI_API}/ddc/read/${cid}`, {
+            headers: state.authToken ? { 'Authorization': `Bearer ${state.authToken}` } : {}
+          });
 
-            if (response.ok) {
-              const result = await response.json();
-              log('DDC: Fetched from API fallback!', 'success');
-              let content = result.content || result.data || result;
-              if (typeof content === 'string') content = JSON.parse(content);
-              if (content.type === 'memo' && content.content) {
-                content = typeof content.content === 'string' ? JSON.parse(content.content) : content.content;
-              }
-              return content;
+          if (response.status === 401) {
+            const errMsg = 'Authorization failed. Connect Proofi wallet extension.';
+            log(`DDC: ${errMsg}`, 'error');
+            throw new Error(errMsg);
+          }
+
+          if (response.ok) {
+            const result = await response.json();
+            log('DDC: Fetched from API!', 'success');
+            let content = result.content || result.data || result;
+            if (typeof content === 'string') content = JSON.parse(content);
+            if (content.type === 'memo' && content.content) {
+              content = typeof content.content === 'string' ? JSON.parse(content.content) : content.content;
             }
-          } catch (err) {
-            log(`DDC: API fetch also failed: ${err.message}`, 'warn');
+            return content;
           }
         }
 
-        // Fallback to IndexedDB
-        return this.fetchLocal(cid);
-      }
-      
-      async fetchLocal(cid) {
-        return new Promise((resolve, reject) => {
-          const tx = ddcDB.transaction(['pieces'], 'readonly');
-          const store = tx.objectStore('pieces');
-          const request = store.get(cid);
-          
-          request.onsuccess = () => {
-            if (request.result) {
-              log(`IndexedDB: Retrieved piece with CID ${cid.slice(0, 20)}...`, 'info');
-              resolve(JSON.parse(request.result.data));
-            } else {
-              reject(new Error(`Piece not found: ${cid}`));
-            }
-          };
-          request.onerror = () => reject(request.error);
-        });
+        // DDC fetch failed - no local fallback
+        const errMsg = `DDC fetch failed for CID ${cid.slice(0, 20)}. Please check your connection.`;
+        log(`DDC: ${errMsg}`, 'error');
+        throw new Error(errMsg);
       }
     }
     
@@ -2051,15 +1995,7 @@
     
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
-      // Initialize IndexedDB
-      try {
-        await initIndexedDB();
-        log('IndexedDB initialized for local storage', 'success');
-      } catch (err) {
-        log('Failed to initialize IndexedDB: ' + err.message, 'error');
-      }
-      
-      // Check DDC connection
+      // Check DDC connection (required - no local fallback)
       await checkDDCConnection();
       
       // Generate agent keypair
@@ -2332,9 +2268,29 @@
       state.bucketId = 1229n;
       log(`Bucket ID: ${state.bucketId}`, 'ddc');
       
-      // Store to DDC (or IndexedDB fallback)
-      const result = await ddcStorage.store(state.bucketId, state.encryptedData);
-      state.dataCid = result.cid;
+      // Store to DDC (REQUIRED - no fallback)
+      let result;
+      try {
+        result = await ddcStorage.store(state.bucketId, state.encryptedData);
+        state.dataCid = result.cid;
+      } catch (err) {
+        log(`Upload failed: ${err.message}`, 'error');
+        // Show error in UI
+        const uploadResultEl = document.getElementById('uploadResult');
+        uploadResultEl.innerHTML = `
+          <div class="kv-grid">
+            <div class="kv-item">
+              <div class="kv-content">
+                <div class="kv-key" style="color: var(--error);">DDC Upload Failed</div>
+                <div class="kv-value" style="color: var(--error);">${escapeHtml(err.message)}</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-secondary" onclick="uploadHealthData()" style="margin-top: 16px;">Retry Upload</button>
+        `;
+        uploadResultEl.style.display = 'block';
+        return; // Stop the flow
+      }
 
       // Request wallet signature on the CID (user attestation)
       let walletSignature = null;
@@ -2372,8 +2328,7 @@
       state.signPayload = signPayload;
 
       // Update UI
-      document.getElementById('storageMode').textContent =
-        result.mode === 'ddc' ? 'Cere DDC Mainnet (via Proofi API)' : 'IndexedDB (offline fallback)';
+      document.getElementById('storageMode').textContent = 'Cere DDC Mainnet (via Proofi API)';
       document.getElementById('bucketId').textContent = state.bucketId.toString();
       document.getElementById('dataCid').textContent = result.cid;
       document.getElementById('ddcUrl').textContent = result.cdnUrl;
@@ -2933,7 +2888,7 @@
       document.getElementById('auditLog').innerHTML = auditHtml;
 
       // Verification details
-      const storageName = state.storageMode === 'ddc' ? 'Cere DDC' : 'IndexedDB';
+      const storageName = 'Cere DDC';
 
       let verifyHtml = `
         <div class="verify-item">
@@ -3081,7 +3036,7 @@
         demo: 'proofi-health-analyzer',
         network: 'cere-mainnet',
         exportedAt: new Date().toISOString(),
-        storageMode: state.storageMode,
+        storageMode: 'ddc',
         bucketId: state.bucketId?.toString(),
         dataCid: state.dataCid,
         cdnUrl: `${DDC_CONFIG.cdnUrl}/${state.bucketId}/${state.dataCid}`,
@@ -3136,21 +3091,7 @@
       const revSig = signMessage(revocationString, state.userKeyPair.privateKey);
       revocation.sig = revSig;
 
-      // Store in IndexedDB
-      try {
-        if (ddcDB) {
-          const tx = ddcDB.transaction('revocations', 'readwrite');
-          tx.objectStore('revocations').put({
-            tokenId: token.id,
-            revocation,
-            timestamp: Date.now()
-          });
-        }
-      } catch (e) {
-        log('Failed to store revocation locally: ' + e.message, 'warn');
-      }
-
-      // Store on DDC via API
+      // Store on DDC via API (required)
       if (state.authToken) {
         try {
           const resp = await fetch(`${PROOFI_API}/ddc/memo`, {
@@ -3197,26 +3138,14 @@
     }
 
     async function checkRevocationStatus(tokenId) {
-      // Check IndexedDB first
-      if (ddcDB) {
-        try {
-          const tx = ddcDB.transaction('revocations', 'readonly');
-          const store = tx.objectStore('revocations');
-          const result = await new Promise((resolve, reject) => {
-            const req = store.get(tokenId);
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-          });
-          if (result) return { revoked: true, source: 'local', ...result.revocation };
-        } catch (e) {
-          // Fall through
-        }
-      }
-
-      // Check in-memory state
+      // Check in-memory state first
       if (state.tokenRevoked && state.capabilityToken?.id === tokenId) {
         return { revoked: true, source: 'memory' };
       }
+
+      // TODO: Check DDC for revocation records
+      // In a production system, we would query DDC for revocation records
+      // For now, we only check in-memory state
 
       return { revoked: false };
     }
