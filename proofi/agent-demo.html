@@ -842,7 +842,19 @@
       letter-spacing: 0.05em;
     }
 
-    /* Responsive */
+    /* Responsive - 1024px */
+    @media (max-width: 1100px) {
+      .demo-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+      }
+
+      .stats-panel {
+        order: -1;
+      }
+    }
+
+    /* Responsive - 768px */
     @media (max-width: 768px) {
       .demo-container {
         padding: 16px;
@@ -858,11 +870,15 @@
       .agent-selector {
         padding: 16px;
         gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .agent-card {
-        min-width: 120px;
+        min-width: 140px;
         padding: 12px;
+        flex-shrink: 0;
       }
 
       .agent-icon {
@@ -874,9 +890,155 @@
       }
 
       .session-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .chat-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .control-btn {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        padding: 12px 16px;
+        min-height: 44px;
+      }
+
+      .dev-toggle {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+      }
+    }
+
+    /* Responsive - 414px */
+    @media (max-width: 414px) {
+      .demo-container {
+        padding: 12px;
+      }
+
+      .chat-area {
+        min-height: 300px;
+        max-height: 400px;
+      }
+
+      .agent-card {
+        min-width: 120px;
+        padding: 10px;
+      }
+
+      .agent-name {
+        font-size: 0.8rem;
+      }
+
+      .agent-desc {
+        font-size: 0.65rem;
+      }
+
+      .earnings-amount {
+        font-size: 2rem;
+      }
+
+      .session-stats {
         grid-template-columns: 1fr;
         gap: 8px;
       }
+
+      .log-entry {
+        grid-template-columns: 60px 1fr auto;
+        gap: 8px;
+        font-size: 0.7rem;
+      }
+
+      .access-item {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .access-toggle {
+        min-width: 44px;
+        min-height: 26px;
+      }
+    }
+
+    /* Responsive - 375px */
+    @media (max-width: 375px) {
+      .logo-text {
+        font-size: 1.2rem;
+      }
+
+      .demo-title {
+        font-size: 0.9rem;
+      }
+
+      .earnings-card {
+        padding: 24px 16px;
+      }
+
+      .earnings-amount {
+        font-size: 1.8rem;
+      }
+
+      .control-btn {
+        font-size: 0.75rem;
+        padding: 10px 12px;
+      }
+
+      .chat-message {
+        max-width: 95%;
+      }
+    }
+
+    /* Responsive - 320px */
+    @media (max-width: 320px) {
+      .agent-selector {
+        gap: 6px;
+      }
+
+      .agent-card {
+        min-width: 100px;
+        padding: 8px;
+      }
+
+      .agent-icon {
+        font-size: 1.5rem;
+      }
+
+      .agent-name {
+        font-size: 0.7rem;
+      }
+
+      .earnings-amount {
+        font-size: 1.5rem;
+      }
+
+      .stat-value {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* Touch targets */
+    @media (hover: none) and (pointer: coarse) {
+      .control-btn,
+      .agent-card,
+      .access-toggle {
+        min-height: 44px;
+      }
+
+      .back-link {
+        padding: 12px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    /* Prevent horizontal overflow */
+    html, body {
+      overflow-x: hidden;
     }
   </style>
 </head>

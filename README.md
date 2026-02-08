@@ -4,6 +4,9 @@
 
 Proofi is a decentralized identity wallet that puts you in control of your digital identity and personal data. Built for the Web3 era, Proofi enables secure, privacy-preserving credential management and data monetization.
 
+[![CI](https://github.com/Brommah/proofi-wallet/actions/workflows/ci.yml/badge.svg)](https://github.com/Brommah/proofi-wallet/actions/workflows/ci.yml)
+[![Deploy](https://github.com/Brommah/proofi-wallet/actions/workflows/deploy.yml/badge.svg)](https://github.com/Brommah/proofi-wallet/actions/workflows/deploy.yml)
+[![Extension Build](https://github.com/Brommah/proofi-wallet/actions/workflows/extension.yml/badge.svg)](https://github.com/Brommah/proofi-wallet/actions/workflows/extension.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ## ✨ Features
@@ -24,11 +27,11 @@ Proofi is a decentralized identity wallet that puts you in control of your digit
 git clone https://github.com/Brommah/proofi-wallet.git
 cd proofi-wallet
 
-# Install dependencies (optional, for dev tools)
+# Install dependencies
 npm install
 
 # Start local server
-npm run dev
+npm run serve
 
 # Open http://localhost:3000
 ```
