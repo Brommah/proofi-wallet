@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proofi Health Analyzer — DDC Mainnet Demo</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
+  <title>Proofi — Health Data Analysis</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a0b'/%3E%3Cpath d='M16 6L26 16L16 26L6 16Z' fill='none' stroke='%2300E5FF' stroke-width='2'/%3E%3Cpath d='M16 11L21 16L16 21L11 16Z' fill='%2300E5FF' opacity='0.5'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
     
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -33,23 +35,23 @@
     
     
     :root {
-      --bg: #0a0a0a;
-      --surface: #111;
-      --card: #161616;
-      --card-hover: #1a1a1a;
-      --border: #222;
-      --border-hover: #333;
-      --text: #ededed;
-      --text-secondary: #888;
-      --text-tertiary: #555;
+      --bg: #09090b;
+      --surface: #18181b;
+      --card: #1c1c20;
+      --card-hover: #222228;
+      --border: #27272a;
+      --border-hover: #3f3f46;
+      --text: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-tertiary: #71717a;
       --accent: #00FF88;
-      --accent-dim: rgba(0, 255, 136, 0.12);
+      --accent-dim: rgba(0, 255, 136, 0.10);
       --blue: #00E5FF;
-      --purple: #a855f7;
-      --orange: #f97316;
-      --red: #ef4444;
-      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --mono: 'Geist Mono', 'SF Mono', 'Fira Code', monospace;
+      --purple: #a78bfa;
+      --orange: #fb923c;
+      --red: #ff4466;
+      --font: 'Inter', -apple-system, system-ui, sans-serif;
+      --mono: 'JetBrains Mono', 'SF Mono', monospace;
       --radius: 12px;
       --radius-sm: 8px;
     }
@@ -171,18 +173,21 @@
     .hero {
       text-align: center;
       margin-bottom: 48px;
+      padding: 16px 0 0;
     }
     .hero h1 {
-      font-size: clamp(32px, 5vw, 48px);
+      font-size: clamp(28px, 5vw, 42px);
       font-weight: 700;
-      letter-spacing: -1px;
+      letter-spacing: -0.5px;
       margin-bottom: 12px;
+      line-height: 1.2;
     }
     .hero p {
       color: var(--text-secondary);
-      font-size: 17px;
-      max-width: 600px;
+      font-size: 16px;
+      max-width: 520px;
       margin: 0 auto;
+      line-height: 1.6;
     }
     
     /* ===== STEPS ===== */
@@ -199,8 +204,11 @@
       overflow: hidden;
       transition: border-color 0.2s;
     }
-    .step.active { border-color: var(--accent); }
-    .step.completed { border-color: var(--accent); }
+    .step.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-dim), 0 4px 24px rgba(0, 255, 136, 0.06);
+    }
+    .step.completed { border-color: var(--accent); opacity: 0.85; }
     .step.completed .step-header { background: var(--accent-dim); }
     
     .step-header {
@@ -312,7 +320,7 @@
       background: var(--accent);
       color: #000;
     }
-    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:hover { background: #00e67a; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2); }
     .btn-primary:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -382,13 +390,22 @@
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 12px;
+      padding: 12px 16px;
       background: var(--bg);
       border-radius: var(--radius-sm);
+      border-left: 3px solid var(--border);
+      transition: border-color 0.2s;
     }
     .kv-icon {
-      font-size: 18px;
+      font-size: 14px;
       flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-dim);
     }
     .kv-content { flex: 1; min-width: 0; }
     .kv-key {
@@ -460,7 +477,7 @@
       border-color: var(--accent);
       color: #000;
     }
-    .scope-icon { font-size: 20px; flex-shrink: 0; }
+    .scope-icon { display: none; }
     .scope-info { flex: 1; }
     .scope-path {
       font-family: var(--mono);
@@ -557,6 +574,16 @@
       font-size: 13px;
     }
     .verify-icon { font-size: 16px; }
+    .verify-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .verify-dot.pass { background: var(--accent); }
+    .verify-dot.fail { background: var(--red); }
+    .verify-dot.warn { background: var(--orange); }
+    .verify-dot.pending { background: var(--text-tertiary); }
     .verify-label { color: var(--text-secondary); }
     .verify-value {
       font-family: var(--mono);
@@ -624,9 +651,8 @@
       flex-shrink: 0;
     }
     .trust-chain-arrow .tc-arrow-line {
-      font-size: 16px;
+      font-size: 18px;
       color: var(--accent);
-      letter-spacing: -2px;
     }
     .trust-chain-arrow .tc-arrow-label {
       font-size: 9px;
@@ -970,7 +996,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      color: #000;
       box-shadow: 0 0 0 4px rgba(0,255,136,0.2), 0 0 0 8px rgba(0,255,136,0.1);
       animation: shieldPulse 3s ease infinite;
     }
@@ -1059,7 +1085,10 @@
   <nav role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <div class="nav-left">
-        <a href="/" class="nav-logo">🏥 Health Analyzer</a>
+        <a href="/" class="nav-logo" style="text-decoration:none;color:var(--text);font-weight:700;font-size:17px;display:flex;align-items:center;gap:8px;">
+          <svg viewBox="0 0 32 32" fill="none" width="24" height="24"><path d="M16 4L28 16L16 28L4 16Z" stroke="#00E5FF" stroke-width="2"/><path d="M16 11L21 16L16 21L11 16Z" fill="#00E5FF" opacity="0.5"/></svg>
+          Proofi
+        </a>
         <span class="nav-badge" id="modeBadge">DDC Mainnet</span>
       </div>
       <div class="wallet-status" id="walletStatus">
@@ -1075,7 +1104,7 @@
       <div class="progress-line" id="progressLine"></div>
       <div class="progress-node active" data-step="1" onclick="scrollToStep(1)">
         1
-        <span class="progress-node-label">Wallet</span>
+        <span class="progress-node-label">Identity</span>
       </div>
       <div class="progress-node" data-step="2" onclick="scrollToStep(2)">
         2
@@ -1083,15 +1112,15 @@
       </div>
       <div class="progress-node" data-step="3" onclick="scrollToStep(3)">
         3
-        <span class="progress-node-label">Token</span>
+        <span class="progress-node-label">Permission</span>
       </div>
       <div class="progress-node" data-step="4" onclick="scrollToStep(4)">
         4
-        <span class="progress-node-label">Agent</span>
+        <span class="progress-node-label">Analysis</span>
       </div>
       <div class="progress-node" data-step="5" onclick="scrollToStep(5)">
         5
-        <span class="progress-node-label">Verify</span>
+        <span class="progress-node-label">Results</span>
       </div>
     </div>
   </div>
@@ -1099,8 +1128,8 @@
   <!-- Main -->
   <main id="main-content">
     <section class="hero">
-      <h1>🔐 Privacy-Preserving Health Analysis</h1>
-      <p>Production demo with real encryption, capability tokens, and Cere DDC Mainnet decentralized storage.</p>
+      <h1>Analyze your health data privately</h1>
+      <p>See how an AI agent can read your data without anyone else seeing it. Everything is encrypted, stored decentrally, and verifiable.</p>
     </section>
 
     <div class="steps">
@@ -1109,41 +1138,38 @@
         <div class="step-header" onclick="toggleStep(1)">
           <div class="step-num"><span>1</span></div>
           <div class="step-info">
-            <div class="step-title">Connect Wallet</div>
-            <div class="step-desc">Generate or import a wallet to establish your identity</div>
+            <div class="step-title">Create Your Identity</div>
+            <div class="step-desc">Generate a cryptographic wallet — this is your digital signature</div>
           </div>
           <span class="step-status">Pending</span>
         </div>
         <div class="step-body">
           <div class="form-group">
-            <label class="form-label">Seed Phrase (12 words) — Leave empty to generate new</label>
+            <label class="form-label">Seed phrase (leave empty to create a new wallet)</label>
             <input aria-label="word1 word2 word3 ... word12" type="text" class="form-input" id="seedInput" placeholder="word1 word2 word3 ... word12">
           </div>
           <div class="btn-group">
-            <button aria-label="Close" class="btn btn-primary" onclick="connectWallet()">🔐 Generate New Wallet</button>
-            <button aria-label="Close" class="btn btn-secondary" onclick="connectWallet(true)">📥 Import Existing</button>
+            <button aria-label="Generate wallet" class="btn btn-primary" onclick="connectWallet()">Create New Wallet</button>
+            <button aria-label="Import wallet" class="btn btn-secondary" onclick="connectWallet(true)">Import Existing</button>
           </div>
           
           <div id="walletResult" style="margin-top: 20px; display: none;">
             <div class="kv-grid">
               <div class="kv-item">
-                <span class="kv-icon">🔑</span>
                 <div class="kv-content">
-                  <div class="kv-key">Ed25519 Public Key</div>
+                  <div class="kv-key">Public Key (Ed25519)</div>
                   <div class="kv-value" id="userPubKey">—</div>
                 </div>
               </div>
               <div class="kv-item">
-                <span class="kv-icon">👤</span>
                 <div class="kv-content">
-                  <div class="kv-key">DID (Decentralized Identifier)</div>
+                  <div class="kv-key">Decentralized Identifier (DID)</div>
                   <div class="kv-value" id="userDID">—</div>
                 </div>
               </div>
               <div class="kv-item">
-                <span class="kv-icon">🔒</span>
                 <div class="kv-content">
-                  <div class="kv-key">X25519 Public Key (for encryption)</div>
+                  <div class="kv-key">Encryption Key (X25519)</div>
                   <div class="kv-value" id="userX25519">—</div>
                 </div>
               </div>
@@ -1157,8 +1183,8 @@
         <div class="step-header" onclick="toggleStep(2)">
           <div class="step-num"><span>2</span></div>
           <div class="step-info">
-            <div class="step-title">Upload Health Data to DDC</div>
-            <div class="step-desc">Encrypt and store your health records in Cere decentralized storage</div>
+            <div class="step-title">Encrypt & Store Your Data</div>
+            <div class="step-desc">Your health data gets encrypted on your device, then stored securely</div>
           </div>
           <span class="step-status">Locked</span>
         </div>
@@ -1176,50 +1202,44 @@
           </div>
           
           <div class="btn-group">
-            <button aria-label="Close" class="btn btn-primary" id="uploadBtn" onclick="uploadHealthData()" disabled>
-              🔐 Encrypt & Upload to DDC
+            <button aria-label="Encrypt and upload data" class="btn btn-primary" id="uploadBtn" onclick="uploadHealthData()" disabled>
+              Encrypt & Upload to DDC
             </button>
           </div>
           
           <div id="uploadResult" style="margin-top: 20px; display: none;">
             <div class="kv-grid">
               <div class="kv-item">
-                <span class="kv-icon">🌐</span>
                 <div class="kv-content">
                   <div class="kv-key">Storage Mode</div>
                   <div class="kv-value ddc" id="storageMode">—</div>
                 </div>
               </div>
               <div class="kv-item">
-                <span class="kv-icon">🗄️</span>
                 <div class="kv-content">
                   <div class="kv-key">DDC Bucket ID</div>
                   <div class="kv-value success" id="bucketId">—</div>
                 </div>
               </div>
               <div class="kv-item">
-                <span class="kv-icon">📦</span>
                 <div class="kv-content">
                   <div class="kv-key">Content ID (CID)</div>
                   <div class="kv-value success" id="dataCid">—</div>
                 </div>
               </div>
               <div class="kv-item">
-                <span class="kv-icon">🔗</span>
                 <div class="kv-content">
                   <div class="kv-key">DDC CDN URL</div>
                   <div class="kv-value" id="ddcUrl" style="font-size: 11px;">—</div>
                 </div>
               </div>
               <div class="kv-item">
-                <span class="kv-icon">🔑</span>
                 <div class="kv-content">
-                  <div class="kv-key">DEK (Data Encryption Key) — Keep Secret!</div>
+                  <div class="kv-key">Data Encryption Key (DEK)</div>
                   <div class="kv-value" id="dekDisplay">—</div>
                 </div>
               </div>
               <div class="kv-item">
-                <span class="kv-icon">📊</span>
                 <div class="kv-content">
                   <div class="kv-key">Encryption Details</div>
                   <div class="kv-value" id="encDetails">—</div>
@@ -1235,24 +1255,22 @@
         <div class="step-header" onclick="toggleStep(3)">
           <div class="step-num"><span>3</span></div>
           <div class="step-info">
-            <div class="step-title">Grant Agent Permission</div>
-            <div class="step-desc">Create a capability token to authorize the AI agent</div>
+            <div class="step-title">Choose What to Share</div>
+            <div class="step-desc">Grant the AI agent read-only access to specific data — revoke anytime</div>
           </div>
           <span class="step-status">Locked</span>
         </div>
         <div class="step-body">
           <div class="kv-grid" style="margin-bottom: 20px;">
             <div class="kv-item">
-              <span class="kv-icon">🤖</span>
               <div class="kv-content">
                 <div class="kv-key">Agent Identity</div>
                 <div class="kv-value">Health Analyzer Agent v1.0</div>
               </div>
             </div>
             <div class="kv-item">
-              <span class="kv-icon">🔐</span>
               <div class="kv-content">
-                <div class="kv-key">Agent X25519 Public Key</div>
+                <div class="kv-key">Agent Encryption Key (X25519)</div>
                 <div class="kv-value" id="agentPubKey">—</div>
               </div>
             </div>
@@ -1262,23 +1280,20 @@
           <div class="scope-grid" id="scopeGrid">
             <div class="scope-item selected" data-path="health/sleep" data-perms="read">
               <div class="scope-check">✓</div>
-              <span class="scope-icon">😴</span>
               <div class="scope-info">
                 <div class="scope-path">health/sleep/*</div>
-                <div class="scope-perms">read — Access sleep data</div>
+                <div class="scope-perms">read — Sleep duration, quality, REM cycles</div>
               </div>
             </div>
             <div class="scope-item selected" data-path="health/heart" data-perms="read">
               <div class="scope-check">✓</div>
-              <span class="scope-icon">❤️</span>
               <div class="scope-info">
                 <div class="scope-path">health/heart/*</div>
-                <div class="scope-perms">read — Access heart rate data</div>
+                <div class="scope-perms">read — Heart rate, HRV, activity context</div>
               </div>
             </div>
             <div class="scope-item" data-path="health/insights" data-perms="read,write">
               <div class="scope-check">✓</div>
-              <span class="scope-icon">💡</span>
               <div class="scope-info">
                 <div class="scope-path">health/insights/*</div>
                 <div class="scope-perms">read, write — Store analysis results</div>
@@ -1295,8 +1310,8 @@
             </select>
           </div>
           
-          <button aria-label="Close" class="btn btn-primary" id="grantBtn" onclick="grantPermission()" disabled>
-            🎫 Create Capability Token
+          <button aria-label="Grant access" class="btn btn-primary" id="grantBtn" onclick="grantPermission()" disabled>
+            Grant Access
           </button>
           
           <div id="tokenResult" style="margin-top: 20px; display: none;">
@@ -1310,14 +1325,12 @@
             
             <div class="kv-grid">
               <div class="kv-item">
-                <span class="kv-icon">🔏</span>
                 <div class="kv-content">
                   <div class="kv-key">Token ID</div>
                   <div class="kv-value" id="tokenId">—</div>
                 </div>
               </div>
               <div class="kv-item">
-                <span class="kv-icon">🎁</span>
                 <div class="kv-content">
                   <div class="kv-key">Wrapped DEK (encrypted for agent)</div>
                   <div class="kv-value" id="wrappedDek">—</div>
@@ -1325,7 +1338,7 @@
               </div>
             </div>
             <button class="revoke-btn" id="revokeBtn" onclick="revokeToken()">
-              🚫 Revoke Token
+              Revoke Token
             </button>
             <div id="revocationStatus" style="margin-top: 8px;"></div>
           </div>
@@ -1337,8 +1350,8 @@
         <div class="step-header" onclick="toggleStep(4)">
           <div class="step-num"><span>4</span></div>
           <div class="step-info">
-            <div class="step-title">Agent Executes Analysis</div>
-            <div class="step-desc">AI agent validates token, fetches from DDC, decrypts data, runs analysis</div>
+            <div class="step-title">AI Analyzes Privately</div>
+            <div class="step-desc">The agent reads your encrypted data, analyzes it, and returns results</div>
           </div>
           <span class="step-status">Locked</span>
         </div>
@@ -1351,45 +1364,40 @@
           <div id="agentSteps" style="display: none;">
             <div class="kv-grid" style="margin-bottom: 24px;">
               <div class="kv-item" id="agentStep1">
-                <span class="kv-icon">⏳</span>
                 <div class="kv-content">
-                  <div class="kv-key">1. Validate Token Signature</div>
-                  <div class="kv-value pending">Pending...</div>
+                  <div class="kv-key">1. Verify your permission is authentic</div>
+                  <div class="kv-value pending">Waiting...</div>
                 </div>
               </div>
               <div class="kv-item" id="agentStep2">
-                <span class="kv-icon">⏳</span>
                 <div class="kv-content">
-                  <div class="kv-key">2. Check Revocation, Expiry & Scopes</div>
-                  <div class="kv-value pending">Pending...</div>
+                  <div class="kv-key">2. Check permission is still valid</div>
+                  <div class="kv-value pending">Waiting...</div>
                 </div>
               </div>
               <div class="kv-item" id="agentStep3">
-                <span class="kv-icon">⏳</span>
                 <div class="kv-content">
-                  <div class="kv-key">3. Unwrap DEK with Agent Private Key</div>
-                  <div class="kv-value pending">Pending...</div>
+                  <div class="kv-key">3. Unlock the encryption key</div>
+                  <div class="kv-value pending">Waiting...</div>
                 </div>
               </div>
               <div class="kv-item" id="agentStep4">
-                <span class="kv-icon">⏳</span>
                 <div class="kv-content">
-                  <div class="kv-key">4. Fetch from DDC & Decrypt Health Data</div>
-                  <div class="kv-value pending">Pending...</div>
+                  <div class="kv-key">4. Download and decrypt your data</div>
+                  <div class="kv-value pending">Waiting...</div>
                 </div>
               </div>
               <div class="kv-item" id="agentStep5">
-                <span class="kv-icon">⏳</span>
                 <div class="kv-content">
-                  <div class="kv-key">5. Run Health Analysis</div>
-                  <div class="kv-value pending">Pending...</div>
+                  <div class="kv-key">5. Analyze and generate insights</div>
+                  <div class="kv-value pending">Waiting...</div>
                 </div>
               </div>
             </div>
           </div>
           
-          <button aria-label="Close" class="btn btn-primary" id="runAgentBtn" onclick="runAgent()" disabled>
-            🤖 Run Agent Analysis
+          <button aria-label="Run analysis" class="btn btn-primary" id="runAgentBtn" onclick="runAgent()" disabled>
+            Run Analysis
           </button>
         </div>
       </div>
@@ -1399,13 +1407,13 @@
         <div class="step-header" onclick="toggleStep(5)">
           <div class="step-num"><span>5</span></div>
           <div class="step-info">
-            <div class="step-title">Results & Verification</div>
-            <div class="step-desc">View analysis results and verify the complete audit trail</div>
+            <div class="step-title">Your Results</div>
+            <div class="step-desc">Health insights plus a complete audit trail proving everything was done right</div>
           </div>
           <span class="step-status">Locked</span>
         </div>
         <div class="step-body">
-          <h4 style="font-size: 15px; margin-bottom: 16px;">📊 Health Analysis Results</h4>
+          <h4 style="font-size: 15px; margin-bottom: 16px;">Health Analysis Results</h4>
           
           <div class="analysis-grid" id="analysisResults">
             <!-- Filled by JS -->
@@ -1418,21 +1426,21 @@
             <pre>Loading...</pre>
           </div>
           
-          <h4 style="font-size: 15px; margin: 24px 0 16px;">📋 Audit Log (Hash Chain)</h4>
+          <h4 style="font-size: 15px; margin: 24px 0 16px;">Audit Trail</h4>
           <div class="audit-log" id="auditLog">
             <!-- Filled by JS -->
           </div>
           
           <div class="verify-section">
-            <h4>✅ Verification Details</h4>
+            <h4>Verification Details</h4>
             <div class="verify-grid" id="verifyGrid">
               <!-- Filled by JS -->
             </div>
           </div>
           
           <div class="btn-group" style="margin-top: 24px;">
-            <button aria-label="Close" class="btn btn-primary" onclick="downloadAuditLog()">📥 Download Audit Log</button>
-            <button aria-label="Close" class="btn btn-secondary" onclick="restartDemo()">🔄 Restart Demo</button>
+            <button aria-label="Download audit log" class="btn btn-primary" onclick="downloadAuditLog()">Download Audit Log</button>
+            <button aria-label="Restart" class="btn btn-secondary" onclick="restartDemo()">Start Over</button>
           </div>
         </div>
       </div>
@@ -1442,7 +1450,7 @@
   <!-- Public CID Verifier -->
   <section class="verifier-section" id="publicVerifier">
     <div class="verifier-card">
-      <h2>🔍 Public CID Verifier</h2>
+      <h2>Public CID Verifier</h2>
       <p>Verify any content stored on Cere DDC. Paste a Content ID to check its existence, fetch metadata, and classify data types.</p>
       <div class="verifier-input-group">
         <input type="text" class="verifier-input" id="verifyCidInput" placeholder="Enter CID (e.g., bafk2bzace...)">
@@ -1455,14 +1463,13 @@
 
   <!-- Console Toggle -->
   <button class="console-toggle" onclick="toggleConsole()">
-    <span>🖥️</span>
-    <span>Dev Console</span>
+    <span>Execution Log</span>
   </button>
 
   <!-- Console Panel -->
   <div class="console-panel" id="consolePanel">
     <div class="console-header">
-      <h4>🖥️ Development Console</h4>
+      <h4>Execution Log</h4>
       <button aria-label="Close" class="console-close" onclick="toggleConsole()">×</button>
     </div>
     <div class="console-body" id="consoleBody">
@@ -1650,7 +1657,7 @@
           state.ddcConnected = true;
           banner.className = 'ddc-banner';
           const issuerInfo = data.issuerWallet ? ` (Issuer: ${data.issuerWallet.slice(0, 12)}...)` : '';
-          statusEl.textContent = `🟢 Connected to Cere DDC Mainnet via Proofi API${issuerInfo}`;
+          statusEl.textContent = `Connected to Cere DDC Mainnet via Proofi API${issuerInfo}`;
           modeBadge.textContent = 'DDC Mainnet';
           modeBadge.className = 'nav-badge';
           log('DDC connected via Proofi API: ' + JSON.stringify(data), 'success');
@@ -1674,7 +1681,7 @@
         if (healthResponse.ok) {
           state.ddcConnected = true;
           banner.className = 'ddc-banner';
-          statusEl.textContent = '🟢 Proofi API online — DDC available';
+          statusEl.textContent = 'Proofi API online — DDC available';
           modeBadge.textContent = 'DDC Mainnet';
           modeBadge.className = 'nav-badge';
           log('Proofi API health check passed', 'success');
@@ -1688,7 +1695,7 @@
       state.ddcConnected = false;
       state.storageMode = 'indexeddb';
       banner.className = 'ddc-banner offline';
-      statusEl.textContent = '🟠 DDC Offline — Using Local Storage (IndexedDB)';
+      statusEl.textContent = 'DDC Offline — Using Local Storage (IndexedDB)';
       modeBadge.textContent = 'Offline Mode';
       modeBadge.className = 'nav-badge offline';
       log('DDC connection failed. Falling back to IndexedDB storage.', 'warn');
@@ -2243,10 +2250,9 @@
         const extensionItem = document.createElement('div');
         extensionItem.className = 'kv-item';
         extensionItem.innerHTML = `
-          <span class="kv-icon">🔌</span>
           <div class="kv-content">
             <div class="kv-key">Proofi Extension</div>
-            <div class="kv-value success">Connected via Proofi Extension</div>
+            <div class="kv-value success">Connected</div>
           </div>
         `;
         kvGrid.insertBefore(extensionItem, kvGrid.firstChild);
@@ -2254,7 +2260,6 @@
         const cereItem = document.createElement('div');
         cereItem.className = 'kv-item';
         cereItem.innerHTML = `
-          <span class="kv-icon">💎</span>
           <div class="kv-content">
             <div class="kv-key">Cere Wallet Address (SS58)</div>
             <div class="kv-value success">${state.walletAddress}</div>
@@ -2273,7 +2278,6 @@
         const modeItem = document.createElement('div');
         modeItem.className = 'kv-item';
         modeItem.innerHTML = `
-          <span class="kv-icon">🔑</span>
           <div class="kv-content">
             <div class="kv-key">Mode</div>
             <div class="kv-value pending">Demo mode (generated keys)</div>
@@ -2365,7 +2369,7 @@
 
       // Update UI
       document.getElementById('storageMode').textContent =
-        result.mode === 'ddc' ? '🌐 Cere DDC Mainnet (via Proofi API)' : '💾 IndexedDB (offline fallback)';
+        result.mode === 'ddc' ? 'Cere DDC Mainnet (via Proofi API)' : 'IndexedDB (offline fallback)';
       document.getElementById('bucketId').textContent = state.bucketId.toString();
       document.getElementById('dataCid').textContent = result.cid;
       document.getElementById('ddcUrl').textContent = result.cdnUrl;
@@ -2379,7 +2383,6 @@
         const sigItem = document.createElement('div');
         sigItem.className = 'kv-item';
         sigItem.innerHTML = `
-          <span class="kv-icon">✍️</span>
           <div class="kv-content">
             <div class="kv-key">Wallet Signature (CID Attestation)</div>
             <div class="kv-value success">${walletSignature.slice(0, 40)}...</div>
@@ -2677,12 +2680,11 @@
     
     function updateAgentStep(stepNum, success, message) {
       const step = document.getElementById(`agentStep${stepNum}`);
-      const icon = step.querySelector('.kv-icon');
       const value = step.querySelector('.kv-value');
-      
-      icon.textContent = success ? '✅' : '❌';
+
       value.textContent = message;
       value.className = 'kv-value ' + (success ? 'success' : '');
+      step.style.borderLeft = success ? '3px solid var(--accent)' : '3px solid var(--red)';
     }
     
     function sleep(ms) {
@@ -2729,22 +2731,22 @@
       // Recommendations based on available data
       const recommendations = [];
       if (hasSleep) {
-        if (avgSleep < 7) recommendations.push('💤 Try to get at least 7 hours of sleep');
-        if (avgDeep < 1.5) recommendations.push('🌙 Your deep sleep is low - avoid caffeine after 2pm');
+        if (avgSleep < 7) recommendations.push('Try to get at least 7 hours of sleep');
+        if (avgDeep < 1.5) recommendations.push('Your deep sleep is low — avoid caffeine after 2pm');
       }
       if (hasHeart) {
-        if (avgRestingHR > 75) recommendations.push('🏃 Consider more cardio to lower resting heart rate');
-        if (avgHRV < 30) recommendations.push('🧘 Low HRV detected - try stress reduction techniques');
+        if (avgRestingHR > 75) recommendations.push('Consider more cardio to lower resting heart rate');
+        if (avgHRV < 30) recommendations.push('Low HRV detected — try stress reduction techniques');
       }
       if (!hasSleep && !hasHeart) {
-        recommendations.push('⚠️ No data available - check your scope permissions');
+        recommendations.push('No data available — check your scope permissions');
       } else if (recommendations.length === 0) {
-        recommendations.push('🌟 Great job! Your health metrics look excellent!');
+        recommendations.push('Great job — your health metrics look excellent.');
       }
       
       // Note what data was NOT available due to scope restrictions
-      if (!hasSleep) recommendations.push('🔒 Sleep data: not shared (scope denied)');
-      if (!hasHeart) recommendations.push('🔒 Heart rate: not shared (scope denied)');
+      if (!hasSleep) recommendations.push('Sleep data: not shared (scope denied)');
+      if (!hasHeart) recommendations.push('Heart rate: not shared (scope denied)');
       
       return {
         avgSleep,
@@ -2806,34 +2808,30 @@
           <div class="trust-chain-title">Trust Chain</div>
           <div class="trust-chain-flow">
             <div class="trust-chain-node">
-              <span class="tc-icon">👤</span>
               <span class="tc-label">User Wallet</span>
               <span class="tc-detail">${state.walletAddress ? state.walletAddress.slice(0, 10) + '...' : 'Sr25519'}</span>
             </div>
             <div class="trust-chain-arrow">
-              <span class="tc-arrow-line">-----&gt;</span>
+              <span class="tc-arrow-line">&rarr;</span>
               <span class="tc-arrow-label">sign</span>
             </div>
             <div class="trust-chain-node">
-              <span class="tc-icon">🔐</span>
               <span class="tc-label">Encrypted Data</span>
               <span class="tc-detail">AES-256-GCM + CID</span>
             </div>
             <div class="trust-chain-arrow">
-              <span class="tc-arrow-line">-----&gt;</span>
+              <span class="tc-arrow-line">&rarr;</span>
               <span class="tc-arrow-label">store</span>
             </div>
             <div class="trust-chain-node">
-              <span class="tc-icon">🌐</span>
               <span class="tc-label">DDC Mainnet</span>
               <span class="tc-detail">Bucket ${state.bucketId || '1229'}</span>
             </div>
             <div class="trust-chain-arrow">
-              <span class="tc-arrow-line">-----&gt;</span>
+              <span class="tc-arrow-line">&rarr;</span>
               <span class="tc-arrow-label">anchor</span>
             </div>
             <div class="trust-chain-node">
-              <span class="tc-icon">⛓️</span>
               <span class="tc-label">Cere Blockchain</span>
               <span class="tc-detail">DAC &rarr; Merkle &rarr; tx_hash</span>
             </div>
@@ -2889,47 +2887,46 @@
       document.getElementById('auditLog').innerHTML = auditHtml;
 
       // Verification details
-      const storageIcon = state.storageMode === 'ddc' ? '🌐' : '💾';
       const storageName = state.storageMode === 'ddc' ? 'Cere DDC' : 'IndexedDB';
 
       let verifyHtml = `
         <div class="verify-item">
-          <span class="verify-icon">✅</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">Token Signature:</span>
           <span class="verify-value">Ed25519 verified</span>
         </div>
         <div class="verify-item">
-          <span class="verify-icon">✅</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">Data CID:</span>
           <span class="verify-value">${state.dataCid.slice(0, 30)}...</span>
         </div>
         <div class="verify-item">
-          <span class="verify-icon">${storageIcon}</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">Storage:</span>
           <span class="verify-value">${storageName} (Bucket ${state.bucketId})</span>
         </div>
         <div class="verify-item">
-          <span class="verify-icon">${state.tokenRevoked ? '🚫' : '✅'}</span>
+          <span class="verify-dot ${state.tokenRevoked ? 'fail' : 'pass'}"></span>
           <span class="verify-label">Token Status:</span>
           <span class="verify-value">${state.tokenRevoked ? '<span class="revocation-status revoked">REVOKED</span>' : '<span class="revocation-status active">ACTIVE</span>'}</span>
         </div>
         <div class="verify-item">
-          <span class="verify-icon">✅</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">Hash Chain:</span>
           <span class="verify-value">${state.auditLog.length} entries, valid</span>
         </div>
         <div class="verify-item">
-          <span class="verify-icon">✅</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">Encryption:</span>
           <span class="verify-value">AES-256-GCM + X25519</span>
         </div>
         <div class="verify-item">
-          <span class="verify-icon">✅</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">Final Hash:</span>
           <span class="verify-value">${state.lastHash}</span>
         </div>
         <div class="verify-item">
-          <span class="verify-icon">🔗</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">CDN URL:</span>
           <span class="verify-value" style="font-size: 10px;">${DDC_CONFIG.cdnUrl}/${state.bucketId}/${state.dataCid}</span>
         </div>
@@ -2939,7 +2936,7 @@
       if (state.walletSignature) {
         verifyHtml += `
         <div class="verify-item">
-          <span class="verify-icon">✅</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">Wallet Signature:</span>
           <span class="verify-value">Sr25519 verified — ${state.walletAddress || 'demo keypair'}</span>
         </div>
@@ -2947,7 +2944,7 @@
       } else {
         verifyHtml += `
         <div class="verify-item">
-          <span class="verify-icon">⚠️</span>
+          <span class="verify-dot warn"></span>
           <span class="verify-label">Wallet Signature:</span>
           <span class="verify-value">Not available (extension signing required)</span>
         </div>
@@ -2958,7 +2955,7 @@
       if (ddcVerification) {
         verifyHtml += `
         <div class="verify-item">
-          <span class="verify-icon">✅</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">DDC Credential:</span>
           <span class="verify-value">Verified (issuer signature valid)</span>
         </div>
@@ -2970,7 +2967,7 @@
         const version = chainState.version || chainState.apiVersion || 'live';
         verifyHtml += `
         <div class="verify-item">
-          <span class="verify-icon">🔗</span>
+          <span class="verify-dot pass"></span>
           <span class="verify-label">Cere Blockchain:</span>
           <span class="verify-value">Online (${version}) — <a href="https://explorer.cere.network/" target="_blank" rel="noopener" style="color: var(--accent);">Explorer</a></span>
         </div>
@@ -2980,12 +2977,12 @@
       // DAC Anchor Status
       verifyHtml += `
         <div class="verify-item">
-          <span class="verify-icon">⏳</span>
+          <span class="verify-dot pending"></span>
           <span class="verify-label">DAC Anchor:</span>
           <span class="verify-value">Processing (Activity Records anchored in era batches)</span>
         </div>
         <div class="verify-item">
-          <span class="verify-icon">📝</span>
+          <span class="verify-dot pending"></span>
           <span class="verify-label">Anchor Pipeline:</span>
           <span class="verify-value" style="font-size: 11px;">DDC writes &rarr; Activity Records &rarr; aggregated by validators &rarr; Merkle root anchored on-chain</span>
         </div>
@@ -3000,7 +2997,7 @@
       const sealHtml = `
         <div class="sovereignty-seal">
           <div class="seal-content">
-            <div class="seal-shield">🛡️</div>
+            <div class="seal-shield"><svg viewBox="0 0 24 24" fill="none" width="32" height="32"><path d="M12 2L3 7v5c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" fill="currentColor" opacity="0.3"/><path d="M10 15.5l-3.5-3.5 1.41-1.41L10 12.67l5.59-5.59L17 8.5l-7 7z" fill="currentColor"/></svg></div>
             <div class="seal-title">Proof of Data Sovereignty</div>
             <div class="seal-subtitle">All cryptographic operations verified. Your data never left your control.</div>
             <div class="seal-facts">
@@ -3137,7 +3134,7 @@
 
       // Update UI
       const btn = document.getElementById('revokeBtn');
-      btn.textContent = '🚫 Token Revoked';
+      btn.textContent = 'Token Revoked';
       btn.classList.add('revoked');
       btn.disabled = true;
 
@@ -3209,7 +3206,7 @@
         if (!response.ok) {
           resultEl.innerHTML = `
             <div class="vr-header">
-              <span class="vr-status not-found">❌ Not Found</span>
+              <span class="vr-status not-found">Not Found</span>
             </div>
             <div class="verifier-detail">
               <span class="vd-label">CID</span>
@@ -3238,7 +3235,7 @@
 
         resultEl.innerHTML = `
           <div class="vr-header">
-            <span class="vr-status verified">✅ Verified on DDC</span>
+            <span class="vr-status verified">Verified on DDC</span>
           </div>
           <div class="verifier-detail">
             <span class="vd-label">CID</span>
@@ -3275,7 +3272,7 @@
       } catch (err) {
         resultEl.innerHTML = `
           <div class="vr-header">
-            <span class="vr-status not-found">⚠️ Verification Failed</span>
+            <span class="vr-status not-found">Verification Failed</span>
           </div>
           <div class="verifier-detail">
             <span class="vd-label">Error</span>

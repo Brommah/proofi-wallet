@@ -1,4 +1,4 @@
-const CACHE_NAME = 'proofi-v5';
+const CACHE_NAME = 'proofi-v6';
 const APP_SHELL = [
   '/',
   '/app',
