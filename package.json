@@ -4,10 +4,22 @@
   "description": "Proofi - Privacy-preserving identity wallet with tokenized data sharing",
   "private": true,
   "scripts": {
+    "lint": "eslint . --ext .js,.ts,.tsx --ignore-pattern node_modules --ignore-pattern dist",
+    "format:check": "prettier --check .",
+    "test:unit": "vitest run --reporter=verbose",
+    "test:e2e": "playwright test",
+    "build": "echo 'Build placeholder - add actual build command'",
     "simulate:queries": "node simulations/query-simulator.js",
     "simulate:load": "node simulations/load-test.js",
     "simulate:tokenomics": "node simulations/tokenomics-sim.js",
-    "simulate:all": "npm run simulate:queries && npm run simulate:load && npm run simulate:tokenomics"
+    "simulate:all": "pnpm run simulate:queries && pnpm run simulate:load && pnpm run simulate:tokenomics"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.4.0",
+    "vitest": "^3.0.0"
   },
   "keywords": [
     "identity",
