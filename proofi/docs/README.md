@@ -45,12 +45,15 @@ Proofi is a protocol for **privacy-preserving AI agents**. It enables:
 
 | Document | Description |
 |----------|-------------|
+| [**🚀 Zero to Deploy**](./ZERO-TO-DEPLOY.md) | Complete beginner guide — from nothing to deployed |
 | [**Quick Start**](./QUICKSTART.md) | From zero to working agent in 5 minutes |
+| [**Deployment Guide**](./DEPLOYMENT.md) | Detailed deployment options & configuration |
 | [**Architecture Guide**](./ARCHITECTURE.md) | How everything connects |
 | [**API Reference**](./API-REFERENCE.md) | Complete SDK & API documentation |
 | [**Runbook**](./RUNBOOK.md) | Deployment, testing, troubleshooting |
 | [**Design Practices**](./DESIGN-PRACTICES.md) | UX patterns & UI components |
 | [**Security**](./SECURITY.md) | Security model & requirements |
+| [**Troubleshooting**](./TROUBLESHOOTING.md) | Common issues & solutions |
 
 ---
 
