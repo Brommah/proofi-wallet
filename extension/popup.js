@@ -32,105 +32,133 @@ var kd=Object.create;var Xa=Object.defineProperty;var Pd=Object.getOwnPropertyDe
   (*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) *)
 */
 
-// --- Proofi Sign Message Handler (appended) ---
-// Handles PROOFI_SIGN_MESSAGE from background.js
+// --- Proofi Sign Handler (storage-based) ---
+// Watches chrome.storage for proofi_sign_pending, signs, writes proofi_sign_result
 // Uses existing module-scoped: V (state), Za (decrypt), fa (keypair), ca (crypto init), we (storage keys)
-chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-  if (msg.type !== "PROOFI_SIGN_MESSAGE") return false;
+(function() {
+  function checkPendingSign() {
+    chrome.storage.local.get("proofi_sign_pending", function(data) {
+      var pending = data.proofi_sign_pending;
+      if (!pending || !pending.message) return;
+      // Don't process stale requests (older than 2 minutes)
+      if (Date.now() - pending.ts > 120000) {
+        chrome.storage.local.remove("proofi_sign_pending");
+        return;
+      }
+      handleSignRequest(pending);
+    });
+  }
 
-  (async function() {
-    try {
-      var message = msg.message;
-      console.log("[Proofi Popup] Sign request received for:", typeof message === "string" ? message.slice(0, 40) + "..." : message);
+  async function handleSignRequest(pending) {
+    var message = pending.message;
+    var requestId = pending.requestId;
+    console.log("[Proofi Popup] Sign request found:", typeof message === "string" ? message.slice(0, 40) + "..." : message);
 
-      // If wallet is already unlocked and keypair is available, sign immediately
-      if (V.isUnlocked && V.keypair) {
-        console.log("[Proofi Popup] Wallet unlocked, signing immediately");
+    // If wallet is already unlocked, sign immediately
+    if (V.isUnlocked && V.keypair) {
+      console.log("[Proofi Popup] Wallet unlocked, signing immediately");
+      try {
         var sig = V.keypair.signHex(message);
-        sendResponse({ signature: sig });
-        return;
+        chrome.storage.local.set({ proofi_sign_result: { requestId: requestId, signature: sig } });
+        chrome.storage.local.remove("proofi_sign_pending");
+        console.log("[Proofi Popup] Signed and stored result");
+      } catch (err) {
+        chrome.storage.local.set({ proofi_sign_result: { requestId: requestId, error: err.message } });
+        chrome.storage.local.remove("proofi_sign_pending");
       }
-
-      // Wallet is locked — show PIN unlock UI
-      console.log("[Proofi Popup] Wallet locked, waiting for PIN unlock...");
-
-      // If we have no encryptedSeed in memory, load from storage
-      if (!V.encryptedSeed) {
-        var state = await new Promise(function(res) {
-          chrome.storage.local.get(Object.values(we), function(s) { res(s); });
-        });
-        V.encryptedSeed = state[we.ENCRYPTED_SEED] || null;
-      }
-
-      if (!V.encryptedSeed) {
-        sendResponse({ error: "No wallet seed found. Please log in first." });
-        return;
-      }
-
-      // Create a PIN prompt overlay
-      var overlay = document.createElement("div");
-      overlay.id = "proofi-sign-overlay";
-      overlay.innerHTML = '<div style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;">' +
-        '<div style="background:#0A0A0A;border:2px solid #00E5FF;border-radius:16px;padding:32px 28px;max-width:320px;width:100%;font-family:Inter,system-ui,sans-serif;">' +
-        '<div style="color:#00E5FF;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">SIGNATURE REQUEST</div>' +
-        '<div style="color:#aaa;font-size:13px;margin-bottom:20px;">A page is requesting your wallet signature. Enter your PIN to approve.</div>' +
-        '<div style="color:#555;font-size:11px;font-family:monospace;background:#111;padding:8px;border-radius:6px;margin-bottom:16px;word-break:break-all;max-height:60px;overflow:auto;">' +
-        (typeof message === "string" ? message.slice(0, 120) : "binary data") + '</div>' +
-        '<input type="password" id="proofi-sign-pin" placeholder="Enter PIN" maxlength="8" inputmode="numeric" style="width:100%;padding:12px;border:2px solid #333;border-radius:8px;background:#111;color:#fff;font-size:16px;text-align:center;letter-spacing:8px;box-sizing:border-box;margin-bottom:12px;">' +
-        '<div id="proofi-sign-error" style="color:#ff4444;font-size:12px;text-align:center;margin-bottom:8px;display:none;"></div>' +
-        '<div style="display:flex;gap:8px;">' +
-        '<button id="proofi-sign-cancel" style="flex:1;padding:10px;border:2px solid #333;border-radius:8px;background:transparent;color:#888;font-size:12px;font-weight:700;cursor:pointer;">CANCEL</button>' +
-        '<button id="proofi-sign-approve" style="flex:1;padding:10px;border:none;border-radius:8px;background:linear-gradient(135deg,#00E5FF,#00FF88);color:#000;font-size:12px;font-weight:700;cursor:pointer;">SIGN</button>' +
-        '</div></div></div>';
-      document.body.appendChild(overlay);
-
-      var pinInput = document.getElementById("proofi-sign-pin");
-      var errorEl = document.getElementById("proofi-sign-error");
-      pinInput.focus();
-
-      await new Promise(function(resolve) {
-        document.getElementById("proofi-sign-cancel").addEventListener("click", function() {
-          overlay.remove();
-          sendResponse({ error: "User cancelled signing" });
-          resolve();
-        });
-
-        async function doSign() {
-          var pin = pinInput.value;
-          if (!pin || pin.length < 4) {
-            errorEl.textContent = "PIN must be at least 4 digits";
-            errorEl.style.display = "block";
-            return;
-          }
-          try {
-            errorEl.style.display = "none";
-            var seed = await Za(V.encryptedSeed, pin);
-            await ca();
-            var keypair = await fa(seed);
-            V.keypair = keypair;
-            V.isUnlocked = true;
-            var sig = keypair.signHex(message);
-            console.log("[Proofi Popup] Message signed successfully");
-            overlay.remove();
-            sendResponse({ signature: sig });
-            resolve();
-          } catch (err) {
-            console.error("[Proofi Popup] Sign error:", err);
-            errorEl.textContent = "Wrong PIN or signing failed";
-            errorEl.style.display = "block";
-          }
-        }
-
-        document.getElementById("proofi-sign-approve").addEventListener("click", doSign);
-        pinInput.addEventListener("keydown", function(ev) {
-          if (ev.key === "Enter") doSign();
-        });
-      });
-    } catch (err) {
-      console.error("[Proofi Popup] Sign handler error:", err);
-      sendResponse({ error: err.message || "Signing failed" });
+      return;
     }
-  })();
 
-  return true; // Keep message channel open for async response
-});
+    // Load encrypted seed if needed
+    if (!V.encryptedSeed) {
+      var state = await new Promise(function(res) {
+        chrome.storage.local.get(Object.values(we), function(s) { res(s); });
+      });
+      V.encryptedSeed = state[we.ENCRYPTED_SEED] || null;
+    }
+
+    if (!V.encryptedSeed) {
+      chrome.storage.local.set({ proofi_sign_result: { requestId: requestId, error: "No wallet seed found" } });
+      chrome.storage.local.remove("proofi_sign_pending");
+      return;
+    }
+
+    // Remove existing overlay if any
+    var existing = document.getElementById("proofi-sign-overlay");
+    if (existing) existing.remove();
+
+    // Show PIN prompt overlay
+    var overlay = document.createElement("div");
+    overlay.id = "proofi-sign-overlay";
+    overlay.innerHTML = '<div style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;">' +
+      '<div style="background:#0A0A0A;border:2px solid #00E5FF;border-radius:16px;padding:32px 28px;max-width:320px;width:100%;font-family:Inter,system-ui,sans-serif;">' +
+      '<div style="color:#00E5FF;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">SIGNATURE REQUEST</div>' +
+      '<div style="color:#aaa;font-size:13px;margin-bottom:20px;">A page is requesting your wallet signature. Enter your PIN to approve.</div>' +
+      '<div style="color:#555;font-size:11px;font-family:monospace;background:#111;padding:8px;border-radius:6px;margin-bottom:16px;word-break:break-all;max-height:60px;overflow:auto;">' +
+      (typeof message === "string" ? message.slice(0, 120) : "binary data") + '</div>' +
+      '<input type="password" id="proofi-sign-pin" placeholder="Enter PIN" maxlength="8" inputmode="numeric" style="width:100%;padding:12px;border:2px solid #333;border-radius:8px;background:#111;color:#fff;font-size:16px;text-align:center;letter-spacing:8px;box-sizing:border-box;margin-bottom:12px;">' +
+      '<div id="proofi-sign-error" style="color:#ff4444;font-size:12px;text-align:center;margin-bottom:8px;display:none;"></div>' +
+      '<div style="display:flex;gap:8px;">' +
+      '<button id="proofi-sign-cancel" style="flex:1;padding:10px;border:2px solid #333;border-radius:8px;background:transparent;color:#888;font-size:12px;font-weight:700;cursor:pointer;">CANCEL</button>' +
+      '<button id="proofi-sign-approve" style="flex:1;padding:10px;border:none;border-radius:8px;background:linear-gradient(135deg,#00E5FF,#00FF88);color:#000;font-size:12px;font-weight:700;cursor:pointer;">SIGN</button>' +
+      '</div></div></div>';
+    document.body.appendChild(overlay);
+
+    var pinInput = document.getElementById("proofi-sign-pin");
+    var errorEl = document.getElementById("proofi-sign-error");
+    pinInput.focus();
+
+    document.getElementById("proofi-sign-cancel").addEventListener("click", function() {
+      overlay.remove();
+      chrome.storage.local.set({ proofi_sign_result: { requestId: requestId, error: "User cancelled signing" } });
+      chrome.storage.local.remove("proofi_sign_pending");
+    });
+
+    async function doSign() {
+      var pin = pinInput.value;
+      if (!pin || pin.length < 4) {
+        errorEl.textContent = "PIN must be at least 4 digits";
+        errorEl.style.display = "block";
+        return;
+      }
+      try {
+        errorEl.style.display = "none";
+        var approveBtn = document.getElementById("proofi-sign-approve");
+        approveBtn.textContent = "SIGNING...";
+        approveBtn.style.opacity = "0.7";
+
+        var seed = await Za(V.encryptedSeed, pin);
+        await ca();
+        var keypair = await fa(seed);
+        V.keypair = keypair;
+        V.isUnlocked = true;
+        var sig = keypair.signHex(message);
+        console.log("[Proofi Popup] Message signed successfully:", sig.slice(0, 20) + "...");
+        overlay.remove();
+        chrome.storage.local.set({ proofi_sign_result: { requestId: requestId, signature: sig } });
+        chrome.storage.local.remove("proofi_sign_pending");
+      } catch (err) {
+        console.error("[Proofi Popup] Sign error:", err);
+        errorEl.textContent = "Wrong PIN or signing failed";
+        errorEl.style.display = "block";
+        var approveBtn = document.getElementById("proofi-sign-approve");
+        if (approveBtn) { approveBtn.textContent = "SIGN"; approveBtn.style.opacity = "1"; }
+      }
+    }
+
+    document.getElementById("proofi-sign-approve").addEventListener("click", doSign);
+    pinInput.addEventListener("keydown", function(ev) {
+      if (ev.key === "Enter") doSign();
+    });
+  }
+
+  // Check on load (popup just opened with pending request)
+  checkPendingSign();
+
+  // Also watch for new sign requests while popup is open
+  chrome.storage.onChanged.addListener(function(changes, area) {
+    if (area === "local" && changes.proofi_sign_pending && changes.proofi_sign_pending.newValue) {
+      checkPendingSign();
+    }
+  });
+})();
