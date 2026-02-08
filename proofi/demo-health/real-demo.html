@@ -42,9 +42,9 @@
       --text: #ededed;
       --text-secondary: #888;
       --text-tertiary: #555;
-      --accent: #22c55e;
-      --accent-dim: rgba(34, 197, 94, 0.15);
-      --blue: #3b82f6;
+      --accent: #00FF88;
+      --accent-dim: rgba(0, 255, 136, 0.12);
+      --blue: #00E5FF;
       --purple: #a855f7;
       --orange: #f97316;
       --red: #ef4444;
@@ -837,6 +837,190 @@
       color: var(--accent);
     }
 
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar {
+      position: sticky;
+      top: 60px;
+      z-index: 99;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px 28px;
+    }
+    .progress-bar-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+    .progress-bar-inner::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 24px;
+      right: 24px;
+      height: 2px;
+      background: var(--border);
+      transform: translateY(-50%);
+      z-index: 0;
+    }
+    .progress-line {
+      position: absolute;
+      top: 50%;
+      left: 24px;
+      height: 2px;
+      background: var(--accent);
+      transform: translateY(-50%);
+      z-index: 1;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0%;
+    }
+    .progress-node {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 2;
+      position: relative;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    .progress-node.active {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.15);
+      animation: progressPulse 2s infinite;
+    }
+    .progress-node.completed {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #000;
+    }
+    .progress-node-label {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .progress-node.active .progress-node-label,
+    .progress-node.completed .progress-node-label {
+      color: var(--text-secondary);
+    }
+    @keyframes progressPulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.15); }
+      50% { box-shadow: 0 0 0 8px rgba(0, 255, 136, 0.08); }
+    }
+
+    /* ===== SOVEREIGNTY SEAL ===== */
+    .sovereignty-seal {
+      margin-top: 32px;
+      padding: 32px;
+      background: linear-gradient(135deg, rgba(0,255,136,0.04), rgba(0,229,255,0.04), rgba(168,85,247,0.04));
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.95);
+      animation: sealReveal 0.8s ease 0.3s forwards;
+    }
+    @keyframes sealReveal {
+      to { opacity: 1; transform: scale(1); }
+    }
+    .sovereignty-seal::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(0,255,136,0.08), transparent, rgba(0,229,255,0.08), transparent);
+      animation: sealRotate 8s linear infinite;
+    }
+    @keyframes sealRotate {
+      to { transform: rotate(360deg); }
+    }
+    .seal-content {
+      position: relative;
+      z-index: 1;
+    }
+    .seal-shield {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 0 0 4px rgba(0,255,136,0.2), 0 0 0 8px rgba(0,255,136,0.1);
+      animation: shieldPulse 3s ease infinite;
+    }
+    @keyframes shieldPulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(0,255,136,0.2), 0 0 0 8px rgba(0,255,136,0.1); }
+      50% { box-shadow: 0 0 0 6px rgba(0,255,136,0.3), 0 0 0 12px rgba(0,255,136,0.15); }
+    }
+    .seal-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .seal-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .seal-facts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto 20px;
+    }
+    .seal-fact .sf-value {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .seal-fact .sf-label {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .seal-hash {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-tertiary);
+      word-break: break-all;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .step-header { padding: 16px; }
@@ -844,6 +1028,10 @@
       .btn-group { flex-direction: column; }
       .btn { width: 100%; justify-content: center; }
       .analysis-grid { grid-template-columns: 1fr 1fr; }
+      .progress-node-label { display: none; }
+      .progress-node { width: 28px; height: 28px; font-size: 10px; }
+      .progress-bar { padding: 12px 16px 16px; }
+      .seal-facts { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -869,6 +1057,33 @@
       </div>
     </div>
   </nav>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div class="progress-bar-inner" id="progressBar">
+      <div class="progress-line" id="progressLine"></div>
+      <div class="progress-node active" data-step="1" onclick="scrollToStep(1)">
+        1
+        <span class="progress-node-label">Wallet</span>
+      </div>
+      <div class="progress-node" data-step="2" onclick="scrollToStep(2)">
+        2
+        <span class="progress-node-label">Encrypt</span>
+      </div>
+      <div class="progress-node" data-step="3" onclick="scrollToStep(3)">
+        3
+        <span class="progress-node-label">Token</span>
+      </div>
+      <div class="progress-node" data-step="4" onclick="scrollToStep(4)">
+        4
+        <span class="progress-node-label">Agent</span>
+      </div>
+      <div class="progress-node" data-step="5" onclick="scrollToStep(5)">
+        5
+        <span class="progress-node-label">Verify</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Main -->
   <main id="main-content">
@@ -1903,21 +2118,51 @@
       }
     }
     
+    function scrollToStep(n) {
+      document.getElementById(`step${n}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     function updateStep(stepNum, status) {
       const step = document.getElementById(`step${stepNum}`);
       const statusEl = step.querySelector('.step-status');
-      
+
       step.classList.remove('active', 'completed');
-      
+
       if (status === 'active') {
         step.classList.add('active');
         statusEl.textContent = 'In Progress';
+        setTimeout(() => scrollToStep(stepNum), 300);
       } else if (status === 'completed') {
         step.classList.add('completed');
         statusEl.textContent = 'Complete';
       } else {
         statusEl.textContent = 'Locked';
       }
+
+      // Update progress bar
+      updateProgressBar();
+    }
+
+    function updateProgressBar() {
+      const nodes = document.querySelectorAll('.progress-node');
+      let lastCompleted = 0;
+      nodes.forEach(node => {
+        const n = parseInt(node.dataset.step);
+        const stepEl = document.getElementById(`step${n}`);
+        node.classList.remove('active', 'completed');
+        const label = node.querySelector('.progress-node-label');
+        if (stepEl.classList.contains('completed')) {
+          node.classList.add('completed');
+          node.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+          node.appendChild(label);
+          lastCompleted = n;
+        } else if (stepEl.classList.contains('active')) {
+          node.classList.add('active');
+        }
+      });
+      // Update progress line width (percentage between first and last node)
+      const pct = (lastCompleted / 4) * 100;
+      document.getElementById('progressLine').style.width = `calc(${pct}% - ${pct > 0 ? 24 : 0}px)`;
     }
     
     // Step 1: Connect Wallet
@@ -2247,7 +2492,10 @@
     // Step 4: Agent Execution
     async function runAgent() {
       log('Agent starting execution...', 'info');
-      
+
+      // Auto-open execution log so audience can watch crypto ops
+      document.getElementById('consolePanel').classList.add('open');
+
       document.getElementById('agentLoading').style.display = 'flex';
       document.getElementById('agentSteps').style.display = 'block';
       
@@ -2687,6 +2935,40 @@
       `;
 
       document.getElementById('verifyGrid').innerHTML = verifyHtml;
+
+      // Sovereignty Seal
+      const elapsed = state.auditLog.length > 0
+        ? ((Date.now() - state.auditLog[0].timestamp) / 1000).toFixed(1)
+        : '—';
+      const sealHtml = `
+        <div class="sovereignty-seal">
+          <div class="seal-content">
+            <div class="seal-shield">🛡️</div>
+            <div class="seal-title">Proof of Data Sovereignty</div>
+            <div class="seal-subtitle">All cryptographic operations verified. Your data never left your control.</div>
+            <div class="seal-facts">
+              <div class="seal-fact">
+                <div class="sf-value">${state.auditLog.length}</div>
+                <div class="sf-label">Audit Entries</div>
+              </div>
+              <div class="seal-fact">
+                <div class="sf-value">AES-256</div>
+                <div class="sf-label">Encryption</div>
+              </div>
+              <div class="seal-fact">
+                <div class="sf-value">Ed25519</div>
+                <div class="sf-label">Signatures</div>
+              </div>
+              <div class="seal-fact">
+                <div class="sf-value">${elapsed}s</div>
+                <div class="sf-label">Total Time</div>
+              </div>
+            </div>
+            <div class="seal-hash">Final hash: ${state.lastHash}</div>
+          </div>
+        </div>
+      `;
+      document.getElementById('verifyGrid').insertAdjacentHTML('afterend', sealHtml);
 
       updateStep(5, 'completed');
       log('Demo complete! All crypto operations were REAL.', 'success');
