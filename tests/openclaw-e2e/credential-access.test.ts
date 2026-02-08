@@ -3,12 +3,15 @@
  *
  * Covers selective disclosure, credential revocation,
  * and multi-credential presentation.
+ * 
+ * Uses REAL Proofi wallet with actual cryptographic signing.
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  MockProofiWallet,
+  RealProofiWallet,
   MockOpenClawAgent,
+  createRealWallet,
   createTestCredential,
   createHealthCredential,
   createAgeCredential,
@@ -16,11 +19,11 @@ import {
 } from './test-setup';
 
 describe('Credential Access', () => {
-  let wallet: MockProofiWallet;
+  let wallet: RealProofiWallet;
   let agent: MockOpenClawAgent;
 
-  beforeEach(() => {
-    wallet = new MockProofiWallet();
+  beforeEach(async () => {
+    wallet = await createRealWallet();
     agent = new MockOpenClawAgent();
     agent.requestAuthorization(wallet, ['credential']);
   });

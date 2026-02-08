@@ -3,13 +3,16 @@
  *
  * End-to-end flow: wallet connect → TEE attestation →
  * agent authorization → credential access → action execution.
+ * 
+ * Uses REAL Proofi wallet with actual cryptographic operations.
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  MockProofiWallet,
+  RealProofiWallet,
   MockOpenClawAgent,
   MockTeeVerifier,
+  createRealWallet,
   createTestCredential,
   createHealthCredential,
   createAgeCredential,
@@ -17,12 +20,12 @@ import {
 } from './test-setup';
 
 describe('Integration: Full E2E Flow', () => {
-  let wallet: MockProofiWallet;
+  let wallet: RealProofiWallet;
   let agent: MockOpenClawAgent;
   let verifier: MockTeeVerifier;
 
-  beforeEach(() => {
-    wallet = new MockProofiWallet();
+  beforeEach(async () => {
+    wallet = await createRealWallet();
     agent = new MockOpenClawAgent();
     verifier = new MockTeeVerifier();
   });

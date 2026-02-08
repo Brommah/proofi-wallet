@@ -1,11 +1,14 @@
 /**
  * Test Setup — Proofi ↔ OpenClaw E2E
  *
- * Mock implementations of the OpenClaw TEE agent and Proofi identity wallet
- * used across all integration tests.
+ * Real Proofi wallet integration using @proofi/core KeyringManager
+ * and CredentialBuilder. OpenClaw agent remains mocked (external TEE).
  */
 
 import { vi } from 'vitest';
+import { KeyringManager } from '../../packages/core/dist/keyring/KeyringManager.js';
+import * as CredentialBuilder from '../../packages/core/dist/credentials/CredentialBuilder.js';
+import type { VerifiableCredential } from '../../packages/core/dist/credentials/types.js';
 
 // ═══════════════════════════════════════════════════════════════════
 // Types
@@ -76,7 +79,249 @@ export interface EncryptedMemoryEntry {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// Mock Proofi Wallet
+// Real Proofi Wallet (using @proofi/core)
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * RealProofiWallet wraps the actual KeyringManager and CredentialBuilder
+ * from @proofi/core for authentic signing and credential creation.
+ */
+export class RealProofiWallet {
+  did: string;
+  private keyring: KeyringManager;
+  private credentials: Map<string, VerifiableCredential> = new Map();
+  private authorizedAgents: Map<string, AgentSession> = new Map();
+  private initialized = false;
+
+  constructor() {
+    this.keyring = new KeyringManager();
+    this.did = ''; // Set after init
+  }
+
+  /** Initialize the wallet with a fresh mnemonic */
+  async init(): Promise<void> {
+    await this.keyring.init();
+    const mnemonic = this.keyring.generateMnemonic();
+    this.keyring.setMnemonic(mnemonic);
+    
+    // Derive primary Ed25519 keypair
+    const pair = this.keyring.derive({ 
+      type: 'ed25519', 
+      label: 'primary',
+      purposes: ['authentication', 'assertion']
+    });
+    
+    this.did = `did:proofi:${pair.address}`;
+    this.initialized = true;
+  }
+
+  private ensureInit(): void {
+    if (!this.initialized) {
+      throw new Error('Wallet not initialized. Call init() first.');
+    }
+  }
+
+  /** Get the primary keypair */
+  private getPrimaryPair() {
+    const pairs = this.keyring.getPairsByPurpose('authentication');
+    if (pairs.length === 0) throw new Error('No authentication keypair found');
+    return pairs[0];
+  }
+
+  /** Get the Polkadot KeyringPair for signing */
+  private getPolkadotPair() {
+    const pair = this.getPrimaryPair();
+    // KeyPairInternal has _polkadotPair for Substrate signing
+    if (!(pair as any)._polkadotPair) {
+      throw new Error('No Polkadot keypair available for signing');
+    }
+    return (pair as any)._polkadotPair;
+  }
+
+  /** Create and store a real verifiable credential */
+  createCredential(claims: Record<string, unknown>): VerifiableCredential {
+    this.ensureInit();
+    const polkadotPair = this.getPolkadotPair();
+    const signer = CredentialBuilder.fromPolkadotPair(polkadotPair);
+    const credential = CredentialBuilder.create(this.did, claims, signer);
+    this.credentials.set(credential.id, credential);
+    return credential;
+  }
+
+  /** Add an existing credential to the wallet */
+  addCredential(credential: VerifiableCredential): void {
+    this.credentials.set(credential.id, credential);
+  }
+
+  /** Get a credential by id */
+  getCredential(id: string): VerifiableCredential | undefined {
+    return this.credentials.get(id);
+  }
+
+  /** Get all credentials of a given type */
+  getCredentialsByType(type: string): VerifiableCredential[] {
+    return [...this.credentials.values()].filter((c) =>
+      c.type.includes(type),
+    );
+  }
+
+  /** Authorize an agent with specific scopes */
+  authorizeAgent(
+    agentId: string,
+    scopes: string[],
+    ttlMs = 3600_000,
+  ): AgentSession {
+    this.ensureInit();
+    const session: AgentSession = {
+      sessionId: `session-${randomHex(16)}`,
+      agentId,
+      walletDid: this.did,
+      scopes,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + ttlMs,
+      active: true,
+    };
+    this.authorizedAgents.set(session.sessionId, session);
+    return session;
+  }
+
+  /** Check whether an agent session is valid */
+  isSessionValid(sessionId: string): boolean {
+    const session = this.authorizedAgents.get(sessionId);
+    if (!session) return false;
+    if (!session.active) return false;
+    if (Date.now() >= session.expiresAt) {
+      session.active = false;
+      return false;
+    }
+    return true;
+  }
+
+  /** Get a session by id */
+  getSession(sessionId: string): AgentSession | undefined {
+    return this.authorizedAgents.get(sessionId);
+  }
+
+  /** Revoke a session */
+  revokeSession(sessionId: string): boolean {
+    const session = this.authorizedAgents.get(sessionId);
+    if (!session) return false;
+    session.active = false;
+    return true;
+  }
+
+  /** Renew an expired/active session */
+  renewSession(sessionId: string, ttlMs = 3600_000): AgentSession | null {
+    const session = this.authorizedAgents.get(sessionId);
+    if (!session) return null;
+    session.expiresAt = Date.now() + ttlMs;
+    session.active = true;
+    return session;
+  }
+
+  /** Sign a payload using real sr25519/ed25519 crypto */
+  sign(payload: string): string {
+    this.ensureInit();
+    const polkadotPair = this.getPolkadotPair();
+    const message = new TextEncoder().encode(payload);
+    const signature = polkadotPair.sign(message);
+    // Return hex-encoded signature
+    return Buffer.from(signature).toString('hex');
+  }
+
+  /** Sign an agent's request after verifying session + scope */
+  signAgentRequest(
+    sessionId: string,
+    action: string,
+    payload: Record<string, unknown>,
+  ): { signature: string; signedPayload: string } | null {
+    const session = this.authorizedAgents.get(sessionId);
+    if (!session || !this.isSessionValid(sessionId)) return null;
+
+    // Check scope
+    const actionScope = action.split(':')[0];
+    if (
+      !session.scopes.includes(actionScope) &&
+      !session.scopes.includes('*')
+    ) {
+      return null;
+    }
+
+    const signedPayload = JSON.stringify({
+      action,
+      payload,
+      sessionId,
+      timestamp: Date.now(),
+    });
+    return { signature: this.sign(signedPayload), signedPayload };
+  }
+
+  /**
+   * Produce a selective disclosure proof.
+   * Note: This is simplified - real ZKP would use snarkjs/circom.
+   */
+  createSelectiveDisclosure(
+    credentialId: string,
+    request: DisclosureRequest,
+  ): DisclosedProof | null {
+    const credential = this.credentials.get(credentialId);
+    if (!credential) return null;
+    if (!credential.type.includes(request.credentialType)) return null;
+
+    const disclosedFields: Record<string, unknown> = {};
+    for (const field of request.requestedFields) {
+      if (field in credential.credentialSubject) {
+        disclosedFields[field] = credential.credentialSubject[field];
+      }
+    }
+
+    const predicateResults = request.predicates?.map((pred) => {
+      const value = credential.credentialSubject[pred.field];
+      let satisfied = false;
+      if (typeof value === 'number' && typeof pred.value === 'number') {
+        switch (pred.operator) {
+          case '>': satisfied = value > pred.value; break;
+          case '<': satisfied = value < pred.value; break;
+          case '>=': satisfied = value >= pred.value; break;
+          case '<=': satisfied = value <= pred.value; break;
+          case '==': satisfied = value === pred.value; break;
+        }
+      }
+      return { field: pred.field, satisfied };
+    });
+
+    // Sign the disclosure for verification (prefixed for test compatibility)
+    const signature = this.sign(JSON.stringify(disclosedFields));
+
+    return {
+      credentialType: request.credentialType,
+      disclosedFields,
+      predicateResults,
+      proof: `zkp:${signature}`,
+    };
+  }
+
+  /** Revoke a credential in the wallet */
+  revokeCredential(credentialId: string): boolean {
+    const cred = this.credentials.get(credentialId);
+    if (!cred) return false;
+    // Mark as revoked on the credential object
+    (cred as any).revoked = true;
+    return true;
+  }
+
+  /** Check if a credential is revoked */
+  isCredentialRevoked(credentialId: string): boolean {
+    const cred = this.credentials.get(credentialId);
+    return (cred as any)?.revoked === true;
+  }
+}
+
+// Legacy alias for backward compatibility
+export { RealProofiWallet as ProofiWallet };
+
+// ═══════════════════════════════════════════════════════════════════
+// Mock Proofi Wallet (for fast unit tests without crypto init)
 // ═══════════════════════════════════════════════════════════════════
 
 export class MockProofiWallet {
@@ -88,6 +333,11 @@ export class MockProofiWallet {
   constructor(did?: string) {
     this.did = did ?? `did:proofi:${randomHex(32)}`;
     this.privateKey = randomHex(64);
+  }
+  
+  /** No-op init for interface compatibility */
+  async init(): Promise<void> {
+    // Mock wallet is ready immediately
   }
 
   /** Add a credential to the wallet */
@@ -496,4 +746,37 @@ function randomHex(length: number): string {
   return Array.from({ length }, () =>
     Math.floor(Math.random() * 16).toString(16),
   ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Factory Functions
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Create a real Proofi wallet with actual cryptographic operations.
+ * Use this for integration/e2e tests.
+ */
+export async function createRealWallet(): Promise<RealProofiWallet> {
+  const wallet = new RealProofiWallet();
+  await wallet.init();
+  return wallet;
+}
+
+/**
+ * Create a mock wallet for fast unit tests.
+ * No crypto initialization required.
+ */
+export function createMockWallet(): MockProofiWallet {
+  return new MockProofiWallet();
+}
+
+/**
+ * Create a wallet based on environment.
+ * Defaults to real wallet for e2e tests.
+ */
+export async function createWallet(useReal = true): Promise<RealProofiWallet | MockProofiWallet> {
+  if (useReal) {
+    return createRealWallet();
+  }
+  return createMockWallet();
 }

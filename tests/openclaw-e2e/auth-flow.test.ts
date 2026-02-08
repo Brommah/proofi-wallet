@@ -4,21 +4,24 @@
  * Covers the authorization lifecycle: wallet authorizes agent,
  * agent requests credential access, wallet signs requests,
  * agent performs actions, and session expiry/renewal.
+ * 
+ * Uses REAL Proofi wallet with actual Ed25519/Sr25519 signing.
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  MockProofiWallet,
+  RealProofiWallet,
   MockOpenClawAgent,
+  createRealWallet,
   createTestCredential,
 } from './test-setup';
 
 describe('Auth Flow', () => {
-  let wallet: MockProofiWallet;
+  let wallet: RealProofiWallet;
   let agent: MockOpenClawAgent;
 
-  beforeEach(() => {
-    wallet = new MockProofiWallet();
+  beforeEach(async () => {
+    wallet = await createRealWallet();
     agent = new MockOpenClawAgent();
   });
 
@@ -227,7 +230,8 @@ describe('Auth Flow', () => {
 
       const actionResult = agent.performAction(signed!, 'check-age');
 
-      expect(actionResult.result).toContain('sig:');
+      // Result contains "sig " (signature) from the mock agent
+      expect(actionResult.result).toMatch(/sig[:\s]/);
     });
   });
 
