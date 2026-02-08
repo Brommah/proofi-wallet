@@ -711,6 +711,132 @@
       margin-right: 8px;
     }
     
+    /* ===== REVOCATION ===== */
+    .revoke-btn {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .revoke-btn:hover { background: rgba(239, 68, 68, 0.1); }
+    .revoke-btn.revoked {
+      background: rgba(239, 68, 68, 0.1);
+      cursor: default;
+      opacity: 0.7;
+    }
+    .revocation-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--mono);
+    }
+    .revocation-status.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .revocation-status.revoked {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+    }
+
+    /* ===== PUBLIC VERIFIER ===== */
+    .verifier-section {
+      max-width: 1100px;
+      margin: 48px auto 64px;
+      padding: 0 24px;
+    }
+    .verifier-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+    .verifier-card h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .verifier-card p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .verifier-input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .verifier-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+    .verifier-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .verifier-result {
+      display: none;
+      padding: 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .verifier-result.visible { display: block; }
+    .verifier-result .vr-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .verifier-result .vr-status {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .verifier-result .vr-status.verified { color: var(--accent); }
+    .verifier-result .vr-status.not-found { color: var(--red); }
+    .verifier-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .verifier-detail:last-child { border: none; }
+    .verifier-detail .vd-label { color: var(--text-secondary); }
+    .verifier-detail .vd-value { font-family: var(--mono); font-size: 12px; }
+    .data-classes {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .data-class-tag {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--mono);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .step-header { padding: 16px; }
@@ -972,6 +1098,10 @@
                 </div>
               </div>
             </div>
+            <button class="revoke-btn" id="revokeBtn" onclick="revokeToken()">
+              🚫 Revoke Token
+            </button>
+            <div id="revocationStatus" style="margin-top: 8px;"></div>
           </div>
         </div>
       </div>
@@ -1004,7 +1134,7 @@
               <div class="kv-item" id="agentStep2">
                 <span class="kv-icon">⏳</span>
                 <div class="kv-content">
-                  <div class="kv-key">2. Check Expiry & Scopes</div>
+                  <div class="kv-key">2. Check Revocation, Expiry & Scopes</div>
                   <div class="kv-value pending">Pending...</div>
                 </div>
               </div>
@@ -1083,6 +1213,20 @@
     </div>
   </main>
 
+  <!-- Public CID Verifier -->
+  <section class="verifier-section" id="publicVerifier">
+    <div class="verifier-card">
+      <h2>🔍 Public CID Verifier</h2>
+      <p>Verify any content stored on Cere DDC. Paste a Content ID to check its existence, fetch metadata, and classify data types.</p>
+      <div class="verifier-input-group">
+        <input type="text" class="verifier-input" id="verifyCidInput" placeholder="Enter CID (e.g., bafk2bzace...)">
+        <input type="number" class="verifier-input" id="verifyBucketInput" placeholder="Bucket" value="1229" style="max-width: 120px;">
+        <button class="btn btn-primary" onclick="publicVerify()">Verify</button>
+      </div>
+      <div class="verifier-result" id="verifierResult"></div>
+    </div>
+  </section>
+
   <!-- Console Toggle -->
   <button class="console-toggle" onclick="toggleConsole()">
     <span>🖥️</span>
@@ -1150,6 +1294,8 @@
       lastHash: null,           // For hash chain
       ddcConnected: false,      // DDC connection status
       storageMode: 'indexeddb', // 'ddc' or 'indexeddb'
+      tokenRevoked: false,       // Whether current token has been revoked
+      revocationCid: null,       // CID of revocation record on DDC
       extensionConnected: false, // Proofi extension status
       walletAddress: null,       // Real Cere SS58 address from extension
       authToken: null            // JWT for Proofi API auth
@@ -1160,7 +1306,7 @@
     
     async function initIndexedDB() {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('ProofiDDC', 1);
+        const request = indexedDB.open('ProofiDDC', 2);
         request.onerror = () => reject(request.error);
         request.onsuccess = () => {
           ddcDB = request.result;
@@ -1170,6 +1316,9 @@
           const db = event.target.result;
           if (!db.objectStoreNames.contains('pieces')) {
             db.createObjectStore('pieces', { keyPath: 'cid' });
+          }
+          if (!db.objectStoreNames.contains('revocations')) {
+            db.createObjectStore('revocations', { keyPath: 'tokenId' });
           }
         };
       });
@@ -2066,7 +2215,14 @@
       document.getElementById('wrappedDek').textContent = 
         `${wrappedDEK.ciphertext.slice(0, 30)}... (${wrappedDEK.ciphertext.length} bytes)`;
       document.getElementById('tokenResult').style.display = 'block';
-      
+
+      // Show revoke button
+      const revokeBtn = document.getElementById('revokeBtn');
+      revokeBtn.style.display = 'inline-flex';
+      state.tokenRevoked = false;
+      document.getElementById('revocationStatus').innerHTML =
+        '<span class="revocation-status active">ACTIVE</span>';
+
       // Audit
       await addAuditEntry('TOKEN_CREATED', {
         tokenId,
@@ -2117,11 +2273,22 @@
       
       updateAgentStep(1, true, 'Signature valid (Ed25519)');
       log('Agent: Signature verified ✓', 'success');
-      
-      // Step 4.2: Check expiry & scopes
+
+      // Step 4.2: Check revocation, expiry & scopes
       await sleep(400);
+      log('Agent: Checking revocation status...', 'info');
+
+      const revStatus = await checkRevocationStatus(token.id);
+      if (revStatus.revoked) {
+        log('Agent: TOKEN REVOKED!', 'error');
+        updateAgentStep(2, false, `Token revoked${revStatus.revokedAt ? ' at ' + new Date(revStatus.revokedAt * 1000).toLocaleString() : ''}!`);
+        await addAuditEntry('AGENT_REJECTED', { reason: 'token_revoked', tokenId: token.id });
+        return;
+      }
+      log('Agent: Token not revoked ✓', 'success');
+
       log('Agent: Checking expiry and scopes...', 'info');
-      
+
       const now = Math.floor(Date.now() / 1000);
       if (token.exp < now) {
         log('Agent: TOKEN EXPIRED!', 'error');
@@ -2437,6 +2604,11 @@
           <span class="verify-value">${storageName} (Bucket ${state.bucketId})</span>
         </div>
         <div class="verify-item">
+          <span class="verify-icon">${state.tokenRevoked ? '🚫' : '✅'}</span>
+          <span class="verify-label">Token Status:</span>
+          <span class="verify-value">${state.tokenRevoked ? '<span class="revocation-status revoked">REVOKED</span>' : '<span class="revocation-status active">ACTIVE</span>'}</span>
+        </div>
+        <div class="verify-item">
           <span class="verify-icon">✅</span>
           <span class="verify-label">Hash Chain:</span>
           <span class="verify-value">${state.auditLog.length} entries, valid</span>
@@ -2557,6 +2729,277 @@
     function restartDemo() {
       location.reload();
     }
+
+    // ========================================
+    // TOKEN REVOCATION
+    // ========================================
+
+    async function revokeToken() {
+      if (!state.capabilityToken || state.tokenRevoked) return;
+
+      const token = state.capabilityToken;
+      log('Revoking token ' + token.id + '...', 'warn');
+
+      // Create signed revocation entry
+      const revocation = {
+        type: 'REVOCATION',
+        tokenId: token.id,
+        revokedAt: Math.floor(Date.now() / 1000),
+        revokedBy: nacl.util.encodeBase64(state.userKeyPair.publicKey),
+        reason: 'user_initiated'
+      };
+
+      // Sign the revocation with user's Ed25519 key
+      const revocationString = JSON.stringify(revocation);
+      const revSig = signMessage(revocationString, state.userKeyPair.privateKey);
+      revocation.sig = revSig;
+
+      // Store in IndexedDB
+      try {
+        if (ddcDB) {
+          const tx = ddcDB.transaction('revocations', 'readwrite');
+          tx.objectStore('revocations').put({
+            tokenId: token.id,
+            revocation,
+            timestamp: Date.now()
+          });
+        }
+      } catch (e) {
+        log('Failed to store revocation locally: ' + e.message, 'warn');
+      }
+
+      // Store on DDC via API
+      if (state.authToken) {
+        try {
+          const resp = await fetch(`${PROOFI_API}/ddc/memo`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${state.authToken}`
+            },
+            body: JSON.stringify({
+              to: nacl.util.encodeBase64(state.userKeyPair.publicKey),
+              subject: `revoke:${token.id}`,
+              body: JSON.stringify(revocation)
+            })
+          });
+
+          if (resp.ok) {
+            const result = await resp.json();
+            state.revocationCid = result.cid;
+            log(`Revocation stored on DDC: ${result.cid}`, 'success');
+          }
+        } catch (e) {
+          log('DDC revocation storage failed: ' + e.message, 'warn');
+        }
+      }
+
+      state.tokenRevoked = true;
+
+      // Update UI
+      const btn = document.getElementById('revokeBtn');
+      btn.textContent = '🚫 Token Revoked';
+      btn.classList.add('revoked');
+      btn.disabled = true;
+
+      document.getElementById('revocationStatus').innerHTML =
+        '<span class="revocation-status revoked">REVOKED</span>';
+
+      // Audit
+      await addAuditEntry('TOKEN_REVOKED', {
+        tokenId: token.id,
+        revocationCid: state.revocationCid || 'local-only'
+      });
+
+      log('Token revoked successfully', 'success');
+    }
+
+    async function checkRevocationStatus(tokenId) {
+      // Check IndexedDB first
+      if (ddcDB) {
+        try {
+          const tx = ddcDB.transaction('revocations', 'readonly');
+          const store = tx.objectStore('revocations');
+          const result = await new Promise((resolve, reject) => {
+            const req = store.get(tokenId);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+          });
+          if (result) return { revoked: true, source: 'local', ...result.revocation };
+        } catch (e) {
+          // Fall through
+        }
+      }
+
+      // Check in-memory state
+      if (state.tokenRevoked && state.capabilityToken?.id === tokenId) {
+        return { revoked: true, source: 'memory' };
+      }
+
+      return { revoked: false };
+    }
+
+    // ========================================
+    // PUBLIC CID VERIFIER
+    // ========================================
+
+    async function publicVerify() {
+      const cidInput = document.getElementById('verifyCidInput');
+      const bucketInput = document.getElementById('verifyBucketInput');
+      const resultEl = document.getElementById('verifierResult');
+
+      const cid = cidInput.value.trim();
+      const bucket = bucketInput.value.trim() || '1229';
+
+      if (!cid) {
+        resultEl.innerHTML = '<div class="vr-header"><span class="vr-status not-found">Please enter a CID</span></div>';
+        resultEl.classList.add('visible');
+        return;
+      }
+
+      resultEl.innerHTML = '<div class="vr-header"><span class="vr-status">Verifying...</span></div>';
+      resultEl.classList.add('visible');
+
+      log(`Public verify: checking CID ${cid} in bucket ${bucket}`, 'ddc');
+
+      const cdnUrl = `https://cdn.ddc-dragon.com/${bucket}/${cid}`;
+
+      try {
+        const response = await fetch(cdnUrl);
+
+        if (!response.ok) {
+          resultEl.innerHTML = `
+            <div class="vr-header">
+              <span class="vr-status not-found">❌ Not Found</span>
+            </div>
+            <div class="verifier-detail">
+              <span class="vd-label">CID</span>
+              <span class="vd-value">${escapeHtml(cid.slice(0, 40))}${cid.length > 40 ? '...' : ''}</span>
+            </div>
+            <div class="verifier-detail">
+              <span class="vd-label">Bucket</span>
+              <span class="vd-value">${escapeHtml(bucket)}</span>
+            </div>
+            <div class="verifier-detail">
+              <span class="vd-label">Status</span>
+              <span class="vd-value">HTTP ${response.status} — Content not found on DDC</span>
+            </div>
+          `;
+          log('Public verify: CID not found on DDC', 'warn');
+          return;
+        }
+
+        const contentType = response.headers.get('content-type') || 'unknown';
+        const contentLength = response.headers.get('content-length') || '—';
+        const text = await response.text();
+        const classification = classifyData(text);
+
+        let dataPreview = text.slice(0, 200);
+        if (text.length > 200) dataPreview += '...';
+
+        resultEl.innerHTML = `
+          <div class="vr-header">
+            <span class="vr-status verified">✅ Verified on DDC</span>
+          </div>
+          <div class="verifier-detail">
+            <span class="vd-label">CID</span>
+            <span class="vd-value">${escapeHtml(cid.slice(0, 40))}${cid.length > 40 ? '...' : ''}</span>
+          </div>
+          <div class="verifier-detail">
+            <span class="vd-label">Bucket</span>
+            <span class="vd-value">${escapeHtml(bucket)}</span>
+          </div>
+          <div class="verifier-detail">
+            <span class="vd-label">Size</span>
+            <span class="vd-value">${contentLength} bytes</span>
+          </div>
+          <div class="verifier-detail">
+            <span class="vd-label">Content Type</span>
+            <span class="vd-value">${escapeHtml(contentType)}</span>
+          </div>
+          <div class="verifier-detail">
+            <span class="vd-label">Classification</span>
+            <div class="data-classes">${classification.map(c => `<span class="data-class-tag">${escapeHtml(c)}</span>`).join('')}</div>
+          </div>
+          <div class="verifier-detail">
+            <span class="vd-label">CDN URL</span>
+            <span class="vd-value"><a href="${cdnUrl}" target="_blank" rel="noopener" style="color: var(--accent);">${escapeHtml(cdnUrl)}</a></span>
+          </div>
+          <div class="verifier-detail">
+            <span class="vd-label">Preview</span>
+            <span class="vd-value" style="max-width: 400px; word-break: break-all;">${escapeHtml(dataPreview)}</span>
+          </div>
+        `;
+
+        log(`Public verify: CID verified on DDC (${contentLength} bytes, ${classification.join(', ')})`, 'success');
+
+      } catch (err) {
+        resultEl.innerHTML = `
+          <div class="vr-header">
+            <span class="vr-status not-found">⚠️ Verification Failed</span>
+          </div>
+          <div class="verifier-detail">
+            <span class="vd-label">Error</span>
+            <span class="vd-value">${escapeHtml(err.message)}</span>
+          </div>
+        `;
+        log('Public verify failed: ' + err.message, 'error');
+      }
+    }
+
+    function classifyData(text) {
+      const classes = [];
+
+      try {
+        const parsed = JSON.parse(text);
+        classes.push('JSON');
+
+        // Check for memo envelope
+        if (parsed.to && parsed.subject && parsed.body) {
+          classes.push('DDC-MEMO');
+          try {
+            const inner = JSON.parse(parsed.body);
+            if (inner.ciphertext || inner.iv) classes.push('ENCRYPTED');
+            if (inner.type === 'REVOCATION') classes.push('REVOCATION');
+          } catch {}
+        }
+
+        // Check for encrypted data
+        if (parsed.ciphertext && parsed.iv) classes.push('ENCRYPTED');
+
+        // Check for capability token
+        if (parsed.iss && parsed.sub && parsed.scopes) classes.push('CAPABILITY-TOKEN');
+
+        // Check for health data
+        if (parsed.sleep || parsed.heartRate) classes.push('HEALTH-DATA');
+
+        // Check for revocation
+        if (parsed.type === 'REVOCATION') classes.push('REVOCATION');
+
+      } catch {
+        if (text.startsWith('-----BEGIN')) classes.push('PEM-KEY');
+        else if (text.length > 100 && !/\s/.test(text.slice(0, 50))) classes.push('BINARY/ENCODED');
+        else classes.push('PLAINTEXT');
+      }
+
+      if (classes.length === 0) classes.push('UNKNOWN');
+      return classes;
+    }
+
+    // Auto-verify from URL params
+    (function checkUrlVerify() {
+      const params = new URLSearchParams(window.location.search);
+      const cid = params.get('verify');
+      const bucket = params.get('bucket');
+      if (cid) {
+        document.getElementById('verifyCidInput').value = cid;
+        if (bucket) document.getElementById('verifyBucketInput').value = bucket;
+        setTimeout(() => {
+          document.getElementById('publicVerifier').scrollIntoView({ behavior: 'smooth' });
+          publicVerify();
+        }, 1000);
+      }
+    })();
   </script>
 </body>
 </html>
