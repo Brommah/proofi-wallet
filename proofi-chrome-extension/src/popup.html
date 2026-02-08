@@ -138,6 +138,14 @@
           <div class="action-icon">🔐</div>
           <div class="text-display text-xs">CREDENTIAL</div>
         </button>
+        <button id="btn-health-data" class="action-card action-purple">
+          <div class="action-icon">🏥</div>
+          <div class="text-display text-xs">HEALTH DATA</div>
+        </button>
+        <button id="btn-agents" class="action-card action-orange">
+          <div class="action-icon">🤖</div>
+          <div class="text-display text-xs">AGENTS</div>
+        </button>
       </div>
       
       <!-- Stored Items -->
@@ -231,6 +239,169 @@
     </div>
   </div>
 
+    <!-- Health Data Screen -->
+    <div id="screen-health" class="screen" style="display:none;">
+      <div class="screen-header">
+        <button id="btn-health-back" class="btn-ghost text-mono text-xs text-muted">← BACK</button>
+        <h1 class="text-display text-display-sm">HEALTH DATA</h1>
+        <p class="text-body-sm text-muted" style="margin-top: 4px;">Import and manage your health records</p>
+      </div>
+      
+      <!-- Health Data Summary -->
+      <div id="health-summary" class="health-summary" style="display:none;">
+        <div class="text-label" style="margin-bottom: 12px;">YOUR DATA</div>
+        <div class="health-stats-grid" id="health-stats-grid">
+          <!-- Populated by JS -->
+        </div>
+        <div class="health-sync-status" id="health-sync-status">
+          <span class="sync-dot offline"></span>
+          <span class="text-mono text-xs">NOT SYNCED TO DDC</span>
+        </div>
+      </div>
+      
+      <!-- Import Section -->
+      <div class="form-section">
+        <label class="text-label">IMPORT HEALTH DATA</label>
+        <p class="text-body-sm text-muted" style="margin: 4px 0 12px;">
+          Upload your Apple Health export (export.xml) or use sample data
+        </p>
+        
+        <div class="import-options">
+          <label for="health-file-input" class="btn-secondary btn-full" style="cursor: pointer; text-align: center;">
+            📂 CHOOSE FILE
+          </label>
+          <input type="file" id="health-file-input" accept=".xml,.zip" style="display:none;">
+          
+          <button id="btn-load-sample" class="btn-secondary btn-full" style="margin-top: 8px;">
+            🧪 LOAD SAMPLE DATA
+          </button>
+        </div>
+        
+        <div id="health-import-progress" class="loading-indicator" style="display:none; margin-top: 12px;">
+          <div class="spinner"></div>
+          <span class="text-mono text-sm" style="color: var(--cyan);">PARSING...</span>
+        </div>
+        
+        <div id="error-health" class="error-box" style="display:none;"></div>
+        <div id="success-health" class="success-box" style="display:none;"></div>
+      </div>
+      
+      <!-- Sync to DDC -->
+      <div id="health-sync-section" class="form-section" style="display:none; margin-top: 16px;">
+        <label class="text-label">SYNC TO DDC</label>
+        <p class="text-body-sm text-muted" style="margin: 4px 0 12px;">
+          Encrypt your health data and store on Cere DDC
+        </p>
+        
+        <button id="btn-sync-ddc" class="btn-primary btn-full">
+          🔐 ENCRYPT & SYNC TO DDC
+        </button>
+        
+        <div id="sync-progress" class="loading-indicator" style="display:none; margin-top: 12px;">
+          <div class="spinner"></div>
+          <span class="text-mono text-sm" style="color: var(--cyan);">ENCRYPTING & UPLOADING...</span>
+        </div>
+        
+        <div id="sync-result" style="display:none; margin-top: 12px;">
+          <div class="kv-grid">
+            <div class="kv-item">
+              <div class="kv-content">
+                <div class="kv-key">CID</div>
+                <div class="kv-value text-mono text-xs" id="health-cid"></div>
+              </div>
+            </div>
+            <div class="kv-item">
+              <div class="kv-content">
+                <div class="kv-key">Bucket</div>
+                <div class="kv-value text-mono text-xs" id="health-bucket"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- PIN unlock for encryption -->
+        <div id="health-pin-unlock" class="pin-unlock-section" style="display:none;">
+          <div class="text-label" style="margin-bottom: 8px;">Enter PIN to encrypt</div>
+          <input type="password" id="health-pin" placeholder="••••••" maxlength="8" inputmode="numeric" class="input-brutal input-pin" autocomplete="off">
+          <button id="btn-health-unlock" class="btn-primary btn-full">UNLOCK & SYNC</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agents Screen -->
+    <div id="screen-agents" class="screen" style="display:none;">
+      <div class="screen-header">
+        <button id="btn-agents-back" class="btn-ghost text-mono text-xs text-muted">← BACK</button>
+        <h1 class="text-display text-display-sm">CONNECTED AGENTS</h1>
+        <p class="text-body-sm text-muted" style="margin-top: 4px;">Apps authorized to access your data</p>
+      </div>
+      
+      <!-- Pending Access Request -->
+      <div id="pending-request" class="pending-request-card" style="display:none;">
+        <div class="text-label" style="color: var(--yellow); margin-bottom: 8px;">⚠️ PENDING REQUEST</div>
+        <div class="agent-request-info">
+          <div class="agent-name text-display text-sm" id="pending-agent-name"></div>
+          <div class="text-body-sm text-muted" id="pending-agent-origin"></div>
+        </div>
+        <div class="requested-scopes" id="pending-scopes">
+          <!-- Populated by JS -->
+        </div>
+        <div class="request-actions" style="margin-top: 12px; display: flex; gap: 8px;">
+          <button id="btn-deny-agent" class="btn-secondary" style="flex: 1;">DENY</button>
+          <button id="btn-approve-agent" class="btn-primary" style="flex: 1;">APPROVE</button>
+        </div>
+      </div>
+      
+      <!-- Connected Agents List -->
+      <div id="agents-list" class="agents-list">
+        <div class="empty-state">
+          <div class="text-display" style="font-size: 2rem; color: var(--steel);">🤖</div>
+          <p class="text-body-sm text-muted">No agents connected</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Approval Modal -->
+    <div id="agent-approval-modal" class="modal-overlay" style="display:none;">
+      <div class="modal-card">
+        <div class="text-label" style="color: var(--cyan);">DATA ACCESS REQUEST</div>
+        <h2 class="text-display" style="margin: 8px 0;" id="modal-agent-name"></h2>
+        <p class="text-body-sm text-muted" id="modal-agent-origin"></p>
+        
+        <div class="modal-section" style="margin-top: 16px;">
+          <div class="text-label" style="margin-bottom: 8px;">REQUESTING ACCESS TO:</div>
+          <div class="scope-list" id="modal-scopes">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        
+        <div class="modal-section" style="margin-top: 16px;">
+          <div class="text-label" style="margin-bottom: 8px;">ACCESS DURATION</div>
+          <div class="expiry-options">
+            <label class="expiry-option">
+              <input type="radio" name="modal-expiry" value="3600">
+              <span class="expiry-btn">1 HOUR</span>
+            </label>
+            <label class="expiry-option">
+              <input type="radio" name="modal-expiry" value="86400" checked>
+              <span class="expiry-btn selected">24 HOURS</span>
+            </label>
+            <label class="expiry-option">
+              <input type="radio" name="modal-expiry" value="604800">
+              <span class="expiry-btn">7 DAYS</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 8px;">
+          <button id="modal-btn-deny" class="btn-secondary" style="flex: 1;">DENY</button>
+          <button id="modal-btn-approve" class="btn-primary" style="flex: 1;">GRANT ACCESS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="popup.js" type="module"></script>
+  <script src="agents-ui.js"></script>
 </body>
 </html>

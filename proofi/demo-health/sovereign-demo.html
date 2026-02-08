@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi — Sovereign Health Analysis</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1a1a1a;
+      --text: #f0f0f0;
+      --text-secondary: #888;
+      --text-tertiary: #555;
+      --border: rgba(255,255,255,0.08);
+      --cyan: #00E5FF;
+      --success: #00FF88;
+      --warning: #FFB800;
+      --error: #FF3366;
+      --purple: #9B59B6;
+      --font: 'Inter', system-ui, sans-serif;
+      --mono: 'SF Mono', monospace;
+      --radius: 12px;
+    }
+    
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--cyan), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+    
+    /* Status Bar */
+    .status-bar {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--surface);
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
+    
+    .status-dot.connected { background: var(--success); }
+    .status-dot.pending { background: var(--warning); }
+    .status-dot.error { background: var(--error); }
+    
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--surface-2);
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .card.completed .step-badge {
+      background: var(--success);
+      color: var(--bg);
+    }
+    
+    .card.active {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), #00B8CC);
+      color: var(--bg);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 229, 255, 0.3);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    /* Data Display */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    
+    .data-item {
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .data-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    
+    .data-label {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    
+    /* Scope Selection */
+    .scope-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .scope-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--surface-2);
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .scope-item:hover {
+      border-color: var(--border);
+    }
+    
+    .scope-item.selected {
+      border-color: var(--cyan);
+      background: rgba(0, 229, 255, 0.05);
+    }
+    
+    .scope-icon { font-size: 1.25rem; }
+    .scope-name { flex: 1; font-weight: 500; }
+    
+    .scope-sensitivity {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    
+    .scope-sensitivity.low { background: rgba(0,255,136,0.1); color: var(--success); }
+    .scope-sensitivity.medium { background: rgba(0,229,255,0.1); color: var(--cyan); }
+    .scope-sensitivity.high { background: rgba(255,183,0,0.1); color: var(--warning); }
+    
+    /* Analysis Results */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    
+    .result-card {
+      background: var(--surface-2);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .result-value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    
+    .result-value.good { color: var(--success); }
+    .result-value.warning { color: var(--warning); }
+    .result-value.bad { color: var(--error); }
+    
+    .result-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+    
+    /* Console */
+    .console {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 16px;
+    }
+    
+    .console-line {
+      padding: 4px 0;
+      color: var(--text-secondary);
+    }
+    
+    .console-line.success { color: var(--success); }
+    .console-line.error { color: var(--error); }
+    .console-line.crypto { color: var(--purple); }
+    .console-line.ddc { color: var(--cyan); }
+    
+    /* Ollama Stream */
+    .ollama-stream {
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Hidden */
+    .hidden { display: none !important; }
+    
+    /* Trust Chain */
+    .trust-chain {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 16px;
+      background: var(--surface-2);
+      border-radius: 8px;
+      margin: 16px 0;
+    }
+    
+    .trust-node {
+      text-align: center;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-radius: 8px;
+      min-width: 100px;
+    }
+    
+    .trust-node-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
+    
+    .trust-node-detail {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+      font-family: var(--mono);
+    }
+    
+    .trust-arrow {
+      color: var(--text-tertiary);
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🏥 Sovereign Health Analysis</h1>
+      <p>Your data stays in your wallet. AI agents request permission through you.</p>
+    </div>
+    
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="status-item">
+        <span class="status-dot" id="walletDot"></span>
+        <span id="walletStatus">Wallet: Not Connected</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot" id="ollamaDot"></span>
+        <span id="ollamaStatus">Ollama: Checking...</span>
+      </div>
+    </div>
+    
+    <!-- Step 1: Connect Wallet -->
+    <div class="card active" id="step1">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">1</span>
+          Connect Proofi Wallet
+        </div>
+      </div>
+      <p style="color: var(--text-secondary); margin-bottom: 16px;">
+        Your wallet holds your health data and controls who can access it. 
+        The extension will handle storage, encryption, and permissions.
+      </p>
+      <button class="btn btn-primary" id="connectWalletBtn" onclick="connectWallet()">
+        🔐 Connect Wallet
+      </button>
+      <div id="walletInfo" class="hidden" style="margin-top: 16px;">
+        <div class="data-grid">
+          <div class="data-item">
+            <div class="data-value" id="walletAddress" style="font-size: 0.8rem;">—</div>
+            <div class="data-label">Address</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Step 2: Request Data Access -->
+    <div class="card" id="step2">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">2</span>
+          Request Data Access
+        </div>
+      </div>
+      <p style="color: var(--text-secondary); margin-bottom: 16px;">
+        Select which data types you want to analyze. Your wallet will prompt you to approve.
+      </p>
+      
+      <div class="scope-list" id="scopeList">
+        <div class="scope-item selected" data-scope="sleep">
+          <span class="scope-icon">🌙</span>
+          <span class="scope-name">Sleep Analysis</span>
+          <span class="scope-sensitivity medium">MEDIUM</span>
+        </div>
+        <div class="scope-item selected" data-scope="heart">
+          <span class="scope-icon">❤️</span>
+          <span class="scope-name">Heart Rate</span>
+          <span class="scope-sensitivity medium">MEDIUM</span>
+        </div>
+        <div class="scope-item" data-scope="steps">
+          <span class="scope-icon">👟</span>
+          <span class="scope-name">Steps</span>
+          <span class="scope-sensitivity low">LOW</span>
+        </div>
+        <div class="scope-item" data-scope="hrv">
+          <span class="scope-icon">📈</span>
+          <span class="scope-name">HRV</span>
+          <span class="scope-sensitivity high">HIGH</span>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" id="requestAccessBtn" onclick="requestAccess()" disabled style="margin-top: 16px;">
+        📨 Request Access from Wallet
+      </button>
+      
+      <div id="accessPending" class="hidden" style="margin-top: 16px;">
+        <div class="loading">
+          <div class="spinner"></div>
+          <span>Waiting for wallet approval...</span>
+        </div>
+      </div>
+      
+      <div id="accessGranted" class="hidden" style="margin-top: 16px; padding: 16px; background: rgba(0,255,136,0.1); border-radius: 8px;">
+        <p style="color: var(--success); font-weight: 600;">✅ Access Granted!</p>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+          Token ID: <span id="tokenId" style="font-family: var(--mono);">—</span>
+        </p>
+      </div>
+    </div>
+    
+    <!-- Step 3: Run Analysis -->
+    <div class="card" id="step3">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">3</span>
+          Analyze with Local AI
+        </div>
+      </div>
+      <p style="color: var(--text-secondary); margin-bottom: 16px;">
+        Data is fetched from DDC, decrypted locally, and analyzed with Ollama. 
+        <strong>Your raw data never leaves your machine.</strong>
+      </p>
+      
+      <!-- Trust Chain -->
+      <div class="trust-chain" id="trustChain">
+        <div class="trust-node">
+          <div class="trust-node-label">Wallet</div>
+          <div class="trust-node-detail">Permission</div>
+        </div>
+        <span class="trust-arrow">→</span>
+        <div class="trust-node">
+          <div class="trust-node-label">DDC</div>
+          <div class="trust-node-detail">Encrypted Data</div>
+        </div>
+        <span class="trust-arrow">→</span>
+        <div class="trust-node">
+          <div class="trust-node-label">Browser</div>
+          <div class="trust-node-detail">Decrypt</div>
+        </div>
+        <span class="trust-arrow">→</span>
+        <div class="trust-node">
+          <div class="trust-node-label">Ollama</div>
+          <div class="trust-node-detail">localhost:11434</div>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" id="runAnalysisBtn" onclick="runAnalysis()" disabled>
+        🧠 Run Analysis with Ollama
+      </button>
+      
+      <div id="analysisProgress" class="hidden" style="margin-top: 16px;">
+        <div class="loading">
+          <div class="spinner"></div>
+          <span id="analysisStep">Fetching encrypted data from DDC...</span>
+        </div>
+      </div>
+      
+      <div id="ollamaStreamContainer" class="hidden" style="margin-top: 16px;">
+        <p style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px;">
+          🤖 AI Response (streaming):
+        </p>
+        <div class="ollama-stream" id="ollamaStream"></div>
+      </div>
+    </div>
+    
+    <!-- Step 4: Results -->
+    <div class="card" id="step4">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">4</span>
+          Your Results
+        </div>
+      </div>
+      
+      <div id="resultsContent" class="hidden">
+        <div class="results-grid" id="resultsGrid">
+          <!-- Filled by JS -->
+        </div>
+        
+        <div style="margin-top: 24px;">
+          <p style="font-weight: 600; margin-bottom: 12px;">Recommendations</p>
+          <div id="recommendations" class="ollama-stream" style="max-height: 150px;"></div>
+        </div>
+      </div>
+      
+      <div id="noResults" style="color: var(--text-tertiary);">
+        Complete the analysis to see your results.
+      </div>
+    </div>
+    
+    <!-- Console -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 Execution Log</div>
+        <button class="btn btn-secondary" onclick="clearConsole()" style="padding: 6px 12px; font-size: 12px;">Clear</button>
+      </div>
+      <div class="console" id="console">
+        <div class="console-line">Sovereign Health Demo initialized</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TweetNaCl for crypto -->
+  <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script>
+  
+  <script>
+    // ========================================
+    // SOVEREIGN HEALTH DEMO
+    // Wallet-Centric Architecture
+    // ========================================
+    
+    // Extension ID - Update this with your actual extension ID
+    const EXTENSION_ID = 'YOUR_EXTENSION_ID_HERE'; // e.g., 'abcdefghijklmnopqrstuvwxyz123456'
+    
+    // State
+    const state = {
+      walletConnected: false,
+      walletAddress: null,
+      accessGranted: false,
+      capabilityToken: null,
+      healthDataCID: null,
+      bucketId: null,
+      ollamaConnected: false,
+      ollamaModel: 'llama3.2:3b'
+    };
+    
+    // ========================================
+    // LOGGING
+    // ========================================
+    
+    function log(message, type = 'info') {
+      const consoleEl = document.getElementById('console');
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+      const line = document.createElement('div');
+      line.className = `console-line ${type}`;
+      line.innerHTML = `<span style="color: var(--text-tertiary);">[${time}]</span> ${message}`;
+      consoleEl.appendChild(line);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+    
+    function clearConsole() {
+      document.getElementById('console').innerHTML = '<div class="console-line">Console cleared</div>';
+    }
+    
+    // ========================================
+    // WALLET CONNECTION
+    // ========================================
+    
+    async function connectWallet() {
+      log('Connecting to Proofi Wallet extension...');
+      
+      try {
+        // Try to communicate with extension
+        const response = await sendToExtension({ type: 'GET_WALLET_STATE' });
+        
+        if (response.connected && response.address) {
+          state.walletConnected = true;
+          state.walletAddress = response.address;
+          
+          updateWalletUI(true);
+          log(`Wallet connected: ${response.address.slice(0, 8)}...`, 'success');
+          
+          // Enable next step
+          document.getElementById('requestAccessBtn').disabled = false;
+          markStepComplete(1);
+          activateStep(2);
+        } else {
+          // Wallet not logged in, open login popup
+          log('Wallet not connected, opening login popup...');
+          await sendToExtension({ type: 'OPEN_LOGIN_POPUP' });
+          
+          // Poll for connection
+          pollForConnection();
+        }
+      } catch (err) {
+        log(`Extension not found: ${err.message}`, 'error');
+        log('Make sure the Proofi Wallet extension is installed and enabled.', 'error');
+        
+        // Show install instructions
+        alert('Proofi Wallet extension not found.\n\nPlease install the extension from chrome://extensions');
+      }
+    }
+    
+    async function pollForConnection() {
+      let attempts = 0;
+      const maxAttempts = 60; // 30 seconds
+      
+      const poll = async () => {
+        if (attempts >= maxAttempts) {
+          log('Connection timeout. Please try again.', 'error');
+          return;
+        }
+        
+        try {
+          const response = await sendToExtension({ type: 'GET_WALLET_STATE' });
+          
+          if (response.connected && response.address) {
+            state.walletConnected = true;
+            state.walletAddress = response.address;
+            
+            updateWalletUI(true);
+            log(`Wallet connected: ${response.address.slice(0, 8)}...`, 'success');
+            
+            document.getElementById('requestAccessBtn').disabled = false;
+            markStepComplete(1);
+            activateStep(2);
+            return;
+          }
+        } catch (err) {
+          // Extension might not be ready
+        }
+        
+        attempts++;
+        setTimeout(poll, 500);
+      };
+      
+      poll();
+    }
+    
+    function updateWalletUI(connected) {
+      const dot = document.getElementById('walletDot');
+      const status = document.getElementById('walletStatus');
+      
+      if (connected) {
+        dot.className = 'status-dot connected';
+        status.textContent = `Wallet: ${state.walletAddress.slice(0, 8)}...`;
+        
+        document.getElementById('walletInfo').classList.remove('hidden');
+        document.getElementById('walletAddress').textContent = state.walletAddress;
+        document.getElementById('connectWalletBtn').textContent = '✓ Connected';
+        document.getElementById('connectWalletBtn').disabled = true;
+      } else {
+        dot.className = 'status-dot';
+        status.textContent = 'Wallet: Not Connected';
+      }
+    }
+    
+    // ========================================
+    // ACCESS REQUEST
+    // ========================================
+    
+    async function requestAccess() {
+      const selectedScopes = getSelectedScopes();
+      
+      if (selectedScopes.length === 0) {
+        alert('Please select at least one data type');
+        return;
+      }
+      
+      log(`Requesting access to: ${selectedScopes.join(', ')}`);
+      document.getElementById('accessPending').classList.remove('hidden');
+      document.getElementById('requestAccessBtn').disabled = true;
+      
+      try {
+        // Send connect request to extension
+        const response = await sendToExtension({
+          type: 'AGENT_CONNECT',
+          payload: {
+            agentId: 'health-analyzer-demo-' + Date.now(),
+            name: 'Health Analyzer Demo',
+            scopes: selectedScopes,
+            dataTypes: selectedScopes,
+            origin: window.location.origin
+          }
+        });
+        
+        if (response.pending) {
+          log('Waiting for user approval in wallet...', 'crypto');
+          
+          // Poll for approval
+          pollForApproval();
+        }
+      } catch (err) {
+        log(`Access request failed: ${err.message}`, 'error');
+        document.getElementById('accessPending').classList.add('hidden');
+        document.getElementById('requestAccessBtn').disabled = false;
+      }
+    }
+    
+    async function pollForApproval() {
+      let attempts = 0;
+      const maxAttempts = 120; // 60 seconds
+      
+      const poll = async () => {
+        if (attempts >= maxAttempts) {
+          log('Approval timeout. Please try again.', 'error');
+          document.getElementById('accessPending').classList.add('hidden');
+          document.getElementById('requestAccessBtn').disabled = false;
+          return;
+        }
+        
+        try {
+          // Check if we have an active session
+          const response = await sendToExtension({
+            type: 'GET_HEALTH_DATA_ACCESS',
+            payload: { agentId: 'health-analyzer-demo' }
+          });
+          
+          if (response.ok && response.cid) {
+            state.accessGranted = true;
+            state.healthDataCID = response.cid;
+            state.bucketId = response.bucket;
+            state.capabilityToken = response;
+            
+            document.getElementById('accessPending').classList.add('hidden');
+            document.getElementById('accessGranted').classList.remove('hidden');
+            document.getElementById('tokenId').textContent = response.cid.slice(0, 20) + '...';
+            
+            log('Access granted!', 'success');
+            log(`Health data CID: ${response.cid}`, 'ddc');
+            
+            document.getElementById('runAnalysisBtn').disabled = false;
+            markStepComplete(2);
+            activateStep(3);
+            return;
+          }
+        } catch (err) {
+          // Not approved yet
+        }
+        
+        attempts++;
+        setTimeout(poll, 500);
+      };
+      
+      poll();
+    }
+    
+    function getSelectedScopes() {
+      const scopes = [];
+      document.querySelectorAll('.scope-item.selected').forEach(item => {
+        scopes.push(item.dataset.scope);
+      });
+      return scopes;
+    }
+    
+    // ========================================
+    // ANALYSIS
+    // ========================================
+    
+    async function runAnalysis() {
+      if (!state.healthDataCID) {
+        log('No health data CID available', 'error');
+        return;
+      }
+      
+      log('Starting sovereign analysis flow...', 'crypto');
+      document.getElementById('analysisProgress').classList.remove('hidden');
+      document.getElementById('runAnalysisBtn').disabled = true;
+      
+      try {
+        // Step 1: Fetch encrypted data from DDC
+        updateAnalysisStep('Fetching encrypted data from DDC...');
+        log(`Fetching from DDC bucket ${state.bucketId}, CID: ${state.healthDataCID}`, 'ddc');
+        
+        const cdnUrl = `https://cdn.ddc-dragon.com/${state.bucketId}/${state.healthDataCID}`;
+        const response = await fetch(cdnUrl);
+        
+        if (!response.ok) {
+          throw new Error(`DDC fetch failed: ${response.status}`);
+        }
+        
+        const encryptedData = await response.json();
+        log('Encrypted data fetched from DDC', 'success');
+        
+        // Step 2: Decrypt data (in browser)
+        updateAnalysisStep('Decrypting data locally...');
+        
+        // In a real implementation, we'd use the wrapped DEK from the capability token
+        // For demo, we'll use sample data
+        log('Decrypting with capability token DEK...', 'crypto');
+        
+        let healthData;
+        if (encryptedData.ciphertext) {
+          // TODO: Real decryption with unwrapped DEK
+          log('Demo mode: Using sample data for analysis', 'warning');
+          healthData = generateSampleHealthData();
+        } else {
+          healthData = encryptedData;
+        }
+        
+        log(`Decrypted ${JSON.stringify(healthData).length} bytes`, 'success');
+        
+        // Step 3: Analyze with Ollama
+        updateAnalysisStep('Sending to local Ollama for analysis...');
+        
+        if (!state.ollamaConnected) {
+          log('Ollama not connected, using built-in analysis', 'warning');
+          const analysis = analyzeBuiltIn(healthData);
+          showResults(analysis);
+        } else {
+          await analyzeWithOllama(healthData);
+        }
+        
+        document.getElementById('analysisProgress').classList.add('hidden');
+        markStepComplete(3);
+        activateStep(4);
+        
+      } catch (err) {
+        log(`Analysis failed: ${err.message}`, 'error');
+        document.getElementById('analysisProgress').classList.add('hidden');
+        document.getElementById('runAnalysisBtn').disabled = false;
+      }
+    }
+    
+    function updateAnalysisStep(message) {
+      document.getElementById('analysisStep').textContent = message;
+      log(message);
+    }
+    
+    async function analyzeWithOllama(healthData) {
+      const streamContainer = document.getElementById('ollamaStreamContainer');
+      const streamEl = document.getElementById('ollamaStream');
+      
+      streamContainer.classList.remove('hidden');
+      streamEl.textContent = '';
+      
+      const sleepSummary = healthData.sleep?.length > 0
+        ? `Sleep: ${healthData.sleep.length} nights, avg ${(healthData.sleep.reduce((a,s) => a + (s.duration || s.totalDuration || 7), 0) / healthData.sleep.length).toFixed(1)}h`
+        : 'No sleep data';
+      
+      const heartSummary = healthData.heart?.length > 0
+        ? `Heart: ${healthData.heart.length} readings, avg ${Math.round(healthData.heart.reduce((a,h) => a + h.bpm, 0) / healthData.heart.length)} BPM`
+        : 'No heart data';
+      
+      const prompt = `Analyze this health data and provide insights:
+
+${sleepSummary}
+${heartSummary}
+
+${healthData.sleep?.length > 0 ? `Recent sleep (last 7 nights): ${JSON.stringify(healthData.sleep.slice(-7), null, 1)}` : ''}
+${healthData.heart?.length > 0 ? `Recent heart readings: ${JSON.stringify(healthData.heart.slice(-20), null, 1)}` : ''}
+
+Provide:
+1. Overall health assessment (2-3 sentences)
+2. Sleep quality insights
+3. Heart health insights
+4. 3-4 actionable recommendations`;
+
+      try {
+        const response = await fetch('http://localhost:11434/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: state.ollamaModel,
+            prompt: prompt,
+            stream: true
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Ollama error: ${response.status}`);
+        }
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullResponse = '';
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n').filter(l => l.trim());
+          
+          for (const line of lines) {
+            try {
+              const json = JSON.parse(line);
+              if (json.response) {
+                fullResponse += json.response;
+                streamEl.textContent = fullResponse;
+                streamEl.scrollTop = streamEl.scrollHeight;
+              }
+            } catch {}
+          }
+        }
+        
+        log('Ollama analysis complete!', 'success');
+        
+        // Show results
+        const analysis = parseOllamaResponse(fullResponse, healthData);
+        showResults(analysis);
+        
+      } catch (err) {
+        log(`Ollama failed: ${err.message}, using built-in`, 'error');
+        const analysis = analyzeBuiltIn(healthData);
+        showResults(analysis);
+      }
+    }
+    
+    function parseOllamaResponse(response, healthData) {
+      const lines = response.split('\n').filter(l => l.trim());
+      const recommendations = lines.filter(l => 
+        l.match(/^\d+[\.\)]/) || l.startsWith('-') || l.startsWith('•')
+      ).slice(0, 4).map(l => l.replace(/^[\d\.\)\-•\s]+/, '').trim());
+      
+      const hasSleep = healthData.sleep?.length > 0;
+      const hasHeart = healthData.heart?.length > 0;
+      
+      let avgSleep = null, sleepScore = null;
+      if (hasSleep) {
+        avgSleep = healthData.sleep.reduce((a, s) => a + (s.duration || s.totalDuration || 7), 0) / healthData.sleep.length;
+        sleepScore = Math.min(100, Math.round(avgSleep / 8 * 100));
+      }
+      
+      let avgHR = null, heartScore = null;
+      if (hasHeart) {
+        avgHR = Math.round(healthData.heart.reduce((a, h) => a + h.bpm, 0) / healthData.heart.length);
+        heartScore = Math.max(0, 100 - Math.abs(avgHR - 70));
+      }
+      
+      return {
+        avgSleep,
+        avgHR,
+        sleepScore,
+        heartScore,
+        recommendations: recommendations.length > 0 ? recommendations : [response.slice(0, 200)],
+        ollamaResponse: response
+      };
+    }
+    
+    function analyzeBuiltIn(healthData) {
+      const hasSleep = healthData.sleep?.length > 0;
+      const hasHeart = healthData.heart?.length > 0;
+      
+      let avgSleep = null, sleepScore = null;
+      if (hasSleep) {
+        avgSleep = healthData.sleep.reduce((a, s) => a + (s.duration || s.totalDuration || 7), 0) / healthData.sleep.length;
+        sleepScore = Math.min(100, Math.round(avgSleep / 8 * 100));
+      }
+      
+      let avgHR = null, heartScore = null;
+      if (hasHeart) {
+        avgHR = Math.round(healthData.heart.reduce((a, h) => a + h.bpm, 0) / healthData.heart.length);
+        heartScore = Math.max(0, 100 - Math.abs(avgHR - 70));
+      }
+      
+      return {
+        avgSleep,
+        avgHR,
+        sleepScore,
+        heartScore,
+        recommendations: [
+          'Maintain consistent sleep schedule',
+          'Aim for 7-9 hours of sleep',
+          'Monitor heart rate during exercise',
+          'Stay hydrated throughout the day'
+        ]
+      };
+    }
+    
+    function showResults(analysis) {
+      const grid = document.getElementById('resultsGrid');
+      const recommendations = document.getElementById('recommendations');
+      
+      grid.innerHTML = '';
+      
+      if (analysis.avgSleep) {
+        grid.innerHTML += `
+          <div class="result-card">
+            <div class="result-value ${analysis.avgSleep >= 7 ? 'good' : 'warning'}">${analysis.avgSleep.toFixed(1)}h</div>
+            <div class="result-label">Avg Sleep</div>
+          </div>
+        `;
+      }
+      
+      if (analysis.sleepScore) {
+        grid.innerHTML += `
+          <div class="result-card">
+            <div class="result-value ${analysis.sleepScore >= 70 ? 'good' : 'warning'}">${analysis.sleepScore}</div>
+            <div class="result-label">Sleep Score</div>
+          </div>
+        `;
+      }
+      
+      if (analysis.avgHR) {
+        grid.innerHTML += `
+          <div class="result-card">
+            <div class="result-value ${analysis.avgHR < 80 ? 'good' : 'warning'}">${analysis.avgHR}</div>
+            <div class="result-label">Avg HR (BPM)</div>
+          </div>
+        `;
+      }
+      
+      if (analysis.heartScore) {
+        grid.innerHTML += `
+          <div class="result-card">
+            <div class="result-value ${analysis.heartScore >= 70 ? 'good' : 'warning'}">${analysis.heartScore}</div>
+            <div class="result-label">Heart Score</div>
+          </div>
+        `;
+      }
+      
+      recommendations.innerHTML = analysis.recommendations.map(r => 
+        `• ${r}`
+      ).join('\n');
+      
+      document.getElementById('resultsContent').classList.remove('hidden');
+      document.getElementById('noResults').classList.add('hidden');
+    }
+    
+    // ========================================
+    // UTILITIES
+    // ========================================
+    
+    function sendToExtension(message) {
+      return new Promise((resolve, reject) => {
+        // Try external messaging first
+        if (chrome.runtime?.sendMessage) {
+          chrome.runtime.sendMessage(EXTENSION_ID, message, (response) => {
+            if (chrome.runtime.lastError) {
+              reject(new Error(chrome.runtime.lastError.message));
+            } else {
+              resolve(response);
+            }
+          });
+        } else {
+          // Try window messaging as fallback
+          window.postMessage({ type: 'PROOFI_REQUEST', ...message }, '*');
+          
+          const timeout = setTimeout(() => {
+            reject(new Error('Extension not responding'));
+          }, 5000);
+          
+          window.addEventListener('message', function handler(event) {
+            if (event.data?.type === 'PROOFI_RESPONSE') {
+              clearTimeout(timeout);
+              window.removeEventListener('message', handler);
+              resolve(event.data.payload);
+            }
+          });
+        }
+      });
+    }
+    
+    function generateSampleHealthData() {
+      const sleep = [];
+      const heart = [];
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + i);
+        sleep.push({
+          date: date.toISOString().split('T')[0],
+          duration: 6 + Math.random() * 3,
+          quality: 60 + Math.floor(Math.random() * 35)
+        });
+      }
+      
+      for (let i = 0; i < 100; i++) {
+        const date = new Date(startDate);
+        date.setHours(date.getHours() + i * 7);
+        const contexts = ['resting', 'walking', 'exercise', 'sleeping'];
+        const context = contexts[Math.floor(Math.random() * contexts.length)];
+        let bpm;
+        switch(context) {
+          case 'resting': bpm = 60 + Math.floor(Math.random() * 20); break;
+          case 'walking': bpm = 80 + Math.floor(Math.random() * 30); break;
+          case 'exercise': bpm = 120 + Math.floor(Math.random() * 60); break;
+          case 'sleeping': bpm = 50 + Math.floor(Math.random() * 15); break;
+        }
+        heart.push({ timestamp: date.toISOString(), bpm, context });
+      }
+      
+      return { sleep, heart };
+    }
+    
+    function markStepComplete(stepNum) {
+      const card = document.getElementById(`step${stepNum}`);
+      card.classList.remove('active');
+      card.classList.add('completed');
+    }
+    
+    function activateStep(stepNum) {
+      const card = document.getElementById(`step${stepNum}`);
+      card.classList.add('active');
+    }
+    
+    // ========================================
+    // INIT
+    // ========================================
+    
+    async function checkOllama() {
+      const dot = document.getElementById('ollamaDot');
+      const status = document.getElementById('ollamaStatus');
+      
+      try {
+        const response = await fetch('http://localhost:11434/api/tags', {
+          method: 'GET',
+          signal: AbortSignal.timeout(3000)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          state.ollamaConnected = true;
+          state.ollamaModel = data.models?.[0]?.name || 'llama3.2:3b';
+          
+          dot.className = 'status-dot connected';
+          status.textContent = `Ollama: ${state.ollamaModel}`;
+          log(`Ollama connected: ${data.models?.length || 0} models available`, 'success');
+        }
+      } catch (err) {
+        dot.className = 'status-dot error';
+        status.textContent = 'Ollama: Offline';
+        log('Ollama not running. Start with: ollama serve', 'warning');
+      }
+    }
+    
+    // Setup scope selection
+    document.querySelectorAll('.scope-item').forEach(item => {
+      item.addEventListener('click', () => {
+        item.classList.toggle('selected');
+      });
+    });
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      log('Sovereign Health Demo initialized');
+      log('This demo uses wallet-centric architecture');
+      checkOllama();
+    });
+  </script>
+</body>
+</html>

@@ -21,6 +21,7 @@ const staticFiles = [
   ['src/styles.css', 'dist/styles.css'],
   ['src/content-styles.css', 'dist/content-styles.css'],
   ['src/inject.js', 'dist/inject.js'],
+  ['src/agents-ui.js', 'dist/agents-ui.js'],
 ];
 
 for (const [src, dest] of staticFiles) {

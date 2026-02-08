@@ -1,12 +1,26 @@
 /**
  * Proofi Wallet — Chrome Extension Popup
- * Handles auth flow, wallet management, and DDC storage.
+ * Handles auth flow, wallet management, DDC storage, and health data.
  */
 
 import { deriveSeedFromPin, encryptSeed, decryptSeed } from './lib/crypto.js';
 import { createKeypair, createAuthHeaders, initCrypto } from './lib/keyring.js';
 import { sendOtp, verifyOtp, registerAddress, storeMemo, storeCredential, listItems } from './lib/api.js';
 import { getWalletState, saveWalletState, clearWalletState } from './lib/storage.js';
+import { 
+  parseAppleHealthXML, 
+  generateSampleHealthData, 
+  getHealthDataSummary,
+  HEALTH_DATA_TYPES 
+} from './health-data.js';
+import {
+  generateDEK,
+  encryptAES,
+  generateCID,
+  uint8ToBase64,
+  base64ToUint8,
+  generateCapabilityToken
+} from './lib/health-crypto.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -25,6 +39,16 @@ let state = {
   isUnlocked: false,
   // Data
   storedItems: [],
+  // Health Data
+  healthData: null,
+  healthDataSummary: null,
+  healthDEK: null,           // Data Encryption Key for health data
+  healthDataCID: null,       // CID of encrypted health data on DDC
+  healthDataBucket: null,    // DDC bucket ID
+  healthDataSynced: false,
+  // Agents
+  connectedAgents: [],
+  pendingAgentRequest: null,
 };
 
 // ── DOM Helpers ────────────────────────────────────────────────────────────
@@ -801,6 +825,481 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true; // Keep message channel open for async
 });
 
+// ── Health Data ────────────────────────────────────────────────────────────
+
+function setupHealthHandlers() {
+  // Navigate to health screen
+  $('#btn-health-data').addEventListener('click', () => {
+    loadHealthDataFromStorage();
+    showScreen('health');
+  });
+  
+  $('#btn-health-back').addEventListener('click', () => {
+    showScreen('dashboard');
+  });
+  
+  // File import
+  $('#health-file-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    $('#health-import-progress').style.display = 'flex';
+    hideError('health');
+    hideSuccess('health');
+    
+    try {
+      const text = await file.text();
+      const healthData = parseAppleHealthXML(text);
+      await saveHealthData(healthData);
+      showSuccess('health', `Imported ${state.healthDataSummary.total} records`);
+    } catch (err) {
+      showError('health', 'Failed to parse file: ' + err.message);
+    } finally {
+      $('#health-import-progress').style.display = 'none';
+    }
+  });
+  
+  // Load sample data
+  $('#btn-load-sample').addEventListener('click', async () => {
+    $('#health-import-progress').style.display = 'flex';
+    hideError('health');
+    hideSuccess('health');
+    
+    try {
+      const sampleData = generateSampleHealthData();
+      await saveHealthData(sampleData);
+      showSuccess('health', `Loaded ${state.healthDataSummary.total} sample records`);
+    } catch (err) {
+      showError('health', 'Failed to load sample: ' + err.message);
+    } finally {
+      $('#health-import-progress').style.display = 'none';
+    }
+  });
+  
+  // Sync to DDC
+  $('#btn-sync-ddc').addEventListener('click', async () => {
+    if (!state.healthData) {
+      showError('health', 'No health data to sync');
+      return;
+    }
+    
+    // Check if we need PIN unlock
+    if (!state.keypair) {
+      $('#health-pin-unlock').style.display = 'block';
+      $('#health-pin').focus();
+      
+      const handleUnlock = async () => {
+        const pin = $('#health-pin').value;
+        if (pin.length < 4) return;
+        
+        try {
+          await unlockWallet(pin);
+          $('#health-pin-unlock').style.display = 'none';
+          $('#health-pin').value = '';
+          await doSyncToDDC();
+        } catch (err) {
+          showError('health', 'Wrong PIN: ' + err.message);
+        }
+      };
+      
+      $('#btn-health-unlock').onclick = handleUnlock;
+      $('#health-pin').onkeydown = (e) => { if (e.key === 'Enter') handleUnlock(); };
+      return;
+    }
+    
+    await doSyncToDDC();
+  });
+}
+
+async function saveHealthData(healthData) {
+  state.healthData = healthData;
+  state.healthDataSummary = getHealthDataSummary(healthData);
+  state.healthDataSynced = false;
+  
+  // Generate a DEK for this health data
+  state.healthDEK = generateDEK();
+  
+  // Save to chrome.storage
+  await chrome.storage.local.set({
+    proofi_health_data: healthData,
+    proofi_health_summary: state.healthDataSummary,
+    proofi_health_dek: uint8ToBase64(state.healthDEK)
+  });
+  
+  renderHealthSummary();
+}
+
+async function loadHealthDataFromStorage() {
+  const result = await chrome.storage.local.get([
+    'proofi_health_data',
+    'proofi_health_summary',
+    'proofi_health_dek',
+    'proofi_health_cid',
+    'proofi_health_bucket',
+    'proofi_health_synced'
+  ]);
+  
+  if (result.proofi_health_data) {
+    state.healthData = result.proofi_health_data;
+    state.healthDataSummary = result.proofi_health_summary || getHealthDataSummary(result.proofi_health_data);
+    state.healthDEK = result.proofi_health_dek ? base64ToUint8(result.proofi_health_dek) : null;
+    state.healthDataCID = result.proofi_health_cid || null;
+    state.healthDataBucket = result.proofi_health_bucket || null;
+    state.healthDataSynced = result.proofi_health_synced || false;
+    
+    renderHealthSummary();
+  }
+}
+
+function renderHealthSummary() {
+  if (!state.healthDataSummary) {
+    $('#health-summary').style.display = 'none';
+    $('#health-sync-section').style.display = 'none';
+    return;
+  }
+  
+  $('#health-summary').style.display = 'block';
+  $('#health-sync-section').style.display = 'block';
+  
+  const grid = $('#health-stats-grid');
+  const summary = state.healthDataSummary;
+  
+  const stats = [
+    { key: 'sleep', icon: '🌙', label: 'SLEEP' },
+    { key: 'heart', icon: '❤️', label: 'HEART' },
+    { key: 'steps', icon: '👟', label: 'STEPS' },
+    { key: 'hrv', icon: '📈', label: 'HRV' }
+  ].filter(s => summary[s.key]?.count > 0);
+  
+  grid.innerHTML = stats.map(s => `
+    <div class="health-stat-item">
+      <div class="health-stat-value">${summary[s.key].count.toLocaleString()}</div>
+      <div class="health-stat-label">${s.icon} ${s.label}</div>
+    </div>
+  `).join('');
+  
+  // Update sync status
+  const syncStatus = $('#health-sync-status');
+  if (state.healthDataSynced && state.healthDataCID) {
+    syncStatus.innerHTML = `
+      <span class="sync-dot synced"></span>
+      <span class="text-mono text-xs">SYNCED TO DDC</span>
+    `;
+    
+    // Show CID
+    $('#sync-result').style.display = 'block';
+    $('#health-cid').textContent = state.healthDataCID;
+    $('#health-bucket').textContent = state.healthDataBucket || '1229';
+  } else {
+    syncStatus.innerHTML = `
+      <span class="sync-dot offline"></span>
+      <span class="text-mono text-xs">NOT SYNCED TO DDC</span>
+    `;
+    $('#sync-result').style.display = 'none';
+  }
+}
+
+async function doSyncToDDC() {
+  if (!state.healthData || !state.healthDEK) {
+    showError('health', 'No health data to sync');
+    return;
+  }
+  
+  $('#sync-progress').style.display = 'flex';
+  hideError('health');
+  
+  try {
+    // Encrypt health data with DEK
+    const jsonData = JSON.stringify(state.healthData);
+    const encrypted = await encryptAES(jsonData, state.healthDEK);
+    
+    // Generate CID for the encrypted data
+    const cid = await generateCID(encrypted);
+    
+    // Store via background script (which proxies to API)
+    const headers = getAuthHeaders();
+    const result = await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({
+        type: 'HEALTH_DATA_TO_DDC',
+        payload: {
+          encryptedData: encrypted,
+          cid: cid
+        }
+      }, (response) => {
+        if (response?.error) reject(new Error(response.error));
+        else resolve(response);
+      });
+    });
+    
+    // Save CID reference
+    state.healthDataCID = result.cid || cid;
+    state.healthDataBucket = result.bucket || '1229';
+    state.healthDataSynced = true;
+    
+    await chrome.storage.local.set({
+      proofi_health_cid: state.healthDataCID,
+      proofi_health_bucket: state.healthDataBucket,
+      proofi_health_synced: true
+    });
+    
+    renderHealthSummary();
+    showSuccess('health', 'Health data encrypted and synced to DDC!');
+    
+  } catch (err) {
+    showError('health', 'Sync failed: ' + err.message);
+  } finally {
+    $('#sync-progress').style.display = 'none';
+  }
+}
+
+// ── Agents ─────────────────────────────────────────────────────────────────
+
+function setupAgentHandlers() {
+  $('#btn-agents').addEventListener('click', () => {
+    loadAgents();
+    checkPendingAgentRequest();
+    showScreen('agents');
+  });
+  
+  $('#btn-agents-back').addEventListener('click', () => {
+    showScreen('dashboard');
+  });
+  
+  // Modal handlers
+  $('#modal-btn-deny').addEventListener('click', denyAgentRequest);
+  $('#modal-btn-approve').addEventListener('click', approveAgentRequest);
+  
+  // Inline approve/deny buttons
+  $('#btn-approve-agent').addEventListener('click', showApprovalModal);
+  $('#btn-deny-agent').addEventListener('click', denyAgentRequest);
+  
+  // Expiry option handlers
+  $$('input[name="modal-expiry"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      $$('.expiry-btn').forEach(btn => btn.classList.remove('selected'));
+      radio.nextElementSibling.classList.add('selected');
+    });
+  });
+}
+
+async function loadAgents() {
+  const result = await chrome.storage.local.get({ proofi_agents: [] });
+  state.connectedAgents = result.proofi_agents.filter(a => 
+    a.active && a.expiresAt > Date.now()
+  );
+  renderAgentsList();
+}
+
+function renderAgentsList() {
+  const container = $('#agents-list');
+  
+  if (state.connectedAgents.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="text-display" style="font-size: 2rem; color: var(--steel);">🤖</div>
+        <p class="text-body-sm text-muted">No agents connected</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = state.connectedAgents.map(agent => `
+    <div class="agent-card ${agent.active ? '' : 'agent-expired'}">
+      <div class="agent-header">
+        <div class="agent-icon">🤖</div>
+        <div class="agent-info">
+          <div class="text-mono text-sm">${escapeHtml(agent.name)}</div>
+          <div class="text-body-sm text-muted">${agent.agentId.slice(0, 16)}...</div>
+        </div>
+      </div>
+      <div class="agent-scopes">
+        ${(agent.scopes || []).map(s => `<span class="scope-badge">${getScopeIcon(s)} ${escapeHtml(s)}</span>`).join('')}
+      </div>
+      <div class="agent-meta">
+        <span class="text-body-sm text-muted">
+          Expires ${formatTime(agent.expiresAt)}
+        </span>
+      </div>
+      <button class="btn-danger btn-sm" onclick="revokeAgent('${escapeHtml(agent.agentId)}')">
+        REVOKE
+      </button>
+    </div>
+  `).join('');
+}
+
+function getScopeIcon(scope) {
+  const icons = {
+    sleep: '🌙',
+    heart: '❤️',
+    steps: '👟',
+    hrv: '📈',
+    bloodOxygen: '🫁',
+    weight: '⚖️',
+    activeEnergy: '🔥',
+    health: '🏥'
+  };
+  return icons[scope] || '📦';
+}
+
+function formatTime(ts) {
+  return new Date(ts).toLocaleString([], { 
+    month: 'short', 
+    day: 'numeric',
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+async function checkPendingAgentRequest() {
+  const result = await chrome.storage.local.get('proofi_pending_agent');
+  state.pendingAgentRequest = result.proofi_pending_agent;
+  
+  if (state.pendingAgentRequest) {
+    renderPendingRequest();
+    $('#pending-request').style.display = 'block';
+  } else {
+    $('#pending-request').style.display = 'none';
+  }
+}
+
+function renderPendingRequest() {
+  const req = state.pendingAgentRequest;
+  if (!req) return;
+  
+  $('#pending-agent-name').textContent = req.name || 'Unknown Agent';
+  $('#pending-agent-origin').textContent = req.origin || 'Unknown origin';
+  
+  const scopesContainer = $('#pending-scopes');
+  const scopes = req.scopes || req.dataTypes || [];
+  
+  scopesContainer.innerHTML = scopes.map(scope => {
+    const typeInfo = HEALTH_DATA_TYPES[scope] || { name: scope, icon: '📦', sensitivity: 'medium' };
+    return `
+      <div class="scope-item">
+        <span class="scope-icon">${typeInfo.icon}</span>
+        <span class="scope-name">${typeInfo.name}</span>
+        <span class="scope-sensitivity ${typeInfo.sensitivity}">${typeInfo.sensitivity.toUpperCase()}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function showApprovalModal() {
+  const req = state.pendingAgentRequest;
+  if (!req) return;
+  
+  $('#modal-agent-name').textContent = req.name || 'Unknown Agent';
+  $('#modal-agent-origin').textContent = req.origin || 'Unknown origin';
+  
+  const scopes = req.scopes || req.dataTypes || [];
+  $('#modal-scopes').innerHTML = scopes.map(scope => {
+    const typeInfo = HEALTH_DATA_TYPES[scope] || { name: scope, icon: '📦', sensitivity: 'medium' };
+    return `
+      <div class="scope-item">
+        <span class="scope-icon">${typeInfo.icon}</span>
+        <span class="scope-name">${typeInfo.name}</span>
+        <span class="scope-sensitivity ${typeInfo.sensitivity}">${typeInfo.sensitivity.toUpperCase()}</span>
+      </div>
+    `;
+  }).join('');
+  
+  $('#agent-approval-modal').style.display = 'flex';
+}
+
+async function approveAgentRequest() {
+  const req = state.pendingAgentRequest;
+  if (!req) return;
+  
+  // Get selected expiry
+  const expiryRadio = document.querySelector('input[name="modal-expiry"]:checked');
+  const expirySeconds = expiryRadio ? parseInt(expiryRadio.value) : 86400;
+  
+  // Generate capability token
+  const token = await generateCapabilityToken({
+    issuerAddress: state.address,
+    issuerDID: `did:proofi:${state.address}`,
+    agentId: req.agentId,
+    agentName: req.name,
+    scopes: req.scopes || req.dataTypes || [],
+    bucketId: state.healthDataBucket || '1229',
+    dataCid: state.healthDataCID,
+    dek: state.healthDEK,
+    expiresInSeconds: expirySeconds
+  });
+  
+  // Store agent session
+  const agentSession = {
+    agentId: req.agentId,
+    name: req.name,
+    scopes: req.scopes || req.dataTypes || [],
+    origin: req.origin,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + (expirySeconds * 1000),
+    active: true,
+    tokenId: token.id
+  };
+  
+  const result = await chrome.storage.local.get({ proofi_agents: [] });
+  const agents = result.proofi_agents.filter(a => a.agentId !== req.agentId);
+  agents.push(agentSession);
+  
+  await chrome.storage.local.set({ 
+    proofi_agents: agents,
+    proofi_pending_agent: null
+  });
+  
+  state.pendingAgentRequest = null;
+  
+  // Send response to requesting page
+  chrome.runtime.sendMessage({
+    type: 'AGENT_APPROVED',
+    payload: {
+      agentId: req.agentId,
+      token: token,
+      healthDataCID: state.healthDataCID,
+      bucketId: state.healthDataBucket
+    }
+  });
+  
+  // Close modal and refresh
+  $('#agent-approval-modal').style.display = 'none';
+  $('#pending-request').style.display = 'none';
+  loadAgents();
+  showToast('ACCESS GRANTED');
+}
+
+async function denyAgentRequest() {
+  await chrome.storage.local.set({ proofi_pending_agent: null });
+  state.pendingAgentRequest = null;
+  
+  chrome.runtime.sendMessage({
+    type: 'AGENT_DENIED',
+    payload: { reason: 'User denied access' }
+  });
+  
+  $('#agent-approval-modal').style.display = 'none';
+  $('#pending-request').style.display = 'none';
+  showToast('ACCESS DENIED');
+}
+
+// Make revokeAgent available globally for onclick handlers
+window.revokeAgent = async function(agentId) {
+  if (!confirm('Revoke access for this agent?')) return;
+  
+  const result = await chrome.storage.local.get({ proofi_agents: [] });
+  const agents = result.proofi_agents.filter(a => a.agentId !== agentId);
+  
+  await chrome.storage.local.set({ proofi_agents: agents });
+  loadAgents();
+  showToast('ACCESS REVOKED');
+};
+
 // ── Boot ───────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -808,5 +1307,18 @@ document.addEventListener('DOMContentLoaded', () => {
   setupDashboardHandlers();
   setupMemoHandlers();
   setupCredentialHandlers();
+  setupHealthHandlers();
+  setupAgentHandlers();
   init();
+  
+  // Check for agent approval view
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('view') === 'agent-approve') {
+    checkPendingAgentRequest().then(() => {
+      if (state.pendingAgentRequest) {
+        showScreen('agents');
+        showApprovalModal();
+      }
+    });
+  }
 });

@@ -1,16 +1,26 @@
 {
   "manifest_version": 3,
   "name": "Proofi Wallet",
-  "version": "1.0.0",
-  "description": "Self-custodial data wallet — Your data, your keys, your proof. Store credentials on-chain with one click.",
+  "version": "1.1.0",
+  "description": "Self-custodial data wallet — Your data, your keys, your proof. Store credentials and health data on-chain.",
   "permissions": [
     "storage",
     "activeTab",
     "contextMenus"
   ],
   "host_permissions": [
-    "https://proofi-api-production.up.railway.app/*"
+    "https://proofi-api-production.up.railway.app/*",
+    "https://cdn.ddc-dragon.com/*",
+    "https://cdn.cere.network/*"
   ],
+  "externally_connectable": {
+    "matches": [
+      "*://localhost/*",
+      "*://127.0.0.1/*",
+      "*://proofi-virid.vercel.app/*",
+      "*://proofi.ai/*"
+    ]
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
