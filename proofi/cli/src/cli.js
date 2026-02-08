@@ -17,6 +17,7 @@ import nacl from 'tweetnacl';
 import naclUtil from 'tweetnacl-util';
 import { XMLParser } from 'fast-xml-parser';
 import crypto from 'crypto';
+import * as bip39 from 'bip39';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONFIG_DIR = path.join(process.env.HOME, '.proofi');
@@ -43,12 +44,23 @@ if (!fs.existsSync(LOGS_DIR)) {
 // CRYPTO UTILITIES
 // ==========================================
 
-function generateKeyPair() {
-  const seed = nacl.randomBytes(32);
+function generateKeyPair(existingMnemonic = null) {
+  // Generate or use existing BIP39 mnemonic (12 words = 128 bits entropy)
+  const mnemonic = existingMnemonic || bip39.generateMnemonic(128);
+  
+  if (!bip39.validateMnemonic(mnemonic)) {
+    throw new Error('Invalid recovery phrase');
+  }
+  
+  // Derive seed from mnemonic (64 bytes, we use first 32)
+  const seedBuffer = bip39.mnemonicToSeedSync(mnemonic);
+  const seed = seedBuffer.slice(0, 32);
+  
   const signKeyPair = nacl.sign.keyPair.fromSeed(seed);
   const boxKeyPair = nacl.box.keyPair.fromSecretKey(seed);
   
   return {
+    mnemonic,
     seed: naclUtil.encodeBase64(seed),
     signing: {
       publicKey: naclUtil.encodeBase64(signKeyPair.publicKey),
@@ -512,84 +524,152 @@ const program = new Command();
 
 program
   .name('proofi')
-  .description('Privacy-preserving health data analysis with local AI')
+  .description(`Privacy-preserving health data analysis with local AI
+
+${chalk.bold('Quick Start:')}
+  ${chalk.cyan('proofi init')}                    Create wallet & configure AI
+  ${chalk.cyan('proofi import')} ~/export.xml     Import Apple Health data  
+  ${chalk.cyan('proofi analyze')}                 Run local AI analysis
+
+${chalk.bold('Your data stays on your device. Always.')}`)
   .version('1.0.0');
 
-// INIT
+// INIT - Complete FTUE flow
 program
   .command('init')
-  .description('Initialize Proofi and check dependencies')
-  .action(async () => {
-    console.log(chalk.bold('\n🔐 Proofi CLI Setup\n'));
+  .description('Set up Proofi (creates wallet, checks AI, saves config)')
+  .option('-f, --force', 'Overwrite existing wallet')
+  .action(async (options) => {
+    console.log(chalk.bold('\n🔐 Proofi Setup\n'));
     
-    const spinner = ora('Checking Ollama...').start();
+    const existingKeys = loadKeys();
+    
+    // If wallet exists and not forcing, show status instead
+    if (existingKeys && !options.force) {
+      console.log(chalk.green('✓ Already initialized'));
+      console.log(chalk.dim(`  DID: ${deriveDID(existingKeys.signing.publicKey)}`));
+      console.log(chalk.dim(`\n  Run ${chalk.cyan('proofi init --force')} to reset.\n`));
+      return;
+    }
+    
+    // ─────────────────────────────────────────────────
+    // [1/4] Creating wallet
+    // ─────────────────────────────────────────────────
+    console.log(chalk.bold('[1/4] Creating wallet...'));
+    
+    const keys = generateKeyPair();
+    const did = deriveDID(keys.signing.publicKey);
+    
+    console.log(chalk.green('    ✓ Generated BIP39 mnemonic'));
+    
+    // Show recovery phrase prominently
+    console.log('');
+    console.log(chalk.bgYellow.black.bold(' ⚠️  RECOVERY PHRASE - WRITE THIS DOWN! '));
+    console.log(chalk.bgYellow.black('                                         '));
+    console.log('');
+    console.log(chalk.yellow.bold('  ┌─────────────────────────────────────────────────┐'));
+    
+    const words = keys.mnemonic.split(' ');
+    for (let i = 0; i < words.length; i += 3) {
+      const row = words.slice(i, i + 3).map((w, j) => {
+        const num = String(i + j + 1).padStart(2, ' ');
+        return `${chalk.dim(num + '.')} ${w.padEnd(10)}`;
+      }).join('  ');
+      console.log(chalk.yellow.bold('  │  ') + row + chalk.yellow.bold('   │'));
+    }
+    
+    console.log(chalk.yellow.bold('  └─────────────────────────────────────────────────┘'));
+    console.log('');
+    console.log(chalk.yellow('  This phrase is the ONLY way to recover your wallet.'));
+    console.log(chalk.yellow('  Store it safely offline. Never share it.'));
+    console.log('');
+    console.log(chalk.dim(`  Your DID: ${did}`));
+    console.log('');
+    
+    // ─────────────────────────────────────────────────
+    // [2/4] Checking AI setup
+    // ─────────────────────────────────────────────────
+    console.log(chalk.bold('[2/4] Checking AI setup...'));
+    
     const ollama = await checkOllama();
     
+    let useCloudAI = false;
+    
     if (ollama.available) {
-      spinner.succeed(`Ollama available with ${ollama.models.length} models`);
+      console.log(chalk.green('    ✓ Ollama found locally'));
       if (ollama.models.length > 0) {
-        console.log(chalk.dim(`   Models: ${ollama.models.map(m => m.name).join(', ')}`));
+        console.log(chalk.dim(`      Models: ${ollama.models.map(m => m.name).join(', ')}`));
+      } else {
+        console.log(chalk.yellow('      No models installed. Run: ollama pull llama3.2'));
       }
     } else {
-      spinner.fail('Ollama not running');
-      console.log(chalk.yellow('\n   Install Ollama: https://ollama.ai'));
-      console.log(chalk.yellow('   Then run: ollama pull llama3.2\n'));
+      console.log(chalk.yellow('    ⚠ Ollama not found'));
+      console.log('');
+      
+      const { cloudChoice } = await inquirer.prompt([{
+        type: 'confirm',
+        name: 'cloudChoice',
+        message: 'Use cloud AI instead? (Privacy trade-off)',
+        default: false
+      }]);
+      
+      useCloudAI = cloudChoice;
+      
+      if (useCloudAI) {
+        console.log(chalk.dim('      Cloud AI enabled (privacy reduced)'));
+      } else {
+        console.log(chalk.dim('      Install Ollama later: https://ollama.ai'));
+      }
     }
+    console.log('');
     
+    // ─────────────────────────────────────────────────
+    // [3/4] Saving configuration
+    // ─────────────────────────────────────────────────
+    console.log(chalk.bold('[3/4] Saving configuration...'));
+    
+    // Save keys
+    saveKeys(keys);
+    
+    // Save config
     const config = loadConfig();
-    const keys = loadKeys();
-    
-    if (keys) {
-      console.log(chalk.green('✓ Wallet configured'));
-      console.log(chalk.dim(`  DID: ${deriveDID(keys.signing.publicKey).slice(0, 40)}...`));
-    } else {
-      console.log(chalk.yellow('○ No wallet configured - run: proofi wallet create'));
-    }
-    
     config.initialized = true;
     config.ollamaAvailable = ollama.available;
+    config.useCloudAI = useCloudAI;
+    config.createdAt = new Date().toISOString();
     saveConfig(config);
     
-    console.log(chalk.dim(`\nConfig: ${CONFIG_DIR}`));
+    // Log to audit
+    addAuditEntry('WALLET_CREATED', { did: did.slice(0, 40) + '...' });
+    
+    console.log(chalk.green(`    ✓ Saved to ${CONFIG_DIR}`));
+    console.log('');
+    
+    // ─────────────────────────────────────────────────
+    // [4/4] Setup complete
+    // ─────────────────────────────────────────────────
+    console.log(chalk.bold('[4/4] Setup complete! 🎉\n'));
+    
+    console.log(chalk.dim('  ────────────────────────────────────────────────'));
+    console.log('');
+    console.log(chalk.bold('  Next step:'));
+    console.log(chalk.cyan(`    proofi import ~/health-export.xml`));
+    console.log('');
+    console.log(chalk.dim('  Export from Apple Health:'));
+    console.log(chalk.dim('    Health app → Profile → Export All Health Data'));
+    console.log('');
   });
 
-// WALLET CREATE
+// WALLET - Show, export, recover
 program
   .command('wallet')
   .description('Manage wallet/identity')
-  .argument('<action>', 'create | show | export')
+  .argument('<action>', 'show | export | recover')
   .action(async (action) => {
-    if (action === 'create') {
-      const existing = loadKeys();
-      if (existing) {
-        const { confirm } = await inquirer.prompt([{
-          type: 'confirm',
-          name: 'confirm',
-          message: 'Wallet already exists. Overwrite?',
-          default: false
-        }]);
-        if (!confirm) return;
-      }
-      
-      const spinner = ora('Generating Ed25519 + X25519 keypairs...').start();
-      const keys = generateKeyPair();
-      saveKeys(keys);
-      spinner.succeed('Wallet created');
-      
-      const did = deriveDID(keys.signing.publicKey);
-      
-      // Log to audit
-      addAuditEntry('WALLET_CREATED', { did: did.slice(0, 40) + '...' });
-      console.log(chalk.bold('\n📜 Your Identity\n'));
-      console.log(`   DID: ${chalk.cyan(did)}`);
-      console.log(`   Signing Key: ${chalk.dim(keys.signing.publicKey.slice(0, 32))}...`);
-      console.log(`   Encryption Key: ${chalk.dim(keys.encryption.publicKey.slice(0, 32))}...`);
-      console.log(chalk.dim(`\n   Keys stored in: ${KEYS_FILE}`));
-      
-    } else if (action === 'show') {
+    if (action === 'show') {
       const keys = loadKeys();
       if (!keys) {
-        console.log(chalk.red('No wallet found. Run: proofi wallet create'));
+        console.log(chalk.red('\nNo wallet found. Run: proofi init\n'));
         return;
       }
       
@@ -599,13 +679,87 @@ program
       console.log(`   Signing Key: ${keys.signing.publicKey}`);
       console.log(`   Encryption Key: ${keys.encryption.publicKey}`);
       
+      if (keys.mnemonic) {
+        console.log(chalk.dim(`\n   Recovery phrase stored: ✓`));
+      }
+      console.log('');
+      
     } else if (action === 'export') {
       const keys = loadKeys();
       if (!keys) {
-        console.log(chalk.red('No wallet found. Run: proofi wallet create'));
+        console.log(chalk.red('\nNo wallet found. Run: proofi init\n'));
         return;
       }
-      console.log(JSON.stringify(keys, null, 2));
+      // Don't export mnemonic in regular export (security)
+      const exportKeys = { ...keys };
+      delete exportKeys.mnemonic;
+      console.log(JSON.stringify(exportKeys, null, 2));
+      
+    } else if (action === 'recover') {
+      console.log(chalk.bold('\n🔐 Wallet Recovery\n'));
+      
+      const existing = loadKeys();
+      if (existing) {
+        const { confirm } = await inquirer.prompt([{
+          type: 'confirm',
+          name: 'confirm',
+          message: 'Existing wallet found. This will overwrite it. Continue?',
+          default: false
+        }]);
+        if (!confirm) {
+          console.log(chalk.dim('\nCancelled.\n'));
+          return;
+        }
+      }
+      
+      console.log(chalk.dim('Enter your 12-word recovery phrase:\n'));
+      
+      const { phrase } = await inquirer.prompt([{
+        type: 'input',
+        name: 'phrase',
+        message: 'Recovery phrase:',
+        validate: (input) => {
+          const words = input.trim().toLowerCase().split(/\s+/);
+          if (words.length !== 12) {
+            return 'Please enter exactly 12 words';
+          }
+          if (!bip39.validateMnemonic(words.join(' '))) {
+            return 'Invalid recovery phrase';
+          }
+          return true;
+        }
+      }]);
+      
+      const mnemonic = phrase.trim().toLowerCase().split(/\s+/).join(' ');
+      
+      let spinner = ora('Recovering wallet...').start();
+      
+      try {
+        const keys = generateKeyPair(mnemonic);
+        saveKeys(keys);
+        
+        const did = deriveDID(keys.signing.publicKey);
+        
+        // Log to audit
+        addAuditEntry('WALLET_RECOVERED', { did: did.slice(0, 40) + '...' });
+        
+        spinner.succeed('Wallet recovered');
+        
+        console.log(chalk.bold('\n✅ Wallet Restored\n'));
+        console.log(`   DID: ${chalk.cyan(did)}`);
+        console.log(chalk.dim(`\n   Keys saved to: ${KEYS_FILE}\n`));
+        
+      } catch (err) {
+        spinner.fail(`Recovery failed: ${err.message}`);
+      }
+      
+    } else if (action === 'create') {
+      // Redirect to init
+      console.log(chalk.yellow('\nUse `proofi init` to create a new wallet.\n'));
+      
+    } else {
+      console.log(chalk.red(`\nUnknown action: ${action}`));
+      console.log(chalk.dim('Available: show | export | recover\n'));
     }
   });
 
