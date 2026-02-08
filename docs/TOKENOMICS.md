@@ -325,5 +325,5 @@ The vision: **"Sign in with Proofi"** becomes as ubiquitous as "Sign in with Goo
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: February 2026*
+*Document Version: 1.1*
+*Last Updated: February 2025*
