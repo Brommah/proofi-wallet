@@ -1654,7 +1654,7 @@
       await checkDDCConnection();
       
       // Generate agent keypair
-      const agentSeed = nacl.util.decodeUTF8('proofi-health-agent-v1-demo00');
+      const agentSeed = nacl.util.decodeUTF8('proofi-health-agent-v1-demo00000');
       state.agentSigningKeyPair = generateSigningKeyPair(agentSeed);
       state.agentKeyPair = nacl.box.keyPair.fromSecretKey(agentSeed);
       
