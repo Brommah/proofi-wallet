@@ -748,6 +748,145 @@
       box-shadow: 0 0 20px var(--cyan-glow);
     }
 
+    /* ═══ CORE PLATFORM FEATURES ═══ */
+    .platform-section {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 50%, var(--bg) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .platform-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 1000px;
+      height: 1000px;
+      background: radial-gradient(circle, var(--cyan-glow) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .platform-pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-bottom: 80px;
+    }
+
+    .pillar {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      padding: 48px 40px;
+      position: relative;
+      transition: all 0.4s;
+    }
+
+    .pillar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+
+    .pillar:hover {
+      border-color: var(--cyan);
+      transform: translateY(-8px);
+      box-shadow: 0 30px 80px rgba(0, 229, 255, 0.15);
+    }
+
+    .pillar:hover::before {
+      transform: scaleX(1);
+    }
+
+    .pillar:nth-child(2)::before { background: var(--magenta); }
+    .pillar:nth-child(2):hover { border-color: var(--magenta); box-shadow: 0 30px 80px rgba(255, 51, 102, 0.15); }
+
+    .pillar:nth-child(3)::before { background: var(--green); }
+    .pillar:nth-child(3):hover { border-color: var(--green); box-shadow: 0 30px 80px rgba(0, 255, 136, 0.15); }
+
+    .pillar-icon {
+      width: 72px;
+      height: 72px;
+      background: var(--cyan-glow);
+      border: 2px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin-bottom: 28px;
+    }
+
+    .pillar:nth-child(2) .pillar-icon { background: var(--magenta-glow); border-color: var(--magenta); }
+    .pillar:nth-child(3) .pillar-icon { background: var(--green-glow); border-color: var(--green); }
+
+    .pillar-title {
+      font-size: 26px;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .pillar-desc {
+      color: var(--text-dim);
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .pillar-examples {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pillar-example {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text);
+      padding: 10px 14px;
+      background: var(--bg);
+      border-left: 2px solid var(--cyan);
+    }
+
+    .pillar:nth-child(2) .pillar-example { border-left-color: var(--magenta); }
+    .pillar:nth-child(3) .pillar-example { border-left-color: var(--green); }
+
+    .pillar-example-icon {
+      font-size: 16px;
+      opacity: 0.8;
+    }
+
+    .platform-tagline {
+      text-align: center;
+      padding: 60px 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    .platform-tagline h3 {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .platform-tagline p {
+      font-size: 18px;
+      color: var(--text-dim);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .platform-tagline .accent-text {
+      color: var(--cyan);
+    }
+
     /* ═══ ECOSYSTEM APPS ═══ */
     .ecosystem-section {
       background: var(--bg-elevated);
@@ -1394,6 +1533,15 @@
 
     /* ═══ RESPONSIVE ═══ */
     @media (max-width: 1024px) {
+      .platform-pillars {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .pillar {
+        padding: 32px;
+      }
+
       .extension-grid,
       .dev-grid,
       .security-grid {
@@ -1524,8 +1672,8 @@
       <span class="nav-logo-text">PROOFI</span>
     </a>
     <div class="nav-links">
+      <a href="#platform">Platform</a>
       <a href="#extension">Extension</a>
-      <a href="#how-it-works">How It Works</a>
       <a href="#ecosystem">Apps</a>
       <a href="#developers">Developers</a>
       <a href="#security">Security</a>
@@ -1557,7 +1705,8 @@
       <span class="hero-title-line"><span class="accent">Your Proof.</span></span>
     </h1>
     <p class="hero-subtitle reveal reveal-d2">
-      The client-side encrypted personal data vault. Your keys never leave your device. 
+      The decentralized identity platform with client-side encryption. 
+      Sign, store, share, and revoke — all with cryptographic proof. 
       Even Proofi can't read your data.
     </p>
     <div class="hero-cta reveal reveal-d3">
@@ -1584,6 +1733,160 @@
     </div>
   </div>
 </section>
+
+<!-- Earn From Your Data Section -->
+<section class="earn-section" id="earn">
+  <div class="section-container">
+    <div class="earn-grid">
+      <div class="earn-content reveal">
+        <div class="section-tag" style="background: linear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">The Data Economy</div>
+        <h2 class="section-title" style="font-size: clamp(36px, 5vw, 52px);">Your Data.<br><span style="background: linear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Your Income.</span></h2>
+        <p class="section-subtitle" style="font-size: 18px; max-width: 500px;">
+          AI agents need personalized context. You have that context. 
+          With Proofi, agents pay <strong style="color: var(--green);">you</strong> — in CERE tokens — every time they query your data.
+          <strong>Decentralized. Permissionless. Unstoppable.</strong>
+        </p>
+        <div class="earn-features">
+          <div class="earn-feature">
+            <div class="earn-feature-icon" style="background: var(--green); color: var(--bg);">💰</div>
+            <div class="earn-feature-text">
+              <strong>On-Chain Micropayments</strong>
+              <span>Every query is a transaction. No middlemen. Payments flow directly to your wallet via smart contracts.</span>
+            </div>
+          </div>
+          <div class="earn-feature">
+            <div class="earn-feature-icon" style="background: var(--cyan); color: var(--bg);">🔐</div>
+            <div class="earn-feature-text">
+              <strong>You Set The Price</strong>
+              <span>Your health data worth more than your music taste? Price it accordingly. You control the marketplace.</span>
+            </div>
+          </div>
+          <div class="earn-feature">
+            <div class="earn-feature-icon" style="background: var(--magenta); color: var(--bg);">⚡</div>
+            <div class="earn-feature-text">
+              <strong>Permissionless Access</strong>
+              <span>Any agent can query. No API keys. No approval needed. If they pay your price, they get access. If you revoke, they're cut off.</span>
+            </div>
+          </div>
+          <div class="earn-feature">
+            <div class="earn-feature-icon" style="background: var(--purple); color: var(--bg);">🌐</div>
+            <div class="earn-feature-text">
+              <strong>Fully Decentralized</strong>
+              <span>No central server. No company controlling payments. Just you, the agent, and the Cere Network blockchain.</span>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap;">
+          <a href="earn.html" class="btn btn-primary btn-large" style="background: linear-gradient(135deg, var(--green), var(--cyan)); border: none;">
+            <span>◇</span> Start Earning
+          </a>
+          <a href="agent-demo.html" class="btn btn-large">
+            <span>▶</span> Watch Demo
+          </a>
+        </div>
+      </div>
+      <div class="earn-visual reveal reveal-d1">
+        <div class="earn-flow-diagram">
+          <div class="earn-flow-step" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 8px;">👤</div>
+            <div style="font-weight: 600; margin-bottom: 4px;">You</div>
+            <div style="font-size: 12px; color: var(--text-dim);">Upload encrypted data</div>
+          </div>
+          <div class="earn-flow-arrow" style="font-size: 24px; color: var(--green); animation: pulse-glow 2s infinite;">→</div>
+          <div class="earn-flow-step" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 8px;">🤖</div>
+            <div style="font-weight: 600; margin-bottom: 4px;">AI Agent</div>
+            <div style="font-size: 12px; color: var(--text-dim);">Queries your context</div>
+          </div>
+          <div class="earn-flow-arrow" style="font-size: 24px; color: var(--cyan); animation: pulse-glow 2s infinite 0.5s;">→</div>
+          <div class="earn-flow-step" style="background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,229,255,0.1)); border: 1px solid var(--green); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 8px;">💎</div>
+            <div style="font-weight: 600; margin-bottom: 4px; color: var(--green);">You Earn CERE</div>
+            <div style="font-size: 12px; color: var(--text-dim);">Instantly, on-chain</div>
+          </div>
+        </div>
+        <div class="earn-example" style="margin-top: 24px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+          <div style="color: var(--text-muted); margin-bottom: 8px;">// Recent queries on your data</div>
+          <div style="margin-bottom: 6px;"><span style="color: var(--cyan);">Health Agent</span> → allergies → <span style="color: var(--green);">+0.10 CERE</span></div>
+          <div style="margin-bottom: 6px;"><span style="color: var(--magenta);">Shopping AI</span> → preferences → <span style="color: var(--green);">+0.05 CERE</span></div>
+          <div style="margin-bottom: 6px;"><span style="color: var(--purple);">Career Coach</span> → skills → <span style="color: var(--green);">+0.20 CERE</span></div>
+          <div style="border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; color: var(--green); font-weight: 600;">Total Today: +2.45 CERE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .earn-section {
+    padding: 120px 0;
+    position: relative;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 50%, var(--bg) 100%);
+  }
+  .earn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .earn-features {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .earn-feature {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .earn-feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .earn-feature-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .earn-feature-text strong {
+    font-size: 15px;
+  }
+  .earn-feature-text span {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .earn-flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 900px) {
+    .earn-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding: 0 24px;
+    }
+    .earn-flow-diagram {
+      flex-direction: column;
+    }
+    .earn-flow-arrow {
+      transform: rotate(90deg);
+    }
+  }
+</style>
 
 <!-- Chrome Extension Section -->
 <section class="extension-section" id="extension">
@@ -1627,16 +1930,16 @@
             <span>Injects <code>window.__proofi_extension__</code> for seamless dApp integration</span>
           </div>
           <div class="extension-feature">
-            <div class="extension-feature-icon">🔑</div>
-            <span>New <code>signMessage()</code> API for cryptographic signatures</span>
+            <div class="extension-feature-icon">✍️</div>
+            <span>Universal <code>signMessage()</code> — sign transactions, prove identity, authorize anything</span>
           </div>
           <div class="extension-feature">
-            <div class="extension-feature-icon">🛡️</div>
-            <span>Keys derived & stored locally — never transmitted</span>
+            <div class="extension-feature-icon">🚫</div>
+            <span>Token revocation — share data, then revoke access anytime</span>
           </div>
           <div class="extension-feature">
             <div class="extension-feature-icon">✓</div>
-            <span>Verify credentials without revealing personal data</span>
+            <span>Public CID verification — anyone can verify, no API keys needed</span>
           </div>
         </div>
         <a href="https://chrome.google.com/webstore" class="btn btn-primary btn-large" target="_blank" rel="noopener">
@@ -1689,14 +1992,123 @@
   </div>
 </section>
 
+<!-- Core Platform Features Section -->
+<section class="platform-section" id="platform">
+  <div class="section-container">
+    <div class="section-header reveal">
+      <div class="section-tag">Core Platform</div>
+      <h2 class="section-title">Three Pillars of Control</h2>
+      <p class="section-subtitle">
+        Every app in the ecosystem inherits these core platform features. 
+        This is the infrastructure for self-sovereign data.
+      </p>
+    </div>
+    
+    <div class="platform-pillars">
+      <!-- Universal Revocation -->
+      <div class="pillar reveal">
+        <div class="pillar-icon">🚫</div>
+        <h3 class="pillar-title">Universal Revocation</h3>
+        <p class="pillar-desc">
+          Shared data with someone? Revoke access instantly. Works for ANY data type, 
+          ANY app, ANY recipient. You stay in control forever.
+        </p>
+        <div class="pillar-examples">
+          <div class="pillar-example">
+            <span class="pillar-example-icon">🏥</span>
+            <span>Revoke doctor access to health records</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">📄</span>
+            <span>Revoke document access after deal closes</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">🎓</span>
+            <span>Issuer or holder can revoke credentials</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">🤖</span>
+            <span>Revoke agent access to your vault</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cryptographic Signing -->
+      <div class="pillar reveal reveal-d1">
+        <div class="pillar-icon">✍️</div>
+        <h3 class="pillar-title">Cryptographic Signing</h3>
+        <p class="pillar-desc">
+          <code style="background: var(--bg); padding: 2px 6px; color: var(--magenta);">signMessage()</code> 
+          works for everything. Prove identity, authorize actions, attest to anything — 
+          with unforgeable cryptographic proof.
+        </p>
+        <div class="pillar-examples">
+          <div class="pillar-example">
+            <span class="pillar-example-icon">💸</span>
+            <span>Sign transactions & authorizations</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">🌐</span>
+            <span>Prove identity to any dApp</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">🤖</span>
+            <span>Authorize AI agent actions</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">📜</span>
+            <span>Attest to documents & agreements</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Public Verification -->
+      <div class="pillar reveal reveal-d2">
+        <div class="pillar-icon">✓</div>
+        <h3 class="pillar-title">Public Verification</h3>
+        <p class="pillar-desc">
+          The CID verifier is universal. Anyone can verify ANY credential, from ANY app, 
+          without API keys. Math-based trust, not platform trust.
+        </p>
+        <div class="pillar-examples">
+          <div class="pillar-example">
+            <span class="pillar-example-icon">🔓</span>
+            <span>No API keys or subscriptions needed</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">🧮</span>
+            <span>Cryptographic proof, not promises</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">🌍</span>
+            <span>Works offline with cached data</span>
+          </div>
+          <div class="pillar-example">
+            <span class="pillar-example-icon">⛓️</span>
+            <span>Permanent record on Cere DDC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="platform-tagline reveal">
+      <h3>One Platform. <span class="accent-text">Infinite Use Cases.</span></h3>
+      <p>
+        Health records, legal documents, gaming achievements, AI agent memory, professional credentials — 
+        the same three pillars secure everything. Build once, trust forever.
+      </p>
+    </div>
+  </div>
+</section>
+
 <!-- Ecosystem Apps Section -->
 <section class="ecosystem-section" id="ecosystem">
   <div class="section-container">
     <div class="section-header reveal">
       <div class="section-tag">Ecosystem</div>
-      <h2 class="section-title">Built on Proofi</h2>
+      <h2 class="section-title">Example Apps</h2>
       <p class="section-subtitle">
-        A growing ecosystem of apps that respect your privacy and put you in control.
+        See what's possible. Each app demonstrates core platform features — revocation, signing, and verification work across all of them.
       </p>
     </div>
     <div class="apps-grid">
@@ -1721,8 +2133,8 @@
           <div class="app-icon">🏥</div>
           <span class="app-name">Health Demo</span>
         </div>
-        <p class="app-desc">See how health credentials work with client-side encryption and verifiable proofs.</p>
-        <span class="app-tag">Demo</span>
+        <p class="app-desc">Full platform demo: encryption, signing, sharing with revocation, and public verification. All core features in action.</p>
+        <span class="app-tag">Full Platform Demo</span>
       </a>
       <a href="artmint.html" class="app-card reveal">
         <div class="app-header">
@@ -1822,22 +2234,22 @@
           <div class="dev-feature">
             <div class="dev-feature-icon">✍️</div>
             <div>
-              <h4>Cryptographic Signatures</h4>
-              <p>Sign messages to prove agent identity. Recipients can verify without API calls.</p>
+              <h4>Universal signMessage()</h4>
+              <p>Sign any message to prove agent identity. Authorize actions, attest to outputs, create audit trails.</p>
             </div>
           </div>
           <div class="dev-feature">
-            <div class="dev-feature-icon">🔗</div>
+            <div class="dev-feature-icon">🚫</div>
             <div>
-              <h4>Identity Verification</h4>
-              <p>Each agent gets a unique, verifiable identity on the blockchain.</p>
+              <h4>Revocable Access</h4>
+              <p>Grant agent access to user vaults, then revoke anytime. Users stay in control of their data.</p>
             </div>
           </div>
           <div class="dev-feature">
-            <div class="dev-feature-icon">📦</div>
+            <div class="dev-feature-icon">✓</div>
             <div>
-              <h4>Simple SDK</h4>
-              <p>Integrate in minutes with our JavaScript/TypeScript SDK.</p>
+              <h4>Public Verification</h4>
+              <p>Anyone can verify agent signatures and credentials with just a CID. No API keys needed.</p>
             </div>
           </div>
         </div>
@@ -1860,31 +2272,23 @@
   <span class="property">pin</span>: <span class="variable">process</span>.<span class="property">env</span>.<span class="property">AGENT_PIN</span>
 });
 
+<span class="comment">// Sign messages to prove agent identity</span>
+<span class="keyword">const</span> <span class="variable">sig</span> = <span class="keyword">await</span> <span class="variable">agent</span>.<span class="function">signMessage</span>(<span class="string">'Task #1234 complete'</span>);
+
 <span class="comment">// Store encrypted agent memory</span>
-<span class="keyword">await</span> <span class="variable">agent</span>.<span class="function">store</span>({
+<span class="keyword">const</span> <span class="variable">cid</span> = <span class="keyword">await</span> <span class="variable">agent</span>.<span class="function">store</span>({
   <span class="property">type</span>: <span class="string">'agent_memory'</span>,
-  <span class="property">data</span>: {
-    <span class="property">conversationHistory</span>: [...],
-    <span class="property">userPreferences</span>: {...},
-    <span class="property">learnedPatterns</span>: [...]
-  }
+  <span class="property">data</span>: { <span class="property">history</span>: [...], <span class="property">patterns</span>: [...] }
 });
 
-<span class="comment">// Sign a message to prove agent identity</span>
-<span class="keyword">const</span> <span class="variable">signature</span> = <span class="keyword">await</span> <span class="variable">agent</span>.<span class="function">signMessage</span>(
-  <span class="string">'I am Agent-7, responding to task #1234'</span>
-);
+<span class="comment">// Share access with another agent (revocable!)</span>
+<span class="keyword">const</span> <span class="variable">token</span> = <span class="keyword">await</span> <span class="variable">agent</span>.<span class="function">share</span>(<span class="variable">cid</span>, <span class="variable">otherAgentKey</span>);
 
-<span class="comment">// Verify another agent's signature</span>
-<span class="keyword">const</span> <span class="variable">isValid</span> = <span class="keyword">await</span> Proofi.<span class="function">verify</span>(
-  <span class="variable">message</span>, <span class="variable">signature</span>, <span class="variable">agentPublicKey</span>
-);
+<span class="comment">// Revoke access anytime</span>
+<span class="keyword">await</span> <span class="variable">agent</span>.<span class="function">revoke</span>(<span class="variable">token</span>);
 
-<span class="comment">// Load encrypted memories (only your keys can decrypt)</span>
-<span class="keyword">const</span> <span class="variable">memories</span> = <span class="keyword">await</span> <span class="variable">agent</span>.<span class="function">retrieve</span>({
-  <span class="property">type</span>: <span class="string">'agent_memory'</span>,
-  <span class="property">limit</span>: <span class="string">10</span>
-});
+<span class="comment">// Anyone can verify signatures (no API key!)</span>
+<span class="keyword">const</span> <span class="variable">valid</span> = <span class="keyword">await</span> Proofi.<span class="function">verify</span>(<span class="variable">msg</span>, <span class="variable">sig</span>, <span class="variable">pubKey</span>);
         </div>
       </div>
     </div>
@@ -1896,9 +2300,10 @@
   <div class="section-container">
     <div class="section-header reveal">
       <div class="section-tag">For Users</div>
-      <h2 class="section-title">Your Life. Encrypted.</h2>
+      <h2 class="section-title">Your Life. Your Rules.</h2>
       <p class="section-subtitle">
-        Everything encrypted on YOUR device, BEFORE it leaves. We literally cannot read your data.
+        Encrypted on YOUR device. Shared on YOUR terms. Revoked whenever YOU decide. 
+        Every use case gets the same three pillars of control.
       </p>
     </div>
     <div class="users-grid">
@@ -1907,36 +2312,36 @@
         <h3>Health Records</h3>
         <p>
           Medical history, prescriptions, test results — all encrypted client-side. 
-          Share selectively with doctors while maintaining complete control.
+          Share with a doctor, then <strong>revoke access</strong> after your visit. You decide who sees what, and for how long.
         </p>
-        <span class="user-card-tag">HIPAA-Ready Encryption</span>
+        <span class="user-card-tag">Share + Revoke Anytime</span>
       </div>
       <div class="user-card reveal reveal-d1">
         <div class="user-card-icon">💼</div>
         <h3>Professional Credentials</h3>
         <p>
           Degrees, certifications, work history — verified once, proven forever. 
-          No more waiting for background checks.
+          Anyone can verify your credentials with just the CID. <strong>No API keys needed.</strong>
         </p>
-        <span class="user-card-tag">Instant Verification</span>
+        <span class="user-card-tag">Public Verification</span>
       </div>
       <div class="user-card reveal reveal-d2">
         <div class="user-card-icon">🎮</div>
         <h3>Gaming Achievements</h3>
         <p>
-          Achievements, ranks, and in-game accomplishments that travel with you. 
-          Prove your skills across platforms.
+          Achievements, ranks, and accomplishments <strong>signed with your keys</strong>. 
+          Prove your skills across platforms with cryptographic proof that can't be faked.
         </p>
-        <span class="user-card-tag">Cross-Platform Proof</span>
+        <span class="user-card-tag">Signed + Verifiable</span>
       </div>
       <div class="user-card reveal reveal-d3">
         <div class="user-card-icon">📄</div>
         <h3>Document Vault</h3>
         <p>
-          Contracts, IDs, important documents — stored encrypted with cryptographic timestamps. 
-          Prove existence without revealing contents.
+          Contracts, IDs, legal documents — share access for a deal, then <strong>revoke when it closes</strong>. 
+          Prove existence and timestamp without revealing contents.
         </p>
-        <span class="user-card-tag">Zero-Knowledge Proofs</span>
+        <span class="user-card-tag">Time-Limited Access</span>
       </div>
     </div>
   </div>
@@ -2018,47 +2423,48 @@
 <section class="trust-section" id="trust">
   <div class="section-container">
     <div class="section-header reveal">
-      <div class="section-tag">Trust Chain</div>
-      <h2 class="section-title">Verify Without Trust</h2>
+      <div class="section-tag">Universal Verification</div>
+      <h2 class="section-title">Math, Not Middlemen</h2>
       <p class="section-subtitle">
-        Anyone can verify your credentials without API keys, subscriptions, or trusting Proofi.
+        The CID verifier works for ANY data from ANY app. Health records, legal docs, gaming achievements, agent outputs — 
+        all verified the same way. No API keys. No subscriptions. Just cryptographic proof.
       </p>
     </div>
     <div class="trust-visual reveal">
       <div class="trust-chain">
         <div class="trust-node">
-          <div class="trust-node-icon">👤</div>
-          <div class="trust-node-title">You Sign</div>
-          <div class="trust-node-desc">Cryptographic signature</div>
+          <div class="trust-node-icon">✍️</div>
+          <div class="trust-node-title">Sign Anything</div>
+          <div class="trust-node-desc">signMessage() works universally</div>
         </div>
         <div class="trust-arrow">→</div>
         <div class="trust-node">
           <div class="trust-node-icon">⛓️</div>
-          <div class="trust-node-title">Stored on Cere</div>
-          <div class="trust-node-desc">Permanent, tamper-proof</div>
+          <div class="trust-node-title">Store on Cere</div>
+          <div class="trust-node-desc">Permanent CID reference</div>
         </div>
         <div class="trust-arrow">→</div>
         <div class="trust-node">
-          <div class="trust-node-icon">✓</div>
-          <div class="trust-node-title">Anyone Verifies</div>
-          <div class="trust-node-desc">No API needed</div>
+          <div class="trust-node-icon">🔓</div>
+          <div class="trust-node-title">Public Verify</div>
+          <div class="trust-node-desc">Anyone, anytime, free</div>
         </div>
       </div>
       <div class="trust-benefits">
         <div class="trust-benefit reveal">
-          <div class="trust-benefit-icon">📜</div>
-          <h4>Permanent Record</h4>
-          <p>Once stored on Cere DDC, your credentials exist forever. No company can delete them.</p>
+          <div class="trust-benefit-icon">🌐</div>
+          <h4>Works Across Apps</h4>
+          <p>Credential from ArtMint? Verify it. Health record from demo? Same verifier. One system for everything.</p>
         </div>
         <div class="trust-benefit reveal reveal-d1">
-          <div class="trust-benefit-icon">🛡️</div>
-          <h4>Tamper-Proof</h4>
-          <p>Cryptographic hashes ensure no one can modify your credentials after storage.</p>
+          <div class="trust-benefit-icon">🔓</div>
+          <h4>No Gatekeepers</h4>
+          <p>Proofi goes down? Verification still works. No API keys, no rate limits, no subscriptions.</p>
         </div>
         <div class="trust-benefit reveal reveal-d2">
-          <div class="trust-benefit-icon">🌍</div>
-          <h4>Open Verification</h4>
-          <p>Anyone with your public key can verify signatures. No API keys required.</p>
+          <div class="trust-benefit-icon">🧮</div>
+          <h4>Math-Based Trust</h4>
+          <p>Cryptographic signatures can't be faked. Either the math checks out, or it doesn't. No trust required.</p>
         </div>
       </div>
     </div>
@@ -2068,9 +2474,10 @@
 <!-- CTA Section -->
 <section class="cta-section">
   <div class="cta-content reveal">
-    <h2 class="cta-title">Own Your Identity</h2>
+    <h2 class="cta-title">Build on Proofi</h2>
     <p class="cta-subtitle">
-      Join thousands of users and developers building on the decentralized identity layer.
+      One platform. Three pillars. Infinite use cases. Sign, store, share, revoke, and verify — 
+      all with cryptographic proof that works across every app in the ecosystem.
     </p>
     <div class="cta-buttons">
       <a href="#extension" class="btn btn-primary btn-large">
@@ -2079,8 +2486,8 @@
       <a href="portal.html" class="btn btn-large">
         Open Wallet
       </a>
-      <a href="ecosystem.html" class="btn btn-green btn-large">
-        Explore Apps
+      <a href="demo-health/real-demo.html" class="btn btn-green btn-large">
+        Try Full Demo
       </a>
     </div>
   </div>
@@ -2096,16 +2503,17 @@
           <span class="footer-logo-text">PROOFI</span>
         </div>
         <p class="footer-desc">
-          Your data. Your keys. Your proof.<br>
-          Client-side encrypted identity on Cere Network.
+          The decentralized identity platform.<br>
+          Sign. Store. Share. Revoke. Verify.<br>
+          All with cryptographic proof on Cere Network.
         </p>
       </div>
       <div class="footer-col">
-        <h4>Product</h4>
+        <h4>Platform</h4>
         <ul>
+          <li><a href="#platform">Core Features</a></li>
           <li><a href="portal.html">Wallet</a></li>
           <li><a href="#extension">Extension</a></li>
-          <li><a href="ecosystem.html">Ecosystem</a></li>
           <li><a href="#security">Security</a></li>
         </ul>
       </div>
