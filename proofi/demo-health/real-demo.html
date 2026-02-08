@@ -1492,7 +1492,13 @@
   <script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script>
   
   <!-- Cere DDC SDK for direct uploads -->
-  <script src="https://cdn.jsdelivr.net/npm/@cere-ddc-sdk/ddc-client@2.12.1/dist/browser/bundle.min.js"></script>
+  <script type="module">
+    import { DdcClient, File as DdcFile, UriSigner, MAINNET } from 'https://unpkg.com/@cere-ddc-sdk/ddc-client@2.16.1/dist/browser.js';
+    window.DdcClient = DdcClient;
+    window.DdcFile = DdcFile;
+    window.UriSigner = UriSigner;
+    window.MAINNET = MAINNET;
+  </script>
   
   <!-- Polkadot.js extension for wallet integration -->
   <script src="https://cdn.jsdelivr.net/npm/@polkadot/extension-dapp@0.46.5/bundle-polkadot-extension-dapp.min.js"></script>
