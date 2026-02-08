@@ -255,6 +255,31 @@ app.get('/ddc/status', async (c) => {
         return c.json({ ok: false, error: e.message }, 500);
     }
 });
+// Store raw content directly to DDC bucket (no memo wrapping)
+app.post('/ddc/store', ddcRateLimit(), async (c) => {
+    const auth = await getAuth(c);
+    if (!auth)
+        return c.json({ error: 'Authorization required' }, 401);
+    const { content, tags } = await c.req.json();
+    if (!content)
+        return c.json({ error: 'content required' }, 400);
+    try {
+        const rawContent = typeof content === 'string' ? content : JSON.stringify(content);
+        const ddcTags = Array.isArray(tags) ? tags : [];
+        const cid = await ddcStore(rawContent, ddcTags);
+        console.log(`📦 Raw DDC store for ${auth.email}: ${cid}`);
+        return c.json({
+            ok: true,
+            cid,
+            bucket: getBucketId(),
+            cdnUrl: `https://cdn.ddc-dragon.com/${getBucketId()}/${cid}`
+        });
+    }
+    catch (e) {
+        console.error(`❌ DDC raw store error: ${e.message}`);
+        return c.json({ error: e.message || 'Failed to store' }, 500);
+    }
+});
 // Store a memo on DDC — with rate limiting
 app.post('/ddc/memo', ddcRateLimit(), async (c) => {
     const auth = await getAuth(c);

@@ -1504,16 +1504,19 @@
         // Try real DDC via Proofi API first
         if (state.authToken) {
           try {
-            log('DDC: Uploading to Cere DDC Mainnet via Proofi API...', 'ddc');
-            const response = await fetch(`${PROOFI_API}/ddc/memo`, {
+            log('DDC: Uploading raw encrypted data to Cere DDC Mainnet bucket 1229...', 'ddc');
+            const response = await fetch(`${PROOFI_API}/ddc/store`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${state.authToken}`
               },
               body: JSON.stringify({
-                memo: jsonData,
-                label: 'health-data-encrypted-v1'
+                content: jsonData,
+                tags: [
+                  { key: 'type', value: 'health-data-encrypted-v1' },
+                  { key: 'app', value: 'proofi-health-demo' }
+                ]
               })
             });
 
@@ -1570,29 +1573,42 @@
       async fetch(bucketId, cid) {
         log(`DDC: Fetching CID ${cid.slice(0, 20)}...`, 'ddc');
 
-        // Try Proofi API first
+        // Fetch directly from DDC CDN (raw content, no API needed)
+        try {
+          const cdnUrl = `https://cdn.ddc-dragon.com/${bucketId}/${cid}`;
+          log(`DDC: Fetching from CDN: ${cdnUrl}`, 'ddc');
+          const response = await fetch(cdnUrl);
+
+          if (response.ok) {
+            const text = await response.text();
+            log('DDC: Fetched from CDN!', 'success');
+            return JSON.parse(text);
+          } else {
+            throw new Error(`CDN returned ${response.status}`);
+          }
+        } catch (err) {
+          log(`DDC: CDN fetch failed: ${err.message}. Trying API fallback...`, 'warn');
+        }
+
+        // Fallback: try Proofi API
         if (state.authToken || state.ddcConnected) {
           try {
-            log('DDC: Fetching from Proofi API...', 'ddc');
             const response = await fetch(`${PROOFI_API}/ddc/read/${cid}`, {
               headers: state.authToken ? { 'Authorization': `Bearer ${state.authToken}` } : {}
             });
 
             if (response.ok) {
               const result = await response.json();
-              log('DDC: Fetched from mainnet!', 'success');
-              // The API wraps memos as {type:"memo", content: "<original data>", ...}
-              // Unwrap to get the original encrypted data object
+              log('DDC: Fetched from API fallback!', 'success');
               let content = result.content || result.data || result;
               if (typeof content === 'string') content = JSON.parse(content);
-              // If wrapped in memo envelope, extract the inner content
               if (content.type === 'memo' && content.content) {
                 content = typeof content.content === 'string' ? JSON.parse(content.content) : content.content;
               }
               return content;
             }
           } catch (err) {
-            log(`DDC: API fetch failed: ${err.message}`, 'warn');
+            log(`DDC: API fetch also failed: ${err.message}`, 'warn');
           }
         }
 
