@@ -102,6 +102,27 @@
       opacity: 1;
       transform: translateY(0);
     }
+    
+    /* Mobile: reduce animation complexity for better performance */
+    @media (max-width: 768px) {
+      .reveal {
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+      }
+    }
+    
+    /* Reduced motion: respect user preferences */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: none;
+      }
+    }
     .reveal-d1 { transition-delay: 0.1s; }
     .reveal-d2 { transition-delay: 0.2s; }
     .reveal-d3 { transition-delay: 0.3s; }
@@ -3065,17 +3086,36 @@
 </footer>
 
 <script>
-  // Reveal on scroll animation
+  // Reveal on scroll animation with mobile fallback
   const reveals = document.querySelectorAll('.reveal');
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
   
-  reveals.forEach(el => revealObserver.observe(el));
+  // Check if IntersectionObserver is supported
+  if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+    
+    reveals.forEach(el => revealObserver.observe(el));
+    
+    // Fallback: Make hero elements visible immediately on mobile
+    if (window.innerWidth <= 768) {
+      document.querySelectorAll('.hero .reveal').forEach(el => {
+        el.classList.add('visible');
+      });
+    }
+  } else {
+    // Fallback for browsers without IntersectionObserver
+    reveals.forEach(el => el.classList.add('visible'));
+  }
+  
+  // Additional fallback: ensure all reveals are visible after 2 seconds
+  setTimeout(() => {
+    reveals.forEach(el => el.classList.add('visible'));
+  }, 2000);
 
   // Nav scroll effect
   const nav = document.getElementById('nav');
