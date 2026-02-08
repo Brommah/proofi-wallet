@@ -2611,13 +2611,41 @@
         return;
       }
       
-      updateAgentStep(4, true, `${healthData.sleep.length} sleep + ${healthData.heartRate.length} HR records`);
+      // Filter data based on granted scopes (CRITICAL: respect user's permission choices)
+      const grantedPaths = token.scopes.map(s => s.path);
+      const filteredData = { version: healthData.version, exportedAt: healthData.exportedAt };
+      
+      const hasSleepScope = grantedPaths.some(p => p.includes('health/sleep'));
+      const hasHeartScope = grantedPaths.some(p => p.includes('health/heart'));
+      
+      if (hasSleepScope) {
+        filteredData.sleep = healthData.sleep;
+        log(`Agent: Sleep data access GRANTED (${healthData.sleep.length} records)`, 'success');
+      } else {
+        filteredData.sleep = [];
+        log('Agent: Sleep data access DENIED by scope', 'warn');
+      }
+      
+      if (hasHeartScope) {
+        filteredData.heartRate = healthData.heartRate;
+        log(`Agent: Heart rate access GRANTED (${healthData.heartRate.length} records)`, 'success');
+      } else {
+        filteredData.heartRate = [];
+        log('Agent: Heart rate access DENIED by scope', 'warn');
+      }
+      
+      const accessSummary = [
+        hasSleepScope ? `${filteredData.sleep.length} sleep` : null,
+        hasHeartScope ? `${filteredData.heartRate.length} HR` : null
+      ].filter(Boolean).join(' + ') || 'No data (check scopes)';
+      
+      updateAgentStep(4, true, accessSummary);
       
       // Step 4.5: Run analysis
       await sleep(700);
       log('Agent: Running health analysis...', 'info');
       
-      const analysis = analyzeHealthData(healthData);
+      const analysis = analyzeHealthData(filteredData);
       
       updateAgentStep(5, true, 'Analysis complete!');
       log('Agent: Analysis complete!', 'success');
@@ -2663,43 +2691,60 @@
     
     // Health Analysis (Real calculations!)
     function analyzeHealthData(data) {
-      // Sleep analysis
-      const sleepDurations = data.sleep.map(s => s.duration);
-      const sleepQualities = data.sleep.map(s => s.quality);
-      const deepSleep = data.sleep.map(s => s.deep);
-      const remSleep = data.sleep.map(s => s.rem);
+      const hasSleep = data.sleep && data.sleep.length > 0;
+      const hasHeart = data.heartRate && data.heartRate.length > 0;
       
-      const avgSleep = sleepDurations.reduce((a, b) => a + b, 0) / sleepDurations.length;
-      const avgQuality = sleepQualities.reduce((a, b) => a + b, 0) / sleepQualities.length;
-      const avgDeep = deepSleep.reduce((a, b) => a + b, 0) / deepSleep.length;
-      const avgRem = remSleep.reduce((a, b) => a + b, 0) / remSleep.length;
+      // Sleep analysis (only if granted)
+      let avgSleep = null, avgQuality = null, avgDeep = null, avgRem = null, sleepScore = null;
+      if (hasSleep) {
+        const sleepDurations = data.sleep.map(s => s.duration);
+        const sleepQualities = data.sleep.map(s => s.quality);
+        const deepSleep = data.sleep.map(s => s.deep);
+        const remSleep = data.sleep.map(s => s.rem);
+        
+        avgSleep = sleepDurations.reduce((a, b) => a + b, 0) / sleepDurations.length;
+        avgQuality = sleepQualities.reduce((a, b) => a + b, 0) / sleepQualities.length;
+        avgDeep = deepSleep.reduce((a, b) => a + b, 0) / deepSleep.length;
+        avgRem = remSleep.reduce((a, b) => a + b, 0) / remSleep.length;
+        sleepScore = Math.round((avgQuality * 0.4) + ((avgSleep / 8) * 60 * 0.3) + ((avgDeep / 2) * 50 * 0.3));
+      }
       
-      // Heart rate analysis
-      const heartRates = data.heartRate.map(h => h.bpm);
-      const restingHR = data.heartRate
-        .filter(h => h.context === 'resting')
-        .map(h => h.bpm);
-      const variability = data.heartRate.map(h => h.variability);
+      // Heart rate analysis (only if granted)
+      let avgHR = null, avgRestingHR = null, avgHRV = null, maxHR = null, minHR = null, heartScore = null;
+      if (hasHeart) {
+        const heartRates = data.heartRate.map(h => h.bpm);
+        const restingHR = data.heartRate.filter(h => h.context === 'resting').map(h => h.bpm);
+        const variability = data.heartRate.map(h => h.variability);
+        
+        avgHR = Math.round(heartRates.reduce((a, b) => a + b, 0) / heartRates.length);
+        avgRestingHR = restingHR.length > 0 
+          ? Math.round(restingHR.reduce((a, b) => a + b, 0) / restingHR.length)
+          : avgHR;
+        avgHRV = Math.round(variability.reduce((a, b) => a + b, 0) / variability.length);
+        maxHR = Math.max(...heartRates);
+        minHR = Math.min(...heartRates);
+        heartScore = Math.round(100 - Math.abs(avgRestingHR - 65) - (avgHRV < 30 ? 20 : 0));
+      }
       
-      const avgHR = Math.round(heartRates.reduce((a, b) => a + b, 0) / heartRates.length);
-      const avgRestingHR = restingHR.length > 0 
-        ? Math.round(restingHR.reduce((a, b) => a + b, 0) / restingHR.length)
-        : avgHR;
-      const avgHRV = Math.round(variability.reduce((a, b) => a + b, 0) / variability.length);
-      const maxHR = Math.max(...heartRates);
-      const minHR = Math.min(...heartRates);
-      
-      // Scores
-      const sleepScore = Math.round((avgQuality * 0.4) + ((avgSleep / 8) * 60 * 0.3) + ((avgDeep / 2) * 50 * 0.3));
-      const heartScore = Math.round(100 - Math.abs(avgRestingHR - 65) - (avgHRV < 30 ? 20 : 0));
-      
-      // Recommendations
+      // Recommendations based on available data
       const recommendations = [];
-      if (avgSleep < 7) recommendations.push('💤 Try to get at least 7 hours of sleep');
-      if (avgDeep < 1.5) recommendations.push('🌙 Your deep sleep is low - avoid caffeine after 2pm');
-      if (avgRestingHR > 75) recommendations.push('🏃 Consider more cardio to lower resting heart rate');
-      if (avgHRV < 30) recommendations.push('🧘 Low HRV detected - try stress reduction techniques');
-      if (recommendations.length === 0) recommendations.push('🌟 Great job! Your health metrics look excellent!');
+      if (hasSleep) {
+        if (avgSleep < 7) recommendations.push('💤 Try to get at least 7 hours of sleep');
+        if (avgDeep < 1.5) recommendations.push('🌙 Your deep sleep is low - avoid caffeine after 2pm');
+      }
+      if (hasHeart) {
+        if (avgRestingHR > 75) recommendations.push('🏃 Consider more cardio to lower resting heart rate');
+        if (avgHRV < 30) recommendations.push('🧘 Low HRV detected - try stress reduction techniques');
+      }
+      if (!hasSleep && !hasHeart) {
+        recommendations.push('⚠️ No data available - check your scope permissions');
+      } else if (recommendations.length === 0) {
+        recommendations.push('🌟 Great job! Your health metrics look excellent!');
+      }
+      
+      // Note what data was NOT available due to scope restrictions
+      if (!hasSleep) recommendations.push('🔒 Sleep data: not shared (scope denied)');
+      if (!hasHeart) recommendations.push('🔒 Heart rate: not shared (scope denied)');
       
       return {
         avgSleep,
@@ -2714,7 +2759,8 @@
         sleepScore,
         heartScore,
         recommendations,
-        recordsAnalyzed: data.sleep.length + data.heartRate.length
+        recordsAnalyzed: (data.sleep?.length || 0) + (data.heartRate?.length || 0),
+        scopeInfo: { sleepGranted: hasSleep, heartGranted: hasHeart }
       };
     }
     
