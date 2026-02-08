@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi Agent Connect</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: #111;
+      border: 2px solid #0ff;
+      padding: 32px;
+      max-width: 400px;
+      width: 100%;
+    }
+    .label {
+      color: #0ff;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 0.8rem;
+      margin-bottom: 24px;
+    }
+    .agent-info {
+      background: #222;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .agent-name {
+      font-size: 1.1rem;
+      color: #0ff;
+    }
+    .agent-id {
+      font-size: 0.7rem;
+      color: #666;
+      margin-top: 4px;
+    }
+    .scopes {
+      margin-top: 16px;
+    }
+    .scope-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #333;
+    }
+    .scope-icon { font-size: 1.2rem; }
+    .scope-name { text-transform: uppercase; font-size: 0.8rem; }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    button {
+      flex: 1;
+      padding: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-reject {
+      background: transparent;
+      border: 1px solid #f44;
+      color: #f44;
+    }
+    .btn-approve {
+      background: #0ff;
+      color: #000;
+    }
+    .btn-approve:hover {
+      background: #0dd;
+    }
+    .status {
+      text-align: center;
+      padding: 40px 0;
+    }
+    .status-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    .hidden { display: none; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="card" id="connect-card">
+    <div class="label">Agent Connection Request</div>
+    <h1>PROOFI</h1>
+    <p class="subtitle">An agent wants to connect to your wallet</p>
+    
+    <div class="agent-info">
+      <div class="agent-name" id="agent-name">Loading...</div>
+      <div class="agent-id" id="agent-id"></div>
+    </div>
+    
+    <div class="label">Requested Access</div>
+    <div class="scopes" id="scopes-list"></div>
+    
+    <div class="actions">
+      <button class="btn-reject" onclick="reject()">REJECT</button>
+      <button class="btn-approve" onclick="approve()">APPROVE</button>
+    </div>
+  </div>
+  
+  <div class="card hidden" id="status-card">
+    <div class="status">
+      <div class="status-icon" id="status-icon">✅</div>
+      <h1 id="status-title">CONNECTED</h1>
+      <p class="subtitle" id="status-subtitle">You can close this window</p>
+    </div>
+  </div>
+  
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const agentId = params.get('agentId') || 'unknown';
+    const agentName = params.get('name') || 'Unknown Agent';
+    const scopes = (params.get('scopes') || 'age').split(',');
+    const callback = params.get('callback');
+    
+    // Display agent info
+    document.getElementById('agent-name').textContent = agentName;
+    document.getElementById('agent-id').textContent = agentId;
+    
+    // Display scopes
+    const icons = { age: '🎂', calendar: '📅', identity: '🪪', health: '🏥', email: '📧' };
+    document.getElementById('scopes-list').innerHTML = scopes.map(s => `
+      <div class="scope-item">
+        <span class="scope-icon">${icons[s] || '📦'}</span>
+        <span class="scope-name">${s}</span>
+      </div>
+    `).join('');
+    
+    // Try to get wallet address from extension
+    let walletAddress = null;
+    
+    // Check if extension is available
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      // This would normally use chrome.runtime.sendMessage to the extension
+      // For demo, we'll simulate
+    }
+    
+    function approve() {
+      showStatus(true);
+      
+      // Generate mock address for demo
+      walletAddress = '5' + Math.random().toString(36).slice(2, 12) + '...';
+      
+      // Callback to CLI
+      if (callback) {
+        const callbackUrl = new URL(callback);
+        callbackUrl.searchParams.set('approved', 'true');
+        callbackUrl.searchParams.set('address', walletAddress);
+        callbackUrl.searchParams.set('token', 'tok_' + Date.now());
+        window.location.href = callbackUrl.toString();
+      }
+    }
+    
+    function reject() {
+      showStatus(false);
+      
+      if (callback) {
+        const callbackUrl = new URL(callback);
+        callbackUrl.searchParams.set('approved', 'false');
+        window.location.href = callbackUrl.toString();
+      }
+    }
+    
+    function showStatus(approved) {
+      document.getElementById('connect-card').classList.add('hidden');
+      document.getElementById('status-card').classList.remove('hidden');
+      document.getElementById('status-icon').textContent = approved ? '✅' : '❌';
+      document.getElementById('status-title').textContent = approved ? 'CONNECTED' : 'REJECTED';
+    }
+  </script>
+</body>
+</html>
