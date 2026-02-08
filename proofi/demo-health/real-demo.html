@@ -1796,7 +1796,7 @@
         timestamp: Date.now(),
         action,
         details,
-        prevHash: state.lastHash || '0'.repeat(44)
+        prevHash: state.lastHash || '0'.repeat(64)
       };
       
       const entryHash = await sha256Base64(JSON.stringify(entry));
@@ -2161,7 +2161,7 @@
       document.querySelectorAll('.scope-item.selected').forEach(item => {
         scopes.push({
           path: item.dataset.path + '/*',
-          permissions: item.dataset.perms.split(',')
+          permissions: item.dataset.perms.split(',').map(p => p.trim())
         });
       });
       
@@ -2571,7 +2571,7 @@
 
       // Recommendations
       document.getElementById('recommendations').innerHTML =
-        '<pre>' + analysis.recommendations.join('\n') + '</pre>';
+        '<pre>' + analysis.recommendations.map(r => escapeHtml(r)).join('\n') + '</pre>';
 
       // Audit log
       const auditHtml = state.auditLog.map(entry => `
