@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpeedType - Design Mockup</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #00FF41;
+      --color-error: #FF3131;
+      --color-bg-dark: #0D0D0D;
+      --color-bg-card: #1A1A1A;
+      --color-text-muted: #8A8A8A; /* was #4A4A4A - now 5.3:1 on dark, WCAG AA */
+      --color-accent-cyan: #00D9FF;
+      --color-gold: #FFD700;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Space Mono', monospace;
+      --glow-primary: 0 0 10px rgba(0, 255, 65, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-mono);
+      background: radial-gradient(ellipse at center, #1A1A1A 0%, #0D0D0D 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* CRT Scanline Effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.05) 2px,
+        rgba(0, 0, 0, 0.05) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-primary);
+      text-shadow: var(--glow-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo::before {
+      content: '⌨️';
+    }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--color-text-muted);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: var(--color-bg-card);
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 16px 24px;
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .stat-value.wpm {
+      color: var(--color-primary);
+      text-shadow: var(--glow-primary);
+    }
+
+    .stat-value.acc {
+      color: var(--color-accent-cyan);
+    }
+
+    .stat-value.time {
+      color: #fff;
+    }
+
+    .mode-select {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+
+    .typing-area {
+      background: var(--color-bg-card);
+      border: 2px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 40px;
+      font-size: 22px;
+      line-height: 1.8;
+      position: relative;
+    }
+
+    .typing-area:focus-within {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 30px rgba(0, 255, 65, 0.1);
+    }
+
+    .text-display {
+      position: relative;
+    }
+
+    .char-correct {
+      color: var(--color-primary);
+    }
+
+    .char-incorrect {
+      color: var(--color-error);
+      text-decoration: line-through;
+    }
+
+    .char-current {
+      color: var(--color-primary);
+      text-shadow: var(--glow-primary);
+      font-weight: 700;
+    }
+
+    .char-pending {
+      color: var(--color-text-muted);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1.2em;
+      background: var(--color-primary);
+      box-shadow: var(--glow-primary);
+      animation: blink 530ms infinite;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      color: var(--color-text-muted);
+      font-size: 14px;
+    }
+
+    .btn {
+      background: transparent;
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 200ms ease;
+    }
+
+    .btn:hover {
+      background: rgba(0, 255, 65, 0.1);
+      box-shadow: var(--glow-primary);
+    }
+
+    /* Leaderboard */
+    .leaderboard {
+      margin-top: 60px;
+      background: var(--color-bg-card);
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .leaderboard-header {
+      padding: 20px;
+      border-bottom: 1px solid #2a2a2a;
+      font-family: var(--font-display);
+      font-size: 18px;
+    }
+
+    .leaderboard-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 80px 80px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #1a1a1a;
+      align-items: center;
+      transition: background 200ms ease;
+    }
+
+    .leaderboard-row:hover {
+      background: rgba(0, 255, 65, 0.03);
+    }
+
+    .leaderboard-row.gold {
+      background: rgba(255, 215, 0, 0.05);
+    }
+
+    .rank {
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
+    .rank.first { color: var(--color-gold); }
+    .rank.second { color: #C0C0C0; }
+    .rank.third { color: #CD7F32; }
+
+    .player-name {
+      color: #fff;
+    }
+
+    .player-wpm {
+      color: var(--color-primary);
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
+    .player-acc {
+      color: var(--color-text-muted);
+    }
+    
+    /* ===== RESPONSIVE FIXES ===== */
+    @media (max-width: 768px) {
+      header {
+        padding: 16px 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .logo {
+        font-size: 18px;
+      }
+      
+      main {
+        margin: 24px auto;
+        padding: 0 16px;
+      }
+      
+      .stats-bar {
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+      }
+      
+      .stat-card {
+        min-width: 80px;
+        padding: 12px 16px;
+      }
+      
+      .stat-value {
+        font-size: 24px;
+      }
+      
+      .stat-label {
+        font-size: 10px;
+      }
+      
+      .mode-select {
+        width: 100%;
+        margin-top: 8px;
+        order: 1;
+        flex-basis: 100%;
+      }
+      
+      .typing-area {
+        padding: 24px 20px;
+        font-size: 16px;
+        line-height: 1.8;
+        border-radius: 8px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+      
+      .leaderboard-row {
+        grid-template-columns: 40px 1fr 60px 60px;
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+      
+      .leaderboard-header {
+        font-size: 16px;
+        padding: 16px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      header {
+        padding: 12px 16px;
+      }
+      
+      main {
+        margin: 16px auto;
+        padding: 0 12px;
+      }
+      
+      .stats-bar {
+        gap: 8px;
+      }
+      
+      .stat-card {
+        flex: 1 1 40%;
+        min-width: 70px;
+        padding: 10px 12px;
+      }
+      
+      .stat-value {
+        font-size: 20px;
+      }
+      
+      .typing-area {
+        padding: 16px;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      
+      .leaderboard-row {
+        grid-template-columns: 32px 1fr 50px;
+      }
+      
+      .player-acc {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 375px) {
+      .logo::before {
+        content: '⌨️';
+        margin-right: 4px;
+      }
+      
+      .logo {
+        font-size: 16px;
+      }
+      
+      .stat-card {
+        padding: 8px 10px;
+      }
+      
+      .stat-value {
+        font-size: 18px;
+      }
+      
+      .typing-area {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">SPEEDTYPE</div>
+    <div class="user-area">
+      <span>👤 guest</span>
+      <span>⚙️</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-label">WPM</div>
+        <div class="stat-value wpm">127</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Accuracy</div>
+        <div class="stat-value acc">98%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Time</div>
+        <div class="stat-value time">0:45</div>
+      </div>
+      <select class="mode-select">
+        <option>60 seconds</option>
+        <option>30 seconds</option>
+        <option>15 seconds</option>
+        <option>Custom</option>
+      </select>
+    </div>
+
+    <div class="typing-area" tabindex="0">
+      <div class="text-display">
+        <span class="char-correct">T</span><span class="char-correct">h</span><span class="char-correct">e</span><span class="char-correct"> </span><span class="char-correct">q</span><span class="char-correct">u</span><span class="char-correct">i</span><span class="char-correct">c</span><span class="char-correct">k</span><span class="char-correct"> </span><span class="char-correct">b</span><span class="char-correct">r</span><span class="char-correct">o</span><span class="char-correct">w</span><span class="char-correct">n</span><span class="char-correct"> </span><span class="char-correct">f</span><span class="char-correct">o</span><span class="char-incorrect">z</span><span class="char-correct"> </span><span class="char-correct">j</span><span class="char-correct">u</span><span class="char-correct">m</span><span class="char-correct">p</span><span class="char-correct">s</span><span class="char-correct"> </span><span class="char-current">o</span><span class="cursor"></span><span class="char-pending">ver the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump! The five boxing wizards jump quickly.</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn">← Restart</button>
+      <span>Tab + Enter to redo</span>
+    </div>
+
+    <div class="leaderboard">
+      <div class="leaderboard-header">🏆 Leaderboard</div>
+      <div class="leaderboard-row gold">
+        <span class="rank first">🥇</span>
+        <span class="player-name">speedster_pro</span>
+        <span class="player-wpm">156</span>
+        <span class="player-acc">99.2%</span>
+      </div>
+      <div class="leaderboard-row">
+        <span class="rank second">🥈</span>
+        <span class="player-name">keyboardwarrior</span>
+        <span class="player-wpm">148</span>
+        <span class="player-acc">98.7%</span>
+      </div>
+      <div class="leaderboard-row">
+        <span class="rank third">🥉</span>
+        <span class="player-name">typist_king</span>
+        <span class="player-wpm">142</span>
+        <span class="player-acc">97.4%</span>
+      </div>
+      <div class="leaderboard-row">
+        <span class="rank">4</span>
+        <span class="player-name">ghost_typer</span>
+        <span class="player-wpm">138</span>
+        <span class="player-acc">96.8%</span>
+      </div>
+      <div class="leaderboard-row">
+        <span class="rank">5</span>
+        <span class="player-name">fast_fingers</span>
+        <span class="player-wpm">135</span>
+        <span class="player-acc">98.1%</span>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

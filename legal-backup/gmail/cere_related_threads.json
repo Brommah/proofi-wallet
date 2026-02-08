@@ -1,0 +1,5918 @@
+{
+  "nextPageToken": "01937362142575846288",
+  "threads": [
+    {
+      "id": "19c02d053ea5674d",
+      "date": "2026-01-28 05:15",
+      "from": "Ashley Li <Ashley.Li@milliard.law>",
+      "subject": "2pm CET / 9pm TW 1/28 Wed. - zoom call re CERE (Fred, Martijn and Rocky)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19c02359ae8c2c8d",
+      "date": "2026-01-28 02:31",
+      "from": "\"'Gina Kim' via Team\" <team@cere.network>",
+      "subject": "Law360 media inquiry Goopal v. Jin et al lawsuit",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_FORUMS",
+        "SPAM"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19c017f42d2dd3d9",
+      "date": "2026-01-27 23:06",
+      "from": "Tien Wong <skylar@connectpreneur.ccsend.com>",
+      "subject": "Private Investor Briefing: Actuated Medical (Neuro Devices)",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19c0130ec3ec8f0a",
+      "date": "2026-01-27 21:41",
+      "from": "Eric at Startup Grind <no-reply@startupgrind.com>",
+      "subject": "Apply to CodeLaunch before Feb 1st and win $50,000 USD equity-free",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19c012c41d76b3d8",
+      "date": "2026-01-27 21:35",
+      "from": "Tien Wong <skylar@connectpreneur.ccsend.com>",
+      "subject": "Early Clinical Validation in a First-in-Class Oncology Platform",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19c010fb9f6ac25f",
+      "date": "2026-01-27 21:05",
+      "from": "Uppitai Newsletter <uppitai@mail.beehiiv.com>",
+      "subject": "A 2-Hour Automation That Sold for $2,600",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19c006826aa01c88",
+      "date": "2026-01-27 18:02",
+      "from": "\"Rocky Lee (via Google Sheets)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Share request for \"Kenzi Aliasses / Pseudonyms\"",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19c0067150fd52a6",
+      "date": "2026-01-27 18:01",
+      "from": "\"Craig | TPP\" <craig@mail.tpp.tech>",
+      "subject": "A calmer way to handle licensing",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19c0050797e3f47d",
+      "date": "2026-01-27 17:36",
+      "from": "Events StreamNative <events@streamnative.io>",
+      "subject": "Powering Real-Time Intelligence — Jan 29",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19c002e3c51182a7",
+      "date": "2026-01-27 16:59",
+      "from": "AI Automation Society <noreply@skool.com>",
+      "subject": "Nate Herk posted \"PRICE INCREASE coming Saturday (important)\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bffb50bd7f8ed2",
+      "date": "2026-01-27 14:46",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in 🚀 Scaling Strategy Secrets: Growth Hacking, Funding, Business Development, AI Tools, and Strategy",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bff4797dc1caa7",
+      "date": "2026-01-27 12:47",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: HR Dashboard / Funnel @ Tue Jan 27, 2026 7pm - 7:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfee3b7c1a02a1",
+      "date": "2026-01-27 10:58",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Rocky Prep Call @ Tue Jan 27, 2026 2pm - 2:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfee1c6bc8fee1",
+      "date": "2026-01-27 10:56",
+      "from": "lemlist <hello@lemlist.com>",
+      "subject": "Potential lemlist security issue",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfeb6171db1fc5",
+      "date": "2026-01-27 10:08",
+      "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+      "subject": "[Pricing Update] Google Cloud pricing changes starting May 1, 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfe8836365aabd",
+      "date": "2026-01-27 09:18",
+      "from": "HeyGen <no_reply@email.heygen.com>",
+      "subject": "Now Live: A completely rebuilt Video Agent",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfe5cec311a4b5",
+      "date": "2026-01-27 08:31",
+      "from": "Karssen Makelaars <info@km.nl>",
+      "subject": "Informatie over huurwoningen in Zwolle",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfe321f77fdd34",
+      "date": "2026-01-27 07:44",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "Weekly digest for Tue, Jan 20 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfd49d53f62b57",
+      "date": "2026-01-27 03:30",
+      "from": "2lazy2try <bingo@patreon.com>",
+      "subject": "Andrew Tate Is Going Out Sad",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfcc2d07492f21",
+      "date": "2026-01-27 01:02",
+      "from": "WeeklyPerformance <WeeklyPerformance@corp.kucoin.com>",
+      "subject": "Weekly Trading Performance With KuCoin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfc001bfb7a744",
+      "date": "2026-01-26 21:30",
+      "from": "martijn@cere.network",
+      "subject": "Jong gezin zoekt huurwoning Zwolle/omgeving",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfc0017edd4d3d",
+      "date": "2026-01-27 10:42",
+      "from": "martijn@cere.network",
+      "subject": "Jong gezin zoekt huurwoning Zwolle/omgeving",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19bfc0012b29fea0",
+      "date": "2026-01-26 21:30",
+      "from": "martijn@cere.network",
+      "subject": "Jong gezin zoekt huurwoning Zwolle/omgeving",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfc0010ce6a75e",
+      "date": "2026-01-26 21:30",
+      "from": "martijn@cere.network",
+      "subject": "Jong gezin zoekt huurwoning Zwolle/omgeving",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfbfff4bb1537b",
+      "date": "2026-01-27 14:56",
+      "from": "martijn@cere.network",
+      "subject": "Jong gezin zoekt huurwoning Zwolle/omgeving",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19bfbfff136b300e",
+      "date": "2026-01-27 10:07",
+      "from": "martijn@cere.network",
+      "subject": "Jong gezin zoekt huurwoning Zwolle/omgeving",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19bfbffec7b903f7",
+      "date": "2026-01-26 21:30",
+      "from": "martijn@cere.network",
+      "subject": "Jong gezin zoekt huurwoning Zwolle/omgeving",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfbeeda0a31d79",
+      "date": "2026-01-26 21:11",
+      "from": "Google <no-reply@accounts.google.com>",
+      "subject": "Security alert",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfbb7e0706a3a6",
+      "date": "2026-01-26 20:12",
+      "from": "huggingface <website@huggingface.co>",
+      "subject": "[Hugging Face] Click this link to confirm your email address",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "19bfabbc8aa51990",
+      "date": "2026-01-26 15:36",
+      "from": "Uppitai Newsletter <uppitai@mail.beehiiv.com>",
+      "subject": "Quick check — is this still useful?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfaa8924bfb5cf",
+      "date": "2026-01-26 15:15",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "6 new notifications since 3:15 pm (Jan 19, 2026)",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bfa9c4cd2b7ccd",
+      "date": "2026-01-26 15:01",
+      "from": "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>",
+      "subject": "Your receipt from Anthropic, PBC #2214-7425-7347",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf9fac96d12f95",
+      "date": "2026-01-26 12:05",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Monday Mobile Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf9ef90e719da9",
+      "date": "2026-01-26 11:53",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: HR process review @ Mon Jan 26, 2026 4pm - 4:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf8e52cd0b8b2a",
+      "date": "2026-01-26 07:02",
+      "from": "\"Fred from Fireflies.ai\" <fred@fireflies.ai>",
+      "subject": "Weekly Digest: Highlights from Jan 19 - Jan 26, 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf7fa5677ba307",
+      "date": "2026-01-26 02:45",
+      "from": "Murray - Open Future Forum and Friends <OpenFutureForum@calendar.luma-mail.com>",
+      "subject": "Executive Events for You",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf685d9111ed1e",
+      "date": "2026-01-25 19:58",
+      "from": "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>",
+      "subject": "Your receipt from Anthropic, PBC #2498-0691-1646",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf67610300a81e",
+      "date": "2026-01-25 19:41",
+      "from": "Anthropic <no-reply-XbYtt1-xdg_dQYcBSS3XYQ@mail.anthropic.com>",
+      "subject": "[action needed] Your Claude API access is turned off",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf5d5d5f4e2051",
+      "date": "2026-01-25 16:46",
+      "from": "WAGMI Ventures <team@wagmiventures.io>",
+      "subject": "Due to Demand - New Block - Anthropic (Claude), $7B+ run rate in under a year (Secondary)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf4cf3f1ead1b8",
+      "date": "2026-01-25 11:59",
+      "from": "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>",
+      "subject": "Your receipt from Anthropic, PBC #2588-1707-4965",
+      "labels": [
+        "UNREAD",
+        "IMPORTANT",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf499d99b071c4",
+      "date": "2026-01-25 11:01",
+      "from": "nothings something <hello@noso.studio>",
+      "subject": "This is TailorTech™. Function-first tailoring.",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf0bdecde24808",
+      "date": "2026-01-24 15:01",
+      "from": "a16z crypto <a16zcrypto@substack.com>",
+      "subject": "What to do when prediction markets fail",
+      "labels": [
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf0b23f2411e65",
+      "date": "2026-01-24 16:49",
+      "from": "Wasserman Hospitality <hospitalitysales@teamwass.com>",
+      "subject": "Music Events with Wasserman Hospitality Sales!",
+      "labels": [
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bf014f4d6be598",
+      "date": "2026-01-24 13:57",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Nu: gratis pizza bij Domino's Zwolle Diezerkade! 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bec91f2c2aeda6",
+      "date": "2026-01-23 21:35",
+      "from": "Niko From Collateral <collateral-partners@mail.beehiiv.com>",
+      "subject": "The Collateral Briefs",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bec44227e6bb54",
+      "date": "2026-01-24 00:15",
+      "from": "PuppyGraph <puppygraph@calendar.luma-mail.com>",
+      "subject": "Keeping the Iceberg streak going: Apache Polaris Meetup",
+      "labels": [
+        "YELLOW_STAR",
+        "STARRED",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19bec2a40fad9ade",
+      "date": "2026-01-23 19:42",
+      "from": "Blockchain Futurist Conference <futurist@emeraldeex.com>",
+      "subject": "🚨 5 Hours Left for Super Early Bird!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bec1fa95dfe14b",
+      "date": "2026-01-23 19:30",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Geen zin om straks te koken?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bec00ce0930614",
+      "date": "2026-01-23 18:57",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Team Alpha & Bravo: Daily Sync @ Weekly from 10am to 10:45am on Tuesday, Wednesday, Thursday, Friday (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bec0063c65a3e3",
+      "date": "2026-01-23 18:56",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Team Alpha & Bravo: Daily Sync @ Wed Jan 28, 2026 10am - 10:45am (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bec0059b952014",
+      "date": "2026-01-23 18:56",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Team Alpha & Bravo: Daily Sync @ Tue Jan 27, 2026 10am - 10:45am (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bebf6adca71496",
+      "date": "2026-01-24 20:10",
+      "from": "Kylie Farrimond <kyliefarrimond.g@yanneandcopartners.co>",
+      "subject": "Fundraising round for Cere??",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19bebced66b44b10",
+      "date": "2026-01-23 18:01",
+      "from": "The Substrate <thesubstrat3@substack.com>",
+      "subject": "The Jevons Paradox in AI: Why Efficiency Creates More Demand",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bebc643fec3c2e",
+      "date": "2026-01-27 18:39",
+      "from": "Dimitri Dieterle <dimitrihdieterle@vortexadvisorband.com>",
+      "subject": "Thoughts, Martijn?",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19beb7dd3a66e6b2",
+      "date": "2026-01-23 16:34",
+      "from": "Artlist <team@newsletter.artlist.io>",
+      "subject": "The future of AI video production starts here",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19beb62f1820032c",
+      "date": "2026-01-23 16:04",
+      "from": "Lynn - <lynn@cere.io>",
+      "subject": "📌 Payment Processing Updates & Reminders",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19beb608ad57efa0",
+      "date": "2026-01-26 16:08",
+      "from": "Jamie Baumer <j.baumer@digitalk-esummit.com>",
+      "subject": "Migrating from WordPress to Webflow – pros, cons, and pitfalls",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19beb2a2bc885eab",
+      "date": "2026-01-23 15:02",
+      "from": "Wellfound <newsletters@hi.wellfound.com>",
+      "subject": "Moonshot rides surge of ‘super apps’",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19beabac63b04597",
+      "date": "2026-01-23 12:58",
+      "from": "Suhas Motwani <prodfolks@substack.com>",
+      "subject": "build an AI agent with me from scratch",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be9ca3147be2f9",
+      "date": "2026-01-23 08:37",
+      "from": "Margaret Newton <margaret.newton@ciorevieweurope.com>",
+      "subject": "Re: Cere Network to be recognized as the Top Decentralized Data Cloud Solutions",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be9a7a3e853a62",
+      "date": "2026-01-23 08:00",
+      "from": "Claude Team <no-reply@email.claude.com>",
+      "subject": "New in Claude Code: Cowork, diff viewer, and more",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be7df4e5ccce87",
+      "date": "2026-01-22 23:40",
+      "from": "HeyGen Academy <academy@learn.heygen.com>",
+      "subject": "The HeyGen Academy is officially live!",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be79d87ac32ad3",
+      "date": "2026-01-22 22:30",
+      "from": "Uppitai Newsletter <uppitai@mail.beehiiv.com>",
+      "subject": "Quick hello from Nate 👋 (AI Automation Society newsletter)",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be78424c7e43ed",
+      "date": "2026-01-22 22:01",
+      "from": "BitGo <hello@go.bitgo.com>",
+      "subject": "Important Client Update from BitGo",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be70750a159df1",
+      "date": "2026-01-22 19:46",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "MLflow Meets Long-Running Agents",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be6ec0a58ae949",
+      "date": "2026-01-22 19:16",
+      "from": "\"“Google AI Studio”\" <googleaistudio-noreply@google.com>",
+      "subject": "[Action Required] Migrate to Gemini 2.5 or Gemini 3 models before March 31, 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be6b9d652e0c5f",
+      "date": "2026-01-22 18:21",
+      "from": "\"Martijn Broersma (via Google Slides)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Presentation shared with you: \"Non-Technical Short Deck\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be6ad9a293e8d6",
+      "date": "2026-01-22 18:02",
+      "from": "Substack <on+product@substack.com>",
+      "subject": "Introducing the Substack TV app, now in beta",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be688c4fe0e5f7",
+      "date": "2026-01-22 17:27",
+      "from": "\"Cointraffic.io\" <pr@cointraffic.io>",
+      "subject": "⚡️ Scale Finance Traffic with Premium Placements",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be62bc0ea75b74",
+      "date": "2026-01-22 15:46",
+      "from": "\"Formidium Corp.\" <marketing@formidium.com>",
+      "subject": "The Asset Manager of 2030: Building for Utility, Agility & Endurance",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be5f47df6de70f",
+      "date": "2026-01-28 05:14",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Finalizing cef.ai setup & direct funding from panama foundation",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 7
+    },
+    {
+      "id": "19be5f4023618be5",
+      "date": "2026-01-22 14:45",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Jobs & Careers in Crypto, Web3, Blockchain, AI by Blockchain Headhunter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be5f21e51100d0",
+      "date": "2026-01-22 14:45",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Unblocking Cere asset transfers.- Diana bills & signatures",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be5c8cf03cef61",
+      "date": "2026-01-22 16:00",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "DAO signature requirements & final review director transition talking points",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19be54ef283356ec",
+      "date": "2026-01-22 11:45",
+      "from": "\"Steph @ Basejam\" <steph@basejam.com>",
+      "subject": "Company Retreat Trend Predictions 2026 🌱",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be4e5e41730ef8",
+      "date": "2026-01-22 09:50",
+      "from": "Omer Karatas <omer.karatas@get-saaspass.com>",
+      "subject": "Worth comparing, or should I close the loop?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be3f140190c10d",
+      "date": "2026-01-22 05:23",
+      "from": "\"AI+ from AI+’s Substack\" <aiplusfounderscommunity@substack.com>",
+      "subject": "March 15, SF GTC Edition: AI+ Renᴬᴵssance Conference",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be3acf601376be",
+      "date": "2026-01-22 04:08",
+      "from": "\"AI+ from AI+’s Substack\" <aiplusfounderscommunity@substack.com>",
+      "subject": "Welcome to AI+’s Substack",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be30b704abdd58",
+      "date": "2026-01-22 01:12",
+      "from": "ETHGlobal <hello@ethglobal.com>",
+      "subject": "ETHConf Speaker Applications Now Open!",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19be1f4ae674ac7b",
+      "date": "2026-01-21 20:07",
+      "from": "ConnectoTransfers <marketing@connectotransfers.com>",
+      "subject": "❄️ Winter Sports Season starts with Ski Transfers",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be1edc22defb7e",
+      "date": "2026-01-21 20:00",
+      "from": "Startup Grind <no-reply@startupgrind.com>",
+      "subject": "Event Tomorrow: PITCHMASTER: How to influence Investors and Win The Market",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be1d93be99ccef",
+      "date": "2026-01-21 19:37",
+      "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+      "subject": "Delivery Status Notification (Failure)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be1d8fbb83921a",
+      "date": "2026-01-21 19:37",
+      "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+      "subject": "Delivery Status Notification (Failure)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be1c1f8f9b42ef",
+      "date": "2026-01-21 19:12",
+      "from": "Blockchain Futurist Conference <futurist@emeraldeex.com>",
+      "subject": "🚨 Super Early Bird Ends Friday ",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be1b400319fd22",
+      "date": "2026-01-22 21:03",
+      "from": "Jenny Vatrenko <jenny@vatrenkoesq.com>",
+      "subject": "Fwd: Wang v. Cerebellum Network et al.",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 6
+    },
+    {
+      "id": "19be1a043f646d96",
+      "date": "2026-01-21 18:35",
+      "from": "Katie_BitMart <katie.liu@bitmart.com>",
+      "subject": "Special Listing Offer From Top15 Exchange_ BitMart!",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be1823e5bf68cc",
+      "date": "2026-01-21 18:02",
+      "from": "BitGo <hello@go.bitgo.com>",
+      "subject": "From $98k Peaks to Tariff-Driven Pullback",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be133da55db314",
+      "date": "2026-01-23 14:01",
+      "from": "Paul Albert <paulalbert.b@yannewealthgroup.co>",
+      "subject": "Need a review - Martijn ?",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19be080d5cd57a7a",
+      "date": "2026-01-21 13:21",
+      "from": "Flink <hello@news.goflink.com>",
+      "subject": "Martijn, €8 off and your Flink weekly update 😍",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be0710abd2360f",
+      "date": "2026-01-21 13:04",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Wednesday Web Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be039ec4f6c121",
+      "date": "2026-01-21 12:04",
+      "from": "\"Kiwi.com\" <travel@kiwi.com>",
+      "subject": "Klik hier voor flashsale-deals van 16 €",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19be00abfb099918",
+      "date": "2026-01-21 11:12",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC Spotlight: People, purpose and progress across media & entertainment",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdf7a3a9d7cc46",
+      "date": "2026-01-21 08:33",
+      "from": "Margaret Newton <margaret.newton@ciorevieweurope.com>",
+      "subject": "Cere Network to be recognized as the Top Decentralized Data Cloud Solutions",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdf0636fd04e2b",
+      "date": "2026-01-21 06:28",
+      "from": "AI Automation Society <noreply@skool.com>",
+      "subject": "Nate Herk posted \"🚨 We're Hiring: Automation Support Specialists\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bde2efa766a7b7",
+      "date": "2026-01-21 02:31",
+      "from": "Charles from lemlist <charles@lemlist-news.com>",
+      "subject": "Webinar invitation - “The 2026 GTM Motion : from Signals to Pipeline”",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdc62baca272ea",
+      "date": "2026-01-20 18:10",
+      "from": "Startup Grind <no-reply@startupgrind.com>",
+      "subject": "Martijn, join us for PITCHMASTER: How to influence Investors and Win The Market",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdc60fcdabcc7b",
+      "date": "2026-01-20 18:08",
+      "from": "The Zenlytic Team <marketing@zenlytic.com>",
+      "subject": "Stay Updated with Zenlytic in 2026, Martijn.",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdc5afaaa8ad79",
+      "date": "2026-01-20 18:01",
+      "from": "The Substrate <thesubstrat3@substack.com>",
+      "subject": "Systems Are The New Product",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdc3f58bc07153",
+      "date": "2026-01-20 17:31",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "Ralph, Claude, and why long agent sessions fall apart",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdba804a384496",
+      "date": "2026-01-20 14:46",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Technology Leadership 🟥 IT, Artificial Intelligence AI, Big Data, Cybersecurity, Web3, Metaverse 5g",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdba5bbf6049b2",
+      "date": "2026-01-20 14:43",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Dat drankje is van ons 🥤",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdb8cb5fbd65ad",
+      "date": "2026-01-20 14:16",
+      "from": "WAGMI Ventures <team@wagmiventures.io>",
+      "subject": "LAST CALL: Sequoia Capital (Apple, Google) Joining Anthropic Fundraise - $300k of Allocation Left",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdb84c4fc404d4",
+      "date": "2026-01-20 14:08",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Cere Network DAO Director Call - Moving to tmrw",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bdb472bee94e0d",
+      "date": "2026-01-20 13:00",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Proposed new time: Go-to-market sync (Biz+Eng) @ Tue Jan 20, 2026 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bda8cee91c9566",
+      "date": "2026-01-20 09:37",
+      "from": "Funda <info@email.funda.nl>",
+      "subject": "Log in om je funda-account te behouden",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bda2a47429ebd0",
+      "date": "2026-01-20 07:46",
+      "from": "Pixabay <Pixabay@community.pixabay.com>",
+      "subject": "Level up in 2026 🚀",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bda09153d87280",
+      "date": "2026-01-20 07:13",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "Weekly digest for Tue, Jan 13 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd925b18574c70",
+      "date": "2026-01-20 03:04",
+      "from": "2lazy2try <bingo@patreon.com>",
+      "subject": "Live Streamer Has Humiliating Crash Out and Instantly Regrets It",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd8b7055e262ed",
+      "date": "2026-01-20 01:03",
+      "from": "WeeklyPerformance <WeeklyPerformance@corp.kucoin.com>",
+      "subject": "Weekly Trading Performance With KuCoin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd7ffc779d46bf",
+      "date": "2026-01-19 21:43",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Please authorise a card payment 📝",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd7c84c649025f",
+      "date": "2026-01-19 20:43",
+      "from": "Granola <notifications@mail.granola.ai>",
+      "subject": "Data export complete",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd7a3e9489941a",
+      "date": "2026-01-19 20:03",
+      "from": "Murray - Open Future Forum and Friends <OpenFutureForum@calendar.luma-mail.com>",
+      "subject": "Select Luma Events For You",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd6fbe4fa05e2b",
+      "date": "2026-01-19 16:59",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Fred x Martijn @ Mon Jan 19, 2026 7pm - 7:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd6adb30d502ed",
+      "date": "2026-01-19 15:34",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Monday Mobile Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd698e2c2b0630",
+      "date": "2026-01-19 15:11",
+      "from": "\"Bren Van Caesbroeck (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Document shared with you: \"Narrow focus proposal\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd69598d28444a",
+      "date": "2026-01-19 15:08",
+      "from": "\"Bren Van Caesbroeck (via Google Slides)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Share request for \"Amit Deck - December '25\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd691d3e68bab3",
+      "date": "2026-01-19 15:03",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "6 new notifications since 3:03 pm (Jan 12, 2026)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd592e916ba16a",
+      "date": "2026-01-19 10:25",
+      "from": "\"David Baláš\" <newsletter@sloneek.com>",
+      "subject": "New Attendance system is here",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd5844a45dbfc2",
+      "date": "2026-01-19 10:09",
+      "from": "TheFork <info@news.thefork.nl>",
+      "subject": "De Top 100 van Nederland voor 2025 is hier!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd4d9c01e4d9c2",
+      "date": "2026-01-19 07:03",
+      "from": "\"Fred from Fireflies.ai\" <fred@fireflies.ai>",
+      "subject": "Weekly Digest: Highlights from Jan 12 - Jan 19, 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd2a53c42e635b",
+      "date": "2026-01-18 20:46",
+      "from": "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>",
+      "subject": "Your receipt from Anthropic, PBC #2466-3150-6197",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd120ffa9702de",
+      "date": "2026-01-18 13:42",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Sunday funday met 50% korting 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bd1109b00403a6",
+      "date": "2026-01-18 13:24",
+      "from": "Cluely <invoice+statements@cluely.com>",
+      "subject": "Your receipt from Cluely #2974-3676",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bcd0401316f442",
+      "date": "2026-01-17 17:31",
+      "from": "a16z crypto <a16zcrypto@substack.com>",
+      "subject": "What shipping containers say about the future of money",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bcbff91e85dfe1",
+      "date": "2026-01-17 13:47",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Kies jouw persoonlijke pizza deal 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc807da02f8706",
+      "date": "2026-01-16 19:18",
+      "from": "Data For AI Events <dataforai@calendar.luma-mail.com>",
+      "subject": "Kick Off 2026 with Data for AI: January & February Bay Area Meetups",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc70c6d10a3544",
+      "date": "2026-01-16 14:43",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Gratis drankje bij je My Domino's Box 🥤",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc6acdea6c2e21",
+      "date": "2026-01-16 12:57",
+      "from": "Suhas Motwani <prodfolks@substack.com>",
+      "subject": "AGI is here…",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc698891967055",
+      "date": "2026-01-16 12:37",
+      "from": "Selby Jennings <talent@selbyjennings.com>",
+      "subject": "The future of risk management: Key 2026 hiring trends",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc692548d20087",
+      "date": "2026-01-16 12:30",
+      "from": "Selby Jennings <talent@selbyjennings.com>",
+      "subject": "The future of finance talent: Key 2026 hiring trends",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc69002164b936",
+      "date": "2026-01-16 12:28",
+      "from": "\"Bren Van Caesbroeck (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Document shared with you: \"Cere Network - Communication Foundation\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc682a63b7ab6a",
+      "date": "2026-01-16 12:13",
+      "from": "Selby Jennings <talent@selbyjennings.com>",
+      "subject": "The future of audit talent: Key 2026 trends",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc6786887882f0",
+      "date": "2026-01-16 12:02",
+      "from": "Niko From Collateral <collateral-partners@mail.beehiiv.com>",
+      "subject": "The Collateral Briefs",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc600a294092ef",
+      "date": "2026-01-16 09:51",
+      "from": "Omer Karatas <omer.karatas@get-saaspass.com>",
+      "subject": "Why many teams move away from Duo / Okta",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc5b26e95b891e",
+      "date": "2026-01-16 08:26",
+      "from": "\"Cointraffic.io\" <pr@cointraffic.io>",
+      "subject": "⚡️ Crypto Newsletter Placements at Special Rates",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc3f65edc48855",
+      "date": "2026-01-16 00:21",
+      "from": "HeyGen <no_reply@email.heygen.com>",
+      "subject": "Introducing HeyGen for Business: Our highest-value plan for your team",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc26e44f10cdf0",
+      "date": "2026-01-15 17:12",
+      "from": "Flink <hello@news.goflink.com>",
+      "subject": "Start 2026 with double Prime perks 💪🎁",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc249f7f0a9dc0",
+      "date": "2026-01-15 16:31",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "Agents Are Easy. Adoption Isn’t.",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc20d5c2aaf6ea",
+      "date": "2026-01-15 15:26",
+      "from": "Wellfound <newsletters@hi.wellfound.com>",
+      "subject": "India’s ‘gray collar’ resurgence",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc1ea3004b6541",
+      "date": "2026-01-15 14:48",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Jobs & Careers in Crypto, Web3, Blockchain, AI by Blockchain Headhunter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc0c7fcaf6a91e",
+      "date": "2026-01-15 09:31",
+      "from": "Creator Studio <no-reply@creatorstudio.com>",
+      "subject": "Final reminder: Creator Studio closes on 23 January",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc0b1855949530",
+      "date": "2026-01-15 09:06",
+      "from": "Selby Jennings <talent@selbyjennings.com>",
+      "subject": "Is your sales and trading hiring strategy ready for 2026?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bc01b22a38d0a7",
+      "date": "2026-01-15 06:22",
+      "from": "LinkedIn <jobs-noreply@linkedin.com>",
+      "subject": "Martijn, looking for a new job?",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbfa307168208b",
+      "date": "2026-01-15 04:11",
+      "from": "Luma <noreply@luma-mail.com>",
+      "subject": " AI × DePIN × Social was canceled",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbdffa073a4cfa",
+      "date": "2026-01-14 20:31",
+      "from": "BitGo <hello@go.bitgo.com>",
+      "subject": "The Powell Inquiry while Markets in Limbo",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbdc4db328fdb5",
+      "date": "2026-01-14 19:28",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Cryptonite's predictions for 2026: Open AI down, cryptos and IPOs up, a Persian Empire comeback, DeepSeek as CCP t…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbd99c3c40c33d",
+      "date": "2026-01-14 18:42",
+      "from": "Blockchain Futurist Conference <futurist@emeraldeex.com>",
+      "subject": "Speaker Applications Now Open 🚀",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbd403646c1684",
+      "date": "2026-01-14 17:04",
+      "from": "Patrick Nicholson-Going <patrick@cere.io>",
+      "subject": "Accepted: Go-to-market sync (Biz+Eng) @ Weekly from 5pm to 5:30pm on Tuesday, Thursday (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbd08f58ef781d",
+      "date": "2026-01-14 16:03",
+      "from": "Astrid Ullmann <Astrid.Ullmann@mll-legal.com>",
+      "subject": "Cerebellum, Inc. | Invoice December 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbc6181d16d3d9",
+      "date": "2026-01-14 13:01",
+      "from": "\"Finance @ Hash Directors\" <invoicereminders@post.xero.com>",
+      "subject": "Hash Cayman Ltd <> Cere Foundation: Invoice INV-3135 is due soon",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbc2d911cf3d1c",
+      "date": "2026-01-14 12:04",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Wednesday Web Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbbf2d4af6e86c",
+      "date": "2026-01-14 11:00",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC Spotlight: Physical AI, intelligent transformation and Content Everywhere",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbb00f598fee72",
+      "date": "2026-01-14 06:35",
+      "from": "Airbnb <discover@airbnb.com>",
+      "subject": "Even weg zonder ver te reizen",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb9df0f9d5631f",
+      "date": "2026-01-14 01:19",
+      "from": "PuppyGraph <puppygraph@calendar.luma-mail.com>",
+      "subject": "🧊 Kicking off 2026: The First Bay Area Iceberg Meetup (+ A Feast!)",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb8b484653aa30",
+      "date": "2026-01-13 19:53",
+      "from": "Google <no-reply@accounts.google.com>",
+      "subject": "Security alert",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb88a59f9e02ff",
+      "date": "2026-01-13 19:07",
+      "from": "Scott Stephenson <marketing@learn.deepgram.com>",
+      "subject": "Deepgram raises $130M Series C",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb876cedbe6187",
+      "date": "2026-01-13 18:45",
+      "from": "\"NotCryptoBro's Memo\" <notcryptobro@substack.com>",
+      "subject": "The Great Migration: Trading the Feed for Digital Campfire",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb866a8d2c3c39",
+      "date": "2026-01-13 18:27",
+      "from": "CrewAI <vipteam@crewai.com>",
+      "subject": "[2026 webinar series] Accelerating AI agent adoption",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb838749a3c002",
+      "date": "2026-01-13 17:37",
+      "from": "Events StreamNative <events@streamnative.io>",
+      "subject": "Join our webcast: Powering Real-Time Intelligence with StreamNative and Volt Active Data",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb81d5cf4d263d",
+      "date": "2026-01-13 17:07",
+      "from": "Artlist <team@newsletter.artlist.io>",
+      "subject": "Sora 2 vs. Veo 3.1: Which is better?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb79b79f0346ce",
+      "date": "2026-01-13 14:46",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in 🚀 Scaling Strategy Secrets: Growth Hacking, Funding, Business Development, AI Tools, and Strategy",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb79b1e833ebfe",
+      "date": "2026-01-13 14:45",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Binnenblijven was nog nooit zo lekker 🍕🌧️",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb768388c7702e",
+      "date": "2026-01-13 13:50",
+      "from": "Anthropic <no-reply---JvXIiCOXgY_lcUIrfXhg@mail.anthropic.com>",
+      "subject": "[action needed] Your Claude API access is turned off",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb6dc8cd000a35",
+      "date": "2026-01-13 11:17",
+      "from": "\"Kiwi.com\" <travel@kiwi.com>",
+      "subject": "Vluchten voor 16 € zijn nu verkrijgbaar!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb618ea94e7ae5",
+      "date": "2026-01-13 07:44",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "Weekly digest for Tue, Jan 6 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb50ce89324154",
+      "date": "2026-01-13 02:51",
+      "from": "LinkedIn <messages-noreply@linkedin.com>",
+      "subject": "Learning Spotlight: Start Your Year with Purpose",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb4aa62b70903d",
+      "date": "2026-01-13 01:03",
+      "from": "WeeklyPerformance <WeeklyPerformance@corp.kucoin.com>",
+      "subject": "Weekly Trading Performance With KuCoin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb47da295b77df",
+      "date": "2026-01-13 00:14",
+      "from": "2lazy2try <bingo@patreon.com>",
+      "subject": "Kurt Metzger Accidentally Exposes Joe Rogan",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb369630c526bf",
+      "date": "2026-01-12 19:13",
+      "from": "Murray - Open Future Forum and Friends <OpenFutureForum@calendar.luma-mail.com>",
+      "subject": "JP Morgan Healthcare Week Events and More",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb2beb91748b10",
+      "date": "2026-01-12 16:06",
+      "from": "Karen Walker <kwalker@abscrecovery.com>",
+      "subject": "Trust Krediet Beheer BV VS Cerebellum Network Inc 2026-0003",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb27673437c143",
+      "date": "2026-01-12 14:47",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "2e pizza vanaf €2.99 bezorgd 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb2713673029c2",
+      "date": "2026-01-12 14:42",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "4 new notifications since 2:42 pm (Jan 5, 2026)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb1e1d585bbc39",
+      "date": "2026-01-12 12:05",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Monday Mobile Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb1964d7124e09",
+      "date": "2026-01-12 19:29",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "PTO Request Martijn 12-16",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19bb165db4cafec0",
+      "date": "2026-01-12 09:49",
+      "from": "Omer Karatas <omer.karatas@get-saaspass.com>",
+      "subject": "A simpler, more affordable 2FA option",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb1642288503b7",
+      "date": "2026-01-12 09:46",
+      "from": "Anthropic User Research <no-reply@research.anthropic.com>",
+      "subject": "Share your Claude Code experience",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bb0cd13e10aba5",
+      "date": "2026-01-12 07:03",
+      "from": "\"Fred from Fireflies.ai\" <fred@fireflies.ai>",
+      "subject": "Weekly Digest: Highlights from Jan 05 - Jan 12, 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bae0367cec2c9e",
+      "date": "2026-01-11 17:01",
+      "from": "a16z crypto <a16zcrypto@substack.com>",
+      "subject": "Privacy trends for 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bad221f0dd11d2",
+      "date": "2026-01-11 13:57",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "50% korting, alleen vandaag! ❄️",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba94c470d8747b",
+      "date": "2026-01-10 20:04",
+      "from": "Suwun Emmanuel <suwunemmanuel22@gmail.com>",
+      "subject": "Re: OFFER OF TALENT",
+      "labels": [
+        "UNREAD",
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba90cffe387baa",
+      "date": "2026-01-10 18:55",
+      "from": "Nicolas Schell <nicolas.schell@scalantec.com>",
+      "subject": "Updated invitation: Weekly - Cere x Scalantec @ Weekly from 12:15pm to 12:30pm on Monday except Mon Jan 12 12:15pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba7074d6e856c3",
+      "date": "2026-01-10 09:30",
+      "from": "Dify <hello@dify.ai>",
+      "subject": "Happy 2026 — Multimodal Knowledge Base, Agentic RAG, and Lessons from Europe",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba4f84959974ac",
+      "date": "2026-01-09 23:54",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "The Bitcoin/Ethereum Options Market Is Sending a Message Most Investors Are Missing— And How We’re Positioned",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba402742a64f4c",
+      "date": "2026-01-09 19:26",
+      "from": "AI Automation Society <noreply@skool.com>",
+      "subject": "Nate Herk posted \"Your discount expires TODAY\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba3e8f043349f0",
+      "date": "2026-01-09 18:58",
+      "from": "HeyGen <no_reply@email.heygen.com>",
+      "subject": "See what’s new in HeyGen for December",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba3cd89d3568e2",
+      "date": "2026-01-09 18:28",
+      "from": "Encode Club <encode-club@calendar.luma-mail.com>",
+      "subject": "Encode Hackathon next weekend",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba3995eeeebb9e",
+      "date": "2026-01-09 17:31",
+      "from": "Apify <hello@apify.com>",
+      "subject": "Update to Apify General Terms and Conditions",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba35d6e97a6886",
+      "date": "2026-01-09 16:26",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Je craving kan weer bezorgd worden! 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba33fa8052e217",
+      "date": "2026-01-09 15:53",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Slide het weekend in met 1+1 gratis 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba2b7872dfcf19",
+      "date": "2026-01-09 13:23",
+      "from": "Suhas Motwani <prodfolks@substack.com>",
+      "subject": "my 2026 ai stack",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba2b7815f52e50",
+      "date": "2026-01-09 13:24",
+      "from": "Flink <hello@news.goflink.com>",
+      "subject": "Martijn, €8 off and your Flink weekly update 😍",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba26ccf2f09b91",
+      "date": "2026-01-09 12:03",
+      "from": "Niko From Collateral <collateral-partners@mail.beehiiv.com>",
+      "subject": "The Collateral Briefs",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba204f02d1c304",
+      "date": "2026-01-09 10:09",
+      "from": "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>",
+      "subject": "Your receipt from Anthropic, PBC #2718-7554-4939",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba202ddc64062d",
+      "date": "2026-01-09 10:07",
+      "from": "Anthropic <no-reply-AHp3vPIwJPiWWJ3gn6RkTQ@mail.anthropic.com>",
+      "subject": "[action needed] Your Claude API access is turned off",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba1aea950cd8db",
+      "date": "2026-01-09 08:35",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "Ethereum: The $1.6 Billion Bitmine Compensation Plan That Assumes a $20,000 ETH Price",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba0c0d88d67f61",
+      "date": "2026-01-09 04:15",
+      "from": "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>",
+      "subject": "Your receipt from Anthropic, PBC #2520-4859-6006",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba0bd84290c300",
+      "date": "2026-01-09 04:12",
+      "from": "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>",
+      "subject": "Your receipt from Anthropic, PBC #2551-6671-0915",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba0a5ea8458ea6",
+      "date": "2026-01-09 03:46",
+      "from": "\"Anthropic, PBC\" <failed-payments@mail.anthropic.com>",
+      "subject": "$24.20 payment to Anthropic, PBC was unsuccessful",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19ba09eb6eb99ded",
+      "date": "2026-01-09 03:38",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "Market Context Is Powerful — Go Deeper with Market Updates",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9ed3018f6e5fa",
+      "date": "2026-01-08 19:16",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "Agents That Click Back",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9e99d1d882e5a",
+      "date": "2026-01-08 18:13",
+      "from": "\"Cointraffic.io\" <pr@cointraffic.io>",
+      "subject": "⚡️ Reach 17M+ Crypto Users via YouTube Influencers",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9e58eb3de7a48",
+      "date": "2026-01-08 17:03",
+      "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+      "subject": "Delivery Status Notification (Failure)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9e58e84bd5b7e",
+      "date": "2026-01-08 17:03",
+      "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+      "subject": "Delivery Status Notification (Failure)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9e58add474906",
+      "date": "2026-01-08 17:02",
+      "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+      "subject": "Delivery Status Notification (Failure)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9e58adbca61a3",
+      "date": "2026-01-08 17:02",
+      "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+      "subject": "Delivery Status Notification (Failure)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9e584dc5382bb",
+      "date": "2026-01-08 17:02",
+      "from": "Wellfound <newsletters@hi.wellfound.com>",
+      "subject": "Claude’s ‘do more with less’ workflow",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9e293dfcfa70b",
+      "date": "2026-01-08 16:11",
+      "from": "Nate Herk <nate@aiautomationsociety.ai>",
+      "subject": "how connections beat credentials in AI",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9de16c3a1380a",
+      "date": "2026-01-08 14:52",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "1+1 gratis bij afhalen ❄️",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9ddb99cd1f8fa",
+      "date": "2026-01-08 14:46",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Technology Leadership 🟥 IT, Artificial Intelligence AI, Big Data, Cybersecurity, Web3, Metaverse 5g",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9cccedaf38830",
+      "date": "2026-01-08 10:08",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "Storyboard Slides - January 7",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b9b749bff095ec",
+      "date": "2026-01-08 03:34",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "False Signals, Real Breakouts: Why Bitcoin’s Next Move Won’t Come From Macro Narratives",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b99aee627088e7",
+      "date": "2026-01-07 19:24",
+      "from": "CEF AI Recruiting Team <no-reply@msg.join.com>",
+      "subject": "Thank you for your application to CEF AI",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b99aea2a016818",
+      "date": "2026-01-07 19:24",
+      "from": "noreply@join.com",
+      "subject": "Verify your account to finalise your application to CEF AI",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b99a542bcc8985",
+      "date": "2026-01-07 19:08",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Tentatively Accepted: Go-to-market sync (Biz+Eng) @ Thu Jan 8, 2026 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9963e5440a449",
+      "date": "2026-01-07 17:56",
+      "from": "Karen Walker <kwalker@abscrecovery.com>",
+      "subject": "Trust Krediel Beheer BV VS Cerebellum Network Inc 2026-0003",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b99200000098de",
+      "date": "2026-01-07 16:42",
+      "from": "WAGMI Ventures <team@wagmiventures.io>",
+      "subject": "Second Close - $500k left - SpaceX - Pre-IPO Allocation (Secondary, Preferred Shares)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9902e35d9e518",
+      "date": "2026-01-07 16:11",
+      "from": "Nate Herk <nate@aiautomationsociety.ai>",
+      "subject": "YouTube can't teach you THIS about AI",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b98c368c9d2e45",
+      "date": "2026-01-07 15:01",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "From 'brrr' to 'mmmmmm' real quick 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b98c347f4a5caf",
+      "date": "2026-01-07 15:01",
+      "from": "\"Formidium Corp.\" <marketing@formidium.com>",
+      "subject": "Leadership is Decision-Making — Are You Doing It Right?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b98b641da1c1a6",
+      "date": "2026-01-07 14:47",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Jobs & Careers in Crypto, Web3, Blockchain, AI by Blockchain Headhunter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b98b37ffbf6337",
+      "date": "2026-01-07 14:44",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC Spotlight: 2026 Trends, quantum chips and deepfakes",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b98ac4021a686c",
+      "date": "2026-01-19 13:17",
+      "from": "Nicolas Schell <nicolas.schell@scalantec.com>",
+      "subject": "Invoice December 2025",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "19b9841034240ac1",
+      "date": "2026-01-07 10:44",
+      "from": "Eric at Genspark <ericjing@genspark.ai>",
+      "subject": "🎉 New Year Sale EXTENDED — Last Chance!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9821325f57c85",
+      "date": "2026-01-07 12:04",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Wednesday Web Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b968584aebc4c5",
+      "date": "2026-01-07 04:34",
+      "from": "Jason Leupold <jason@protocolwealthllc.com>",
+      "subject": "Re: Assignment and Release and Updated Contract",
+      "labels": [
+        "UNREAD",
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b94c8e7b9a4a44",
+      "date": "2026-01-06 20:29",
+      "from": "AI Automation Society <noreply@skool.com>",
+      "subject": "Nate Herk posted \"New Year’s Sale: 69% Off (ends Friday)\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b94447e83f33c4",
+      "date": "2026-01-06 18:04",
+      "from": "Happenstance <web@happenstance.fyi>",
+      "subject": "🍀 Your profile now has your network map!",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9440d84cc176b",
+      "date": "2026-01-06 18:00",
+      "from": "Happenstance <web@happenstance.fyi>",
+      "subject": "🍀 New information about your search: Gaming/Enterprise platform partners",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9435c97eb711e",
+      "date": "2026-01-06 17:48",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Canceled event: Team Alpha & Bravo: Daily Sync @ Thu Jan 8, 2026 10am - 10:45am (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b93fbdc25ca311",
+      "date": "2026-01-06 16:45",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Declined: Go-to-market sync (Biz+Eng) @ Tue Jan 6, 2026 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b938e80e8ec0a8",
+      "date": "2026-01-06 14:45",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Software Engineer - Full Stack Developer",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b93049812baa1d",
+      "date": "2026-01-06 12:15",
+      "from": "\"Steph @ Basejam\" <steph@basejam.com>",
+      "subject": "Planning a company retreat this year?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b928a80fb0c454",
+      "date": "2026-01-06 10:01",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "You have a negative balance ⚠️",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9260b9314762a",
+      "date": "2026-01-06 09:16",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "Weekly digest for Tue, Dec 30 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b925e58b6fadb5",
+      "date": "2026-01-06 09:13",
+      "from": "Jeroen Westenbroek <info@bigfish.nl>",
+      "subject": "Maak impact met visuele content op maat",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b909d9c80da271",
+      "date": "2026-01-06 01:03",
+      "from": "WeeklyPerformance <WeeklyPerformance@corp.kucoin.com>",
+      "subject": "Weekly Trading Performance With KuCoin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b909b1c3df21ca",
+      "date": "2026-01-06 01:00",
+      "from": "Murray - Open Future Forum and Friends <OpenFutureForum@calendar.luma-mail.com>",
+      "subject": "JP Morgan Healthcare Week Events and More",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b9083c755bec4d",
+      "date": "2026-01-06 00:35",
+      "from": "2lazy2try <bingo@patreon.com>",
+      "subject": "The Rizzler Humbles Mark Normand and Sam Morril",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8fa7751daae23",
+      "date": "2026-01-05 20:34",
+      "from": "\"Fred Jin (via Google Drive)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Item shared with you: \"IMG_2305.MOV\"",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8f91a13e2cdf7",
+      "date": "2026-01-05 20:10",
+      "from": "Patreon <no-reply@patreon.com>",
+      "subject": "Speciaal voor jou gemaakt door 2lazy2try ❤️",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8f610d20096f5",
+      "date": "2026-01-05 19:17",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Go-to-market sync (Biz+Eng) @ Tue Jan 6, 2026 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8f57010759fe3",
+      "date": "2026-01-09 10:51",
+      "from": "Roberto Bertinetti <rb@metislabsai.com>",
+      "subject": "Martijn",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b8f37a9cf2665b",
+      "date": "2026-01-05 18:32",
+      "from": "WAGMI Ventures <team@wagmiventures.io>",
+      "subject": "Stripe Allocation (Secondary)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8f00ee8a73762",
+      "date": "2026-01-05 17:32",
+      "from": "Ethan Missner <emissner@insightpartners.com>",
+      "subject": "Added Meeting Link",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8eff661b85ca9",
+      "date": "2026-01-05 17:30",
+      "from": "Ethan Missner <emissner@insightpartners.com>",
+      "subject": "Ethan / Martijn Meeting",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8eb1c594785d1",
+      "date": "2026-01-05 16:06",
+      "from": "\"Accedo.tv\" <marketing@accedo.tv>",
+      "subject": "Final chance to book your meeting with Accedo at CES 2026.",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8e47c22c85bec",
+      "date": "2026-01-05 18:01",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Cere DAO director update / procedural review request",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "19b8e86bf26737e3",
+      "date": "2026-01-05 15:19",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "2e pizza vanaf 1.99 bij afhalen 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8e2b71d28e2bc",
+      "date": "2026-01-05 13:37",
+      "from": "Suhas Motwani <prodfolks@substack.com>",
+      "subject": "a note about 2026 from TPF",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8dd46c94527db",
+      "date": "2026-01-05 12:04",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Monday Mobile Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8dad23ea276fa",
+      "date": "2026-01-05 11:21",
+      "from": "\"Kiwi.com\" <travel@kiwi.com>",
+      "subject": "Vluchten vanuit Nederland vanaf slechts 19 €!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8cbeda91d0733",
+      "date": "2026-01-05 07:01",
+      "from": "\"Fred from Fireflies.ai\" <fred@fireflies.ai>",
+      "subject": "Weekly Digest: Highlights from Dec 29 - Jan 05, 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8ca47eafb993a",
+      "date": "2026-01-05 06:32",
+      "from": "\"OnChain Advisors (via Clio Notifications)\" <notifications@clio.com>",
+      "subject": "A bill from OnChain Advisors",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8b06f6e5048a2",
+      "date": "2026-01-04 23:00",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "10x Weekly Crypto Kickoff – This Market Is Leaving Hesitant Traders Behind",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8afe4092cc38c",
+      "date": "2026-01-04 22:51",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "Stop Guessing the Market. Start Understanding It.",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b891284d274970",
+      "date": "2026-01-04 13:54",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Nieuw jaar, same cravings ☃️🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8866694afc961",
+      "date": "2026-01-04 10:46",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "1 event happening tomorrow",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b85ee1b3ead51b",
+      "date": "2026-01-03 23:15",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "Don’t Miss the Next Move in Bitcoin, Ethereum, Solana, XRP, BNB,...",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b85134a24e710c",
+      "date": "2026-01-03 19:16",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "2 new notifications since 7:16 pm (Dec 27, 2025)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8493d84b0af23",
+      "date": "2026-01-03 16:56",
+      "from": "a16z crypto <a16zcrypto@substack.com>",
+      "subject": "8 big ideas for 2026 (and more trends to watch)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b843741791bf27",
+      "date": "2026-01-03 15:16",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Slice slice baby ❄️🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b8421191dab2aa",
+      "date": "2026-01-07 01:31",
+      "from": "Daniel Kelley <daniel@gocyberou.com>",
+      "subject": "Hey Martijn",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b83e059038d4dc",
+      "date": "2026-01-03 13:41",
+      "from": "Artlist <team@mail.artlist.io>",
+      "subject": "Martijn, it’s your last chance to get 2 free months",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7fc90d7c43878",
+      "date": "2026-01-02 18:37",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Cayman / DAO weekly check @ Mon Jan 5, 2026 2pm - 2:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7f770154a3222",
+      "date": "2026-01-02 17:07",
+      "from": "Artlist <team@newsletter.artlist.io>",
+      "subject": "⌛ 24 hours left to save up to 40% on any annual AI plan",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7f38962e2d590",
+      "date": "2026-01-02 15:59",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "[URGENT]: 30638-Cerebellum Networks Inc_Invoice#3500606 + 30639-Cerebellum Networks Inc_Invoice#3500607",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7c676acf1d02a",
+      "date": "2026-01-02 02:51",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "Prediction Markets Aren’t Efficient — How We Generated 154% Annualized Returns in 2025",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7c21bab65065a",
+      "date": "2026-01-02 01:35",
+      "from": "Google Payments <payments-noreply@google.com>",
+      "subject": "Google Cloud Platform & APIs: Your invoice is available for 01C148-ED76FB-C9F791",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7b0aeadae4a6c",
+      "date": "2026-01-01 20:31",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "The OpsCARS - A year in review of the AI ecosystem",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7a85186bcedb1",
+      "date": "2026-01-01 18:05",
+      "from": "Wellfound <newsletters@hi.wellfound.com>",
+      "subject": "OpenAI seeks head of preparedness",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b79a1882ebc911",
+      "date": "2026-01-01 13:56",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "New Year's Katercatering 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b769ee6442d31b",
+      "date": "2025-12-31 23:54",
+      "from": "The Fordefi Team <support@fordefi.com>",
+      "subject": "You have a new Fordefi account Cere",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b75d4430374150",
+      "date": "2025-12-31 20:12",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Review of the Cryptonite's 2025 top predictions—How did we do? Very well. ¡Feliz Navidad y próspero Año Nuevo a to…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b74bcdae944332",
+      "date": "2025-12-31 15:08",
+      "from": "\"Bromberg & Associates\" <jinny-brombergtranslations.com@shared1.ccsend.com>",
+      "subject": "Thank you for being part of our story!",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b74b0207c8c345",
+      "date": "2025-12-31 14:54",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Leg een goeie bodem voor 2025 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b74a9fc9048338",
+      "date": "2025-12-31 14:47",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Jobs & Careers in Crypto, Web3, Blockchain, AI by Blockchain Headhunter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b748949d212877",
+      "date": "2025-12-31 14:11",
+      "from": "TheFork <info@news.thefork.nl>",
+      "subject": "Gelukkig Nieuwjaar 2026, Martijn!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7414ab6c5ca2f",
+      "date": "2025-12-31 12:04",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Wednesday Web Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b70a3e2a99f017",
+      "date": "2025-12-30 20:02",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "The 2025 Recap: Part 3 – Final batch inbound",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b7048c8e1dfdc2",
+      "date": "2025-12-30 18:22",
+      "from": "Gul Rehman via LinkedIn <messaging-digest-noreply@linkedin.com>",
+      "subject": "Gul’s messages to Cere Network are waiting",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6fff820a6ed48",
+      "date": "2025-12-30 17:02",
+      "from": "TechEx Events <Lukas@techexevent.com>",
+      "subject": "Happy New Year from TechEx Events — see what’s coming in 2026!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6f8c488539f38",
+      "date": "2025-12-30 14:57",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "50% korting op je 2e pizza 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6f042aa550c2b",
+      "date": "2025-12-30 12:28",
+      "from": "Changelly for Business <pro@e.changelly.com>",
+      "subject": "Find the perfect solution for all your business needs – Part II",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6e92d7bda6ab3",
+      "date": "2025-12-30 10:24",
+      "from": "\"Kiwi.com\" <travel@kiwi.com>",
+      "subject": "Van Kiwi.com aan jou: bedankt",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6df5d80243375",
+      "date": "2025-12-30 07:33",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "Weekly digest for Tue, Dec 23 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6d43d50a66949",
+      "date": "2025-12-30 04:18",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "Mastering 2026 Starts With Being Prepared",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6cf26e9d81871",
+      "date": "2025-12-30 02:49",
+      "from": "LinkedIn <messages-noreply@linkedin.com>",
+      "subject": "Learning Spotlight: Smarter Workflows with AI",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6ccf2cbbc0014",
+      "date": "2025-12-30 02:11",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "Prediction Markets - Live Trade: A Mispriced Bitcoin Outcome With Hours to Expiry",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6cc5d6fe4151d",
+      "date": "2025-12-30 02:00",
+      "from": "Ashley Li <Ashley.Li@milliard.law>",
+      "subject": "RE: Invitation: Cere Entities Update @ Fri Dec 19, 2025 4:30pm - 5pm (CET) (ashley.li@milliard.law)",
+      "labels": [
+        "UNREAD",
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6c91428781b36",
+      "date": "2025-12-30 01:03",
+      "from": "WeeklyPerformance <WeeklyPerformance@corp.kucoin.com>",
+      "subject": "Weekly Trading Performance With KuCoin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6c2baf6d22c03",
+      "date": "2025-12-29 23:12",
+      "from": "\"Synexis.io\" <cal-ICOBVGmdiQytZUQ@calendar.luma-mail.com>",
+      "subject": "Thank you for an incredible year from Dr Pavel. See what’s coming in January",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6b4bae2b5ed08",
+      "date": "2025-12-29 19:07",
+      "from": "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>",
+      "subject": "Your receipt from Anthropic, PBC #2687-0963-7700",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6b4a6b436ff78",
+      "date": "2025-12-29 19:06",
+      "from": "Anthropic <no-reply-_E1HfKhfyTP_qxUoCbDcJw@mail.anthropic.com>",
+      "subject": "Welcome to the Pro plan",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6b3b7cae20acf",
+      "date": "2025-12-29 18:50",
+      "from": "Cursor <no-reply@cursor.sh>",
+      "subject": "Voltooi de codeverificatie",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6adf82bbc6886",
+      "date": "2025-12-29 17:09",
+      "from": "\"Cointraffic.io\" <pr@cointraffic.io>",
+      "subject": "⚡️ Publish Your Press Release at Special Rates",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6a9b755c942f9",
+      "date": "2025-12-29 15:55",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Happy hours bij Domino's Zwolle Diezerkade! 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6a73a35a0cc1e",
+      "date": "2026-01-05 17:59",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Cere DAO - Contribution Agreements, Authorized signers / minimum threshold",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "19b6a6fe0cda8a3b",
+      "date": "2025-12-29 15:09",
+      "from": "Andrea Trost <andrea.trost@mll-legal.com>",
+      "subject": "Automatic reply: Review required: Cere Network DAO Director Release (Frank & Arnd)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b6a66a585e0073",
+      "date": "2025-12-29 15:07",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Review required: Cere Network DAO Director Release (Frank & Arnd)",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6a5b245db7f40",
+      "date": "2025-12-29 14:45",
+      "from": "\"Bromberg & Associates\" <jinny-brombergtranslations.com@shared1.ccsend.com>",
+      "subject": "Letter from Jinny Bromberg - Bromberg & Associates",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6a43bd0b1333c",
+      "date": "2025-12-29 14:19",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "Cere DAO Director... - Add: “Your token grants will be sent ...",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6a3933f6952a8",
+      "date": "2025-12-29 14:08",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Monday Mobile Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6a261a0752acb",
+      "date": "2025-12-29 14:11",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "Cere DAO Director Transition - Proposed Terms",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b69ddc0b9b03fe",
+      "date": "2025-12-29 12:28",
+      "from": "Changelly for Business <pro@e.changelly.com>",
+      "subject": "Find the perfect solution for all your business needs – Part I",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6981af95e0789",
+      "date": "2025-12-29 10:47",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "1 event happening tomorrow",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b69408f441194f",
+      "date": "2025-12-29 09:36",
+      "from": "Sara <Booking@logsnembers.com>",
+      "subject": "Final Tables Available for NYE 2026 — Book Now",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b68b2d0d42486b",
+      "date": "2025-12-29 07:01",
+      "from": "\"Fred from Fireflies.ai\" <fred@fireflies.ai>",
+      "subject": "Weekly Digest: Highlights from Dec 22 - Dec 29, 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b675928dfd1ca0",
+      "date": "2025-12-29 00:44",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "10x Weekly Crypto Kickoff – When Liquidity Vanishes, Positioning Decides the Next Move",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b6505c3c474a25",
+      "date": "2025-12-28 13:53",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Even niet in de keuken na de feestdagen?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b64b74713dc5c8",
+      "date": "2025-12-28 12:28",
+      "from": "Changelly for Business <pro@e.changelly.com>",
+      "subject": "🎯 Quick 2-min survey + your free Web3 marketing checklist inside!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b647c0b370e257",
+      "date": "2025-12-28 11:23",
+      "from": "\"Kiwi.com\" <travel@kiwi.com>",
+      "subject": "Klik hier voor flashsale-deals van 20 €",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b646f8b1192e4e",
+      "date": "2025-12-28 11:09",
+      "from": "10x Research <reports@update.10xresearch.com>",
+      "subject": "Is Bitcoin Quietly Setting Up a Multi-Week Move? Here’s the Trade",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5fe0c2335cca9",
+      "date": "2025-12-27 13:55",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "After-Christmas dip?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5f90d784b6b52",
+      "date": "2025-12-27 12:28",
+      "from": "Changelly for Business <pro@e.changelly.com>",
+      "subject": "Let’s launch a marketing campaign together!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5ee02a17bf3f2",
+      "date": "2025-12-27 09:15",
+      "from": "JOIN <noreply@join.com>",
+      "subject": "Your premium ad on LinkedIn has expired.",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5c8c5a679f1e0",
+      "date": "2025-12-26 22:24",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "List of Assets",
+      "labels": [
+        "UNREAD",
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5c1d6092f7a09",
+      "date": "2025-12-26 20:23",
+      "from": "LinkedIn Messaging <messages-noreply@linkedin.com>",
+      "subject": "Craig’s and R.’s messages are waiting",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5c094fdb26a61",
+      "date": "2025-12-26 20:01",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "The 2025 Recap: Part 2 - The era of the Coldplay meme",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5ba8f0450004f",
+      "date": "2025-12-26 18:15",
+      "from": "Bren Van Caesbroeck <bren.vancaesbroeck@cere.network>",
+      "subject": "Invitation: Sync Patrick & Martijn @ Mon Dec 29, 2025 12pm - 12:30pm (CET) (Martijn Broersma)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5b0efa3feabfa",
+      "date": "2025-12-26 15:27",
+      "from": "Wellfound <newsletters@hi.wellfound.com>",
+      "subject": "Generalists are in demand",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5b0642e9ac54d",
+      "date": "2025-12-26 15:18",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Een kerstcadeautje voor jou! 🎁",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5af80c9f6cb44",
+      "date": "2025-12-30 10:18",
+      "from": "Tarek Saad <Tarek.Saad@blkpartners.com>",
+      "subject": ": Settlement Terms",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 5
+    },
+    {
+      "id": "19b5ae965d8a73b6",
+      "date": "2025-12-26 14:46",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Jobs & Careers in Crypto, Web3, Blockchain, AI by Blockchain Headhunter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5a86ba8d92be0",
+      "date": "2025-12-26 12:57",
+      "from": "Suhas Motwani <prodfolks@substack.com>",
+      "subject": "PM jobs are dying",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5a6a67e5c026a",
+      "date": "2025-12-26 12:28",
+      "from": "Changelly for Business <pro@e.changelly.com>",
+      "subject": "Must-have Web3 metrics checklist from the industry leader",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b56a626c9daec6",
+      "date": "2025-12-25 18:54",
+      "from": "Orbis86 from Orbis86 Monthly Pulse <orbis86@substack.com>",
+      "subject": "🗞️ Orbis86 Monthly Pulse – December 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b5373519585459",
+      "date": "2025-12-25 04:00",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Wednesday Web Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b521826f9cceaa",
+      "date": "2025-12-24 21:41",
+      "from": "Data For AI Events <dataforai@calendar.luma-mail.com>",
+      "subject": "🎄 Data for AI — A Year-End Wrap-up & Holiday Greetings",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b51364b1fc625b",
+      "date": "2025-12-24 17:34",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "8 new notifications since 5:34 pm (Dec 17, 2025)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b50a0f8d3504df",
+      "date": "2025-12-24 14:51",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Let’s make Christmas cheesy! 🎅",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b504270612e96b",
+      "date": "2025-12-24 13:08",
+      "from": "\"Cointraffic.io\" <pr@cointraffic.io>",
+      "subject": "Merry Christmas & Happy New Year from Cointraffic",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4e07b4394182b",
+      "date": "2025-12-24 02:44",
+      "from": "Steven Comfort <steven@cere.io>",
+      "subject": "Declined: Go-to-market sync (Biz+Eng) @ Thu Jan 1, 2026 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4e06caab529da",
+      "date": "2025-12-24 02:43",
+      "from": "Steven Comfort <steven@cere.io>",
+      "subject": "Declined: Go-to-market sync (Biz+Eng) @ Thu Dec 25, 2025 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4d6a3f11e0a17",
+      "date": "2025-12-23 23:52",
+      "from": "Guillermo at Startup Grind <guillermo.vizcaino-ortiz@startupgrind.com>",
+      "subject": "🏆 Join the Ultimate Startup Competition + Win $50K Equity-Free and More!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4d55d7ed05d45",
+      "date": "2025-12-23 23:30",
+      "from": "Fenwick <fenwickwestllp@fenwick.com>",
+      "subject": "[Fenwick Alert] NDAA Expands US Trade, Technology, and Security Regulations in 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4cc1a91d70b4a",
+      "date": "2025-12-23 20:48",
+      "from": "Jayca from Breezy HR <jayca.pike@breezyhr.com>",
+      "subject": "👑 I'll have what she's having | Breezy Newsletter December 2025",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4c9c098959144",
+      "date": "2025-12-23 20:07",
+      "from": "Artlist <team@newsletter.artlist.io>",
+      "subject": "The most heartwarming video you'll see this holiday",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4c9652590f21e",
+      "date": "2025-12-23 20:01",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "The 2025 Recap: Part 1 - \"Was that really this year?\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4c10c1348e313",
+      "date": "2025-12-23 17:35",
+      "from": "Team StreamNative <team@streamnative.io>",
+      "subject": "StreamNative December Newsletter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4b81e7af67470",
+      "date": "2025-12-23 14:59",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Het kerstdiner in een box, gewoon bij Domino’s! 🎁",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4b7515acfa185",
+      "date": "2025-12-23 14:45",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in 🚀 Scaling Strategy Secrets: Growth Hacking, Funding, Business Development, AI Tools, and Strategy",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4b3767d9fdc14",
+      "date": "2025-12-23 13:37",
+      "from": "Flink <hello@news.goflink.com>",
+      "subject": "Martijn, €8 off and your Flink weekly update 😍",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4ac668f5db582",
+      "date": "2025-12-23 11:34",
+      "from": "Cursor Team <hi@mail.cursor.com>",
+      "subject": "Your Year in Code",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4ab235ecd9959",
+      "date": "2025-12-23 11:12",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Invitation: Sync with Patrick @ Tue Dec 23, 2025 11:30am - 12pm (CET) (martijn@cere.network)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a91825eb3ebb",
+      "date": "2025-12-23 10:36",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation:  Leadership Session - Setting the team up for success for... @ Weekly from 10am to 11am on Monday (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a8f1eb5568ab",
+      "date": "2025-12-23 10:34",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Team Alpha & Bravo: Daily Sync @ Weekly from 10am to 10:45am on Tuesday, Wednesday, Thursday, Friday (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a8d3c004ab25",
+      "date": "2025-12-23 10:32",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation:  Leadership Session - Setting the team up for success for... @ Mon Dec 29, 2025 10am - 11am (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a8bdba433e06",
+      "date": "2025-12-23 10:30",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Leadership Session - Setting the team up for success for ... @ Weekly from 1pm to 1:45pm on Monday from Mon Aug 11 to Sun Dec 28 (CEST) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a8116cbbce8e",
+      "date": "2025-12-23 10:18",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Canceled event: Team Alpha & Bravo: Daily Sync @ Thu Jan 1, 2026 10am - 10:45am (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a7fe9cc103de",
+      "date": "2025-12-23 10:17",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Canceled event: Team Alpha & Bravo: Daily Sync @ Fri Dec 26, 2025 10am - 10:45am (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a7fe7562c8e1",
+      "date": "2025-12-23 10:17",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Canceled event: Team Alpha & Bravo: Daily Sync @ Thu Dec 25, 2025 10am - 10:45am (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a7f23ff2bdd3",
+      "date": "2025-12-23 10:16",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Weekly SEK Meeting @ Wed Dec 31, 2025 5pm - 6:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a7f18604f281",
+      "date": "2025-12-23 10:16",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Weekly SEK Meeting @ Wed Dec 24, 2025 5pm - 6:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4a6b4a7acc6c2",
+      "date": "2025-12-23 23:13",
+      "from": "Joshua Xie <joshua.xie@corp.kucoin.com>",
+      "subject": "Notification of being Tagged as ST Project",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "19b4a286a6451dd4",
+      "date": "2025-12-23 08:42",
+      "from": "Airwallex <support@info.airwallex.com>",
+      "subject": "Attention: Active phishing websites targeting Airwallex customers",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b49f2808823a53",
+      "date": "2025-12-23 07:43",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "Weekly digest for Tue, Dec 16 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4884805ef82ea",
+      "date": "2025-12-23 01:03",
+      "from": "WeeklyPerformance <WeeklyPerformance@corp.kucoin.com>",
+      "subject": "Weekly Trading Performance With KuCoin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4770d85faf572",
+      "date": "2025-12-22 20:02",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "Our AI/ML Practitioner’s Guide to GPUs",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4741205929997",
+      "date": "2025-12-22 19:10",
+      "from": "Ethan Missner <emissner@insightpartners.com>",
+      "subject": "Accepted: Ethan Missner <> Fred Jin - CEF.AI Intro",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b473580b7794d5",
+      "date": "2025-12-22 18:57",
+      "from": "Generative AI <info@genai.works>",
+      "subject": "If AI is on your 2026 list, start here",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b470c8d9a9ed94",
+      "date": "2025-12-22 18:12",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Go-to-market sync (Biz+Eng) @ Tue Dec 23, 2025 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4701c14141ddc",
+      "date": "2025-12-22 17:26",
+      "from": "\"Kilian Schärli\" <Kilian.Schaerli@mll-legal.com>",
+      "subject": "Happy Holidays from the MLL Legal Team",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b46e68f3b74aeb",
+      "date": "2025-12-22 17:31",
+      "from": "Granola <hey@mail.granola.so>",
+      "subject": "Thank you",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b46c0749472985",
+      "date": "2025-12-22 16:49",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Monday Mobile Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b46affd6f8ba1f",
+      "date": "2025-12-22 16:31",
+      "from": "\"Formidium Corp.\" <marketing@formidium.com>",
+      "subject": "Celebrating a Season of Gratitude and a Trifecta of Wins",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b46a165f6f5016",
+      "date": "2025-12-22 16:15",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "1 event happening tomorrow",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b45c08a8e21a81",
+      "date": "2025-12-22 12:10",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Cayman / DAO weekly check @ Mon Dec 22, 2025 2pm - 2:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b45c06c079e75f",
+      "date": "2025-12-22 12:09",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Emit deck @ Mon Dec 22, 2025 12:30pm - 1pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b456cf1311007c",
+      "date": "2025-12-22 10:38",
+      "from": "\"Patrick Nicholson-Going (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Share request for \"Onboarding Questionnaire | Scalantec x Cere - CEF B2B\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b455890414ced5",
+      "date": "2025-12-22 10:16",
+      "from": "\"Patrick Nicholson-Going (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Share request for \"Onboarding Questionnaire | Scalantec x Cere - CEF B2B\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4552494918d21",
+      "date": "2025-12-22 10:09",
+      "from": "\"Patrick Nicholson-Going (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Share request for \"Onboarding Questionnaire | Scalantec x Cere - CEF B2B\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b454f4fbc3e815",
+      "date": "2025-12-22 10:06",
+      "from": "The Fireblocks team <support@fireblocks.io>",
+      "subject": "Your report is ready",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b4508e7719ecab",
+      "date": "2025-12-25 17:54",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "Settlement Terms",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "19b44a4fc76bbe5f",
+      "date": "2025-12-22 07:00",
+      "from": "\"Fred from Fireflies.ai\" <fred@fireflies.ai>",
+      "subject": "Weekly Digest: Highlights from Dec 15 - Dec 22, 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b430aa1f282eb6",
+      "date": "2025-12-21 23:32",
+      "from": "Murray - Open Future Forum and Friends <OpenFutureForum@calendar.luma-mail.com>",
+      "subject": "Select Luma Events For You",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b41bbf769078b1",
+      "date": "2025-12-21 17:26",
+      "from": "Charlotte Robert <charlotte.robert90@gmail.com>",
+      "subject": "Updated invitation: Karton aan de straat en blauwe bak op de hoek. @ Every 2 weeks from 8pm to 9pm on Sunday from Sun Feb 11, 2024 to Sat Dec 27 (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4170e37da37ef",
+      "date": "2025-12-21 16:01",
+      "from": "a16z crypto <a16zcrypto@substack.com>",
+      "subject": "From oil barons to AI builders: Books we’re reading this winter",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b40f1d5bdc95f3",
+      "date": "2025-12-21 13:45",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "🚨 Deze zondag: 50% korting op pizza!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3ffa08f8e8f7b",
+      "date": "2025-12-21 09:15",
+      "from": "JOIN <noreply@join.com>",
+      "subject": "Your premium ad on LinkedIn has expired.",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b3c923f78261f0",
+      "date": "2025-12-20 17:22",
+      "from": "Jason Leupold <jason@protocolwealthllc.com>",
+      "subject": "Cere November Report",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3bf08c36d99cf",
+      "date": "2025-12-20 14:26",
+      "from": "Hotel Oderberger <noreply@trustyou.com>",
+      "subject": "How was your experience at Hotel Oderberger?",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3b6f6c37c255e",
+      "date": "2025-12-20 12:05",
+      "from": "\"Kiwi.com\" <travel@kiwi.com>",
+      "subject": "Klik hier voor flashsale-deals van 19 €",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3aeb95dc7fbe5",
+      "date": "2025-12-20 09:41",
+      "from": "Granola <invite@mail.granola.so>",
+      "subject": "We've updated our Terms of Service",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3987adf74fda9",
+      "date": "2025-12-22 08:50",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "Kenzi Settlement Key Points",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL"
+      ],
+      "messageCount": 10
+    },
+    {
+      "id": "19b3950b4072b1db",
+      "date": "2025-12-20 02:12",
+      "from": "LinkedIn <messages-noreply@linkedin.com>",
+      "subject": "Welcome to Premium, Martijn! Let’s get started",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b38176ab85fe89",
+      "date": "2025-12-19 20:30",
+      "from": "ConnectoTransfers <marketing@connectotransfers.com>",
+      "subject": "Enjoy the Holidays! Season’s Warmest Greetings from Connecto",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b380b7ca169d44",
+      "date": "2025-12-19 20:17",
+      "from": "Hotel Oderberger <noreply@mews.li>",
+      "subject": "Check out online with Hotel Oderberger",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b37a43f1cfd024",
+      "date": "2025-12-19 18:24",
+      "from": "Ankit Kumar Arya via LinkedIn <messaging-digest-noreply@linkedin.com>",
+      "subject": "Ankit Kumar’s messages to CEF.AI are waiting",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b36d32348abef0",
+      "date": "2025-12-19 14:01",
+      "from": "TechSmith <email@email.techsmith.com>",
+      "subject": "🔥 FINAL DAY! 20% Off Camtasia Ends Today",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b36ce9cf8a6ad3",
+      "date": "2025-12-19 14:31",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Weekly SEK Meeting @ Weekly from 5pm to 6:30pm on Friday (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b369fc8022ffa9",
+      "date": "2025-12-19 13:38",
+      "from": "Suhas Motwani <prodfolks@substack.com>",
+      "subject": "december breaks everything",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b369b1cdbb3df8",
+      "date": "2025-12-19 13:34",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Probeer de Nacho Cheddar Volcano! 🧀",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b36995d0d4e971",
+      "date": "2025-12-19 13:32",
+      "from": "Molecule Newsletter <moleculeto@substack.com>",
+      "subject": "Molecule Wrapped",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b36699fbc70b45",
+      "date": "2025-12-19 12:39",
+      "from": "Digital Marketing World Forum <hello@digitalmarketingwf.com>",
+      "subject": "2025 in Review: An incredible Digital Marketing World Forum Series",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b36632428d83a3",
+      "date": "2025-12-19 12:33",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Leadership Session - Setting the team up for success for ... @ Weekly from 1pm to 1:45pm on Monday from Mon Nov 24 to Sun Dec 21 (CET) (martijn@cere.network)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3662f5fce68b0",
+      "date": "2025-12-19 12:33",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Updated invitation: Team Alpha & Bravo: Daily Sync @ Weekly from 10am to 10:45am on weekdays from Wed Dec 17 to Sun Dec 21 (CET) (martijn@cere.network)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b35f67899d039a",
+      "date": "2025-12-19 10:35",
+      "from": "Quin Borromeo <quin@cere.io>",
+      "subject": "Invitation: Onboarding sync @ Fri Dec 19, 2025 11am - 12pm (CET) (martijn@cere.network)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b32cc1cb7f615c",
+      "date": "2025-12-18 19:49",
+      "from": "\"Patrick Nicholson-Going (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Share request for \"CEF (Gaming) Website & Demo\"",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b32cb6854c48d0",
+      "date": "2025-12-18 19:47",
+      "from": "Charles from lemlist <charles@lemlist-news.com>",
+      "subject": "6 lemlist features from 2025 shaping outbound in 2026",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b32b594826f96b",
+      "date": "2025-12-18 19:25",
+      "from": "Startup Grind <no-reply@startupgrind.com>",
+      "subject": "Martijn, join us for Startup Mania 2026",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b325ffcae4a665",
+      "date": "2025-12-18 17:51",
+      "from": "Blockchain Futurist Conference <futurist@emeraldeex.com>",
+      "subject": "2026 Futurist Conference Dates 🚀",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b324d2b7e01e42",
+      "date": "2025-12-18 17:31",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "Context Is the Real Stack",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b32046dd6d713f",
+      "date": "2025-12-18 16:11",
+      "from": "\"Accedo.tv\" <marketing@accedo.tv>",
+      "subject": "Cross-device streaming made easier — join us at CES to learn more.",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b31ec27bd81948",
+      "date": "2025-12-18 15:45",
+      "from": "Changelly for Business <pro@e.changelly.com>",
+      "subject": "15 minutes until the New Year Crypto StandUp",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b31d7f65a77a34",
+      "date": "2025-12-18 15:23",
+      "from": "Wellfound <newsletters@hi.wellfound.com>",
+      "subject": "India passes U.S. in AI usage",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b31cb62b359e0d",
+      "date": "2025-12-18 15:09",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "2nd slice voor de helft van de price 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b31c2f3da49392",
+      "date": "2025-12-18 15:00",
+      "from": "Cluely Team <hello@cluely.com>",
+      "subject": "Get 15% off Cluely for Getting Mobile",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3191945f1bfa0",
+      "date": "2025-12-18 14:06",
+      "from": "AI Minds <aiminds@mail.beehiiv.com>",
+      "subject": "Is Sam Altman’s AGI Masterclass Good? Will the AI Bubble Pop Soon? Are Voice Assistants Ready for Agentic Tasks?",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b316d231130b51",
+      "date": "2025-12-19 03:11",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Cere / CEF asset framework alignment call",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 4
+    },
+    {
+      "id": "19b316b4550cfb4a",
+      "date": "2025-12-18 13:24",
+      "from": "Cluely <invoice+statements@cluely.com>",
+      "subject": "Your receipt from Cluely #2920-0956",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b315664309271d",
+      "date": "2025-12-18 13:01",
+      "from": "Diana Ayala <diana.a@rdheritagegp67.com>",
+      "subject": "Opportunity with EBITDA positive $2B revenue company in 2024",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3155993643241",
+      "date": "2025-12-18 13:00",
+      "from": "Changelly for Business <pro@e.changelly.com>",
+      "subject": "⏰ we’re live soon: join the New Year crypto standup",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b311c55c9da6b9",
+      "date": "2025-12-18 11:58",
+      "from": "\"Patrick Nicholson-Going (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Share request for \"CEF (Gaming) Website & Demo\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b3108fa87d66c3",
+      "date": "2025-12-18 11:37",
+      "from": "\"Patrick Nicholson-Going (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Share request for \"CEF Positioning October 25\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2e5a93d7dc8bc",
+      "date": "2025-12-17 22:59",
+      "from": "Substack <on+product@substack.com>",
+      "subject": "Live video on Substack, one year in",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2d6d206aa44ec",
+      "date": "2025-12-17 18:48",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Proposed new time: Go-to-market sync (Biz+Eng) @ Thu Dec 18, 2025 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2cf9bc81de3d3",
+      "date": "2025-12-17 16:42",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC Spotlight: Diversity, sustainable tech and AI laws",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2cddd477ac808",
+      "date": "2025-12-17 16:10",
+      "from": "Deepgram Marketing <marketing@learn.deepgram.com>",
+      "subject": "Live Today at 10 AM PT: Multi-Agent Voice AI",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2cb98e52c7724",
+      "date": "2025-12-17 15:31",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Invitation: Patrick — Office Visit / Onboarding Session @ Thu Dec 18, 2025 10:30am - 11:30am (CET) (martijn@cere.network)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2c8f06957169b",
+      "date": "2025-12-17 14:45",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Technology Leadership 🟥 IT, Artificial Intelligence AI, Big Data, Cybersecurity, Web3, Metaverse 5g",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2c8aab0b663de",
+      "date": "2025-12-17 14:40",
+      "from": "Bren Van Caesbroeck <bren.vancaesbroeck@cere.network>",
+      "subject": "Updated invitation: Narrative sync 2 @ Wed Dec 17, 2025 4:30pm - 5pm (CET) (Martijn Broersma)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2c84ca2e866bb",
+      "date": "2025-12-17 14:34",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "De week door de helft, de prijs ook! 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2bfe0c5c8573a",
+      "date": "2025-12-17 12:07",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Wednesday Web Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2bad098f75729",
+      "date": "2025-12-19 12:14",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Martijn invoice + reimbursements",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b2bac042284b1e",
+      "date": "2025-12-17 10:37",
+      "from": "Bren Van Caesbroeck <bren.vancaesbroeck@cere.network>",
+      "subject": "Declined: Go-to-market sync (Biz+Eng) (Martijn Broersma)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 4
+    },
+    {
+      "id": "19b2b877da167c14",
+      "date": "2025-12-17 09:57",
+      "from": "LinkedIn <notifications-noreply@linkedin.com>",
+      "subject": "Martijn, your Year in Review is here",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2987b167b3bb3",
+      "date": "2025-12-17 00:38",
+      "from": "WAGMI Ventures <team@wagmiventures.io>",
+      "subject": "New Allocation - SpaceX - Pre-IPO Allocation (Secondary, Preferred Shares)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2904629a6446b",
+      "date": "2025-12-16 22:15",
+      "from": "Hotel Oderberger <noreply@mews.li>",
+      "subject": "Your receipt from Hotel Oderberger",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b28ff1936541bc",
+      "date": "2025-12-17 08:49",
+      "from": "Uber Receipts <noreply@uber.com>",
+      "subject": "[Business] Your Tuesday evening trip with Uber",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b287eacca8ec00",
+      "date": "2025-12-18 15:46",
+      "from": "Fred Jin <fred@cere.network>",
+      "subject": "DAO Directors",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 6
+    },
+    {
+      "id": "19b282de3383aea7",
+      "date": "2025-12-16 18:20",
+      "from": "\"Fred from Fireflies.ai\" <fred@fireflies.ai>",
+      "subject": "Your Year in Meetings - See your 2025 Fireflies Recap!",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2826a7821249d",
+      "date": "2025-12-16 18:11",
+      "from": "Deepgram <devs@learn.deepgram.com>",
+      "subject": "New TTS and STT languages and EU endpoint GA",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b28001bce49701",
+      "date": "2025-12-16 17:30",
+      "from": "StreamNative Team <info@streamnative.io>",
+      "subject": "StreamNative recognized in Analyst Evaluation for Streaming Data Platforms 🚀",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b27efab23342f0",
+      "date": "2025-12-16 17:12",
+      "from": "Artlist <team@newsletter.artlist.io>",
+      "subject": "The #1 thing AI creators want in 2026",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2763bff2e91f7",
+      "date": "2025-12-16 14:40",
+      "from": "Google Pay <googlepay-noreply@google.com>",
+      "subject": "Martijn, you added a new card to your Google Account",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b275908430d429",
+      "date": "2025-12-16 14:28",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Martijn, your virtual card is ready for use 💳",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b26f4f19016308",
+      "date": "2025-12-16 12:39",
+      "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+      "subject": "[Billing Update] Delayed billing for Gemini API usage between Nov 20 and Nov 28",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b26766f6d89585",
+      "date": "2025-12-16 10:20",
+      "from": "\"David Baláš\" <newsletter@sloneek.com>",
+      "subject": "🎄 Christmas Updates: Custom Reports & Attendance 2.0",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b266f675be30ad",
+      "date": "2025-12-16 10:13",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Martijn invoice december '25",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b266e6f0306f04",
+      "date": "2025-12-16 10:12",
+      "from": "Natalia from Wolt <Natalia@mail.wolt.com>",
+      "subject": "Ważna aktualizacja: Wykorzystaj punkty Wolt Rewards do 31 stycznia 2026 r.",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2615b62022f83",
+      "date": "2025-12-16 08:35",
+      "from": "Cursor Team <hi@mail.cursor.com>",
+      "subject": "Now in Cursor: Web Layout Editor and Debug Mode",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2600b57560e9a",
+      "date": "2025-12-16 08:12",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "Weekly digest for Tue, Dec 9 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b25f80661969a0",
+      "date": "2025-12-16 08:02",
+      "from": "\"V.O. Patents & Trademarks\" <communication@vo.eu>",
+      "subject": "Schedules of charges with effect from April 2025",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b247967a81d4a5",
+      "date": "2025-12-16 01:02",
+      "from": "WeeklyPerformance <WeeklyPerformance@corp.kucoin.com>",
+      "subject": "Weekly Trading Performance With KuCoin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b23d0c8dd6d573",
+      "date": "2025-12-15 22:00",
+      "from": "MediaMint Marketing Team <marketing@mediamint.com>",
+      "subject": "MediaMint CES Connect",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2374edd1ae83a",
+      "date": "2025-12-15 20:20",
+      "from": "Fenwick <fenwickwestllp@fenwick.com>",
+      "subject": "[Fenwick Alert] White House Executive Order Creates National AI Policy, Overriding States",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b230933a60b7a7",
+      "date": "2025-12-15 18:22",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "1 event happening tomorrow",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b230140f0c04d6",
+      "date": "2025-12-15 18:14",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Go-to-market sync (Biz+Eng) @ Tue Dec 16, 2025 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b22885ae2995a6",
+      "date": "2025-12-31 11:23",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Cere Ecosystem clean up -> final walkthrough following latest developments",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 9
+    },
+    {
+      "id": "19b22794d56abcfd",
+      "date": "2025-12-15 15:40",
+      "from": "Nicolas Schell <nicolas.schell@scalantec.com>",
+      "subject": "Invitation: Weekly - Cere x Scalantec @ Weekly from 12:15pm to 12:30pm on Monday (CET) (martijn@cere.network)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b22426ea66ba51",
+      "date": "2025-12-15 14:01",
+      "from": "TechSmith <email@email.techsmith.com>",
+      "subject": "✨ End of Year Sale: Get 20% Off Camtasia Plans!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b223d0e44721aa",
+      "date": "2025-12-15 14:39",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "50% korting op je 2e pizza 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b2224d7b026e1b",
+      "date": "2025-12-15 14:15",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Fwd: AVOID LEGAL PROCEEDINGS: Would you like to clear your late payment debts once and for all? Your relation V.O. Patent & Trademarks, reference 002-629-033/530173",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b221538dea3831",
+      "date": "2025-12-15 13:56",
+      "from": "Stuart from Gleam <hello@gleam.io>",
+      "subject": "Martijn Broersma, Make 2026 your highest-growth year with one smart giveaway ✨",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b21afa5d187af1",
+      "date": "2025-12-15 12:05",
+      "from": "Mobbin <newsletter@mobbin.com>",
+      "subject": "Monday Mobile Drop",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b219df636febd9",
+      "date": "2025-12-15 11:45",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Your EUR balance is still negative 💔",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b219264f9ca5ff",
+      "date": "2025-12-15 11:33",
+      "from": "Johanna Snel <jsnelvandelft@quickworksagency.com>",
+      "subject": "Kort vraagje, Martijn",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b20eccc7369ecc",
+      "date": "2025-12-15 08:32",
+      "from": "Creator Studio <no-reply@creatorstudio.com>",
+      "subject": "An important update: Creator Studio is closing",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b209b17ff9c4cd",
+      "date": "2025-12-15 07:03",
+      "from": "\"Fred from Fireflies.ai\" <fred@fireflies.ai>",
+      "subject": "Weekly Digest: Highlights from Dec 08 - Dec 15, 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1f044bc4f05a2",
+      "date": "2025-12-14 23:38",
+      "from": "Bren Van Caesbroeck <bren.vancaesbroeck@cere.network>",
+      "subject": "Invitation: Narrative sync 2 @ Wed Dec 17, 2025 3:30pm - 4pm (CET) (Martijn Broersma)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1f0347e205a93",
+      "date": "2025-12-14 23:37",
+      "from": "Bren Van Caesbroeck <bren.vancaesbroeck@cere.network>",
+      "subject": "Invitation: Narrative sync @ Mon Dec 15, 2025 2:30pm - 3pm (CET) (Martijn Broersma)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1e0b729652264",
+      "date": "2025-12-14 18:05",
+      "from": "a16z crypto <a16zcrypto@substack.com>",
+      "subject": "Bridge and Circle founders on the real story of stablecoins",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1dcb1de7cfd1c",
+      "date": "2025-12-14 17:56",
+      "from": "\"AI Automation Society (Skool)\" <noreply@skool.com>",
+      "subject": "6 new notifications since 5:56 pm (Dec 7, 2025)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1ceea9a9d52a0",
+      "date": "2025-12-14 13:55",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "🚨 Deze zondag: 50% korting op pizza!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b17f5b2fabf26c",
+      "date": "2025-12-13 14:45",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Jobs & Careers in Crypto, Web3, Blockchain, AI by Blockchain Headhunter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b147c84c692756",
+      "date": "2025-12-12 22:34",
+      "from": "Cluely Team <hello@cluely.com>",
+      "subject": "A New Cluely is Here",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b138eaff0fe89e",
+      "date": "2025-12-12 18:14",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Cayman / DAO weekly check @ Mon Dec 15, 2025 2pm - 2:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b138517cf8ddbc",
+      "date": "2025-12-12 18:04",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Update to our Trading Terms 📣",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1295b2cfe634d",
+      "date": "2025-12-12 13:42",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "Probeer de Nacho Cheddar Volcano! 🧀",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b128b50a762c8f",
+      "date": "2025-12-12 13:30",
+      "from": "Changelly for Business <pro@e.changelly.com>",
+      "subject": "Meet the speakers behind the first crypto standup",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1280114be64d5",
+      "date": "2025-12-12 13:17",
+      "from": "Suhas Motwani <prodfolks@substack.com>",
+      "subject": "migrate migrate migrate",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b122daa443f844",
+      "date": "2025-12-12 11:49",
+      "from": "Bren Van Caesbroeck <bren.vancaesbroeck@cere.network>",
+      "subject": "Updated invitation: Growth Strategy Sync @ Fri Dec 12, 2025 6pm - 6:15pm (CET) (Martijn Broersma)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b122ae106700fc",
+      "date": "2025-12-12 11:45",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "You need to top up your account ⚠️",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1221ac37542ce",
+      "date": "2025-12-12 11:35",
+      "from": "\"Kiwi.com\" <travel@kiwi.com>",
+      "subject": "Maar kort in de aanbieding: vluchten voor 19 €",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b11e2fd6620f0c",
+      "date": "2025-12-12 10:27",
+      "from": "Bren Van Caesbroeck <bren.vancaesbroeck@cere.network>",
+      "subject": "Invitation: Growth Strategy Sync @ Fri Dec 12, 2025 5:45pm - 6pm (CET) (Martijn Broersma)",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1165dfd51a63f",
+      "date": "2025-12-12 08:10",
+      "from": "Andrea Trost <andrea.trost@mll-legal.com>",
+      "subject": "CERE Network DAO - Mail 2025-12-11",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b1131bf0b0ed60",
+      "date": "2025-12-12 07:13",
+      "from": "Samir Khadepaun <sk@wizly.app>",
+      "subject": "Decision Velocity: why winners in 2026 will decide faster",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b10b9de5c86cf4",
+      "date": "2025-12-12 05:02",
+      "from": "Talha Tariq <ship@info.vercel.com>",
+      "subject": "Security Update: Two additional React Server Components vulnerabilities",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b10a9890658bd5",
+      "date": "2025-12-12 04:44",
+      "from": "OpenAI <noreply@email.openai.com>",
+      "subject": "GPT-5.2 is now live in the OpenAI API",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0f534131950fa",
+      "date": "2025-12-11 22:31",
+      "from": "Upwork Notification <noreply@upwork.com>",
+      "subject": "Update to our User Agreement and Privacy Policy",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0f45d615efa89",
+      "date": "2025-12-11 22:42",
+      "from": "\"Steven Comfort (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "Cere Network Core Positioning",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b0f421b43bb9ef",
+      "date": "2025-12-11 22:12",
+      "from": "Steven Comfort <steven@cere.io>",
+      "subject": "Re: Document shared with you: \"Cere Network Core Positioning\"",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0f0196bd55e12",
+      "date": "2025-12-11 21:01",
+      "from": "Deepgram Marketing <marketing@learn.deepgram.com>",
+      "subject": "Join 800+ Voice AI innovators learning multi-agent orchestration",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0e84450dd9eb5",
+      "date": "2025-12-11 18:45",
+      "from": "Bitly Team <hello@e.bitly.com>",
+      "subject": "Please, stop gifting Bitly",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0e312c7a37a16",
+      "date": "2025-12-15 13:39",
+      "from": "\"Secretary Select | Nathalie Reyes\" <nathalie@sqout.pro>",
+      "subject": "Per Direct Inzetbaar: Topsecretaresses & Office Support",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19b0e1e25d4556b7",
+      "date": "2025-12-11 16:53",
+      "from": "Ryan Horne <ryan.horne@searchability.com>",
+      "subject": "Cere Network - Crypto / Blockchain Engineering",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0e01db08d5c66",
+      "date": "2025-12-11 16:21",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "OpenAI's Google nightmare, here come the DeAI hobbits, #DeleteGoogle4ever, the Trump pump and dump, the dumbing of…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0df35dd25fce9",
+      "date": "2025-12-11 16:06",
+      "from": "Wellfound <newsletters@hi.wellfound.com>",
+      "subject": "Startups ‘refound’ to AI",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0dd9bc88079ca",
+      "date": "2025-12-11 15:38",
+      "from": "Steven Comfort <steven@cere.io>",
+      "subject": "Accepted: Go-to-market sync (Biz+Eng) @ Thu Dec 11, 2025 5:30pm - 6pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0dc717d399f8b",
+      "date": "2025-12-11 15:18",
+      "from": "\"Accedo.tv\" <marketing@accedo.tv>",
+      "subject": "Beyond Generative AI: The Rise of \"Agentic\" Video Operations",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0da2d25202c58",
+      "date": "2025-12-11 14:38",
+      "from": "\"Domino's Pizza\" <info@vip.dominos.nl>",
+      "subject": "50% korting op je 2e pizza 🍕",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0d97d27e87264",
+      "date": "2025-12-11 14:26",
+      "from": "Khachatur Gharibyan <khachatur@cere.io>",
+      "subject": "Accepted: Go-to-market sync (Biz+Eng) @ Thu Dec 11, 2025 5:30pm - 6pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0d7964664fb0c",
+      "date": "2025-12-11 13:53",
+      "from": "Flink <hello@news.goflink.com>",
+      "subject": "Martijn, €8 off and your Flink weekly update 😍",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0d20ce0ab957b",
+      "date": "2025-12-11 12:16",
+      "from": "\"Cointraffic.io\" <pr@cointraffic.io>",
+      "subject": "⚡️ Secure Your Spot in 2026 Top Crypto Rankings",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0c6d9af9ae2e0",
+      "date": "2025-12-11 09:01",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "Passing Tests, Failing Humans",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0a2bf75c87f53",
+      "date": "2025-12-10 22:30",
+      "from": "Cluely Team <hello@cluely.com>",
+      "subject": "Cluely Mobile is Here",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0a0d04d620d62",
+      "date": "2025-12-10 21:56",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: DAO Check-in following Kilian call @ Thu Dec 11, 2025 6pm - 6:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0a0cf86a0fb54",
+      "date": "2025-12-10 21:56",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Accepted: Go-to-market sync (Biz+Eng) @ Thu Dec 11, 2025 5pm - 5:30pm (CET) (martijn@cere.network)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0991d1c162e49",
+      "date": "2025-12-10 19:41",
+      "from": "Nate Herk <nate@aiautomationsociety.ai>",
+      "subject": "Want my help launching your AI agency? (Seriously)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b089c04bb949f3",
+      "date": "2025-12-10 15:13",
+      "from": "Frank Gaugel <frank@cere.network>",
+      "subject": "Declined: Jour Fixe @ Wed Dec 10, 2025 5pm - 5:30pm (CET) (Martijn Broersma)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    }
+  ]
+}

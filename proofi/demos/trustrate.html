@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustRate — Verified Anonymous Reviews</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--orange:#FF6B35;--amber:#FFC107;--teal:#00BFA5;--bg:#0F1119;--surface:#181B2A;--card:#1E2235;--border:#2A2D42;--text:#E8EAF0;--dim:#6E7191}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 0%,rgba(255,107,53,0.06) 0%,transparent 50%),radial-gradient(ellipse at 70% 100%,rgba(0,191,165,0.06) 0%,transparent 50%);pointer-events:none}
+    .container{max-width:520px;margin:0 auto;padding:16px}
+    .header{text-align:center;padding:20px 0 16px}
+    .logo{font-size:28px;font-weight:700;background:linear-gradient(135deg,var(--orange),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px}
+    .tagline{font-size:11px;color:var(--dim);letter-spacing:1px}
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+    .wallet-bar.connected{border-color:var(--teal);box-shadow:0 0 15px rgba(0,191,165,0.08)}
+    .winfo .wlabel{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+    .winfo .waddr{font-size:11px;color:var(--teal);font-family:monospace}
+    .btn{font-family:'DM Sans',sans-serif;font-weight:700;font-size:12px;padding:10px 18px;border:2px solid var(--orange);background:transparent;color:var(--orange);border-radius:8px;cursor:pointer;transition:all .2s}
+    .btn:hover{background:var(--orange);color:#fff;box-shadow:0 4px 15px rgba(255,107,53,0.3)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.teal{border-color:var(--teal);color:var(--teal)}.btn.teal:hover{background:var(--teal);color:#fff}
+    .btn.red{border-color:#E74C3C;color:#E74C3C}.btn.red:hover{background:#E74C3C;color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+    .tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--surface);border-radius:10px;padding:3px}
+    .tab{flex:1;padding:10px;text-align:center;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--dim);transition:all .2s}
+    .tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+    .tab:hover:not(.active){color:var(--text)}
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+    .section-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+    .stars{display:flex;gap:4px;margin-bottom:12px}
+    .star{font-size:32px;cursor:pointer;transition:transform .15s;filter:grayscale(1) opacity(0.3)}
+    .star:hover{transform:scale(1.2)}
+    .star.lit{filter:none;animation:starPop .3s ease}
+    @keyframes starPop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+    .categories{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .cat-tag{padding:6px 12px;border:1px solid var(--border);border-radius:20px;font-size:11px;cursor:pointer;transition:all .2s;color:var(--dim)}
+    .cat-tag.active{border-color:var(--orange);color:var(--orange);background:rgba(255,107,53,0.08)}
+    .cat-tag:hover{border-color:var(--orange);color:var(--orange)}
+    textarea{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:80px;outline:none;transition:border-color .2s}
+    textarea:focus{border-color:var(--orange)}
+    textarea::placeholder{color:var(--dim)}
+    input[type=text]{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:10px}
+    input:focus{border-color:var(--orange)}
+    input::placeholder{color:var(--dim)}
+    .review-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;transition:border-color .2s}
+    .review-card:hover{border-color:rgba(255,107,53,0.3)}
+    .review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .review-place{font-weight:700;font-size:14px}
+    .review-cat{font-size:10px;padding:3px 8px;background:rgba(255,107,53,0.1);color:var(--orange);border-radius:10px}
+    .review-stars{margin-bottom:6px;font-size:14px;letter-spacing:2px}
+    .review-text{font-size:13px;color:var(--text);line-height:1.5;margin-bottom:8px}
+    .review-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--dim)}
+    .review-meta .verified{color:var(--teal);display:flex;align-items:center;gap:3px}
+    .empty-state{text-align:center;padding:30px;color:var(--dim)}
+    .empty-state .icon{font-size:36px;margin-bottom:8px;display:block}
+    .stat-row{display:flex;gap:8px;margin-bottom:12px}
+    .stat-box{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+    .stat-box .num{font-size:22px;font-weight:700;color:var(--orange)}
+    .stat-box .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    .footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase;transition:color .15s}
+    .footer a:hover{color:var(--orange)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--teal);border-radius:10px;padding:10px 20px;font-size:11px;color:var(--teal);z-index:10000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#E74C3C;color:#E74C3C}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">⭐ TrustRate</div>
+      <div class="tagline">1 wallet = 1 review • Verified & anonymous</div>
+    </div>
+
+    <div class="wallet-bar" id="walletBar">
+      <div class="winfo">
+        <div class="wlabel">Proofi Wallet</div>
+        <div class="waddr" id="walletAddr">Not connected</div>
+      </div>
+      <button class="btn sm" id="connectBtn" onclick="handleConnect()">Connect</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" id="statReviews">0</div><div class="lbl">Reviews</div></div>
+      <div class="stat-box"><div class="num" id="statAvg">—</div><div class="lbl">Avg Rating</div></div>
+      <div class="stat-box"><div class="num" id="statVerified">0</div><div class="lbl">Verified</div></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('browse')">Browse</div>
+      <div class="tab" onclick="switchTab('write')">Write Review</div>
+      <div class="tab" onclick="switchTab('my')">My Reviews</div>
+    </div>
+
+    <!-- Browse Tab -->
+    <div id="tab-browse">
+      <div class="categories" id="filterCats"></div>
+      <div id="reviewList"></div>
+    </div>
+
+    <!-- Write Tab -->
+    <div id="tab-write" style="display:none">
+      <div class="section">
+        <div class="section-title">📝 Write a Review</div>
+        <input type="text" id="placeName" placeholder="Restaurant or product name...">
+        <div class="categories" id="writeCats"></div>
+        <div style="margin-bottom:8px;font-size:12px;color:var(--dim)">Your rating:</div>
+        <div class="stars" id="ratingStars"></div>
+        <textarea id="reviewText" placeholder="Share your honest experience..."></textarea>
+        <button class="btn teal" style="width:100%;margin-top:12px;padding:12px" id="submitBtn" onclick="submitReview()" disabled>
+          Submit Verified Review
+        </button>
+      </div>
+    </div>
+
+    <!-- My Reviews Tab -->
+    <div id="tab-my" style="display:none">
+      <div id="myReviewList"></div>
+    </div>
+
+    <div class="footer">
+      <a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+  <script>
+    const CATEGORIES = ['🍕 Food', '☕ Coffee', '🛍️ Shopping', '🏨 Hotel', '📱 Tech', '🎬 Entertainment'];
+    let selectedCat = null, filterCat = null, rating = 0;
+    let reviews = JSON.parse(localStorage.getItem('tr_reviews') || '[]');
+    let proofi, walletAddress;
+
+    // Seed demo reviews if empty
+    if (!reviews.length) {
+      reviews = [
+        { place: 'Sakura Ramen House', category: '🍕 Food', rating: 5, text: 'Best tonkotsu ramen in the city. Rich broth, perfect noodles. The chashu pork melts in your mouth.', wallet: '5GrwvaEF...JMakdg', verified: true, date: '2024-01-15T10:30:00Z' },
+        { place: 'Bean & Brew', category: '☕ Coffee', rating: 4, text: 'Great single-origin selection. The pour-over V60 is exceptional. Cozy atmosphere, a bit pricey.', wallet: '5FHneW46...xPJ9B3', verified: true, date: '2024-01-14T14:00:00Z' },
+        { place: 'TechZone Store', category: '📱 Tech', rating: 3, text: 'Decent selection but staff knowledge was lacking. Good prices on accessories. Return policy could be better.', wallet: '5DAAnrj7...VvBZn', verified: true, date: '2024-01-12T09:15:00Z' },
+        { place: 'Grand Park Hotel', category: '🏨 Hotel', rating: 5, text: 'Stunning views, impeccable service. The rooftop pool was the highlight. Worth every penny.', wallet: '5HGjWAeF...hT4GK', verified: true, date: '2024-01-10T18:45:00Z' },
+        { place: 'CineMax IMAX', category: '🎬 Entertainment', rating: 4, text: 'Amazing sound system and picture quality. Seats are comfortable. Snack prices are insane though.', wallet: '5CiPPseX...fZsWN', verified: true, date: '2024-01-08T20:00:00Z' },
+      ];
+      localStorage.setItem('tr_reviews', JSON.stringify(reviews));
+    }
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'TrustRate' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Wallet connected!'); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); });
+      renderFilterCats();
+      renderWriteCats();
+      renderStars();
+      renderReviews();
+      updateStats();
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach((t, i) => { t.classList.toggle('active', ['browse','write','my'][i] === name); });
+      ['browse','write','my'].forEach(n => document.getElementById('tab-'+n).style.display = n === name ? 'block' : 'none');
+      if (name === 'my') renderMyReviews();
+    }
+
+    function renderFilterCats() {
+      const el = document.getElementById('filterCats');
+      el.innerHTML = '<div class="cat-tag active" onclick="setFilter(null)">All</div>' + CATEGORIES.map(c => `<div class="cat-tag" onclick="setFilter('${c}')">${c}</div>`).join('');
+    }
+
+    function setFilter(cat) {
+      filterCat = cat;
+      document.querySelectorAll('#filterCats .cat-tag').forEach(el => {
+        el.classList.toggle('active', (cat === null && el.textContent === 'All') || el.textContent === cat);
+      });
+      renderReviews();
+    }
+
+    function renderWriteCats() {
+      document.getElementById('writeCats').innerHTML = CATEGORIES.map(c => `<div class="cat-tag" onclick="selectCat(this,'${c}')">${c}</div>`).join('');
+    }
+
+    function selectCat(el, cat) {
+      selectedCat = cat;
+      document.querySelectorAll('#writeCats .cat-tag').forEach(e => e.classList.remove('active'));
+      el.classList.add('active');
+      checkSubmit();
+    }
+
+    function renderStars() {
+      document.getElementById('ratingStars').innerHTML = [1,2,3,4,5].map(i => `<span class="star" onclick="setRating(${i})" onmouseenter="hoverStar(${i})" onmouseleave="unhoverStar()">⭐</span>`).join('');
+    }
+
+    function setRating(n) { rating = n; updateStarDisplay(n); checkSubmit(); }
+    function hoverStar(n) { updateStarDisplay(n); }
+    function unhoverStar() { updateStarDisplay(rating); }
+    function updateStarDisplay(n) { document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('lit', i < n)); }
+
+    function checkSubmit() {
+      const place = document.getElementById('placeName').value.trim();
+      const text = document.getElementById('reviewText').value.trim();
+      document.getElementById('submitBtn').disabled = !place || !text || !rating || !selectedCat;
+    }
+
+    document.addEventListener('input', checkSubmit);
+
+    async function submitReview() {
+      const place = document.getElementById('placeName').value.trim();
+      const text = document.getElementById('reviewText').value.trim();
+      if (!place || !text || !rating || !selectedCat) return;
+
+      const review = {
+        place, category: selectedCat, rating, text,
+        wallet: walletAddress ? walletAddress.slice(0,10)+'...'+walletAddress.slice(-4) : 'Anonymous',
+        verified: !!walletAddress,
+        date: new Date().toISOString(),
+      };
+
+      if (walletAddress) {
+        try {
+          document.getElementById('submitBtn').textContent = 'Storing on-chain...';
+          document.getElementById('submitBtn').disabled = true;
+          await proofi.storeAchievement({ game: 'trustrate', score: rating, achievement: 'review-posted', data: review });
+          toast('⭐ Review stored on DDC!');
+        } catch (e) { toast(e.message, true); }
+      } else {
+        toast('Review saved locally (connect wallet for on-chain verification)');
+      }
+
+      reviews.unshift(review);
+      localStorage.setItem('tr_reviews', JSON.stringify(reviews));
+      renderReviews();
+      updateStats();
+
+      // Reset form
+      document.getElementById('placeName').value = '';
+      document.getElementById('reviewText').value = '';
+      rating = 0; selectedCat = null;
+      renderStars(); renderWriteCats();
+      document.getElementById('submitBtn').textContent = 'Submit Verified Review';
+      document.getElementById('submitBtn').disabled = true;
+      switchTab('browse');
+    }
+
+    function renderReviews() {
+      const list = document.getElementById('reviewList');
+      const filtered = filterCat ? reviews.filter(r => r.category === filterCat) : reviews;
+      if (!filtered.length) {
+        list.innerHTML = '<div class="empty-state"><span class="icon">📝</span>No reviews yet in this category</div>';
+        return;
+      }
+      list.innerHTML = filtered.map(r => reviewCard(r)).join('');
+    }
+
+    function renderMyReviews() {
+      const list = document.getElementById('myReviewList');
+      const mine = walletAddress ? reviews.filter(r => r.wallet.startsWith(walletAddress.slice(0,10))) : [];
+      if (!mine.length) {
+        list.innerHTML = '<div class="empty-state"><span class="icon">📋</span>' + (walletAddress ? 'No reviews yet. Write your first!' : 'Connect wallet to see your reviews') + '</div>';
+        return;
+      }
+      list.innerHTML = mine.map(r => reviewCard(r)).join('');
+    }
+
+    function reviewCard(r) {
+      const stars = '⭐'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+      const date = new Date(r.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return `
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-place">${r.place}</span>
+            <span class="review-cat">${r.category}</span>
+          </div>
+          <div class="review-stars">${stars}</div>
+          <div class="review-text">${r.text}</div>
+          <div class="review-meta">
+            <span style="font-family:monospace">${r.wallet}</span>
+            ${r.verified ? '<span class="verified">✓ Verified</span>' : ''}
+          </div>
+          <div class="review-meta" style="margin-top:4px"><span>${date}</span></div>
+        </div>`;
+    }
+
+    function updateStats() {
+      document.getElementById('statReviews').textContent = reviews.length;
+      const avg = reviews.length ? (reviews.reduce((s,r) => s + r.rating, 0) / reviews.length).toFixed(1) : '—';
+      document.getElementById('statAvg').textContent = avg;
+      document.getElementById('statVerified').textContent = reviews.filter(r => r.verified).length;
+    }
+
+    async function handleConnect() {
+      if (walletAddress) { proofi.disconnect(); walletAddress = null; updateWalletUI(); return; }
+      try { document.getElementById('connectBtn').textContent = '...'; await proofi.connect(); } catch(e) { toast(e.message, true); document.getElementById('connectBtn').textContent = 'Connect'; }
+    }
+
+    function updateWalletUI() {
+      const bar = document.getElementById('walletBar'), addr = document.getElementById('walletAddr'), btn = document.getElementById('connectBtn');
+      if (walletAddress) { bar.classList.add('connected'); addr.textContent = walletAddress.slice(0,6)+'...'+walletAddress.slice(-4); btn.textContent = 'Disconnect'; btn.className = 'btn sm red'; }
+      else { bar.classList.remove('connected'); addr.textContent = 'Not connected'; btn.textContent = 'Connect'; btn.className = 'btn sm'; }
+    }
+
+    let toastTimer;
+    function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(err?' error':'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.className='toast',3000)}
+
+    init();
+  </script>
+</body>
+</html>

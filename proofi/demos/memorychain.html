@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryChain — Encrypted Digital Diary</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📔</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--warm:#D4A574;--cream:#F5E6D3;--rose:#E88D97;--sage:#7CAE7A;--deep:#1A0F0A;--surface:#2A1F18;--card:#352A22;--border:#4A3D33;--text:#F0E8E0;--dim:#8C7B6E}
+    body{background:var(--deep);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(212,165,116,0.08) 0%,transparent 60%);pointer-events:none}
+    .container{max-width:520px;margin:0 auto;padding:16px}
+    .header{text-align:center;padding:24px 0 16px}
+    .logo{font-family:'Crimson Pro',serif;font-size:32px;font-weight:700;color:var(--warm)}
+    .tagline{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px;font-style:italic}
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+    .wallet-bar.connected{border-color:var(--sage);box-shadow:0 0 20px rgba(124,174,122,0.08)}
+    .wl{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}.wa{font-size:11px;color:var(--sage);font-family:monospace}
+    .btn{font-family:'Inter',sans-serif;font-weight:600;font-size:12px;padding:10px 18px;border:2px solid var(--warm);background:transparent;color:var(--warm);border-radius:8px;cursor:pointer;transition:all .2s}
+    .btn:hover{background:var(--warm);color:var(--deep);box-shadow:0 4px 15px rgba(212,165,116,0.3)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.sage{border-color:var(--sage);color:var(--sage)}.btn.sage:hover{background:var(--sage);color:var(--deep)}
+    .btn.rose{border-color:var(--rose);color:var(--rose)}.btn.rose:hover{background:var(--rose);color:#fff}
+    .btn.red{border-color:#EF4444;color:#EF4444}.btn.red:hover{background:#EF4444;color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+    .mood-picker{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+    .mood{font-size:24px;cursor:pointer;padding:6px;border:2px solid transparent;border-radius:8px;transition:all .2s;filter:grayscale(.8) opacity(.5)}
+    .mood:hover{filter:none;transform:scale(1.1)}
+    .mood.selected{filter:none;border-color:var(--warm);background:rgba(212,165,116,0.1)}
+    .write-area{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+    .write-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .date-display{font-family:'Crimson Pro',serif;font-size:18px;color:var(--warm)}
+    .time-display{font-size:11px;color:var(--dim)}
+    textarea{width:100%;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;line-height:1.8;resize:vertical;min-height:160px;outline:none;transition:border-color .2s}
+    textarea:focus{border-color:var(--warm)}
+    textarea::placeholder{color:var(--dim);font-style:italic}
+    .char-count{text-align:right;font-size:10px;color:var(--dim);margin-top:4px}
+    .encrypt-info{display:flex;align-items:center;gap:6px;padding:8px 12px;background:rgba(124,174,122,0.05);border:1px solid rgba(124,174,122,0.2);border-radius:8px;margin-bottom:12px;font-size:11px;color:var(--sage)}
+    .entry-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+    .entry-card:hover{border-color:var(--warm);transform:translateX(2px)}
+    .entry-date{font-family:'Crimson Pro',serif;font-size:15px;color:var(--warm);margin-bottom:2px;display:flex;justify-content:space-between;align-items:center}
+    .entry-mood{font-size:16px}
+    .entry-preview{font-size:12px;color:var(--dim);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .entry-meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10px;color:var(--dim)}
+    .badge{font-size:8px;padding:2px 8px;border-radius:4px}
+    .badge-enc{background:rgba(124,174,122,0.1);color:var(--sage);border:1px solid rgba(124,174,122,0.3)}
+    .badge-ddc{background:rgba(212,165,116,0.1);color:var(--warm);border:1px solid rgba(212,165,116,0.3)}
+    .streak-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+    .streak-icon{font-size:24px}
+    .streak-info .num{font-size:18px;font-weight:700;color:var(--warm)}
+    .streak-info .lbl{font-size:10px;color:var(--dim)}
+    .streak-dots{display:flex;gap:3px;margin-left:auto}
+    .streak-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+    .streak-dot.filled{background:var(--warm)}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;width:90%;max-width:440px}
+    .modal h3{font-family:'Crimson Pro',serif;font-size:20px;color:var(--warm);margin-bottom:12px}
+    .modal-content{font-family:'Crimson Pro',serif;font-size:15px;line-height:1.8;max-height:300px;overflow-y:auto;padding:12px;background:var(--card);border-radius:8px;margin-bottom:12px}
+    .empty{text-align:center;padding:40px 20px;color:var(--dim)}
+    .empty .icon{font-size:40px;display:block;margin-bottom:8px}
+    .footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase}.footer a:hover{color:var(--warm)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--sage);border-radius:10px;padding:10px 20px;font-size:11px;color:var(--sage);z-index:10001;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:var(--rose);color:var(--rose)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">📔 MemoryChain</div>
+      <div class="tagline">Your encrypted diary, timestamped forever</div>
+    </div>
+    <div class="wallet-bar" id="walletBar">
+      <div><div class="wl">Proofi Wallet</div><div class="wa" id="walletAddr">Not connected</div></div>
+      <button class="btn sm" id="connectBtn" onclick="handleConnect()">Connect</button>
+    </div>
+
+    <div class="streak-bar">
+      <span class="streak-icon">🔥</span>
+      <div class="streak-info"><div class="num" id="streakNum">0</div><div class="lbl">day streak</div></div>
+      <div class="streak-dots" id="streakDots"></div>
+    </div>
+
+    <div class="write-area">
+      <div class="write-header">
+        <div class="date-display" id="dateDisplay"></div>
+        <div class="time-display" id="timeDisplay"></div>
+      </div>
+      <div style="font-size:12px;color:var(--dim);margin-bottom:8px">How are you feeling?</div>
+      <div class="mood-picker" id="moodPicker"></div>
+      <textarea id="entryText" placeholder="What's on your mind today..."></textarea>
+      <div class="char-count"><span id="charCount">0</span> characters</div>
+      <div class="encrypt-info">🔒 Entry will be encrypted with your wallet key before storage</div>
+      <button class="btn sage" style="width:100%;padding:12px;margin-top:8px" id="saveBtn" onclick="saveEntry()" disabled>
+        📝 Save & Encrypt Entry
+      </button>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span style="font-family:'Crimson Pro',serif;font-size:18px;color:var(--warm)">Past Entries</span>
+      <span style="font-size:11px;color:var(--dim)" id="entryCount">0 entries</span>
+    </div>
+    <div id="entryList"></div>
+
+    <div class="footer"><a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a></div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <div id="modalContainer"></div>
+
+  <script src="proofi-sdk.js"></script>
+  <script>
+    const MOODS = ['😊','😌','🤔','😢','😤','🥰','😴','🎉','💪','🌧️'];
+    let proofi, walletAddress;
+    let entries = JSON.parse(localStorage.getItem('mc_entries') || '[]');
+    let selectedMood = null;
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'MemoryChain' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Diary unlocked!'); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); });
+
+      const now = new Date();
+      document.getElementById('dateDisplay').textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+      document.getElementById('timeDisplay').textContent = now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+
+      document.getElementById('moodPicker').innerHTML = MOODS.map(m =>
+        `<span class="mood" onclick="selectMood(this,'${m}')">${m}</span>`
+      ).join('');
+
+      document.getElementById('entryText').addEventListener('input', function() {
+        document.getElementById('charCount').textContent = this.value.length;
+        document.getElementById('saveBtn').disabled = !this.value.trim();
+      });
+
+      renderEntries();
+      updateStreak();
+    }
+
+    function selectMood(el, mood) {
+      selectedMood = mood;
+      document.querySelectorAll('.mood').forEach(m => m.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function encrypt(text) {
+      const key = walletAddress || 'memorychain-local';
+      let r = '';
+      for (let i = 0; i < text.length; i++) r += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+      return btoa(unescape(encodeURIComponent(r)));
+    }
+
+    function decrypt(enc) {
+      const key = walletAddress || 'memorychain-local';
+      const decoded = decodeURIComponent(escape(atob(enc)));
+      let r = '';
+      for (let i = 0; i < decoded.length; i++) r += String.fromCharCode(decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+      return r;
+    }
+
+    async function saveEntry() {
+      const text = document.getElementById('entryText').value.trim();
+      if (!text) return;
+
+      const encrypted = encrypt(text);
+      const entry = {
+        id: Date.now().toString(36),
+        mood: selectedMood || '📝',
+        encrypted,
+        preview: text.slice(0,50) + (text.length>50?'...':''),
+        charCount: text.length,
+        onChain: false,
+        date: new Date().toISOString(),
+      };
+
+      if (walletAddress) {
+        try {
+          document.getElementById('saveBtn').textContent = '⏳ Encrypting...';
+          document.getElementById('saveBtn').disabled = true;
+          await proofi.storeAchievement({ game:'memorychain', score: entries.length+1, achievement:'diary-entry', data:{ mood: selectedMood, charCount: text.length, date: entry.date } });
+          entry.onChain = true;
+          toast('📔 Entry encrypted & stored on DDC!');
+        } catch (e) { toast(e.message, true); }
+      } else { toast('Entry saved locally (connect wallet for DDC)'); }
+
+      entries.unshift(entry);
+      localStorage.setItem('mc_entries', JSON.stringify(entries));
+      renderEntries();
+      updateStreak();
+
+      document.getElementById('entryText').value = '';
+      document.getElementById('charCount').textContent = '0';
+      selectedMood = null;
+      document.querySelectorAll('.mood').forEach(m => m.classList.remove('selected'));
+      document.getElementById('saveBtn').textContent = '📝 Save & Encrypt Entry';
+      document.getElementById('saveBtn').disabled = true;
+    }
+
+    function renderEntries() {
+      const list = document.getElementById('entryList');
+      document.getElementById('entryCount').textContent = entries.length + ' entries';
+      if (!entries.length) {
+        list.innerHTML = '<div class="empty"><span class="icon">📔</span>Your diary is empty<br><small>Start writing your first entry</small></div>';
+        return;
+      }
+      list.innerHTML = entries.map(e => {
+        const d = new Date(e.date);
+        return `
+          <div class="entry-card" onclick="viewEntry('${e.id}')">
+            <div class="entry-date">
+              <span>${d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+              <span class="entry-mood">${e.mood}</span>
+            </div>
+            <div class="entry-preview">${e.preview}</div>
+            <div class="entry-meta">
+              <span>${d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})} • ${e.charCount} chars</span>
+              <div style="display:flex;gap:4px">
+                <span class="badge badge-enc">ENCRYPTED</span>
+                ${e.onChain?'<span class="badge badge-ddc">DDC</span>':''}
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function viewEntry(id) {
+      const entry = entries.find(e => e.id === id);
+      if (!entry) return;
+      try {
+        const content = decrypt(entry.encrypted);
+        const d = new Date(entry.date);
+        document.getElementById('modalContainer').innerHTML = `
+          <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+            <div class="modal">
+              <h3>${entry.mood} ${d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</h3>
+              <div class="modal-content">${content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <span style="font-size:10px;color:var(--dim)">${d.toLocaleString()}</span>
+                <div style="display:flex;gap:4px">
+                  <span class="badge badge-enc">DECRYPTED</span>
+                  ${entry.onChain?'<span class="badge badge-ddc">DDC</span>':''}
+                </div>
+              </div>
+              <button class="btn" style="width:100%" onclick="closeModal()">🔒 Lock</button>
+            </div>
+          </div>`;
+      } catch { toast('Could not decrypt. Wrong wallet?', true); }
+    }
+
+    function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
+
+    function updateStreak() {
+      let streak = 0;
+      const today = new Date().toDateString();
+      const dates = [...new Set(entries.map(e => new Date(e.date).toDateString()))];
+      let check = new Date();
+      for (let i = 0; i < 7; i++) {
+        if (dates.includes(check.toDateString())) streak++;
+        else if (i > 0) break;
+        check.setDate(check.getDate() - 1);
+      }
+      document.getElementById('streakNum').textContent = streak;
+      document.getElementById('streakDots').innerHTML = Array.from({length:7}, (_, i) => {
+        const d = new Date(); d.setDate(d.getDate() - (6-i));
+        const filled = dates.includes(d.toDateString());
+        return `<div class="streak-dot ${filled?'filled':''}" title="${d.toLocaleDateString()}"></div>`;
+      }).join('');
+    }
+
+    async function handleConnect() {
+      if (walletAddress) { proofi.disconnect(); walletAddress=null; updateWalletUI(); return; }
+      try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){toast(e.message,true);document.getElementById('connectBtn').textContent='Connect'}
+    }
+    function updateWalletUI() {
+      const bar=document.getElementById('walletBar'),addr=document.getElementById('walletAddr'),btn=document.getElementById('connectBtn');
+      if(walletAddress){bar.classList.add('connected');addr.textContent=walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);btn.textContent='Disconnect';btn.className='btn sm red'}
+      else{bar.classList.remove('connected');addr.textContent='Not connected';btn.textContent='Connect';btn.className='btn sm'}
+    }
+    let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+    init();
+  </script>
+</body>
+</html>

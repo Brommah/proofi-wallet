@@ -1,0 +1,50 @@
+{"idx": 1, "id": "2f3d8000-83d6-81ff-b59f-f6ce2515e2c5", "name": "Konstantin Zhivotov", "role": "AI Innovator", "http": 200, "old_score": "3", "new_score": 2, "ok": true}
+{"idx": 2, "id": "2f3d8000-83d6-812d-8e0a-e28f6002e0c0", "name": "Preeti Parihar", "role": "AI Innovator", "http": 200, "old_score": "4", "new_score": 4, "ok": true}
+{"idx": 3, "id": "2f4d8000-83d6-81f1-8fc4-f0d1e809fb50", "name": "Akarsh Reddy Tatimakula", "role": "AI Engineer", "http": 200, "old_score": "2", "new_score": 2, "ok": true}
+{"idx": 4, "id": "2f4d8000-83d6-815e-ac79-fe21b18f4b42", "name": "Nash Ashworth", "role": "AI Innovator", "http": 200, "old_score": "4", "new_score": 4, "ok": true}
+{"idx": 5, "id": "2f4d8000-83d6-8133-8160-e08628b00637", "name": "Ajith Vemuri", "role": "Principal Fullstack Engineer", "http": 200, "old_score": "3", "new_score": 4, "ok": true}
+{"idx": 6, "id": "2f4d8000-83d6-81f7-b326-e6e137247efa", "name": "Pavan Thota", "role": "AI Innovator", "http": 200, "old_score": "7", "new_score": 7, "ok": true}
+{"idx": 7, "id": "2f4d8000-83d6-81ff-be45-c6f8a16121aa", "name": "Chandrakant Bagewadi", "role": "Principal Fullstack Engineer", "http": 200, "old_score": "6", "new_score": 4, "ok": true}
+{"idx": 8, "id": "2f6d8000-83d6-8167-8e52-d6c390f032d9", "name": "Cedric Ogire", "role": "Blockchain Engineer", "http": 200, "old_score": "8", "new_score": 7, "ok": true}
+{"idx": 9, "id": "2f6d8000-83d6-8175-864b-ff2f6bfdb4a1", "name": "Manuel", "role": "AI Engineer", "http": 200, "old_score": "4", "new_score": 2, "ok": true}
+{"idx": 10, "id": "2f6d8000-83d6-815a-9d8e-dcfc71240fcd", "name": "Rajkumar", "role": "AI Engineer", "http": 200, "old_score": "8", "new_score": 4, "ok": true}
+{"idx": 11, "id": "2f6d8000-83d6-8116-8370-f931f2ffeb9f", "name": "Dhieddine Barhoumi", "role": "AI Engineer", "http": 200, "old_score": "3", "new_score": 3, "ok": true}
+{"idx": 12, "id": "2f6d8000-83d6-81d0-9fb7-e983b282b22f", "name": "Hany Almnaem", "role": "AI Engineer", "http": 200, "old_score": "3", "new_score": 2, "ok": true}
+{"idx": 13, "id": "2f6d8000-83d6-8177-b9ca-fb68448d8394", "name": "Leticia Azevedo", "role": "AI Engineer", "http": 200, "old_score": "3", "new_score": 1, "ok": true}
+{"idx": 14, "id": "2f6d8000-83d6-8114-90dd-f9992f1f38cb", "name": "Sravanthi Reddy", "role": "AI Engineer", "http": 200, "old_score": "7", "new_score": 6, "ok": true}
+{"idx": 15, "id": "2f3d8000-83d6-8125-b3f8-e12454a0bc94", "name": "Haochen Li", "role": "AI Innovator", "http": 200, "old_score": "3", "new_score": 3, "ok": true}
+{"idx": 16, "id": "2f4d8000-83d6-8148-8fb5-d1d532c6c41d", "name": "Kirandevraj R", "role": "AI Innovator", "http": 200, "old_score": "5", "new_score": 4, "ok": true}
+{"idx": 17, "id": "2f6d8000-83d6-8179-8645-ddf87d5e2a76", "name": "Abhineet Pandey", "role": "AI Engineer", "http": 0, "old_score": "N/A", "new_score": "N/A", "ok": false}
+{"idx": 18, "id": "2f6d8000-83d6-8132-bda1-d5fa78b48579", "name": "S Kabir", "role": "AI Engineer", "http": 200, "old_score": "6", "new_score": 3, "ok": true}
+{"idx": 19, "id": "2f6d8000-83d6-8179-af5e-f54a0ec7db23", "name": "Tilek Maksatbekov", "role": "Founder's Associate (Business Ops)", "http": 200, "old_score": "4", "new_score": 3, "ok": true}
+{"idx": 20, "id": "2f6d8000-83d6-8177-8a9f-cef750f8129e", "name": "Marcel Hadwiger", "role": "Founder's Associate (Business Ops)", "http": 200, "old_score": "4", "new_score": 4, "ok": true}
+{"idx": 21, "id": "2edd8000-83d6-81d0-bff1-e513dd67f2ba", "name": "Lukas Walliser", "role": "Founder's Associate (Business Ops)", "http": 0, "old_score": "N/A", "new_score": "N/A", "ok": false}
+{"idx": 22, "id": "2e7d8000-83d6-807d-bc27-c0b59dbe8d9e", "name": "Haichuan Wei (Arthur)", "role": "AI Innovator", "http": 200, "old_score": "8", "new_score": 3, "ok": true}
+{"idx": 23, "id": "2f1d8000-83d6-808b-ae95-e716bd9702fb", "name": "Melvin Tercan", "role": "AI Innovator", "http": 200, "old_score": "7", "new_score": 8, "ok": true}
+{"idx": 24, "id": "2ecd8000-83d6-81ce-ae78-f7bd5ce1d539", "name": "Zakaria Saif", "role": "Blockchain Engineer", "http": 200, "old_score": "8", "new_score": 5, "ok": true}
+{"idx": 25, "id": "2b5d8000-83d6-81aa-b4ee-c58eb1133327", "name": "Ayush Bajpai", "role": "AI Innovator", "http": 200, "old_score": "7", "new_score": 3, "ok": true}
+{"idx": 26, "id": "2b2d8000-83d6-81e0-a384-c3a877b424f6", "name": "Kiran Devihosur", "role": "AI Innovator", "http": 200, "old_score": "8", "new_score": 3, "ok": true}
+{"idx": 27, "id": "2abd8000-83d6-806d-886d-f2bf4c7fc4dc", "name": "Naman Patel", "role": "Principal Fullstack Engineer", "http": 200, "old_score": "8", "new_score": 7, "ok": true}
+{"idx": 28, "id": "2a9d8000-83d6-81c9-b7ca-ee5d32b186a5", "name": "Matthew Work", "role": "AI Innovator", "http": 200, "old_score": "5", "new_score": 3, "ok": true}
+{"idx": 29, "id": "2a0d8000-83d6-8128-8218-cb4394750476", "name": "Joep Gommers", "role": "AI Innovator", "http": 200, "old_score": "8", "new_score": 8, "ok": true}
+{"idx": 30, "id": "29dd8000-83d6-8190-b205-d2000769b3f7", "name": "Yi Mao", "role": "Principal Fullstack Engineer", "http": 200, "old_score": "8", "new_score": 5, "ok": true}
+{"idx": 31, "id": "27dd8000-83d6-812f-9d3e-dd87edc84412", "name": "Deepti Ahlawat", "role": "AI Engineer", "http": 200, "old_score": "8", "new_score": 3, "ok": true}
+{"idx": 32, "id": "277d8000-83d6-81c6-ba30-f2c99d20ea89", "name": "Venkatesh Ramavath", "role": "AI Engineer", "http": 200, "old_score": "8", "new_score": 7, "ok": true}
+{"idx": 33, "id": "24ed8000-83d6-8000-b7c0-df2f30afb5b7", "name": "Farah Fatima", "role": "", "http": 200, "old_score": "1", "new_score": 10, "ok": true}
+{"idx": 34, "id": "24cd8000-83d6-80fe-9958-d83771738ee0", "name": "Khachatur Gharibyan", "role": "Principal Fullstack Engineer", "http": 200, "old_score": "9", "new_score": 6, "ok": true}
+{"idx": 35, "id": "249d8000-83d6-80fb-ba22-d262e777bc11", "name": "Jacob Rafati", "role": "AI Innovator", "http": 200, "old_score": "9", "new_score": 8, "ok": true}
+{"idx": 36, "id": "246d8000-83d6-81a6-a7ce-eb69a85da936", "name": "Maksym Ivashchenko", "role": "Principal Fullstack Engineer", "http": 200, "old_score": "9", "new_score": 4, "ok": true}
+{"idx": 37, "id": "242d8000-83d6-81b2-a4c6-fe7d2bec6001", "name": "Avimukta Malakar", "role": "", "http": 200, "old_score": "3", "new_score": 1, "ok": true}
+{"idx": 38, "id": "241d8000-83d6-8187-8777-c4a66d2eef78", "name": "Julianna Kulesova", "role": "", "http": 200, "old_score": "3", "new_score": 2, "ok": true}
+{"idx": 39, "id": "241d8000-83d6-808c-84c7-f060ead28a1a", "name": "Lisa Lomadze", "role": "", "http": 0, "old_score": "N/A", "new_score": "N/A", "ok": false}
+{"idx": 40, "id": "23cd8000-83d6-81b7-89d9-d311a2a91762", "name": "Dunja Maria Darmer", "role": "", "http": 200, "old_score": "3", "new_score": 7, "ok": true}
+{"idx": 41, "id": "1dfd8000-83d6-8041-9a70-d961220900fc", "name": "Juan Paulino Garcia", "role": "AI Innovator", "http": 200, "old_score": "7", "new_score": 5, "ok": true}
+{"idx": 42, "id": "1ddd8000-83d6-811d-820f-f6be1e5a49e5", "name": "Sash Saseetharran", "role": "AI Innovator", "http": 200, "old_score": "8", "new_score": 5, "ok": true}
+{"idx": 43, "id": "1d6d8000-83d6-8000-b648-eb7f0354c184", "name": "Jonathon Ong", "role": "AI Innovator", "http": 200, "old_score": "8", "new_score": 3, "ok": true}
+{"idx": 44, "id": "1c9d8000-83d6-80c9-bbf3-cc1cef25cf56", "name": "Arnav Wadhwa", "role": "AI Innovator", "http": 200, "old_score": "8", "new_score": 8, "ok": true}
+{"idx": 45, "id": "270d8000-83d6-8172-b469-f974b6f71490", "name": "Ken Wu", "role": "Founder's Associate", "http": 200, "old_score": "7", "new_score": 8, "ok": true}
+{"idx": 46, "id": "270d8000-83d6-8162-b600-edc1000e4d4a", "name": "Lamiaa Maguerra", "role": "Founder's Associate", "http": 200, "old_score": "5", "new_score": 2, "ok": true}
+{"idx": 47, "id": "270d8000-83d6-815e-8b31-f9265785c7ff", "name": "Ken Wu", "role": "Founder's Associate", "http": 200, "old_score": "8", "new_score": 8, "ok": true}
+{"idx": 48, "id": "270d8000-83d6-815c-b9b0-cd7f9642bd0e", "name": "Jayati Chandra", "role": "Founder's Associate", "http": 200, "old_score": "8", "new_score": 9, "ok": true}
+{"idx": 49, "id": "270d8000-83d6-8121-bb2b-fc3f9ac6cf17", "name": "Jayati Chandra", "role": "Founder's Associate", "http": 200, "old_score": "8", "new_score": 9, "ok": true}
+{"idx": 50, "id": "26fd8000-83d6-81f3-9909-ffe915d67643", "name": "Moheeb Ahmed", "role": "Founder's Associate", "http": 500, "old_score": "N/A", "new_score": "N/A", "ok": false}

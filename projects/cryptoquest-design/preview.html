@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoQuest - Design Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Lora:wght@400;500&family=Alegreya+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-gold: #D4AF37;
+      --color-purple: #4A0E4E;
+      --color-red: #8B0000;
+      --color-blue: #1E3A5F;
+      --color-bronze: #CD7F32;
+      --color-parchment: #F5E6C4;
+      --color-shadow: #0D0D0D;
+      
+      --font-display: 'Cinzel Decorative', serif;
+      --font-heading: 'Cinzel', serif;
+      --font-body: 'Lora', serif;
+      --font-ui: 'Alegreya Sans', sans-serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(180deg, #0D0D0D 0%, #1a0a1a 50%, #0D0D0D 100%);
+      min-height: 100vh;
+      color: var(--color-parchment);
+    }
+    
+    /* Header */
+    .header {
+      background: linear-gradient(180deg, rgba(74,14,78,0.9) 0%, rgba(13,13,13,0.95) 100%);
+      border-bottom: 3px solid var(--color-gold);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    
+    .logo {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      color: var(--color-gold);
+      text-shadow: 
+        0 0 10px rgba(212,175,55,0.5),
+        2px 2px 4px rgba(0,0,0,0.8);
+      letter-spacing: 4px;
+    }
+    
+    .logo span {
+      color: var(--color-parchment);
+    }
+    
+    .nav-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-family: var(--font-ui);
+    }
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0,0,0,0.5);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(212,175,55,0.3);
+    }
+    
+    .stat-item .value {
+      color: var(--color-gold);
+      font-weight: 700;
+    }
+    
+    /* Main Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .creator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    /* Character Preview Panel */
+    .character-preview {
+      background: 
+        linear-gradient(180deg, rgba(74,14,78,0.3) 0%, rgba(13,13,13,0.9) 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%231a1a1a" width="100" height="100"/><circle fill="%232a2a2a" cx="50" cy="50" r="40" opacity="0.3"/></svg>');
+      border: 3px solid var(--color-bronze);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .character-preview::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 50%);
+      animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .character-frame {
+      position: relative;
+      z-index: 1;
+      width: 280px;
+      height: 350px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+      border: 4px solid var(--color-bronze);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 
+        0 0 0 2px var(--color-gold),
+        0 8px 32px rgba(0,0,0,0.6),
+        inset 0 0 60px rgba(212,175,55,0.1);
+    }
+    
+    .character-frame::before,
+    .character-frame::after {
+      content: '◆';
+      position: absolute;
+      color: var(--color-gold);
+      font-size: 1.5rem;
+      text-shadow: 0 0 10px rgba(212,175,55,0.8);
+    }
+    
+    .character-frame::before { top: -12px; left: 50%; transform: translateX(-50%); }
+    .character-frame::after { bottom: -12px; left: 50%; transform: translateX(-50%); }
+    
+    .character-silhouette {
+      font-size: 8rem;
+      opacity: 0.6;
+      filter: drop-shadow(0 0 20px rgba(212,175,55,0.3));
+    }
+    
+    .character-name-display {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--color-gold);
+      margin-top: 1rem;
+      text-align: center;
+    }
+    
+    .character-class-display {
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      color: var(--color-parchment);
+      opacity: 1; /* was 0.8 - now fully visible for WCAG AA */
+    }
+    
+    /* Equipment Slots */
+    .equipment-slots {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .equip-slot {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+      border: 2px solid var(--color-bronze);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .equip-slot:hover {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 15px rgba(212,175,55,0.5);
+      transform: translateY(-3px);
+    }
+    
+    .equip-slot.legendary {
+      border-color: var(--color-gold);
+      animation: legendary-glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes legendary-glow {
+      0%, 100% { box-shadow: 0 0 10px var(--color-gold), 0 0 20px rgba(212,175,55,0.3); }
+      50% { box-shadow: 0 0 20px var(--color-gold), 0 0 40px rgba(212,175,55,0.5); }
+    }
+    
+    /* Options Panel */
+    .options-panel {
+      background: rgba(0,0,0,0.6);
+      border: 2px solid rgba(205,127,50,0.5);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    
+    .panel-title {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      color: var(--color-gold);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid rgba(212,175,55,0.3);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      color: var(--color-parchment);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(0,0,0,0.5);
+      border: 2px solid var(--color-bronze);
+      border-radius: 8px;
+      color: var(--color-parchment);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-gold);
+      box-shadow: 0 0 10px rgba(212,175,55,0.3);
+    }
+    
+    .form-input::placeholder {
+      color: rgba(245,230,196,0.65); /* was 0.4 - now WCAG AA compliant */
+    }
+    
+    /* Class Selection */
+    .class-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+    
+    .class-option {
+      background: rgba(0,0,0,0.5);
+      border: 2px solid rgba(205,127,50,0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .class-option:hover {
+      border-color: var(--color-gold);
+      background: rgba(212,175,55,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .class-option.selected {
+      border-color: var(--color-gold);
+      background: linear-gradient(180deg, rgba(212,175,55,0.2) 0%, rgba(0,0,0,0.5) 100%);
+      box-shadow: 0 0 15px rgba(212,175,55,0.3);
+    }
+    
+    .class-icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    
+    .class-name {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      color: var(--color-parchment);
+    }
+    
+    /* Stat Bars */
+    .stats-section {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+    
+    .stat-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    
+    .stat-label {
+      width: 100px;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .stat-bar {
+      flex: 1;
+      height: 20px;
+      background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+      border: 2px solid #333;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0 0.75rem;
+    }
+    
+    .stat-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    
+    .stat-fill.strength {
+      background: linear-gradient(90deg, #8B0000 0%, #FF4444 50%, #8B0000 100%);
+      width: 84%;
+    }
+    
+    .stat-fill.defense {
+      background: linear-gradient(90deg, #CD7F32 0%, #DAA520 50%, #CD7F32 100%);
+      width: 62%;
+    }
+    
+    .stat-fill.agility {
+      background: linear-gradient(90deg, #228B22 0%, #32CD32 50%, #228B22 100%);
+      width: 91%;
+    }
+    
+    .stat-fill.magic {
+      background: linear-gradient(90deg, #4A0E4E 0%, #9B59B6 50%, #4A0E4E 100%);
+      width: 28%;
+    }
+    
+    .stat-fill.vitality {
+      background: linear-gradient(90deg, #8B0000 0%, #FF6B6B 50%, #8B0000 100%);
+      width: 73%;
+    }
+    
+    .stat-value {
+      width: 30px;
+      font-family: var(--font-ui);
+      font-weight: 700;
+      color: var(--color-gold);
+      text-align: right;
+    }
+    
+    /* Buttons */
+    .button-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+      border: 2px solid #8B7500;
+      color: #1a0a00;
+      box-shadow: 
+        0 4px 0 #8B7500,
+        0 8px 16px rgba(0,0,0,0.4);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 6px 0 #8B7500,
+        0 12px 24px rgba(212,175,55,0.3);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #8B7500;
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(180deg, #6B2D5B 0%, #4A0E4E 100%);
+      border: 2px solid #3A0B3E;
+      color: var(--color-parchment);
+      box-shadow: 
+        0 4px 0 #3A0B3E,
+        0 8px 16px rgba(0,0,0,0.4);
+    }
+    
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(180deg, #7B3D6B 0%, #5A1E5E 100%);
+    }
+    
+    /* Rarity Examples */
+    .rarity-showcase {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: rgba(0,0,0,0.6);
+      border-radius: 16px;
+      border: 2px solid rgba(205,127,50,0.3);
+    }
+    
+    .rarity-title {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--color-gold);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .rarity-items {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .rarity-item {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-family: var(--font-ui);
+      font-weight: 700;
+      border: 2px solid;
+    }
+    
+    .rarity-common { border-color: #808080; color: #808080; background: rgba(128,128,128,0.1); }
+    .rarity-uncommon { border-color: #2ECC71; color: #2ECC71; background: rgba(46,204,113,0.1); }
+    .rarity-rare { border-color: #3498DB; color: #3498DB; background: rgba(52,152,219,0.1); }
+    .rarity-epic { border-color: #9B59B6; color: #9B59B6; background: rgba(155,89,182,0.1); }
+    .rarity-legendary { 
+      border-color: #D4AF37; 
+      color: #D4AF37; 
+      background: rgba(212,175,55,0.1);
+      animation: legendary-glow 2s ease-in-out infinite;
+    }
+    .rarity-mythic { 
+      border-color: #FF6B6B; 
+      color: #FF6B6B; 
+      background: linear-gradient(90deg, rgba(255,107,107,0.1) 0%, rgba(139,0,0,0.2) 100%);
+      animation: mythic-pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes mythic-pulse {
+      0%, 100% { box-shadow: 0 0 10px #FF6B6B, 0 0 20px rgba(139,0,0,0.5); }
+      50% { box-shadow: 0 0 20px #FF6B6B, 0 0 40px rgba(139,0,0,0.7); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .creator-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .logo {
+        font-size: 1.75rem;
+      }
+      
+      .class-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1 class="logo">CRYPTO<span>QUEST</span></h1>
+    <nav class="nav-stats">
+      <div class="stat-item">
+        <span>💰</span>
+        <span class="value">1,234</span>
+      </div>
+      <div class="stat-item">
+        <span>⚡</span>
+        <span class="value">500</span>
+      </div>
+      <div class="stat-item">
+        <span>👤</span>
+      </div>
+    </nav>
+  </header>
+  
+  <main class="container">
+    <div class="creator-grid">
+      <!-- Character Preview -->
+      <section class="character-preview">
+        <div class="character-frame">
+          <span class="character-silhouette">⚔️</span>
+          <div class="character-name-display">Your Hero</div>
+          <div class="character-class-display">Warrior • Level 1</div>
+        </div>
+        
+        <div class="equipment-slots">
+          <div class="equip-slot legendary">🗡️</div>
+          <div class="equip-slot">🛡️</div>
+          <div class="equip-slot">👕</div>
+          <div class="equip-slot">👢</div>
+          <div class="equip-slot">💍</div>
+        </div>
+      </section>
+      
+      <!-- Options Panel -->
+      <section class="options-panel">
+        <h2 class="panel-title">Create Your Hero</h2>
+        
+        <div class="form-group">
+          <label class="form-label">Character Name</label>
+          <input type="text" class="form-input" placeholder="Enter your hero's name...">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Choose Your Class</label>
+          <div class="class-grid">
+            <div class="class-option selected">
+              <span class="class-icon">⚔️</span>
+              <span class="class-name">Warrior</span>
+            </div>
+            <div class="class-option">
+              <span class="class-icon">🏹</span>
+              <span class="class-name">Ranger</span>
+            </div>
+            <div class="class-option">
+              <span class="class-icon">🔮</span>
+              <span class="class-name">Mage</span>
+            </div>
+            <div class="class-option">
+              <span class="class-icon">🗡️</span>
+              <span class="class-name">Rogue</span>
+            </div>
+            <div class="class-option">
+              <span class="class-icon">🛡️</span>
+              <span class="class-name">Paladin</span>
+            </div>
+            <div class="class-option">
+              <span class="class-icon">💀</span>
+              <span class="class-name">Necro</span>
+            </div>
+            <div class="class-option">
+              <span class="class-icon">🔥</span>
+              <span class="class-name">Pyro</span>
+            </div>
+            <div class="class-option">
+              <span class="class-icon">❄️</span>
+              <span class="class-name">Cryo</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stats-section">
+          <div class="stat-row">
+            <span class="stat-label">⚔️ Strength</span>
+            <div class="stat-bar"><div class="stat-fill strength"></div></div>
+            <span class="stat-value">84</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">🛡️ Defense</span>
+            <div class="stat-bar"><div class="stat-fill defense"></div></div>
+            <span class="stat-value">62</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">⚡ Agility</span>
+            <div class="stat-bar"><div class="stat-fill agility"></div></div>
+            <span class="stat-value">91</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">🔮 Magic</span>
+            <div class="stat-bar"><div class="stat-fill magic"></div></div>
+            <span class="stat-value">28</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">❤️ Vitality</span>
+            <div class="stat-bar"><div class="stat-fill vitality"></div></div>
+            <span class="stat-value">73</span>
+          </div>
+        </div>
+        
+        <div class="button-row">
+          <button class="btn btn-secondary">⬅️ Back</button>
+          <button class="btn btn-primary">Create Hero ➡️</button>
+        </div>
+      </section>
+    </div>
+    
+    <!-- Rarity Showcase -->
+    <section class="rarity-showcase">
+      <h3 class="rarity-title">Item Rarity System</h3>
+      <div class="rarity-items">
+        <span class="rarity-item rarity-common">Common</span>
+        <span class="rarity-item rarity-uncommon">Uncommon</span>
+        <span class="rarity-item rarity-rare">Rare</span>
+        <span class="rarity-item rarity-epic">Epic</span>
+        <span class="rarity-item rarity-legendary">Legendary</span>
+        <span class="rarity-item rarity-mythic">Mythic</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

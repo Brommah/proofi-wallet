@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TokenGate — Wallet-Gated Content</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚪</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--gold:#EAB308;--amber:#F59E0B;--lime:#84CC16;--bg:#0C0A09;--surface:#1C1917;--card:#292524;--border:#44403C;--text:#FAFAF9;--dim:#78716C}
+    body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% -10%,rgba(234,179,8,0.07) 0%,transparent 50%);pointer-events:none}
+    .container{max-width:520px;margin:0 auto;padding:16px}
+    .header{text-align:center;padding:20px 0 16px}
+    .logo{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--gold),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px}
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+    .wallet-bar.connected{border-color:var(--gold);box-shadow:0 0 20px rgba(234,179,8,0.08)}
+    .wl{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}.wa{font-size:11px;color:var(--gold);font-family:monospace}
+    .btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:12px;padding:10px 18px;border:2px solid var(--gold);background:transparent;color:var(--gold);border-radius:8px;cursor:pointer;transition:all .2s}
+    .btn:hover{background:var(--gold);color:var(--bg);box-shadow:0 4px 15px rgba(234,179,8,0.3)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.lime{border-color:var(--lime);color:var(--lime)}.btn.lime:hover{background:var(--lime);color:var(--bg)}
+    .btn.red{border-color:#EF4444;color:#EF4444}.btn.red:hover{background:#EF4444;color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+    .tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--surface);border-radius:10px;padding:3px}
+    .tab{flex:1;padding:10px;text-align:center;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--dim);transition:all .2s}
+    .tab.active{background:var(--card);color:var(--text)}
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+    .section-title{font-size:14px;font-weight:700;margin-bottom:12px}
+    input[type=text],textarea{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;outline:none;margin-bottom:8px}
+    textarea{resize:vertical;min-height:100px}
+    input:focus,textarea:focus{border-color:var(--gold)}
+    input::placeholder,textarea::placeholder{color:var(--dim)}
+    .content-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;transition:border-color .2s}
+    .content-card:hover{border-color:rgba(234,179,8,0.3)}
+    .content-header{padding:14px;display:flex;justify-content:space-between;align-items:flex-start}
+    .content-title{font-size:16px;font-weight:700}
+    .content-creator{font-size:10px;color:var(--dim);font-family:monospace;margin-top:2px}
+    .content-type-badge{padding:3px 10px;border-radius:6px;font-size:10px;font-weight:600}
+    .type-article{background:rgba(234,179,8,0.1);color:var(--gold)}
+    .type-code{background:rgba(132,204,22,0.1);color:var(--lime)}
+    .type-media{background:rgba(168,85,247,0.1);color:#A855F7}
+    .gated-content{position:relative;min-height:120px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    .gated-blur{filter:blur(8px);opacity:.3;padding:20px;font-size:13px;line-height:1.6;text-align:center;user-select:none}
+    .gate-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+    .gate-icon{font-size:40px;margin-bottom:8px}
+    .gate-text{font-size:14px;font-weight:700;margin-bottom:4px}
+    .gate-sub{font-size:11px;color:var(--dim);margin-bottom:12px}
+    .unlocked-content{padding:16px;background:var(--card);font-size:13px;line-height:1.7;border-top:1px solid var(--border)}
+    .unlocked-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:rgba(132,204,22,0.1);color:var(--lime);border-radius:6px;font-size:10px;font-weight:600;border:1px solid rgba(132,204,22,0.3)}
+    .content-footer{padding:10px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--dim)}
+    .access-rule{display:flex;align-items:center;gap:4px;font-size:11px;margin-bottom:8px;padding:8px 12px;background:rgba(234,179,8,0.05);border:1px solid rgba(234,179,8,0.15);border-radius:8px;color:var(--amber)}
+    .stat-row{display:flex;gap:8px;margin-bottom:16px}
+    .stat-box{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+    .stat-box .num{font-size:22px;font-weight:800;color:var(--gold)}
+    .stat-box .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    .empty{text-align:center;padding:30px;color:var(--dim)}.empty .icon{font-size:36px;display:block;margin-bottom:8px}
+    .footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase}.footer a:hover{color:var(--gold)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--gold);border-radius:10px;padding:10px 20px;font-size:11px;color:var(--gold);z-index:10000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#EF4444;color:#EF4444}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🚪 TokenGate</div>
+      <div class="tagline">Wallet-gated content • Access control via identity</div>
+    </div>
+    <div class="wallet-bar" id="walletBar">
+      <div><div class="wl">Proofi Wallet</div><div class="wa" id="walletAddr">Not connected</div></div>
+      <button class="btn sm" id="connectBtn" onclick="handleConnect()">Connect</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" id="sContent">0</div><div class="lbl">Content</div></div>
+      <div class="stat-box"><div class="num" id="sGated">0</div><div class="lbl">Gated</div></div>
+      <div class="stat-box"><div class="num" id="sUnlocked">0</div><div class="lbl">Unlocked</div></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('browse')">Browse Content</div>
+      <div class="tab" onclick="switchTab('create')">Publish Gated</div>
+    </div>
+
+    <div id="tab-browse"><div id="contentList"></div></div>
+
+    <div id="tab-create" style="display:none">
+      <div class="section">
+        <div class="section-title">📄 Publish Gated Content</div>
+        <input type="text" id="contentTitle" placeholder="Content title...">
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <button class="btn sm" onclick="setType('article')" id="typeArticle" style="flex:1;border-color:var(--gold);color:var(--gold)">📝 Article</button>
+          <button class="btn sm" onclick="setType('code')" id="typeCode" style="flex:1;border-color:var(--lime);color:var(--lime)">💻 Code</button>
+          <button class="btn sm" onclick="setType('media')" id="typeMedia" style="flex:1;border-color:#A855F7;color:#A855F7">🎬 Media</button>
+        </div>
+        <textarea id="contentBody" placeholder="Your content here... (Markdown supported)"></textarea>
+        <div class="access-rule">🔑 Access rule: Any Proofi wallet holder can unlock</div>
+        <button class="btn lime" style="width:100%;padding:12px" onclick="publishContent()" id="publishBtn" disabled>
+          🚪 Publish Gated Content
+        </button>
+      </div>
+    </div>
+
+    <div class="footer"><a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script src="proofi-sdk.js"></script>
+  <script>
+    let proofi, walletAddress;
+    let contentType = 'article';
+    let contents = JSON.parse(localStorage.getItem('tg_content') || 'null');
+    let unlocked = new Set(JSON.parse(localStorage.getItem('tg_unlocked') || '[]'));
+
+    if (!contents) {
+      contents = [
+        { id:'c1', title:'The Future of Decentralized Identity', type:'article', body:'Self-sovereign identity (SSI) represents a paradigm shift in how we think about digital identity. Instead of relying on centralized authorities like governments or corporations to verify who we are, SSI puts individuals in control of their own identity data.\n\nWith verifiable credentials stored on decentralized networks like Cere DDC, users can prove claims about themselves without revealing unnecessary information. This is the foundation of privacy-preserving authentication.\n\nKey benefits:\n• No single point of failure\n• User controls their data\n• Selective disclosure\n• Cross-platform portability', creator:'5GrwvaEF...JMakdg', gated:true, date:'2024-01-15', views:42 },
+        { id:'c2', title:'Proofi SDK Integration Guide', type:'code', body:'// Connect to Proofi wallet\nconst proofi = new ProofiSDK({\n  appName: "My dApp",\n  walletUrl: "https://proofi-virid.vercel.app/app"\n});\n\n// Request connection\nconst address = await proofi.connect();\nconsole.log("Connected:", address);\n\n// Store achievement/data on DDC\nawait proofi.storeAchievement({\n  game: "my-app",\n  score: 100,\n  achievement: "first-action",\n  data: { custom: "payload" }\n});\n\n// Listen for events\nproofi.on("connected", (data) => {\n  console.log("Wallet:", data.address);\n});', creator:'5FHneW46...xPJ9B3', gated:true, date:'2024-01-14', views:128 },
+        { id:'c3', title:'Building Web3 UX That Doesn\'t Suck', type:'article', body:'The biggest barrier to Web3 adoption isn\'t technology—it\'s user experience. Here are 5 principles for building dApps that normal humans can actually use:\n\n1. PROGRESSIVE DISCLOSURE\nDon\'t dump blockchain complexity on users upfront. Let them use the app first, connect wallet later.\n\n2. FAMILIAR PATTERNS\nUse standard UI patterns. A "Connect Wallet" button should feel as natural as "Sign in with Google."\n\n3. HANDLE ERRORS GRACEFULLY\nBlockchain transactions fail. Your app shouldn\'t. Always have fallbacks and clear error messages.\n\n4. MOBILE FIRST\n70% of web traffic is mobile. If your dApp doesn\'t work on phones, you\'ve lost most of your users.\n\n5. SPEED > DECENTRALIZATION\nUsers don\'t care about consensus mechanisms. They care about their app being fast.', creator:'5DAAnrj7...VvBZn', gated:true, date:'2024-01-12', views:89 },
+      ];
+      localStorage.setItem('tg_content', JSON.stringify(contents));
+    }
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'TokenGate' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Gate unlocked!'); renderContent(); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); renderContent(); });
+      document.getElementById('contentTitle').addEventListener('input', checkPublish);
+      document.getElementById('contentBody').addEventListener('input', checkPublish);
+      renderContent();
+      updateStats();
+    }
+
+    function switchTab(n) {
+      document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active',['browse','create'][i]===n));
+      document.getElementById('tab-browse').style.display = n==='browse'?'block':'none';
+      document.getElementById('tab-create').style.display = n==='create'?'block':'none';
+    }
+
+    function setType(t) {
+      contentType = t;
+      ['article','code','media'].forEach(x => {
+        const btn = document.getElementById('type'+x.charAt(0).toUpperCase()+x.slice(1));
+        btn.style.background = x===t ? (x==='article'?'var(--gold)':x==='code'?'var(--lime)':'#A855F7') : 'transparent';
+        btn.style.color = x===t ? 'var(--bg)' : (x==='article'?'var(--gold)':x==='code'?'var(--lime)':'#A855F7');
+      });
+    }
+
+    function checkPublish() {
+      const t = document.getElementById('contentTitle').value.trim();
+      const b = document.getElementById('contentBody').value.trim();
+      document.getElementById('publishBtn').disabled = !t || !b;
+    }
+
+    async function publishContent() {
+      const title = document.getElementById('contentTitle').value.trim();
+      const body = document.getElementById('contentBody').value.trim();
+      if (!title || !body) return;
+
+      const item = {
+        id: 'c'+Date.now().toString(36), title, type: contentType, body,
+        creator: walletAddress ? walletAddress.slice(0,10)+'...'+walletAddress.slice(-4) : 'Anonymous',
+        gated: true, date: new Date().toISOString().split('T')[0], views: 0, onChain: false,
+      };
+
+      if (walletAddress) {
+        try {
+          document.getElementById('publishBtn').textContent = 'Publishing...';
+          document.getElementById('publishBtn').disabled = true;
+          await proofi.storeAchievement({ game:'tokengate', score:1, achievement:'content-published', data:{ title, type: contentType } });
+          item.onChain = true;
+          toast('🚪 Content published & gated on DDC!');
+        } catch (e) { toast(e.message, true); }
+      } else { toast('Published locally'); }
+
+      contents.unshift(item);
+      localStorage.setItem('tg_content', JSON.stringify(contents));
+      renderContent(); updateStats();
+      document.getElementById('contentTitle').value = '';
+      document.getElementById('contentBody').value = '';
+      document.getElementById('publishBtn').textContent = '🚪 Publish Gated Content';
+      checkPublish();
+      switchTab('browse');
+    }
+
+    function unlockContent(id) {
+      if (!walletAddress) { toast('Connect wallet to unlock', true); return; }
+      unlocked.add(id);
+      localStorage.setItem('tg_unlocked', JSON.stringify([...unlocked]));
+      const c = contents.find(x => x.id === id);
+      if (c) c.views++;
+      localStorage.setItem('tg_content', JSON.stringify(contents));
+      renderContent(); updateStats();
+      toast('🔓 Content unlocked!');
+    }
+
+    function renderContent() {
+      const list = document.getElementById('contentList');
+      if (!contents.length) { list.innerHTML = '<div class="empty"><span class="icon">🚪</span>No content yet</div>'; return; }
+      list.innerHTML = contents.map(c => {
+        const isUnlocked = unlocked.has(c.id) || !c.gated;
+        const typeClass = c.type==='article'?'type-article':c.type==='code'?'type-code':'type-media';
+        const typeIcon = c.type==='article'?'📝':c.type==='code'?'💻':'🎬';
+        return `
+          <div class="content-card">
+            <div class="content-header">
+              <div><div class="content-title">${c.title}</div><div class="content-creator">by ${c.creator}</div></div>
+              <span class="content-type-badge ${typeClass}">${typeIcon} ${c.type}</span>
+            </div>
+            ${isUnlocked ? `
+              <div class="unlocked-content">${c.type==='code'?'<pre style="white-space:pre-wrap;font-family:monospace;font-size:12px">'+c.body.replace(/</g,'&lt;')+'</pre>':c.body.replace(/\n/g,'<br>')}</div>
+            ` : `
+              <div class="gated-content">
+                <div class="gated-blur">${c.body.slice(0,200)}</div>
+                <div class="gate-overlay">
+                  <div class="gate-icon">🔒</div>
+                  <div class="gate-text">Wallet-Gated Content</div>
+                  <div class="gate-sub">Connect your Proofi wallet to unlock</div>
+                  <button class="btn" onclick="unlockContent('${c.id}')">${walletAddress?'🔓 Unlock with Wallet':'Connect to Unlock'}</button>
+                </div>
+              </div>
+            `}
+            <div class="content-footer">
+              <span>${c.date} • ${c.views} views</span>
+              ${isUnlocked?'<span class="unlocked-badge">✓ Unlocked</span>':'<span style="color:var(--gold)">🔒 Gated</span>'}
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function updateStats() {
+      document.getElementById('sContent').textContent = contents.length;
+      document.getElementById('sGated').textContent = contents.filter(c=>c.gated).length;
+      document.getElementById('sUnlocked').textContent = unlocked.size;
+    }
+
+    async function handleConnect() {
+      if(walletAddress){proofi.disconnect();walletAddress=null;updateWalletUI();return}
+      try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){toast(e.message,true);document.getElementById('connectBtn').textContent='Connect'}
+    }
+    function updateWalletUI() {
+      const bar=document.getElementById('walletBar'),addr=document.getElementById('walletAddr'),btn=document.getElementById('connectBtn');
+      if(walletAddress){bar.classList.add('connected');addr.textContent=walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);btn.textContent='Disconnect';btn.className='btn sm red'}
+      else{bar.classList.remove('connected');addr.textContent='Not connected';btn.textContent='Connect';btn.className='btn sm'}
+    }
+    let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+    init();
+  </script>
+</body>
+</html>

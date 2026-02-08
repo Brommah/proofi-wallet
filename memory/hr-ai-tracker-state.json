@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-02-08T13:00:00+01:00",
+  "mae_by_role": {
+    "FA": 3.4,
+    "Principal": 1.0,
+    "Blockchain": 0.88,
+    "AI Innovator": 2.35
+  },
+  "sample_sizes": {
+    "FA": 10,
+    "Principal": 4,
+    "Blockchain": 4,
+    "AI Innovator": 10
+  }
+}

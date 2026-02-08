@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Attribution Dashboard — CEF HR</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header { text-align: center; padding: 30px 0; }
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header .subtitle { color: #8892b0; font-size: 1.1em; }
+        .header .filter-note { color: #f59e0b; font-size: 0.9em; margin-top: 8px; }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-card .number { font-size: 2.2em; font-weight: 700; color: #4facfe; }
+        .stat-card .label { color: #8892b0; margin-top: 5px; font-size: 0.9em; }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chart-card h2 { font-size: 1.2em; margin-bottom: 15px; color: #e0e0e0; }
+        .chart-container { position: relative; height: 300px; }
+        .table-card { grid-column: span 2; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        th { background: rgba(79, 172, 254, 0.2); color: #4facfe; }
+        tr:hover { background: rgba(255, 255, 255, 0.05); }
+        .bar { height: 20px; border-radius: 4px; }
+        .badge {
+            display: inline-block; padding: 4px 8px; border-radius: 4px;
+            font-size: 0.8em; font-weight: 600;
+        }
+        .badge-green { background: #10b981; color: white; }
+        .badge-yellow { background: #f59e0b; color: black; }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+        .insight-box {
+            background: rgba(79, 172, 254, 0.1);
+            border-left: 4px solid #4facfe;
+            padding: 15px; margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .insight-box h3 { color: #4facfe; margin-bottom: 10px; }
+        @media (max-width: 900px) {
+            .table-card { grid-column: span 1; }
+            .dashboard { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Source Attribution Dashboard</h1>
+        <div class="subtitle">CEF HR Pipeline • Human-Scored Candidates Only</div>
+        <div class="filter-note">⚠️ Only showing candidates with both a Human Score AND a Source tag (N=1,259)</div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="number">1,259</div>
+            <div class="label">Human-Scored w/ Source</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">12</div>
+            <div class="label">Source Channels</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">4.6</div>
+            <div class="label">Avg Human Score</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">36%</div>
+            <div class="label">High Quality (≥7)</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">89%</div>
+            <div class="label">Best HQ Rate (WF Autopilot)</div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- Source Distribution -->
+        <div class="chart-card">
+            <h2>📈 Source Distribution (Volume)</h2>
+            <div class="chart-container">
+                <canvas id="sourceDistChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Quality by Source -->
+        <div class="chart-card">
+            <h2>⭐ Avg Human Score by Source</h2>
+            <div class="chart-container">
+                <canvas id="qualityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- HQ Rate by Source -->
+        <div class="chart-card">
+            <h2>🎯 High-Quality Rate (Human Score ≥7)</h2>
+            <div class="chart-container">
+                <canvas id="hqRateChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Sources by Role -->
+        <div class="chart-card">
+            <h2>👥 Sources by Role</h2>
+            <div class="chart-container">
+                <canvas id="roleSourceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Volume vs Quality Bubble -->
+        <div class="chart-card">
+            <h2>📊 Volume vs Quality (Bubble = HQ Rate)</h2>
+            <div class="chart-container">
+                <canvas id="volumeQualityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- AI vs Human Score -->
+        <div class="chart-card">
+            <h2>🤖 AI Score vs Human Score by Source</h2>
+            <div class="chart-container">
+                <canvas id="aiVsHumanChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Detailed Table -->
+        <div class="chart-card table-card">
+            <h2>📋 Source Performance Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Volume</th>
+                        <th>Distribution</th>
+                        <th>Avg Human</th>
+                        <th>Avg AI</th>
+                        <th>HQ Rate (≥7)</th>
+                        <th>Top Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Inbound: Join</td>
+                        <td>666</td>
+                        <td><div class="bar" style="width:100%; background: linear-gradient(90deg, #4facfe, #00f2fe)"></div></td>
+                        <td><span class="badge badge-red">4.1</span></td>
+                        <td><span class="badge badge-yellow">6.5</span></td>
+                        <td>158 / 666 (24%)</td>
+                        <td>AI Innovator (219)</td>
+                    </tr>
+                    <tr>
+                        <td>Inbound: Wellfound</td>
+                        <td>242</td>
+                        <td><div class="bar" style="width:36%; background: linear-gradient(90deg, #43e97b, #38f9d7)"></div></td>
+                        <td><span class="badge badge-yellow">5.8</span></td>
+                        <td><span class="badge badge-yellow">6.2</span></td>
+                        <td>135 / 242 (56%)</td>
+                        <td>Principal FS (123)</td>
+                    </tr>
+                    <tr>
+                        <td>Inbound: LinkedIn</td>
+                        <td>178</td>
+                        <td><div class="bar" style="width:27%; background: linear-gradient(90deg, #667eea, #764ba2)"></div></td>
+                        <td><span class="badge badge-red">3.4</span></td>
+                        <td><span class="badge badge-yellow">6.7</span></td>
+                        <td>49 / 178 (28%)</td>
+                        <td>Unknown (136)</td>
+                    </tr>
+                    <tr>
+                        <td>Outbound: Lemlist</td>
+                        <td>49</td>
+                        <td><div class="bar" style="width:7%; background: linear-gradient(90deg, #fa709a, #fee140)"></div></td>
+                        <td><span class="badge badge-green">6.3</span></td>
+                        <td><span class="badge badge-yellow">6.3</span></td>
+                        <td>40 / 49 (82%)</td>
+                        <td>AI Innovator (24)</td>
+                    </tr>
+                    <tr>
+                        <td>Outbound: LinkedIn</td>
+                        <td>45</td>
+                        <td><div class="bar" style="width:7%; background: linear-gradient(90deg, #a18cd1, #fbc2eb)"></div></td>
+                        <td><span class="badge badge-yellow">5.9</span></td>
+                        <td><span class="badge badge-green">7.6</span></td>
+                        <td>23 / 45 (51%)</td>
+                        <td>AI Innovator (23)</td>
+                    </tr>
+                    <tr>
+                        <td>Wellfound: Autopilot</td>
+                        <td>35</td>
+                        <td><div class="bar" style="width:5%; background: linear-gradient(90deg, #f093fb, #f5576c)"></div></td>
+                        <td><span class="badge badge-green">6.9</span></td>
+                        <td><span class="badge badge-green">6.9</span></td>
+                        <td>31 / 35 (89%)</td>
+                        <td>AI Innovator (25)</td>
+                    </tr>
+                    <tr>
+                        <td>Inbound: Company Website</td>
+                        <td>33</td>
+                        <td><div class="bar" style="width:5%; background: linear-gradient(90deg, #5ee7df, #b490ca)"></div></td>
+                        <td><span class="badge badge-yellow">5.3</span></td>
+                        <td><span class="badge badge-green">6.9</span></td>
+                        <td>16 / 33 (48%)</td>
+                        <td>Principal FS (16)</td>
+                    </tr>
+                    <tr>
+                        <td>Inbound: RemoteOK</td>
+                        <td>6</td>
+                        <td><div class="bar" style="width:1%; background: #374151"></div></td>
+                        <td><span class="badge badge-red">1.3</span></td>
+                        <td><span class="badge badge-red">4.0</span></td>
+                        <td>1 / 6 (17%)</td>
+                        <td>Principal FS (5)</td>
+                    </tr>
+                    <tr>
+                        <td><em>Others (HN, Remocate, Recooty, Web3 Career)</em></td>
+                        <td>5</td>
+                        <td><div class="bar" style="width:1%; background: #374151"></div></td>
+                        <td><span class="badge badge-yellow">—</span></td>
+                        <td><span class="badge badge-yellow">—</span></td>
+                        <td>3 / 5</td>
+                        <td>Mixed</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Insights -->
+        <div class="chart-card table-card">
+            <h2>💡 Key Insights</h2>
+            <div class="insight-box">
+                <h3>🏆 Best ROI: Wellfound Autopilot</h3>
+                <p><strong>89% high-quality rate</strong> with avg human score 6.9. Small volume (35) but nearly every candidate is worth interviewing. Scale this channel.</p>
+            </div>
+            <div class="insight-box">
+                <h3>🎯 Outbound Lemlist: Hidden Gem</h3>
+                <p><strong>82% HQ rate</strong> — second best quality channel. Only 49 candidates but extremely targeted. Human score (6.3) closely matches AI score (6.3), showing good calibration.</p>
+            </div>
+            <div class="insight-box">
+                <h3>📉 Join: Volume Leader, Quality Laggard</h3>
+                <p>53% of all scored candidates come from Join, but only <strong>24% are high-quality</strong> (human avg 4.1). The AI overestimates Join candidates by 2.4 points (AI: 6.5 vs Human: 4.1). Consider tightening AI prompts for Join or adding pre-filters.</p>
+            </div>
+            <div class="insight-box">
+                <h3>⚠️ AI-Human Calibration Gap</h3>
+                <p><strong>Inbound LinkedIn</strong> has the worst calibration: AI scores avg 6.7 but humans score 3.4 — a <strong>3.3 point gap</strong>. The 136 "Unknown" role entries suggest missing role tagging from this channel.</p>
+            </div>
+            <div class="insight-box">
+                <h3>📊 Recommendations</h3>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Scale:</strong> Wellfound Autopilot + Lemlist outbound — best quality per candidate</li>
+                    <li><strong>Fix:</strong> AI scoring for Join & LinkedIn inbound — massive overestimation</li>
+                    <li><strong>Tag:</strong> 315 candidates have "Unknown" role — mostly from LinkedIn inbound</li>
+                    <li><strong>Investigate:</strong> Company Website (48% HQ, low volume) — worth driving more traffic here</li>
+                    <li><strong>Drop:</strong> RemoteOK — 6 candidates, avg human score 1.3</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colors = ['#4facfe','#43e97b','#667eea','#fa709a','#a18cd1','#f093fb','#5ee7df','#ef4444','#fee140'];
+        const sources = ['Join','Wellfound','LinkedIn (In)','Lemlist','LinkedIn (Out)','WF Autopilot','Company Web','RemoteOK','Other'];
+        const volumes = [666, 242, 178, 49, 45, 35, 33, 6, 5];
+        const avgHuman = [4.1, 5.8, 3.4, 6.3, 5.9, 6.9, 5.3, 1.3, 5.3];
+        const avgAI = [6.5, 6.2, 6.7, 6.3, 7.6, 6.9, 6.9, 4.0, 5.5];
+        const hqRate = [24, 56, 28, 82, 51, 89, 48, 17, 60];
+
+        // Source Distribution Donut
+        new Chart(document.getElementById('sourceDistChart'), {
+            type: 'doughnut',
+            data: {
+                labels: sources,
+                datasets: [{ data: volumes, backgroundColor: colors, borderWidth: 0 }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'right', labels: { color: '#e0e0e0', font: { size: 11 } } } }
+            }
+        });
+
+        // Avg Human Score by Source
+        new Chart(document.getElementById('qualityChart'), {
+            type: 'bar',
+            data: {
+                labels: sources.slice(0, 8),
+                datasets: [{
+                    label: 'Avg Human Score',
+                    data: avgHuman.slice(0, 8),
+                    backgroundColor: avgHuman.slice(0, 8).map(v => v >= 6 ? '#10b981' : v >= 4.5 ? '#f59e0b' : '#ef4444'),
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { min: 0, max: 10, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#8892b0' }, grid: { display: false } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // HQ Rate by Source
+        new Chart(document.getElementById('hqRateChart'), {
+            type: 'bar',
+            data: {
+                labels: sources.slice(0, 8),
+                datasets: [{
+                    label: 'HQ Rate %',
+                    data: hqRate.slice(0, 8),
+                    backgroundColor: hqRate.slice(0, 8).map(v => v >= 70 ? '#10b981' : v >= 40 ? '#f59e0b' : '#ef4444'),
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { max: 100, ticks: { color: '#8892b0', callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Sources by Role (Stacked)
+        new Chart(document.getElementById('roleSourceChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Join','Wellfound','LinkedIn (In)','Lemlist','LinkedIn (Out)','WF Autopilot','Company Web'],
+                datasets: [
+                    { label: 'AI Innovator', data: [219, 54, 8, 24, 23, 25, 11], backgroundColor: '#4facfe' },
+                    { label: 'Principal FS', data: [108, 123, 34, 22, 2, 10, 16], backgroundColor: '#43e97b' },
+                    { label: 'AI Engineer', data: [182, 10, 0, 0, 0, 0, 0], backgroundColor: '#fa709a' },
+                    { label: "Founder's Assoc", data: [55, 0, 0, 0, 0, 0, 0], backgroundColor: '#fee140' },
+                    { label: 'Unknown/Other', data: [95, 55, 136, 3, 20, 0, 6], backgroundColor: '#374151' }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { stacked: true, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                plugins: { legend: { labels: { color: '#e0e0e0' } } }
+            }
+        });
+
+        // Volume vs Quality Bubble
+        new Chart(document.getElementById('volumeQualityChart'), {
+            type: 'bubble',
+            data: {
+                datasets: [
+                    { label: 'Join', data: [{x:666, y:4.1, r:12}], backgroundColor: 'rgba(79,172,254,0.7)' },
+                    { label: 'Wellfound', data: [{x:242, y:5.8, r:18}], backgroundColor: 'rgba(67,233,123,0.7)' },
+                    { label: 'LinkedIn (In)', data: [{x:178, y:3.4, r:10}], backgroundColor: 'rgba(102,126,234,0.7)' },
+                    { label: 'Lemlist', data: [{x:49, y:6.3, r:22}], backgroundColor: 'rgba(250,112,154,0.7)' },
+                    { label: 'LinkedIn (Out)', data: [{x:45, y:5.9, r:16}], backgroundColor: 'rgba(161,140,209,0.7)' },
+                    { label: 'WF Autopilot', data: [{x:35, y:6.9, r:25}], backgroundColor: 'rgba(240,147,251,0.7)' },
+                    { label: 'Company Web', data: [{x:33, y:5.3, r:15}], backgroundColor: 'rgba(94,231,223,0.7)' }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Volume', color: '#8892b0' }, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { title: { display: true, text: 'Avg Human Score', color: '#8892b0' }, min: 0, max: 10, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                plugins: { legend: { labels: { color: '#e0e0e0' } } }
+            }
+        });
+
+        // AI vs Human Score
+        new Chart(document.getElementById('aiVsHumanChart'), {
+            type: 'bar',
+            data: {
+                labels: sources.slice(0, 8),
+                datasets: [
+                    { label: 'Human Score', data: avgHuman.slice(0, 8), backgroundColor: '#4facfe', borderRadius: 4 },
+                    { label: 'AI Score', data: avgAI.slice(0, 8), backgroundColor: 'rgba(79,172,254,0.3)', borderColor: '#4facfe', borderWidth: 1, borderRadius: 4 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { ticks: { color: '#8892b0', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { min: 0, max: 10, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                plugins: { legend: { labels: { color: '#e0e0e0' } } }
+            }
+        });
+    </script>
+</body>
+</html>

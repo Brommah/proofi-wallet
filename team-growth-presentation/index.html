@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Growth Execution — KD Week 2026-03</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;
+  --surface:#12121a;
+  --surface-raised:#1a1a26;
+  --border:#2a2a3a;
+  --border-glow:#3a3a5a;
+  --text:#e8e6f0;
+  --text-dim:#8a889a;
+  --accent:#7c6aef;
+  --accent-bright:#9d8fff;
+  --green:#34d399;
+  --amber:#fbbf24;
+  --blue:#60a5fa;
+  --rose:#f472b6;
+  --cyan:#22d3ee;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Noise texture overlay */
+body::before{
+  content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+/* ─── HEADER ─── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;
+  padding:2rem;position:relative;
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(124,106,239,.08),transparent);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.4rem 1rem;border-radius:100px;
+  background:rgba(124,106,239,.1);border:1px solid rgba(124,106,239,.25);
+  font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--accent-bright);margin-bottom:2rem;
+  font-weight:500;
+}
+.hero-badge .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  animation:pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{
+  font-size:clamp(2.4rem,5vw,4.2rem);font-weight:700;
+  letter-spacing:-.03em;line-height:1.1;
+  background:linear-gradient(135deg,var(--text) 0%,var(--accent-bright) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:1rem;
+}
+.hero .subtitle{
+  font-size:clamp(1rem,2vw,1.3rem);color:var(--text-dim);
+  font-weight:300;letter-spacing:.02em;
+}
+.hero .subtitle strong{color:var(--text);font-weight:500}
+.scroll-hint{
+  position:absolute;bottom:2rem;
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  color:var(--text-dim);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;
+  animation:float 3s ease infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.scroll-hint svg{width:20px;height:20px;stroke:var(--text-dim)}
+
+/* ─── NAV PILLS ─── */
+.nav-strip{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,10,15,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:.75rem 1.5rem;display:flex;justify-content:center;gap:.5rem;
+  transition:opacity .3s;
+}
+.nav-pill{
+  padding:.45rem 1.1rem;border-radius:100px;
+  font-size:.82rem;font-weight:500;letter-spacing:.02em;
+  color:var(--text-dim);border:1px solid transparent;
+  cursor:pointer;transition:all .25s;text-decoration:none;
+  white-space:nowrap;
+}
+.nav-pill:hover{color:var(--text);border-color:var(--border)}
+.nav-pill.active{color:var(--accent-bright);border-color:var(--accent);background:rgba(124,106,239,.08)}
+
+/* ─── SECTIONS ─── */
+.section{
+  max-width:1100px;margin:0 auto;
+  padding:5rem 1.5rem 3rem;
+}
+.section-label{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.section-label .tag{
+  padding:.2rem .6rem;border-radius:4px;font-size:.7rem;font-weight:600;
+}
+.tag-a{background:rgba(52,211,153,.12);color:var(--green)}
+.tag-b{background:rgba(96,165,250,.12);color:var(--blue)}
+.tag-c{background:rgba(251,191,36,.12);color:var(--amber)}
+.section-title{
+  font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;
+  letter-spacing:-.02em;margin-bottom:.6rem;line-height:1.2;
+}
+.section-desc{
+  color:var(--text-dim);font-size:1rem;max-width:640px;margin-bottom:2.5rem;
+  line-height:1.7;
+}
+
+/* ─── CARDS ─── */
+.card-grid{display:grid;gap:1rem}
+.card-grid.two-col{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:1.4rem 1.6rem;
+  position:relative;overflow:hidden;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+}
+.card:hover{
+  border-color:var(--border-glow);
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(124,106,239,.3),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.card:hover::before{opacity:1}
+
+.card-head{display:flex;align-items:flex-start;gap:.8rem;margin-bottom:.6rem}
+.card-icon{
+  flex-shrink:0;width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;
+}
+.card-icon.green{background:rgba(52,211,153,.1);color:var(--green)}
+.card-icon.blue{background:rgba(96,165,250,.1);color:var(--blue)}
+.card-icon.amber{background:rgba(251,191,36,.1);color:var(--amber)}
+.card-icon.rose{background:rgba(244,114,182,.1);color:var(--rose)}
+.card-icon.cyan{background:rgba(34,211,238,.1);color:var(--cyan)}
+.card-icon.accent{background:rgba(124,106,239,.1);color:var(--accent-bright)}
+
+.card-title{font-size:1rem;font-weight:600;line-height:1.3}
+.card-body{color:var(--text-dim);font-size:.88rem;line-height:1.65}
+.card-body code{
+  font-family:'JetBrains Mono',monospace;font-size:.8rem;
+  background:rgba(124,106,239,.1);padding:.1rem .35rem;border-radius:4px;
+  color:var(--accent-bright);
+}
+
+.status{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  padding:.2rem .55rem;border-radius:100px;margin-top:.6rem;
+}
+.status.done{background:rgba(52,211,153,.1);color:var(--green)}
+.status.progress{background:rgba(251,191,36,.1);color:var(--amber)}
+.status.planned{background:rgba(96,165,250,.1);color:var(--blue)}
+
+/* ─── CARD LINKS ─── */
+.card-links{
+  display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem;
+}
+.card-links a{
+  display:inline-flex;align-items:center;gap:.25rem;
+  font-size:.75rem;font-weight:500;letter-spacing:.02em;
+  color:var(--accent-bright);text-decoration:none;
+  padding:.2rem .55rem;border-radius:100px;
+  background:rgba(124,106,239,.08);border:1px solid rgba(124,106,239,.15);
+  transition:all .2s;
+}
+.card-links a:hover{
+  background:rgba(124,106,239,.15);border-color:rgba(124,106,239,.3);
+  transform:translateY(-1px);
+}
+
+/* ─── BUCKET B: STATS ─── */
+.stats-row{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:1rem;margin-bottom:2rem;
+}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1.2rem 1.4rem;text-align:center;
+}
+.stat-value{
+  font-size:2rem;font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--accent-bright),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat-label{font-size:.78rem;color:var(--text-dim);margin-top:.2rem;letter-spacing:.03em}
+
+.dash-feature{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.9rem 1.2rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:.6rem;
+  transition:border-color .3s;
+}
+.dash-feature:hover{border-color:var(--border-glow)}
+.dash-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.dash-feature-text{font-size:.92rem;font-weight:400}
+.dash-feature-text strong{font-weight:600;color:var(--text)}
+
+/* ─── ROADMAP TIMELINE ─── */
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{
+  content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(180deg,var(--amber),var(--accent),var(--blue));
+  border-radius:2px;
+}
+.timeline-item{position:relative;margin-bottom:1.8rem}
+.timeline-item::before{
+  content:'';position:absolute;left:-2rem;top:.55rem;
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid var(--accent);background:var(--bg);
+  z-index:1;
+}
+.timeline-item.done::before{background:var(--green);border-color:var(--green)}
+.timeline-item.progress::before{background:var(--amber);border-color:var(--amber);
+  box-shadow:0 0 12px rgba(251,191,36,.3);
+}
+.timeline-item.planned::before{background:var(--bg);border-color:var(--blue)}
+
+.timeline-head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.timeline-title{font-size:1.05rem;font-weight:600}
+.timeline-body{color:var(--text-dim);font-size:.88rem;margin-top:.3rem;line-height:1.6}
+
+/* ─── DIVIDER ─── */
+.divider{
+  height:1px;max-width:1100px;margin:0 auto;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+}
+
+/* ─── FOOTER ─── */
+.footer{
+  max-width:1100px;margin:0 auto;padding:3rem 1.5rem 2rem;
+  display:flex;justify-content:space-between;align-items:center;
+  color:var(--text-dim);font-size:.82rem;
+  border-top:1px solid var(--border);
+}
+.footer-logo{display:flex;align-items:center;gap:.5rem;font-weight:500;color:var(--text)}
+
+/* ─── REVEAL ANIMATION ─── */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:640px){
+  .section{padding:3rem 1rem 2rem}
+  .card{padding:1.1rem 1.2rem}
+  .card-grid.two-col{grid-template-columns:1fr}
+  .nav-strip{gap:.3rem;padding:.6rem .8rem}
+  .nav-pill{padding:.35rem .7rem;font-size:.75rem}
+  .footer{flex-direction:column;gap:.8rem;text-align:center}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .hero h1{padding:0 .5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero" id="top">
+  <div class="hero-badge"><span class="dot"></span> Week 2026-03 Report</div>
+  <h1>Team Growth Execution</h1>
+  <p class="subtitle"><strong>Cerebellum Network</strong> · Team Charlie</p>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </div>
+</header>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav-strip" id="nav">
+  <a class="nav-pill active" href="#before" data-section="before">Before</a>
+  <a class="nav-pill" href="#automation" data-section="automation">A · Automation</a>
+  <a class="nav-pill" href="#dashboard" data-section="dashboard">B · Dashboard</a>
+  <a class="nav-pill" href="#roadmap" data-section="roadmap">C · Roadmap</a>
+</nav>
+
+<!-- ═══════════════ BEFORE ═══════════════ -->
+<section class="section" id="before">
+  <div class="reveal">
+    <div class="section-label">
+      <span class="tag" style="background:rgba(244,114,182,.12);color:var(--rose)">⚠</span>
+      <span style="color:var(--rose)">The Starting Point</span>
+    </div>
+    <h2 class="section-title">What We Inherited</h2>
+    <p class="section-desc">Before any of this work started, Team Charlie's hiring infrastructure was broken at every layer. Here's what we were dealing with.</p>
+  </div>
+
+  <div class="card-grid two-col">
+
+    <div class="card reveal" style="border-color:rgba(244,114,182,.2)">
+      <div class="card-head">
+        <div class="card-icon rose">💀</div>
+        <div><div class="card-title">100 Fake SLA Violations</div></div>
+      </div>
+      <div class="card-body">
+        Dashboard showed <strong style="color:var(--rose)">100 "SLA violations"</strong> with 9,000+ hour wait times. Reality: these were stale talent pool candidates — not real violations. Signal completely buried in noise. Fred couldn't see what mattered.
+      </div>
+    </div>
+
+    <div class="card reveal reveal-delay-1" style="border-color:rgba(244,114,182,.2)">
+      <div class="card-head">
+        <div class="card-icon rose">🔥</div>
+        <div><div class="card-title">Zapier Pipeline — Broken</div></div>
+      </div>
+      <div class="card-body">
+        The entire Zapier automation was failing. Records not being added to the Candidate Board. Multiple errored runs in January. Google Drive + Notion integrations broken. Candidates entering the void.
+      </div>
+    </div>
+
+    <div class="card reveal" style="border-color:rgba(244,114,182,.2)">
+      <div class="card-head">
+        <div class="card-icon rose">📊</div>
+        <div><div class="card-title">Hundreds of Miscategorized Candidates</div></div>
+      </div>
+      <div class="card-body">
+        "Promising (talent pool)" and "Week+ Silence" were being treated as active pipeline. 95/100 candidates on the first page were stale (>30 days). All stats were garbage — no one trusted the data.
+      </div>
+    </div>
+
+    <div class="card reveal reveal-delay-1" style="border-color:rgba(244,114,182,.2)">
+      <div class="card-head">
+        <div class="card-icon rose">🌐</div>
+        <div><div class="card-title">Broken Career Pages</div></div>
+      </div>
+      <div class="card-body">
+        Career pages showing wrong roles. Lever directs broken. Candidates clicking links and landing nowhere. Source tracking defaulting everything to "Direct" — zero attribution.
+      </div>
+    </div>
+
+    <div class="card reveal" style="border-color:rgba(244,114,182,.2)">
+      <div class="card-head">
+        <div class="card-icon rose">🎯</div>
+        <div><div class="card-title">Actions Split Across Tabs</div></div>
+      </div>
+      <div class="card-body">
+        Fred's actions were scattered across multiple dashboard tabs. "Actions Required" vs "Fred's Queue" vs "Overview" — no single place to see what needs doing. Every decision required clicking through 3+ views.
+      </div>
+    </div>
+
+    <div class="card reveal reveal-delay-1" style="border-color:rgba(244,114,182,.2)">
+      <div class="card-head">
+        <div class="card-icon rose">🤷</div>
+        <div><div class="card-title">No Source Tracking</div></div>
+      </div>
+      <div class="card-body">
+        Impossible to tell where candidates came from. JOIN poller was defaulting everything to "Direct." No way to measure which channel was actually working. Outbound ROI = unknown.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ BUCKET A ═══════════════ -->
+<section class="section" id="automation">
+  <div class="reveal">
+    <div class="section-label">
+      <span class="tag tag-a">A</span>
+      <span style="color:var(--green)">Automation Fixes Done</span>
+    </div>
+    <h2 class="section-title">What We Built</h2>
+    <p class="section-desc">Ten systems shipped. From AI scoring to outbound sourcing — every piece of the hiring pipeline was touched, fixed, or rebuilt from scratch.</p>
+  </div>
+
+  <div class="card-grid two-col">
+
+    <div class="card reveal">
+      <div class="card-head">
+        <div class="card-icon green">⚡</div>
+        <div>
+          <div class="card-title">AI Scoring Pipeline</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Migrated <code>GPT-4</code> → <code>Gemini Flash 3</code> (free, structured output). MAE between human/AI scores drastically dropped. Version tracking synced across GitHub + Notion.
+        <div class="card-links">
+          <a href="https://www.notion.so/AI-Scoring-Dashboard-2f5d800083d6813b90b2d8c88a7a1c33" target="_blank">AI Scoring Dashboard ↗</a>
+          <a href="https://docs.google.com/document/d/1olglbWjbJ4gSKR8qWTVWCyn0ZO8mdVqZ/edit" target="_blank">Scoring Report ↗</a>
+          <a href="https://github.com/cere-io/HR-2026-E2E" target="_blank">GitHub Repo ↗</a>
+        </div>
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+    <div class="card reveal reveal-delay-1">
+      <div class="card-head">
+        <div class="card-icon blue">📊</div>
+        <div>
+          <div class="card-title">Source Attribution</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Dashboard distinguishing Join.com vs WellFound vs SiriNet vs CEF website origins. Click tracking via <code>/apply/:role?src=</code> redirect deployed on Railway.
+        <div class="card-links">
+          <a href="https://hr-funnel-monitor-production.up.railway.app/v3" target="_blank">Live Dashboard ↗</a>
+          <a href="https://docs.google.com/document/d/1ynM0KIm2izX9p128JLQwpHlr2jir5ZMe/edit" target="_blank">Sourcing Strategy ↗</a>
+        </div>
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-head">
+        <div class="card-icon rose">🔥</div>
+        <div>
+          <div class="card-title">Kicked Out Zapier</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Join.com pulled directly. WellFound via Google Apps Script polling inbox every 50min. Resumes extracted to Drive → scoring pipeline. Zero vendor lock-in.
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+    <div class="card reveal reveal-delay-1">
+      <div class="card-head">
+        <div class="card-icon cyan">🧹</div>
+        <div>
+          <div class="card-title">Pipeline Cleanup</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Removed hundreds of miscategorized candidates that were skewing stats. Single clean Notion view — accurate data, no noise.
+        <div class="card-links">
+          <a href="https://www.notion.so/Candidate-Board-21fd800083d680699e44f0ee9d2d09a1" target="_blank">Candidate Board ↗</a>
+        </div>
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-head">
+        <div class="card-icon accent">🌐</div>
+        <div>
+          <div class="card-title">Career Pages Fixed</div>
+        </div>
+      </div>
+      <div class="card-body">
+        All career pages updated. Lever directs fixed. Correct roles shown. No more broken links sending candidates into the void.
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+    <div class="card reveal reveal-delay-1">
+      <div class="card-head">
+        <div class="card-icon amber">📈</div>
+        <div>
+          <div class="card-title">Daily Eval Tracker</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Checks last 10 evaluations daily. Alerts on score drift — catches calibration issues before they become systemic.
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-head">
+        <div class="card-icon accent">🤖</div>
+        <div>
+          <div class="card-title">Clawdbot Integration</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Natural language candidate review, MAE checking, and outbound list generation — all via conversational AI interface.
+        <div class="card-links">
+          <a href="https://www.notion.so/Wiki-Programmatic-Outreach-24cd800083d6807db298f8417e2ad05e" target="_blank">Outreach Wiki ↗</a>
+        </div>
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+    <div class="card reveal reveal-delay-1">
+      <div class="card-head">
+        <div class="card-icon green">📨</div>
+        <div>
+          <div class="card-title">Lemlist Campaign</div>
+        </div>
+      </div>
+      <div class="card-body">
+        190/197 blockchain engineer leads imported via API from Clay sourcing. Outbound sequences active and running.
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-head">
+        <div class="card-icon blue">📣</div>
+        <div>
+          <div class="card-title">X Ads Campaign</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Deployed for Innovation Manager role. Currently testing for Blockchain Engineer — expanding reach beyond traditional job boards.
+        <div class="card-links">
+          <a href="https://docs.google.com/document/d/1ds9bnfptrUGfXR4JGL9N0rUTVhF8MR5o/edit" target="_blank">Ad Copy (AI) ↗</a>
+          <a href="https://docs.google.com/document/d/1Ewp285Rv2MHbHke5KD" target="_blank">Ad Copy (All Roles) ↗</a>
+        </div>
+      </div>
+      <div class="status progress">⟳ In Progress</div>
+    </div>
+
+    <div class="card reveal reveal-delay-1">
+      <div class="card-head">
+        <div class="card-icon cyan">⛏️</div>
+        <div>
+          <div class="card-title">Clay/GitHub Sourcing</div>
+        </div>
+      </div>
+      <div class="card-body">
+        128 senior blockchain engineers + 6,291 principal software engineers imported. Massive outbound talent pool ready for activation.
+      </div>
+      <div class="status done">✓ Done</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ BUCKET B ═══════════════ -->
+<section class="section" id="dashboard">
+  <div class="reveal">
+    <div class="section-label">
+      <span class="tag tag-b">B</span>
+      <span style="color:var(--blue)">Dashboard</span>
+    </div>
+    <h2 class="section-title">Volume + Quality Overlay</h2>
+    <p class="section-desc">Real-time visibility into pipeline health. Every candidate scored, every source tracked, every outlier surfaced.
+      <span class="card-links" style="display:block;margin-top:.6rem">
+        <a href="https://hr-funnel-monitor-production.up.railway.app/v3" target="_blank">Live Dashboard ↗</a>
+        <a href="https://www.notion.so/AI-Scoring-Dashboard-2f5d800083d6813b90b2d8c88a7a1c33" target="_blank">AI Scoring ↗</a>
+        <a href="https://www.notion.so/Candidate-Board-21fd800083d680699e44f0ee9d2d09a1" target="_blank">Candidate Board ↗</a>
+      </span>
+    </p>
+  </div>
+
+  <div class="stats-row reveal">
+    <div class="stat-card">
+      <div class="stat-value">6,419+</div>
+      <div class="stat-label">Engineers Sourced</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">4</div>
+      <div class="stat-label">Active Sources</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">Top 10%</div>
+      <div class="stat-label">Rock Star Threshold</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">μ + 2σ</div>
+      <div class="stat-label">Selection Formula</div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="dash-feature">
+      <div class="dash-dot" style="background:var(--green)"></div>
+      <div class="dash-feature-text"><strong>Inbound vs Outbound</strong> — volume by source, tracked day-by-day</div>
+    </div>
+    <div class="dash-feature">
+      <div class="dash-dot" style="background:var(--accent-bright)"></div>
+      <div class="dash-feature-text"><strong>Quality Overlay</strong> — scoring distribution layered on top of volume data</div>
+    </div>
+    <div class="dash-feature">
+      <div class="dash-dot" style="background:var(--amber)"></div>
+      <div class="dash-feature-text"><strong>Rock Star Rate</strong> — top 10% candidates (mean + 2σ), tracked daily &amp; weekly</div>
+    </div>
+    <div class="dash-feature">
+      <div class="dash-dot" style="background:var(--blue)"></div>
+      <div class="dash-feature-text"><strong>Per-Source Comparison</strong> — rock star rate by origin (Join, WellFound, SiriNet, CEF)</div>
+    </div>
+    <div class="dash-feature">
+      <div class="dash-dot" style="background:var(--rose)"></div>
+      <div class="dash-feature-text"><strong>Hero Stats</strong> — total count, avg AI/human scores, std dev, top 10% threshold</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ BUCKET C ═══════════════ -->
+<section class="section" id="roadmap">
+  <div class="reveal">
+    <div class="section-label">
+      <span class="tag tag-c">C</span>
+      <span style="color:var(--amber)">System Improvements</span>
+    </div>
+    <h2 class="section-title">Roadmap</h2>
+    <p class="section-desc">What's next — structured improvements to close gaps in process, tooling, and cross-team alignment.</p>
+  </div>
+
+  <div class="timeline reveal">
+
+    <div class="timeline-item progress">
+      <div class="timeline-head">
+        <span class="timeline-title">Interview Scripts</span>
+        <span class="status progress">⟳ This Week</span>
+      </div>
+      <div class="timeline-body">15-min pre-screen template + longer engineering deep-dive interview. Standardized evaluation criteria across all interviewers.</div>
+    </div>
+
+    <div class="timeline-item progress">
+      <div class="timeline-head">
+        <span class="timeline-title">Daily Execution Check-ins</span>
+        <span class="status progress">⟳ Active</span>
+      </div>
+      <div class="timeline-body">Tue/Wed mid-week updates to Fred. Structured format — blockers, wins, metrics delta.
+        <div class="card-links">
+          <a href="https://docs.google.com/document/d/1G88aT5a341H9-srkQhlL5UnhrWKzc4_QIlVV2Iap4RQ/edit" target="_blank">Daily Execution Notes ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item planned">
+      <div class="timeline-head">
+        <span class="timeline-title">Notification Bot</span>
+        <span class="status planned">◇ Planned</span>
+      </div>
+      <div class="timeline-body">Reconfigure Slack bot to reduce noise per Val's feedback. Signal-to-noise ratio is the target — only actionable alerts.</div>
+    </div>
+
+    <div class="timeline-item planned">
+      <div class="timeline-head">
+        <span class="timeline-title">Candidate Routing</span>
+        <span class="status planned">◇ Planned</span>
+      </div>
+      <div class="timeline-body">Rock stars → fast-track. Above threshold → 15min pre-screen. Overdue 2+ days → auto-alert. Zero candidates falling through cracks.</div>
+    </div>
+
+    <div class="timeline-item planned">
+      <div class="timeline-head">
+        <span class="timeline-title">AI Unification</span>
+        <span class="status planned">◇ Planned</span>
+      </div>
+      <div class="timeline-body">Phased approach to unify AI developments, cross-referenced with engineering (Ehor/Sergei). One brain, not five scripts.</div>
+    </div>
+
+    <div class="timeline-item planned">
+      <div class="timeline-head">
+        <span class="timeline-title">Hackathon Prep</span>
+        <span class="status planned">◇ ~3 Weeks</span>
+      </div>
+      <div class="timeline-body">Topics list, toolkit presentation, demo stacks, local models setup. Coordinating with Salo on logistics and scope.
+        <div class="card-links">
+          <a href="https://docs.google.com/document/d/1GVwNvELveqtoc_-fbWFSK_jSTXKCAdCFy7FmwRO435k/edit" target="_blank">Hackathon Prep Doc ↗</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="footer-logo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+    </svg>
+    Prepared by Mart
+  </div>
+  <div>Cerebellum Network · Team Charlie · January 2026</div>
+</footer>
+
+<script>
+// ─── Scroll reveal ───
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// ─── Nav active state ───
+const sections = document.querySelectorAll('.section');
+const pills = document.querySelectorAll('.nav-pill');
+
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      pills.forEach(p => p.classList.remove('active'));
+      const pill = document.querySelector(`[data-section="${e.target.id}"]`);
+      if (pill) pill.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => navObserver.observe(s));
+
+// ─── Smooth pill clicks ───
+pills.forEach(p => {
+  p.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.getElementById(p.dataset.section);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>

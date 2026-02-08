@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verified Profile — CereProof</title>
+  <meta name="description" content="Verified credentials. No middleman. Cryptographically verified on Cere DDC.">
+  <meta property="og:title" content="Verified Profile — CereProof">
+  <meta property="og:description" content="Cryptographically verified credentials stored on decentralized cloud. No LinkedIn needed.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='2' fill='%233B82F6'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='20' font-weight='bold' fill='white'%3E◇%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #fafafa;
+      color: #0a0a0a;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* ─── Top Bar ─── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 64px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #000;
+    }
+
+    .top-bar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #0a0a0a;
+    }
+
+    .top-bar-brand .diamond {
+      width: 32px;
+      height: 32px;
+      background: #3B82F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    .top-bar-brand .brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0a0a0a;
+    }
+
+    .top-bar-brand .brand-tagline {
+      font-size: 11px;
+      color: #9a9a9a;
+      font-weight: 400;
+      display: block;
+      letter-spacing: 0.5px;
+    }
+
+    .top-bar-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .top-btn {
+      padding: 8px 16px;
+      border: 2px solid #000;
+      border-radius: 2px;
+      background: #fff;
+      color: #0a0a0a;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .top-btn:hover {
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    /* ─── Profile Header ─── */
+    .profile-header {
+      margin-bottom: 48px;
+    }
+
+    .profile-header-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      background: #3B82F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #fff;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      flex: 1;
+      min-width: 0;
+      padding-top: 4px;
+    }
+
+    .profile-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 56px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 8px;
+      color: #0a0a0a;
+    }
+
+    .profile-bio {
+      font-size: 16px;
+      color: #3B82F6;
+      margin-bottom: 12px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .profile-address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #9a9a9a;
+      word-break: break-all;
+    }
+
+    .profile-address .full { display: none; }
+
+    /* ─── Stats ─── */
+    .profile-stats {
+      display: flex;
+      gap: 0;
+      border: 2px solid #000;
+      border-radius: 2px;
+      margin-bottom: 48px;
+    }
+
+    .stat {
+      flex: 1;
+      text-align: center;
+      padding: 24px 16px;
+      border-right: 2px solid #000;
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      color: #0a0a0a;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-value.text-date {
+      font-size: 16px;
+      line-height: 2.5;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #9a9a9a;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    /* ─── Trust Banner ─── */
+    .trust-banner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: #3B82F6;
+      border-radius: 2px;
+      margin-bottom: 48px;
+    }
+
+    .trust-banner .icon { font-size: 22px; }
+
+    .trust-banner .text {
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .trust-banner .sub {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      margin-top: 2px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── Section Titles ─── */
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #9a9a9a;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    /* ─── Credential Cards ─── */
+    .credentials {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+
+    .cred-card {
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 2px;
+      padding: 28px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cred-card:hover {
+      border-color: #3B82F6;
+    }
+
+    .cred-card.invalid { border-color: #EF4444; }
+    .cred-card.invalid:hover { border-color: #EF4444; }
+
+    .cred-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .cred-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 6px 14px;
+      border: 2px solid #3B82F6;
+      border-radius: 2px;
+      color: #3B82F6;
+      background: transparent;
+    }
+
+    .cred-type.diploma { border-color: #3B82F6; color: #3B82F6; }
+    .cred-type.employment { border-color: #3B82F6; color: #3B82F6; }
+    .cred-type.certification { border-color: #F59E0B; color: #F59E0B; }
+    .cred-type.skill { border-color: #3B82F6; color: #3B82F6; }
+    .cred-type.membership { border-color: #3B82F6; color: #3B82F6; }
+    .cred-type.award { border-color: #F59E0B; color: #F59E0B; }
+    .cred-type.default { border-color: #9a9a9a; color: #9a9a9a; }
+
+    .cred-verify-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 2px;
+    }
+
+    .cred-verify-badge.valid {
+      background: #f0fdf4;
+      color: #22C55E;
+      border: 1px solid #22C55E;
+    }
+
+    .cred-verify-badge.invalid {
+      background: #fef2f2;
+      color: #EF4444;
+      border: 1px solid #EF4444;
+    }
+
+    .cred-claim {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      color: #0a0a0a;
+    }
+
+    .cred-expand-hint {
+      font-size: 11px;
+      color: #9a9a9a;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .cred-card:hover .cred-expand-hint { color: #3B82F6; }
+    .cred-card.expanded .cred-expand-hint .hint-text { display: none; }
+    .cred-card.expanded .cred-expand-hint .hint-collapse { display: inline; }
+    .cred-expand-hint .hint-collapse { display: none; }
+
+    .cred-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .cred-meta-item {
+      color: #4a4a4a;
+    }
+
+    .cred-meta-item strong {
+      color: #9a9a9a;
+      font-weight: 500;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .cred-meta-item a {
+      color: #4a4a4a;
+      text-decoration: none;
+    }
+
+    .cred-meta-item a:hover { color: #3B82F6; }
+
+    /* Expand */
+    .cred-expand {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      display: none;
+    }
+
+    .cred-card.expanded .cred-expand { display: block; }
+
+    .cred-expand-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .cred-expand-row:last-child { border-bottom: none; }
+
+    .cred-expand-key { color: #9a9a9a; font-weight: 500; }
+    .cred-expand-val { color: #4a4a4a; text-align: right; word-break: break-all; max-width: 60%; }
+
+    /* ─── Claims History ─── */
+    .claims-history {
+      margin-bottom: 64px;
+    }
+
+    .claims-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .claim-history-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 2px;
+      font-size: 14px;
+    }
+
+    .claim-history-card:hover {
+      border-color: #3B82F6;
+    }
+
+    .claim-history-card .claim-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .claim-history-card .claim-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .claim-history-card .claim-info .claim-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 2px;
+      color: #0a0a0a;
+    }
+
+    .claim-history-card .claim-info .claim-doc {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #9a9a9a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .claim-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .claim-status-badge.pending {
+      background: #fffbeb;
+      color: #F59E0B;
+      border: 1px solid #F59E0B;
+    }
+
+    .claim-status-badge.approved {
+      background: #f0fdf4;
+      color: #22C55E;
+      border: 1px solid #22C55E;
+    }
+
+    .claim-status-badge.rejected {
+      background: #fef2f2;
+      color: #EF4444;
+      border: 1px solid #EF4444;
+    }
+
+    /* ─── How it Works ─── */
+    .how-it-works {
+      margin-bottom: 64px;
+    }
+
+    .steps-row {
+      display: flex;
+      gap: 0;
+    }
+
+    .step-card {
+      flex: 1;
+      padding: 32px 24px;
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 2px;
+      border-right: none;
+      text-align: left;
+    }
+
+    .step-card:last-of-type { border-right: 2px solid #000; }
+
+    .step-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 64px;
+      font-weight: 700;
+      color: #e0e0e0;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .step-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0a0a0a;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: #4a4a4a;
+      line-height: 1.6;
+    }
+
+    .step-connector { display: none; }
+
+    /* ─── QR Section ─── */
+    .qr-section {
+      text-align: center;
+      padding: 48px 32px;
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 2px;
+      margin-bottom: 64px;
+    }
+
+    .qr-section .section-title {
+      border-bottom: none;
+      text-align: center;
+    }
+
+    .qr-box {
+      width: 160px;
+      height: 160px;
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 2px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .share-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #3B82F6;
+      word-break: break-all;
+      margin-bottom: 16px;
+    }
+
+    .copy-btn {
+      padding: 10px 24px;
+      border: 2px solid #000;
+      border-radius: 2px;
+      background: #fff;
+      color: #0a0a0a;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+    }
+
+    .copy-btn:hover {
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    /* ─── Get Verified ─── */
+    .get-verified {
+      margin-bottom: 64px;
+    }
+
+    .get-verified-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+      color: #0a0a0a;
+    }
+
+    .get-verified-options {
+      margin-bottom: 32px;
+    }
+
+    .get-verified-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      font-size: 15px;
+      color: #4a4a4a;
+      line-height: 1.5;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .get-verified-option:last-child { border-bottom: none; }
+
+    .get-verified-option .opt-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .get-verified-option strong { color: #0a0a0a; }
+
+    .get-verified-cta {
+      text-align: left;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: #3B82F6;
+      border: 2px solid #3B82F6;
+      border-radius: 2px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+
+    .cta-btn:hover {
+      background: #2563EB;
+      border-color: #2563EB;
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      text-align: center;
+      color: #9a9a9a;
+      font-size: 13px;
+      padding-top: 24px;
+      border-top: 1px solid #e0e0e0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .footer a {
+      color: #4a4a4a;
+      text-decoration: none;
+    }
+
+    .footer a:hover { color: #3B82F6; }
+
+    /* ─── Loading ─── */
+    .loading {
+      text-align: center;
+      padding: 120px 24px;
+    }
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e0e0e0;
+      border-top-color: #3B82F6;
+      border-radius: 0;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      color: #9a9a9a;
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── Error / Empty ─── */
+    .error-state {
+      text-align: center;
+      padding: 120px 24px;
+    }
+
+    .error-state .icon { font-size: 48px; margin-bottom: 16px; }
+    .error-state .msg { color: #4a4a4a; font-size: 16px; }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: #9a9a9a;
+    }
+
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 640px) {
+      .page { padding: 24px 16px 48px; }
+
+      .top-bar {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .top-bar-brand .brand-tagline { display: none; }
+
+      .profile-header-top {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+      }
+
+      .avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+      }
+
+      .profile-name {
+        font-size: 36px;
+        letter-spacing: -1px;
+      }
+
+      .profile-stats {
+        flex-wrap: wrap;
+      }
+
+      .stat {
+        padding: 16px 12px;
+      }
+
+      .stat-value { font-size: 28px; }
+
+      .steps-row {
+        flex-direction: column;
+      }
+
+      .step-card {
+        border-right: 2px solid #000 !important;
+        border-bottom: none;
+      }
+
+      .step-card:last-of-type { border-bottom: 2px solid #000; }
+
+      .step-number { font-size: 48px; }
+
+      .cred-claim { font-size: 18px; }
+      .cred-meta { flex-direction: column; gap: 12px; }
+      .cred-top { flex-direction: column; gap: 8px; }
+
+      .get-verified-title { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <!-- Top bar -->
+    <div class="top-bar">
+      <a href="/" class="top-bar-brand">
+        <span class="diamond">◇</span>
+        <div>
+          <span class="brand-name">CereProof</span>
+          <span class="brand-tagline">Verified credentials. No middleman.</span>
+        </div>
+      </a>
+      <div class="top-bar-actions">
+        <a href="/" class="top-btn">← Dashboard</a>
+        <button class="top-btn" onclick="copyProfileUrl()">📋 Copy Link</button>
+      </div>
+    </div>
+
+    <!-- Content (filled by JS) -->
+    <div id="content">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading verified credentials from DDC...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code lib -->
+  <script src="https://unpkg.com/qrcode@1.5.4/build/qrcode.min.js"></script>
+
+  <script>
+    const API_BASE = window.location.origin;
+    const BUCKET_ID = 1229;
+    const CDN = 'https://cdn.ddc-dragon.com';
+
+    // Extract address from URL
+    const pathParts = window.location.pathname.split('/');
+    const address = pathParts[pathParts.length - 1];
+
+    if (!address || address.length < 10) {
+      showError('No wallet address provided', 'Use /profile/YOUR_WALLET_ADDRESS');
+    } else {
+      loadProfile(address);
+    }
+
+    async function loadProfile(addr) {
+      try {
+        const resp = await fetch(`${API_BASE}/api/profile/${addr}`);
+        const data = await resp.json();
+
+        if (!data.ok) {
+          showError('Could not load profile', data.error || 'Unknown error');
+          return;
+        }
+
+        renderProfile(data);
+      } catch (e) {
+        showError('Connection failed', `Could not reach the server: ${e.message}`);
+      }
+    }
+
+    function getCleanUrl() {
+      const url = new URL(window.location.href);
+      if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+        return `cereproof.io/profile/${address.slice(0, 8)}...${address.slice(-6)}`;
+      }
+      return `${url.hostname}${url.pathname}`;
+    }
+
+    function getMemberSince(creds) {
+      if (!creds || creds.length === 0) return null;
+      let oldest = null;
+      creds.forEach(c => {
+        if (c.issuanceDate) {
+          const d = new Date(c.issuanceDate);
+          if (!oldest || d < oldest) oldest = d;
+        }
+      });
+      return oldest;
+    }
+
+    function renderProfile(data) {
+      const { address, received, issued } = data;
+      const allCreds = received.credentials || [];
+      const verifiedCount = allCreds.filter(c => c.verified).length;
+      const totalCount = allCreds.length;
+
+      const firstName = allCreds.find(c => c.subjectName)?.subjectName || '';
+      const initials = firstName ? firstName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : address.slice(0, 2).toUpperCase();
+
+      document.title = `${firstName || address.slice(0, 12)} — CereProof`;
+
+      const memberSince = getMemberSince(allCreds);
+      const memberSinceStr = memberSince ? memberSince.toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : null;
+
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <!-- Profile Header -->
+        <div class="profile-header">
+          <div class="profile-header-top">
+            <div class="avatar">${initials}</div>
+            <div class="profile-info">
+              <div class="profile-name">${escapeHtml(firstName) || 'Anonymous'}</div>
+              <div class="profile-bio">Building the decentralized future. Co-Founder at Cere Network.</div>
+              <div class="profile-address">
+                <span class="short">${address.slice(0, 8)}...${address.slice(-6)}</span>
+                <span class="full">${address}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+          <div class="stat">
+            <div class="stat-value">${verifiedCount}</div>
+            <div class="stat-label">Verified</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${totalCount}</div>
+            <div class="stat-label">Credentials</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${issued.count}</div>
+            <div class="stat-label">Signed</div>
+          </div>
+          ${memberSinceStr ? `
+          <div class="stat">
+            <div class="stat-value text-date">${memberSinceStr}</div>
+            <div class="stat-label">Since</div>
+          </div>` : ''}
+        </div>
+
+        <!-- Trust Banner -->
+        ${verifiedCount > 0 ? `
+        <div class="trust-banner">
+          <span class="icon">🔐</span>
+          <div>
+            <div class="text">${verifiedCount} credential${verifiedCount !== 1 ? 's' : ''} cryptographically verified on-chain</div>
+            <div class="sub">Sr25519 signatures verified against issuer public keys</div>
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- How it Works -->
+        <div class="how-it-works">
+          <div class="section-title">How it Works</div>
+          <div class="steps-row">
+            <div class="step-card">
+              <div class="step-number">01</div>
+              <div class="step-title">Issue</div>
+              <div class="step-desc">An authorized issuer creates and cryptographically signs a credential</div>
+            </div>
+            <div class="step-card">
+              <div class="step-number">02</div>
+              <div class="step-title">Store</div>
+              <div class="step-desc">The signed credential is permanently stored on Cere's Decentralized Data Cloud</div>
+            </div>
+            <div class="step-card">
+              <div class="step-number">03</div>
+              <div class="step-title">Verify</div>
+              <div class="step-desc">Anyone can verify the credential's authenticity using just the CID — no account needed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Credentials -->
+        <div class="section-title">Credentials</div>
+
+        <div class="credentials" id="credentialsList">
+          ${totalCount === 0 ? `
+            <div class="empty-state">
+              <div class="icon">🎓</div>
+              <p>No credentials found for this wallet yet.</p>
+            </div>
+          ` : allCreds.map((cred, i) => renderCredCard(cred, i)).join('')}
+        </div>
+
+        <!-- Claims History -->
+        <div class="claims-history" id="claimsHistorySection" style="display: none;">
+          <div class="section-title">Pending Claims</div>
+          <div class="claims-list" id="claimsHistoryList"></div>
+        </div>
+
+        <!-- QR Code & Share -->
+        <div class="qr-section">
+          <div class="section-title">Share This Profile</div>
+          <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
+          <div class="share-url" id="shareUrl">${getCleanUrl()}</div>
+          <button class="copy-btn" onclick="copyProfileUrl()">COPY PROFILE LINK</button>
+        </div>
+
+        <!-- How to get verified -->
+        <div class="get-verified">
+          <div class="get-verified-title">Get your credentials verified</div>
+          <div class="get-verified-options">
+            <div class="get-verified-option">
+              <span class="opt-icon">🎓</span>
+              <span>Ask your university to issue a <strong>DiplomaCredential</strong> to your wallet address</span>
+            </div>
+            <div class="get-verified-option">
+              <span class="opt-icon">💼</span>
+              <span>Ask your employer to issue an <strong>EmploymentCredential</strong></span>
+            </div>
+            <div class="get-verified-option">
+              <span class="opt-icon">📜</span>
+              <span>Any organization with a CereProof wallet can issue verifiable credentials</span>
+            </div>
+          </div>
+          <div class="get-verified-cta">
+            <a href="/" class="cta-btn">Learn more about issuing credentials →</a>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          CereProof — Powered by <a href="https://cere.network" target="_blank">Cere DDC</a> · Decentralized credentials, cryptographically verified.
+        </div>
+      `;
+
+      generateQR();
+      loadClaimsHistory(address);
+    }
+
+    function generateQR() {
+      const canvas = document.getElementById('qrCanvas');
+      if (!canvas) return;
+
+      if (typeof QRCode !== 'undefined') {
+        QRCode.toCanvas(canvas, window.location.href, {
+          width: 140,
+          margin: 2,
+          color: { dark: '#000000', light: '#ffffff' }
+        }, function(err) {
+          if (err) {
+            console.warn('QR generation failed, using fallback');
+            drawFallbackQR(canvas);
+          }
+        });
+      } else {
+        drawFallbackQR(canvas);
+        setTimeout(() => {
+          if (typeof QRCode !== 'undefined') {
+            QRCode.toCanvas(canvas, window.location.href, {
+              width: 140, margin: 2,
+              color: { dark: '#000000', light: '#ffffff' }
+            });
+          }
+        }, 2000);
+      }
+    }
+
+    function drawFallbackQR(canvas) {
+      canvas.width = 140;
+      canvas.height = 140;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 140, 140);
+      
+      ctx.fillStyle = '#000000';
+      const size = 4;
+      const addr = address || 'cereproof';
+      for (let y = 0; y < 35; y++) {
+        for (let x = 0; x < 35; x++) {
+          if ((x < 7 && y < 7) || (x >= 28 && y < 7) || (x < 7 && y >= 28)) {
+            const isBorder = x === 0 || y === 0 || x === 6 || y === 6 || 
+                           x === 28 || (x >= 28 && (y === 0 || y === 6)) ||
+                           (y >= 28 && (x === 0 || x === 6));
+            const isInner = (x >= 2 && x <= 4 && y >= 2 && y <= 4) ||
+                           (x >= 30 && x <= 32 && y >= 2 && y <= 4) ||
+                           (x >= 2 && x <= 4 && y >= 30 && y <= 32);
+            if (isBorder || isInner) {
+              ctx.fillRect(x * size, y * size, size, size);
+            }
+          } else {
+            const hash = (addr.charCodeAt((x + y * 3) % addr.length) * 31 + x * 7 + y * 13) % 100;
+            if (hash < 40) {
+              ctx.fillRect(x * size, y * size, size, size);
+            }
+          }
+        }
+      }
+    }
+
+    function renderCredCard(cred, index) {
+      const typeMap = {
+        DiplomaCredential: { icon: '🎓', label: 'Diploma', class: 'diploma' },
+        EmploymentCredential: { icon: '💼', label: 'Employment', class: 'employment' },
+        CertificationCredential: { icon: '📜', label: 'Certification', class: 'certification' },
+        SkillCredential: { icon: '⚡', label: 'Skill', class: 'skill' },
+        MembershipCredential: { icon: '🏛️', label: 'Membership', class: 'membership' },
+        AwardCredential: { icon: '🏆', label: 'Award', class: 'award' },
+      };
+
+      const typeInfo = typeMap[cred.claimType] || { icon: '📄', label: cred.claimType?.replace('Credential', '') || 'Credential', class: 'default' };
+      const date = cred.issuanceDate ? new Date(cred.issuanceDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown';
+      const claim = cred.credential?.credentialSubject?.claim || cred.claimData || '';
+      const issuerAddr = cred.credential?.issuer?.address || cred.issuer || '';
+      const signature = cred.credential?.proof?.signatureValue || '';
+
+      return `
+        <div class="cred-card ${cred.verified ? '' : 'invalid'}" onclick="this.classList.toggle('expanded')">
+          <div class="cred-top">
+            <span class="cred-type ${typeInfo.class}">${typeInfo.icon} ${typeInfo.label}</span>
+            <span class="cred-verify-badge ${cred.verified ? 'valid' : 'invalid'}">
+              ${cred.verified ? '✓ Verified' : '✗ Unverified'}
+            </span>
+          </div>
+
+          <div class="cred-claim">${escapeHtml(typeof claim === 'string' ? claim : JSON.stringify(claim))}</div>
+
+          <div class="cred-expand-hint">
+            <span class="hint-text">→ expand</span>
+            <span class="hint-collapse">↓ collapse</span>
+          </div>
+
+          <div class="cred-meta">
+            <div class="cred-meta-item">
+              <strong>Issued</strong>
+              ${escapeHtml(date)}
+            </div>
+            <div class="cred-meta-item">
+              <strong>Issuer</strong>
+              <a href="/profile/${issuerAddr}" title="${issuerAddr}">${issuerAddr.slice(0, 8)}...${issuerAddr.slice(-6)}</a>
+            </div>
+            <div class="cred-meta-item">
+              <strong>CID</strong>
+              <a href="${CDN}/${BUCKET_ID}/${cred.cid}" target="_blank" title="View on DDC CDN">${cred.cid.slice(0, 16)}...</a>
+            </div>
+          </div>
+
+          <div class="cred-expand">
+            <div class="cred-expand-row">
+              <span class="cred-expand-key">Full CID</span>
+              <span class="cred-expand-val">${cred.cid}</span>
+            </div>
+            <div class="cred-expand-row">
+              <span class="cred-expand-key">Issuer Address</span>
+              <span class="cred-expand-val">${issuerAddr}</span>
+            </div>
+            <div class="cred-expand-row">
+              <span class="cred-expand-key">Signature</span>
+              <span class="cred-expand-val" style="font-size:10px;">${signature.slice(0, 48)}...</span>
+            </div>
+            <div class="cred-expand-row">
+              <span class="cred-expand-key">Proof Type</span>
+              <span class="cred-expand-val">Sr25519Signature2024</span>
+            </div>
+            <div class="cred-expand-row">
+              <span class="cred-expand-key">Network</span>
+              <span class="cred-expand-val">Cere DDC Mainnet — Bucket ${BUCKET_ID}</span>
+            </div>
+            <div class="cred-expand-row">
+              <span class="cred-expand-key">Verify Independently</span>
+              <span class="cred-expand-val"><a href="${CDN}/${BUCKET_ID}/${cred.cid}" target="_blank" style="color: #3B82F6;">View raw credential on CDN →</a></span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function showError(title, detail) {
+      document.getElementById('content').innerHTML = `
+        <div class="error-state">
+          <div class="icon">⚠️</div>
+          <div class="msg"><strong>${escapeHtml(title)}</strong><br>${escapeHtml(detail)}</div>
+        </div>
+      `;
+    }
+
+    function copyProfileUrl() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        if (btn) {
+          const orig = btn.textContent;
+          btn.textContent = '✓ COPIED';
+          setTimeout(() => btn.textContent = orig, 2000);
+        }
+      });
+    }
+
+    async function loadClaimsHistory(walletAddr) {
+      try {
+        const resp = await fetch(`${API_BASE}/claims/history?wallet=${walletAddr}`);
+        const data = await resp.json();
+
+        if (data.ok && data.claims && data.claims.length > 0) {
+          const section = document.getElementById('claimsHistorySection');
+          const list = document.getElementById('claimsHistoryList');
+          if (!section || !list) return;
+
+          section.style.display = 'block';
+
+          const typeIcons = {
+            DiplomaCredential: '🎓',
+            EmploymentCredential: '💼',
+            CertificationCredential: '📜',
+            SkillCredential: '⚡',
+            MembershipCredential: '🏛️',
+            AwardCredential: '🏆',
+          };
+
+          list.innerHTML = data.claims.map(claim => {
+            const icon = typeIcons[claim.claimType] || '📄';
+            const typeName = (claim.claimType || 'Claim').replace('Credential', '');
+
+            const statusClass = claim.status === 'approved' ? 'approved'
+              : claim.status === 'rejected' ? 'rejected' : 'pending';
+            const statusLabel = claim.status === 'approved' ? '✓ Approved'
+              : claim.status === 'rejected' ? '✗ Rejected' : '⏳ Pending';
+
+            const credLink = (claim.status === 'approved' && claim.credentialCid)
+              ? ` <a href="${CDN}/${BUCKET_ID}/${claim.credentialCid}" target="_blank" style="color:#3B82F6;text-decoration:none;font-size:11px;font-family:'JetBrains Mono',monospace;">View credential →</a>`
+              : '';
+
+            return `
+              <div class="claim-history-card">
+                <span class="claim-icon">${icon}</span>
+                <div class="claim-info">
+                  <div class="claim-title">${escapeHtml(typeName)}</div>
+                  <div class="claim-doc">${escapeHtml(claim.documentName || 'No document name')}${credLink}</div>
+                </div>
+                <span class="claim-status-badge ${statusClass}">${statusLabel}</span>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (e) {
+        console.log('Claims history not available:', e.message);
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

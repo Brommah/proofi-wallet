@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=380, initial-scale=1.0">
+  <title>Proofi Wallet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Loading state -->
+    <div id="screen-loading" class="screen screen-center">
+      <div class="loading-mark">
+        <div class="loading-p">P</div>
+      </div>
+      <div class="text-label mt-4" style="color: var(--cyan);">INITIALIZING</div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="screen-login" class="screen" style="display:none;">
+      <div class="login-hero">
+        <div class="text-label" style="color: var(--cyan); margin-bottom: 8px;">Data Ownership Protocol</div>
+        <h1 class="text-display text-display-xl">PROOFI</h1>
+        <p class="text-body text-muted" style="max-width: 280px; margin-top: 8px;">
+          Self-custodial credentials verified on-chain. Your data, your keys, your proof.
+        </p>
+      </div>
+      
+      <!-- Email Step -->
+      <div id="step-email" class="auth-card fade-in">
+        <label class="text-label">Email Address</label>
+        <input type="email" id="input-email" placeholder="you@example.com" class="input-brutal" autofocus>
+        <div id="error-email" class="error-box" style="display:none;"></div>
+        <button id="btn-send-otp" class="btn-primary" disabled>CONTINUE</button>
+      </div>
+      
+      <!-- OTP Step -->
+      <div id="step-otp" class="auth-card" style="display:none;">
+        <div class="text-label">Verification Code</div>
+        <p class="text-body-sm text-muted" style="margin: 4px 0 16px;">
+          Sent to <span id="otp-email" class="text-mono text-white"></span>
+        </p>
+        <div id="otp-inputs" class="otp-container">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]">
+        </div>
+        <div id="error-otp" class="error-box" style="display:none;"></div>
+        <div id="loading-otp" class="loading-indicator" style="display:none;">
+          <div class="spinner"></div>
+          <span class="text-mono text-sm" style="color: var(--cyan);">VERIFYING</span>
+        </div>
+        <button id="btn-back-email" class="btn-secondary">← DIFFERENT EMAIL</button>
+      </div>
+      
+      <!-- PIN Step -->
+      <div id="step-pin" class="auth-card" style="display:none;">
+        <div class="text-label" id="pin-title">Create Your PIN</div>
+        <p class="text-body-sm text-muted" id="pin-subtitle" style="margin: 4px 0 16px;">
+          This PIN derives your wallet keys. Remember it — it cannot be recovered.
+        </p>
+        <input type="password" id="input-pin" placeholder="••••••" maxlength="8" inputmode="numeric" pattern="[0-9]*" class="input-brutal input-pin" autocomplete="off">
+        <div class="pin-dots" id="pin-dots">
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+        </div>
+        <div id="error-pin" class="error-box" style="display:none;"></div>
+        <div id="loading-pin" class="loading-indicator" style="display:none;">
+          <div class="spinner"></div>
+          <span class="text-mono text-sm" style="color: var(--cyan);">DERIVING KEYS</span>
+        </div>
+        <button id="btn-setup-pin" class="btn-primary" disabled>CREATE WALLET</button>
+      </div>
+      
+      <!-- Feature blocks -->
+      <div class="features-grid">
+        <div class="feature-block feature-accent">
+          <div class="text-label" style="font-size: 0.5rem;">CUSTODY</div>
+          <div class="text-display" style="font-size: 1.1rem; color: var(--cyan);">SELF</div>
+        </div>
+        <div class="feature-block">
+          <div class="text-label" style="font-size: 0.5rem;">NETWORK</div>
+          <div class="text-display" style="font-size: 1.1rem;">CERE</div>
+        </div>
+        <div class="feature-block">
+          <div class="text-label" style="font-size: 0.5rem;">STORAGE</div>
+          <div class="text-display" style="font-size: 1.1rem;">DDC</div>
+        </div>
+      </div>
+      
+      <div class="footer-line">
+        <p class="text-label" style="color: var(--ash); text-align: center;">Your keys never leave your device</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="screen-dashboard" class="screen" style="display:none;">
+      <!-- Header -->
+      <div class="dash-header">
+        <div class="dash-header-top">
+          <div>
+            <div class="text-label" style="color: var(--cyan); margin-bottom: 4px;">PROOFI WALLET</div>
+            <div id="dash-email" class="text-mono text-xs text-muted"></div>
+          </div>
+          <div class="status-badge" id="status-badge">
+            <div class="status-dot online"></div>
+            <span class="text-mono text-xs">CONNECTED</span>
+          </div>
+        </div>
+        
+        <!-- Address -->
+        <div class="address-card" id="address-card">
+          <div class="address-card-header">
+            <div class="text-label">ADDRESS</div>
+            <button id="btn-copy-address" class="btn-ghost text-mono text-xs">COPY</button>
+          </div>
+          <div id="dash-address" class="text-mono text-xs text-muted" style="word-break: break-all;"></div>
+        </div>
+      </div>
+      
+      <!-- Quick Actions -->
+      <div class="action-grid">
+        <button id="btn-store-memo" class="action-card action-cyan">
+          <div class="action-icon">📝</div>
+          <div class="text-display text-xs">STORE MEMO</div>
+        </button>
+        <button id="btn-store-cred" class="action-card action-green">
+          <div class="action-icon">🔐</div>
+          <div class="text-display text-xs">CREDENTIAL</div>
+        </button>
+      </div>
+      
+      <!-- Stored Items -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="text-display" style="font-size: 1rem;">STORED DATA</h2>
+          <button id="btn-refresh" class="btn-ghost text-mono text-xs" style="color: var(--ash);">↻ REFRESH</button>
+        </div>
+        <div id="items-list" class="items-list">
+          <div class="empty-state">
+            <div class="text-display" style="font-size: 2rem; color: var(--steel);">∅</div>
+            <p class="text-body-sm text-muted">No data stored yet</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Wallet Lock / Settings -->
+      <div class="dash-footer">
+        <div class="dash-status-row">
+          <div class="dash-status-item">
+            <div class="text-label">STATUS</div>
+            <div class="status-value">
+              <div id="lock-dot" class="status-square warn"></div>
+              <span id="lock-status" class="text-mono text-sm">LOCKED</span>
+            </div>
+          </div>
+          <div class="dash-status-item">
+            <div class="text-label">NETWORK</div>
+            <div class="text-mono text-sm" style="color: var(--cyan);">MAINNET</div>
+          </div>
+        </div>
+        
+        <button id="btn-unlock" class="btn-secondary btn-full" style="display:none;">🔓 UNLOCK WITH PIN</button>
+        <button id="btn-disconnect" class="btn-danger btn-full">DISCONNECT</button>
+      </div>
+    </div>
+
+    <!-- Store Memo Screen -->
+    <div id="screen-memo" class="screen" style="display:none;">
+      <div class="screen-header">
+        <button id="btn-memo-back" class="btn-ghost text-mono text-xs text-muted">← BACK</button>
+        <h1 class="text-display text-display-sm">STORE MEMO</h1>
+        <p class="text-body-sm text-muted" style="margin-top: 4px;">Encrypted on Cere DDC — decentralized & permanent</p>
+      </div>
+      <div class="form-section">
+        <label class="text-label">Your Data</label>
+        <textarea id="input-memo" placeholder="Enter text to store on-chain..." rows="6" class="input-brutal input-textarea"></textarea>
+        <div id="error-memo" class="error-box" style="display:none;"></div>
+        <div id="success-memo" class="success-box" style="display:none;"></div>
+        <button id="btn-submit-memo" class="btn-primary btn-full" disabled>STORE ON DDC</button>
+      </div>
+      
+      <!-- PIN unlock for signing -->
+      <div id="memo-pin-unlock" class="pin-unlock-section" style="display:none;">
+        <div class="text-label" style="margin-bottom: 8px;">Enter PIN to sign</div>
+        <input type="password" id="memo-pin" placeholder="••••••" maxlength="8" inputmode="numeric" class="input-brutal input-pin" autocomplete="off">
+        <button id="btn-memo-unlock" class="btn-primary btn-full">UNLOCK & STORE</button>
+      </div>
+    </div>
+
+    <!-- Store Credential Screen -->
+    <div id="screen-credential" class="screen" style="display:none;">
+      <div class="screen-header">
+        <button id="btn-cred-back" class="btn-ghost text-mono text-xs text-muted">← BACK</button>
+        <h1 class="text-display text-display-sm">ISSUE CREDENTIAL</h1>
+        <p class="text-body-sm text-muted" style="margin-top: 4px;">Self-issued verifiable credential on DDC</p>
+      </div>
+      <div class="form-section">
+        <label class="text-label">Credential Type</label>
+        <select id="input-cred-type" class="input-brutal input-select">
+          <option value="ProofOfIdentity">Proof of Identity</option>
+          <option value="ProofOfOwnership">Proof of Ownership</option>
+          <option value="ProofOfMembership">Proof of Membership</option>
+          <option value="ProofOfCompletion">Proof of Completion</option>
+          <option value="Custom">Custom</option>
+        </select>
+        
+        <label class="text-label" style="margin-top: 16px;">Claim Data</label>
+        <textarea id="input-cred-data" placeholder='{"name": "...", "role": "..."}' rows="5" class="input-brutal input-textarea text-mono"></textarea>
+        <div id="error-cred" class="error-box" style="display:none;"></div>
+        <div id="success-cred" class="success-box" style="display:none;"></div>
+        <button id="btn-submit-cred" class="btn-primary btn-full" disabled>ISSUE CREDENTIAL</button>
+      </div>
+      
+      <!-- PIN unlock for signing -->
+      <div id="cred-pin-unlock" class="pin-unlock-section" style="display:none;">
+        <div class="text-label" style="margin-bottom: 8px;">Enter PIN to sign</div>
+        <input type="password" id="cred-pin" placeholder="••••••" maxlength="8" inputmode="numeric" class="input-brutal input-pin" autocomplete="off">
+        <button id="btn-cred-unlock" class="btn-primary btn-full">UNLOCK & ISSUE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

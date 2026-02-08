@@ -1,0 +1,30 @@
+Standup Team Alpha - 15 januari 2024
+
+Aanwezig: Jan, Marie, Piet, Sarah
+
+Jan:
+- Bezig met API refactor, denkt vrijdag klaar te zijn
+- Vraagt Marie om de nieuwe designs te reviewen
+- Heeft hulp nodig van Piet voor de database migratie
+
+Marie:
+- Designs voor de checkout flow zijn af
+- Wacht op feedback van klant, komt woensdag
+- Gaat Sarah's PR reviewen vandaag
+
+Piet:
+- Bug in de checkout gevonden, moet voor release gefixt worden
+- Kan Jan helpen met migratie, maar pas donderdag
+- Performance tests draaien in de achtergrond
+
+Sarah:
+- Feature branch is klaar voor review
+- Documentatie moet nog geschreven worden
+- Vraagt: wanneer is de volgende demo?
+
+Beslissingen:
+- Release datum blijft 1 februari
+- We gaan toch voor Angular in plaats van React
+- Demo wordt volgende week dinsdag, 14:00
+
+Volgende meeting: maandag 9:00

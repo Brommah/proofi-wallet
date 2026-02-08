@@ -1,0 +1,84 @@
+{
+  "categories": {
+    "SW": {
+      "name": "Software/Subscriptions",
+      "description": "SaaS, licenties, hosting, cloud services",
+      "default_btw": 21,
+      "keywords": ["github", "aws", "azure", "google cloud", "digitalocean", "transip", "vercel", "heroku", "netlify", "openai", "anthropic", "adobe", "microsoft", "jetbrains", "figma", "notion", "slack", "zoom", "dropbox"]
+    },
+    "HW": {
+      "name": "Hardware",
+      "description": "Laptops, monitors, kabels, accessoires",
+      "default_btw": 21,
+      "keywords": ["coolblue", "mediamarkt", "apple", "dell", "amazon electronics", "bol.com", "alternate"]
+    },
+    "TR": {
+      "name": "Travel",
+      "description": "OV, vluchten, hotels, taxi (zakelijk)",
+      "default_btw": 21,
+      "keywords": ["ns.nl", "ns international", "uber", "bolt", "booking.com", "airbnb", "klm", "schiphol", "transavia", "flixbus", "ov-chipkaart"]
+    },
+    "ML": {
+      "name": "Meals/Entertainment",
+      "description": "Zakelijke lunches, representatie, klantbezoek",
+      "default_btw": 9,
+      "keywords": ["restaurant", "cafe", "thuisbezorgd", "uber eats", "deliveroo", "starbucks", "coffee"]
+    },
+    "PS": {
+      "name": "Professional Services",
+      "description": "Accountant, juridisch, coaching, consultancy",
+      "default_btw": 21,
+      "keywords": ["accountant", "notaris", "advocaat", "coach", "consultant"]
+    },
+    "OF": {
+      "name": "Office Supplies",
+      "description": "Kantoorartikelen, inkt, papier, bureau spullen",
+      "default_btw": 21,
+      "keywords": ["staples", "viking", "bruna", "hema", "action", "ikea"]
+    },
+    "ED": {
+      "name": "Education",
+      "description": "Cursussen, boeken, conferenties, trainingen",
+      "default_btw": 0,
+      "keywords": ["udemy", "coursera", "pluralsight", "bol.com boeken", "conferentie", "workshop", "training"]
+    },
+    "MK": {
+      "name": "Marketing",
+      "description": "Ads, promotie, drukwerk, social media",
+      "default_btw": 21,
+      "keywords": ["google ads", "facebook ads", "linkedin", "twitter ads", "drukkerij", "vistaprint"]
+    },
+    "CM": {
+      "name": "Communication",
+      "description": "Telefoon, internet, domein registratie",
+      "default_btw": 21,
+      "keywords": ["kpn", "vodafone", "t-mobile", "ziggo", "transip domains", "cloudflare"]
+    },
+    "IN": {
+      "name": "Insurance",
+      "description": "Zakelijke verzekeringen, aansprakelijkheid",
+      "default_btw": 0,
+      "keywords": ["verzekering", "insurance", "aov", "aansprakelijkheid"]
+    },
+    "OT": {
+      "name": "Other",
+      "description": "Overige zakelijke kosten",
+      "default_btw": 21,
+      "keywords": []
+    },
+    "PR": {
+      "name": "Private",
+      "description": "Privé uitgaven (niet aftrekbaar)",
+      "default_btw": 0,
+      "keywords": []
+    },
+    "MX": {
+      "name": "Mixed",
+      "description": "Deels zakelijk, deels privé",
+      "default_btw": 21,
+      "keywords": []
+    }
+  },
+  "payment_methods": ["bank", "pin", "cash", "creditcard", "paypal", "ideal"],
+  "btw_rates": [0, 9, 21]
+}

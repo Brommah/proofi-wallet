@@ -1,0 +1,203 @@
+[
+  ["FirstName","LastName","Email","Company","LinkedIn","Location","Role","Campaign Type","Why","Source","GitHub"],
+
+  ["Tobias","Grieger","","Cockroach Labs","https://linkedin.com/in/tobias-grieger","Europe (CET)","Staff Engineer","Infra Distributed","#1 CockroachDB contributor (5861 commits). Deep distributed database expertise - consensus, replication, storage engine. Massive open source track record.","GitHub CockroachDB contributors","https://github.com/tbg"],
+
+  ["Raphael","Poss","","","https://linkedin.com/in/raphael-poss","Netherlands","Senior Engineer","Infra Distributed","#2 CockroachDB contributor (4294 commits). Based in Netherlands - local to Cere. Deep SQL engine and distributed systems expertise. Active blogger at raphaelposs.com.","GitHub CockroachDB contributors","https://github.com/knz"],
+
+  ["Andrei","Matei","","Data Ex Machina","https://linkedin.com/in/andrei-matei","NYC","Founder/Engineer","Infra Distributed","Ex-CockroachDB/Google. 2327 CockroachDB commits. Now building Side-Eye - production debugger for distributed systems. Deep distributed systems debugging expertise.","GitHub CockroachDB contributors","https://github.com/andreimatei"],
+
+  ["Ivan","Kozlovic","","Synadia Communications","https://linkedin.com/in/ivan-kozlovic","Denver, CO","NATS Core Maintainer","Infra Distributed","NATS.io Core Maintainer at Synadia. 2005 commits to nats-server. Deep messaging infrastructure expertise - exactly the kind of distributed messaging Cere needs.","GitHub NATS contributors","https://github.com/kozlovic"],
+
+  ["Neil","Alexander","","Synadia Communications","https://linkedin.com/in/neilalexander","United Kingdom","Software Engineer","Infra Distributed","NATS contributor (1368 commits). Network enthusiast at Synadia. Built NATS clustering and federation features. Deep networking and distributed messaging.","GitHub NATS contributors","https://github.com/neilalexander"],
+
+  ["Waldemar","Quevedo","","Synadia Communications","https://linkedin.com/in/waldemar-quevedo","San Francisco","NATS Core Maintainer","Infra Distributed","NATS Core Maintainer at Synadia. 374 commits to nats-server. Active in NATS ecosystem across multiple client libraries. Deep messaging infrastructure.","GitHub NATS contributors","https://github.com/wallyqs"],
+
+  ["Alice","Ryhl","","Google","https://linkedin.com/in/alice-ryhl","Denmark","Software Engineer","Infra Distributed","Tokio maintainer (582 commits). Marked hireable on GitHub! Rust async runtime expert. Google engineer in Denmark (EU!). Deep systems programming + concurrency.","GitHub Tokio contributors","https://github.com/Darksonn"],
+
+  ["Lucio","Franco","","514-labs","https://linkedin.com/in/lucio-franco","East Coast USA","Software Engineer","Infra Distributed","Tokio/Tower/Hyper contributor. Bio: 'Rust, Networking, Distributed Systems and Storage Engines.' Building at 514-labs. 1116 GitHub followers. Ships networking infrastructure.","GitHub Tokio contributors","https://github.com/LucioFranco"],
+
+  ["Eliza","Weisman","","Oxide Computer","https://linkedin.com/in/eliza-weisman","California","Systems Engineer","Infra Distributed","Tokio tracing author (113 commits to Tokio). Self-described 'systems witch' at Oxide Computer. 2189 GitHub followers. Deep observability + async systems.","GitHub Tokio contributors","https://github.com/hawkw"],
+
+  ["Sean","McArthur","","Independent","https://linkedin.com/in/seanmonstar","","Software Engineer","Infra Distributed","Independent maintainer of hyper, reqwest, tower - the Rust HTTP ecosystem. 3255 GitHub followers. Bio: 'Independent maintainer.' Deep networking, HTTP, and API infrastructure.","GitHub Tokio/Hyper contributors","https://github.com/seanmonstar"],
+
+  ["Nadav","Har'El","","ScyllaDB","https://linkedin.com/in/nadav-harel","Israel","Senior Engineer","Infra Distributed","Top ScyllaDB contributor (2050 commits). Deep C++ high-performance database internals. ScyllaDB is the NoSQL DB built for extreme low-latency - relevant to DDC.","GitHub ScyllaDB contributors","https://github.com/nyh"],
+
+  ["Bastian","Köcher","","Parity Technologies","https://linkedin.com/in/bastian-koecher","Berlin","Core Developer","Infra Distributed","#1 Substrate contributor (806 commits). Berlin-based! Rust blockchain infrastructure expert at Parity. Knows the Polkadot/Substrate ecosystem that Cere builds on.","GitHub Substrate contributors","https://github.com/bkchr"],
+
+  ["Pierre","Krieger","","Freelance","https://linkedin.com/in/pierre-krieger","Berlin, Germany","Freelance Engineer","Infra Distributed","Ex-Parity, 549 Substrate commits. Freelance in Berlin! Created libp2p-rs. 1755 GitHub followers. Deep p2p networking + Rust. Knows Polkadot ecosystem.","GitHub Substrate contributors","https://github.com/tomaka"],
+
+  ["Kian","Paimani","","Parity Technologies","https://linkedin.com/in/kianpaimani","Berlin","Software Engineer","Infra Distributed","Parity engineer, 259 Substrate commits. Berlin-based! MSc Parallel & Distributed Systems from VU Amsterdam. Deep Rust + blockchain runtime expertise.","GitHub Substrate contributors","https://github.com/kianenigma"],
+
+  ["Shawn","Tabrizi","","Parity Technologies","https://linkedin.com/in/shawntabrizi","Puerto Rico","Software Engineer","Infra Distributed","Parity engineer, 256 Substrate commits. 'Discovery through experience.' Active OSS contributor and Polkadot ecosystem builder. Substrate runtime + pallets.","GitHub Substrate contributors","https://github.com/shawntabrizi"],
+
+  ["André","Silva","","Parity Technologies","https://linkedin.com/in/andre-silva","","Software Engineer","Infra Distributed","Parity engineer, 281 Substrate commits. Finality gadgets, consensus protocol implementation. Deep distributed consensus expertise.","GitHub Substrate contributors","https://github.com/andresilva"],
+
+  ["Jon","Gjengset","","Helsing","https://linkedin.com/in/jonhoo","Oslo, Norway","Principal Engineer","Infra Distributed","Principal Engineer at Helsing. Author of 'Rust for Rustaceans'. MIT PhD in distributed systems. Co-founded ReadySet (streaming SQL cache). Ex-AWS. Deep Rust + distributed systems.","GitHub + LinkedIn","https://github.com/jonhoo"],
+
+  ["Tyler","Neely","","Independent/Consultant","https://linkedin.com/in/tyler-neely","Berlin, Germany","Consultant/Creator","Infra Distributed","Creator of sled embedded database (8.8k stars). Berlin-based! 10 years shipping stateful distributed systems. Correctness-focused. Conference speaker.","GitHub + Conference","https://github.com/spacejam"],
+
+  ["Alex","Crichton","","","","","Software Engineer","Infra Distributed","Major Rust contributor (5371 followers). Tokio, wasm-bindgen, cargo. Deep systems programming. One of the most prolific Rust ecosystem contributors ever.","GitHub Rust ecosystem","https://github.com/alexcrichton"],
+
+  ["Marek","Majkowski","","ex-Cloudflare","https://linkedin.com/in/marek-majkowski","London, UK","Staff Engineer","Infra Distributed","12 years at Cloudflare. Bootstrapped DDoS mitigation, Spectrum, Cloudchamber. Hundreds of blog posts. Deep networking + systems at massive scale. Recently left CF.","Cloudflare Blog + Twitter","https://github.com/majek"],
+
+  ["Predrag","Gruevski","","","https://linkedin.com/in/predrag-gruevski","","Software Engineer","Infra Distributed","Creator of cargo-semver-checks and Trustfall query engine. Ex-Kensho (AI company). Deep Rust tooling + query engine design. Active OSS contributor.","GitHub","https://github.com/obi1kenobi"],
+
+  ["Matthias","Endler","","corrode consulting","https://linkedin.com/in/matthias-endler","Germany","Rust Consultant","Infra Distributed","Rust systems consultant in Germany. Popular technical blog at endler.dev. Conference speaker. Deep Rust systems programming expertise. Local to EU.","Blog + Conference","https://github.com/mre"],
+
+  ["David","Tolnay","","","","","Software Engineer","Infra Distributed","Creator of serde, syn, anyhow, thiserror - foundational Rust crates used by virtually every Rust project. 15k+ GitHub followers. Extreme depth in Rust systems design.","GitHub Rust ecosystem","https://github.com/dtolnay"],
+
+  ["Amos","Wenger","","Independent","https://linkedin.com/in/amos-wenger","France","Systems Engineer","Infra Distributed","fasterthanlime blog - legendary deep-dive systems articles. Deep understanding of networking, async, Linux internals. France-based (EU!). Builds and explains.","Blog + GitHub","https://github.com/fasterthanlime"],
+
+  ["Robert","Habermeier","","","https://linkedin.com/in/robert-habermeier","","Software Engineer","Infra Distributed","Top Substrate contributor (284 commits). Polkadot core developer. Deep blockchain consensus and parachain infrastructure. Knows decentralized infrastructure.","GitHub Substrate contributors","https://github.com/rphmeier"],
+
+  ["Carl","Lerche","","AWS","https://linkedin.com/in/carllerche","Portland, OR","Software Engineer","Infra Distributed","Created Tokio, mio, bytes - the foundation of Rust async I/O. 2707 GitHub followers. At AWS. Deep async runtime + networking infrastructure creator.","GitHub Tokio contributors","https://github.com/carllerche"],
+
+  ["Eric","Liang","","Databricks","https://linkedin.com/in/eric-liang-31308019","","Software Engineer","Infra Distributed","Top Ray contributor (1334 commits). Ray co-creator at Anyscale/Databricks. Distributed compute framework for ML. Deep distributed scheduling + execution.","GitHub Ray contributors","https://github.com/ericl"],
+
+  ["Edward","Oakes","","Anyscale","https://linkedin.com/in/edward-oakes","Minneapolis, MN","Software Engineer","Infra Distributed","Top Ray contributor (1131 commits). Ray Serve lead at Anyscale. 'Cares about the little things.' Deep distributed serving infrastructure.","GitHub Ray contributors","https://github.com/edoakes"],
+
+  ["Shu","Ding","g@shud.in","Vercel","https://linkedin.com/in/shuding","","Software Engineer","Full-Stack Builder","Early Vercel engineer (2018). Built SWR, Nextra, Next.js features, AI SDK, v0, analytics. True full-stack: React + infrastructure. Designer + engineer hybrid.","Vercel + GitHub","https://github.com/shuding"],
+
+  ["Tanner","Linsley","","TanStack","https://linkedin.com/in/tannerlinsley","Syracuse, UT","Owner/Creator","Full-Stack Builder","Creator of TanStack (Query, Router, Table, Form) - used by Fortune 500s. TypeScript + React expert. Ships complete libraries that thousands of companies depend on.","GitHub + LinkedIn","https://github.com/tannerlinsley"],
+
+  ["Armin","Ronacher","","Sentry","https://linkedin.com/in/armin-ronacher","Austria","Principal Engineer","Full-Stack Builder","Creator of Flask, Jinja2, Rye (Rust Python tooling). At Sentry. Rare Python + Rust full-stack talent. Deep API design sense. Ships production tools used by millions.","GitHub + Blog","https://github.com/mitsuhiko"],
+
+  ["Matteo","Collina","","Platformatic","https://linkedin.com/in/matteo-collina","Italy","CTO/Co-founder","Full-Stack Builder","Node.js TSC member. Created Fastify (fast HTTP framework). Platformatic co-founder. Deep HTTP performance + API platform expertise. Ships production Node.js at scale.","GitHub + Conference","https://github.com/mcollina"],
+
+  ["Dominik","Dorfmeister","","","https://linkedin.com/in/dominik-dorfmeister","Vienna, Austria","Software Engineer","Full-Stack Builder","TkDodo - TanStack Query core maintainer. Popular React/TypeScript blog. Deep data fetching + state management. EU-based (Vienna). Ships OSS used by thousands.","Blog + GitHub","https://github.com/TkDodo"],
+
+  ["Ryan","Carniato","","","https://linkedin.com/in/ryan-carniato","","Software Engineer","Full-Stack Builder","SolidJS creator. Deep reactive framework expertise. TypeScript + performance-focused frontend. Understands rendering, reactivity, and full-stack JS deeply.","GitHub + Conference","https://github.com/ryansolid"],
+
+  ["Anthony","Fu","","NuxtLabs","https://linkedin.com/in/anthonyfu","","Software Engineer","Full-Stack Builder","Vite, Vitest, UnoCSS, Slidev core team. Most prolific OSS contributor in JS/TS ecosystem. Ships dozens of tools. Deep DX + tooling + full-stack TypeScript.","GitHub","https://github.com/antfu"],
+
+  ["Devon","Govett","","","https://linkedin.com/in/devongovett","","Software Engineer","Full-Stack Builder","Created Parcel bundler, React Aria/Spectrum. Deep frontend infrastructure + accessibility. Ships production-grade UI libraries at Adobe-scale quality.","GitHub","https://github.com/devongovett"],
+
+  ["Jason","Miller","","","https://linkedin.com/in/pabortal","","Software Engineer","Full-Stack Builder","Preact creator (lightweight React alternative). Ex-Google (Chrome team). Deep understanding of performance, rendering, bundling. Ships minimal, high-impact code.","GitHub + Conference","https://github.com/developit"],
+
+  ["Luca","Casonato","","Deno","https://linkedin.com/in/luca-casonato","","Software Engineer","Full-Stack Builder","Deno core team. Fresh framework creator. Rust + TypeScript full-stack. Deep runtime + web standards expertise. Ships modern web infrastructure.","GitHub + Deno","https://github.com/lucacasonato"],
+
+  ["Mark","Erikson","","Replay.io","https://linkedin.com/in/markerikson","","Software Engineer","Full-Stack Builder","Redux maintainer (Redux Toolkit). Deep state management + React expertise. At Replay.io (time-travel debugging). Ships widely-used OSS libraries.","GitHub + Blog","https://github.com/markerikson"],
+
+  ["Brandon","Bayer","","Flightcontrol","https://linkedin.com/in/brandonbayer","","Founder/Engineer","Full-Stack Builder","Blitz.js creator (full-stack React framework). Now Flightcontrol (deployment platform). Ships end-to-end products. TypeScript + infrastructure.","GitHub + LinkedIn","https://github.com/flybayer"],
+
+  ["Caleb","Porzio","","Independent","https://linkedin.com/in/caleb-porzio","","Creator/Engineer","Full-Stack Builder","Created Livewire and Alpine.js. Ships complete full-stack solutions (Laravel + JS). Indie maker who builds products used by thousands. Mission-driven builder.","GitHub + Conference","https://github.com/calebporzio"],
+
+  ["Zack","Jackson","","ByteDance/Rspack","https://linkedin.com/in/zackljackson","","Staff Engineer","Full-Stack Builder","Module Federation creator (webpack). Now at ByteDance on Rspack. Pioneered micro-frontend architecture. Deep bundling + distributed frontend systems.","GitHub + Conference","https://github.com/ScriptedAlchemy"],
+
+  ["Lenz","Weber-Tronic","","","https://linkedin.com/in/lenz-weber","Germany","Software Engineer","Full-Stack Builder","Redux Toolkit / RTK Query maintainer. Ex-Apollo GraphQL. Germany-based (EU!). Deep API client + state management. Ships production libraries.","GitHub","https://github.com/phryneas"],
+
+  ["Tim","Neutkens","","Vercel","https://linkedin.com/in/timneutkens","Netherlands","Engineering Lead","Full-Stack Builder","Next.js lead at Vercel. Netherlands-based (local!). Drives the most popular React framework. Deep full-stack web infrastructure expertise.","GitHub + Vercel","https://github.com/timneutkens"],
+
+  ["Steven","Tey","","Dub.co","https://linkedin.com/in/steventey","","Founder/Engineer","Full-Stack Builder","Created Dub.co (open source link management). Ex-Vercel. Ships complete products end-to-end with Next.js + TypeScript. 20k+ GitHub followers. Builder mindset.","GitHub + LinkedIn","https://github.com/steven-tey"],
+
+  ["Lee","Robinson","","Vercel","https://linkedin.com/in/leerob","","VP of DX","Full-Stack Builder","VP of Developer Experience at Vercel. Prolific builder + educator. Ships demos, tools, and products. Deep Next.js + React + full-stack expertise.","Vercel + GitHub","https://github.com/leerob"],
+
+  ["Rich","Harris","","Vercel","https://linkedin.com/in/rich-harris","","Staff Engineer","Full-Stack Builder","Svelte creator. Now at Vercel building SvelteKit. Deep compiler + framework design. Ships innovative approaches to web development. Rethinks web primitives.","GitHub + Conference","https://github.com/Rich-Harris"],
+
+  ["Mateusz","Burzyński","","","https://linkedin.com/in/mateusz-burzynski","Poland","Software Engineer","Full-Stack Builder","XState core contributor. Deep TypeScript + state machines. Poland-based (EU!). Extreme TypeScript type-level programming expertise. Ships complex OSS.","GitHub","https://github.com/Andarist"],
+
+  ["Alex","Mironov","","Stripe","https://linkedin.com/in/alexmironov1","","Staff Engineer","Platform API","Staff Engineer at Stripe - Developer Experience + Cloud Infrastructure. 14+ years building customer-facing products and high-availability distributed systems at scale.","LinkedIn",""],
+
+  ["Nalin","Goel","","Stripe","https://linkedin.com/in/nalin-goel","","Staff Engineer","Platform API","Staff Engineer at Stripe Edge. Platform processes payments exceeding GDP of many countries. 99.999% uptime. Deep API gateway + traffic infrastructure at massive scale.","LinkedIn",""],
+
+  ["Omer","Zach","","Stripe","https://linkedin.com/in/omerzach","","Staff Engineer","Platform API","Staff Engineer at Stripe. Airflow redesign at Stripe scale. Ex-Credit Karma (Traffic Infrastructure). Deep platform + workflow orchestration at scale.","LinkedIn",""],
+
+  ["Ryan","Lane","","Stripe","https://linkedin.com/in/ryandlane","","Senior Staff Engineer","Platform API","Senior Staff Engineer at Stripe. Systems architecture + AWS infrastructure. Deep platform engineering at one of the world's most critical API companies.","LinkedIn",""],
+
+  ["Mike","North","","Stripe","https://linkedin.com/in/northm","","Staff Engineer","Platform API","Developer Platform TL at Stripe. Carnegie Mellon. Leads the developer platform that powers Stripe's API experience. Deep SDK + API design.","LinkedIn",""],
+
+  ["Malte","Ubl","","Vercel","https://linkedin.com/in/malteubl","Alameda, CA","VP Engineering","Platform API","VP Engineering at Vercel. Previously led Google AMP. Deep web platform + API design at massive scale. Knows developer platforms inside out.","LinkedIn",""],
+
+  ["Jay","Gengelbach","","Vercel","https://ca.linkedin.com/in/jaygengelbach","","Engineering Leader","Platform API","Engineering leader at Vercel. Building the developer platform behind Next.js deployment. Deep infrastructure + DX at scale.","LinkedIn",""],
+
+  ["Joshua","Bezaleel Abednego","","","https://linkedin.com/in/joshuabezaleel","","Platform Engineer","Platform API","CNCF TAG Developer Experience Tech Lead. Platform, Infrastructure, and DX specialist. Deep cloud-native platform engineering + developer tooling.","LinkedIn + CNCF",""],
+
+  ["Dillon","Mulroy","","Cloudflare","https://linkedin.com/in/dillon-mulroy","Raleigh, NC","Software Engineer","Platform API","Ex-Vercel (TypeScript, Node, React, OCaml). Now at Cloudflare. Deep developer platform experience across two of the best platform companies.","LinkedIn",""],
+
+  ["Mikhail","Smarshchok","","Stripe","https://linkedin.com/in/mikhail-smarshchok","","Staff Engineer","Platform API","Staff Engineer at Stripe. Deep API platform + infrastructure expertise at the company known for best-in-class API design.","LinkedIn",""],
+
+  ["Ankita","Gupta","","Stripe","https://linkedin.com/in/ankita-gupta","","Staff Engineer","Platform API","Staff Engineer at Stripe. Developer experience + platform engineering. Deep developer-first workflow design for microservices at scale.","LinkedIn",""],
+
+  ["Bharath","Raghavendran","","Coinbase","https://linkedin.com/in/bharathraghavendran","","Staff Engineer","Platform API","Hiring Sr Staff Engineers at Coinbase. Crypto + AI platform intersection. Ex-Stripe. Deep platform engineering across fintech + crypto.","LinkedIn",""],
+
+  ["Netto","Farah","","Cursor","https://linkedin.com/in/netto-farah-7433b328","","Software Engineer","Platform API","At Cursor (AI code editor). Platform engineering background. Building developer tools that millions use. Deep DX + API design.","LinkedIn",""],
+
+  ["R.I.","Pienaar","","Synadia","https://linkedin.com/in/ripienaar","","Software Engineer","Platform API","NATS contributor (233 commits). Built Choria (orchestration platform). Deep platform + API design for messaging infrastructure. DevOps tooling creator.","GitHub NATS + LinkedIn","https://github.com/ripienaar"],
+
+  ["Kai","Waehner","","Confluent","https://de.linkedin.com/in/kaiwaehner","Germany","Global Field CTO","Real-time Streaming","Global Field CTO at Confluent. Germany-based (EU!). Author + speaker on Kafka + Flink for streaming data. Deep real-time data architecture.","LinkedIn",""],
+
+  ["Till","Rohrmann","","Restate","https://linkedin.com/in/tillrohrmann","Berlin","Engineering Lead","Real-time Streaming","Apache Flink PMC member. Engineering lead at Restate (durable execution). Berlin-based! TU Berlin. Deep stream processing + distributed execution.","GitHub + LinkedIn","https://github.com/tillrohrmann"],
+
+  ["Aljoscha","Krettek","","Materialize","https://linkedin.com/in/aljoscha-krettek","Germany","Software Engineer","Real-time Streaming","Apache Flink + Apache Beam committer and PMC. At Materialize (streaming SQL). Germany-based! TU Berlin. Co-founded Ververica (Flink company).","GitHub + LinkedIn","https://github.com/aljoscha"],
+
+  ["Frank","McSherry","","Materialize","https://linkedin.com/in/frank-mcsherry","NYC","Chief Scientist","Real-time Streaming","Chief Scientist at Materialize. Created Timely Dataflow + Differential Dataflow. Ex-Microsoft Research. Deep streaming computation theory + practice.","GitHub + Conference","https://github.com/frankmcsherry"],
+
+  ["Stephan","Ewen","","Restate","https://de.linkedin.com/in/stephanewen","Berlin","Co-founder","Real-time Streaming","Apache Flink co-creator. Founded Ververica (data Artisans), now Restate. Berlin-based! Invented modern stream processing. Deep streaming + durable execution.","GitHub + LinkedIn","https://github.com/StephanEwen"],
+
+  ["Cheng","Zentol","","","","","Software Engineer","Real-time Streaming","#1 Apache Flink contributor (2341 commits). Deep stream processing internals. Core Flink committer.","GitHub Flink contributors","https://github.com/zentol"],
+
+  ["Eric","Liang","","Databricks","https://linkedin.com/in/eric-liang-31308019","","Software Engineer","Real-time Streaming","Top Ray contributor (1334 commits). Ray co-creator. Distributed compute for ML at Databricks. Deep distributed scheduling, data processing.","GitHub Ray contributors","https://github.com/ericl"],
+
+  ["Maurice","Van Veen","","Synadia","https://linkedin.com/in/mauricevanveen","Netherlands","Software Engineer","Real-time Streaming","NATS contributor (582 commits). Netherlands-based (local!). Building real-time messaging infrastructure. JetStream streaming features.","GitHub NATS contributors","https://github.com/MauriceVanVeen"],
+
+  ["Matthias","Hanel","","Synadia","","","Software Engineer","Real-time Streaming","NATS contributor (383 commits). Building streaming and messaging infrastructure at Synadia. Deep real-time messaging systems.","GitHub NATS contributors","https://github.com/matthiashanel"],
+
+  ["Denes","Bandur","","ScyllaDB","","","Software Engineer","Real-time Streaming","Top ScyllaDB contributor (3652 commits). Deep high-performance database + streaming internals. C++ systems expert.","GitHub ScyllaDB contributors","https://github.com/denesb"],
+
+  ["Tomasz","Grabiec","","ScyllaDB","","","Software Engineer","Real-time Streaming","#2 ScyllaDB contributor (4085 commits). Deep database storage engine + streaming compaction. High-performance systems.","GitHub ScyllaDB contributors","https://github.com/tgrabiec"],
+
+  ["Tomer","Weller","","","","","Software Engineer","Real-time Streaming","Ex-Confluent, streaming infrastructure expert. Deep Kafka internals + real-time data pipeline architecture.","Industry knowledge",""],
+
+  ["Fabian","Hueske","","","https://linkedin.com/in/fabian-hueske","Germany","Software Engineer","Real-time Streaming","Apache Flink committer + PMC. Author of 'Stream Processing with Apache Flink'. Germany-based! Deep streaming theory + practice. Conference speaker.","Book + Conference",""],
+
+  ["Vasiliki","Kalavri","","","https://linkedin.com/in/vasilikikalavri","","Assistant Professor/Engineer","Real-time Streaming","Boston University. Apache Flink committer. Co-author of 'Stream Processing with Apache Flink'. Deep streaming systems research + implementation.","Book + Academic",""],
+
+  ["Robert","Metzger","","","https://linkedin.com/in/robert-metzger","Germany","Software Engineer","Real-time Streaming","Apache Flink committer. Germany-based! Deep Flink deployment + operations. Built Flink's CI/CD and release infrastructure.","GitHub + LinkedIn",""],
+
+  ["Kostas","Kloudas","","","https://linkedin.com/in/kkloudas","","Software Engineer","Real-time Streaming","Apache Flink committer. Built Flink's state backend + checkpointing. Deep exactly-once semantics + fault-tolerant streaming.","GitHub + LinkedIn",""],
+
+  ["Maximilian","Michels","","","https://linkedin.com/in/maximilian-michels","","Software Engineer","Real-time Streaming","Apache Flink + Apache Beam committer. Cross-engine streaming expertise. Deep runner architecture + execution model.","GitHub + LinkedIn",""],
+
+  ["Tzu-Li","Tai","","","https://linkedin.com/in/tzulitai","","Software Engineer","Real-time Streaming","Apache Flink committer. Deep state management + exactly-once processing. Kafka-Flink integration expert.","GitHub",""],
+
+  ["Gyula","Fora","","","https://linkedin.com/in/gyula-fora","","Software Engineer","Real-time Streaming","Apache Flink committer. Flink Kubernetes operator. Deep streaming + cloud-native deployment expertise.","GitHub + LinkedIn",""],
+
+  ["Thomas","Weise","","","https://linkedin.com/in/thomas-weise","","Software Engineer","Real-time Streaming","Apache Apex PMC, streaming expert. Deep real-time data processing at scale. Conference speaker on streaming architectures.","LinkedIn + Conference",""],
+
+  ["Jark","Wu","","","https://linkedin.com/in/jark-wu","","Software Engineer","Real-time Streaming","Apache Flink committer. Flink SQL engine lead. Deep streaming SQL + real-time analytics. Built Flink's CDC connector ecosystem.","GitHub + LinkedIn",""],
+
+  ["Dawid","Wysakowicz","","","https://linkedin.com/in/dawid-wysakowicz","Poland","Software Engineer","Real-time Streaming","Apache Flink committer. Poland-based (EU!). Deep Flink state + fault tolerance. Core streaming infrastructure.","GitHub + LinkedIn",""],
+
+  ["Seth","Wiesman","","","https://linkedin.com/in/seth-wiesman","","Software Engineer","Real-time Streaming","Apache Flink committer. Flink Table API + SQL expert. Deep streaming query optimization.","GitHub + LinkedIn",""],
+
+  ["Martijn","Visser","","","https://linkedin.com/in/martijn-visser-flink","Netherlands","Software Engineer","Real-time Streaming","Apache Flink committer. Netherlands-based (local to Cere!). Deep Flink connector ecosystem + community building.","GitHub + LinkedIn",""],
+
+  ["Ben","Johnson","","","https://linkedin.com/in/benbjohnson","","Software Engineer","Infra Distributed","Creator of BoltDB (Go embedded database, used in etcd). Created Litestream (SQLite streaming replication). Deep database + replication expertise.","GitHub + Blog","https://github.com/benbjohnson"],
+
+  ["Conrad","Ludgate","","Neon","https://linkedin.com/in/conradludgate","UK","Software Engineer","Infra Distributed","Neon (serverless Postgres) engineer. Tokio contributor. UK-based. Rust + database infrastructure. Building the future of serverless databases.","GitHub + LinkedIn","https://github.com/conradludgate"],
+
+  ["Rain","Xu","","Oxide Computer","https://linkedin.com/in/rain-sunshowers","","Software Engineer","Platform API","cargo-nextest creator. At Oxide Computer. Deep Rust tooling + developer experience. Ships tools that improve developer productivity at scale.","GitHub","https://github.com/sunshowers"],
+
+  ["Evan","Czaplicki","","","https://linkedin.com/in/evanczaplicki","","Software Engineer","Full-Stack Builder","Elm language creator. Pioneer in typed functional UI. Deep language design + developer experience. Thinks differently about building web applications.","GitHub + Conference","https://github.com/evancz"],
+
+  ["Fred","Schott","","Astro","https://linkedin.com/in/fredschott","","Co-founder/Engineer","Full-Stack Builder","Astro co-creator. Snowpack creator. Deep web bundling + framework design. Ships complete developer tools. Builder who rethinks web architecture.","GitHub + Conference","https://github.com/FredKSchott"],
+
+  ["Matthew","Phillips","","Astro","https://linkedin.com/in/matthew-phillips","","Co-founder/Engineer","Full-Stack Builder","Astro co-creator. Ships complete web frameworks. Deep full-stack TypeScript + server rendering. Builder mindset.","GitHub + Conference","https://github.com/matthewp"],
+
+  ["Yoshua","Wuyts","","","https://linkedin.com/in/yoshuawuyts","Netherlands","Software Engineer","Platform API","Rust async contributor (Tide, async-std). Netherlands-based (local!). Deep Rust + API design. Mozilla contributor. Ships Rust web infrastructure.","GitHub","https://github.com/yoshuawuyts"],
+
+  ["Dario","Freddi","","Astarte/SECO","https://linkedin.com/in/dariofreddi","Italy","CTO","Platform API","IoT platform builder. Deep device API + data pipeline design. Rust + Elixir. EU-based (Italy). Builds complete IoT platforms end-to-end.","LinkedIn + GitHub",""],
+
+  ["Evan","You","","Independent","https://linkedin.com/in/evanyou","","Creator","Full-Stack Builder","Vue.js + Vite creator. Ships framework ecosystems used by millions. Deep tooling + DX design. Independent/mission-driven builder.","GitHub + Conference","https://github.com/yyx990803"],
+
+  ["Gal","Schlezinger","","","https://linkedin.com/in/galschlezinger","","Software Engineer","Platform API","fnm (Node version manager in Rust) creator. Deep developer tooling + CLI design. Ships tools used by thousands of developers.","GitHub","https://github.com/Schniz"],
+
+  ["Boshen","Chen","","","","","Software Engineer","Full-Stack Builder","OxcJS creator (Rust-based JS toolchain). Building next-gen JavaScript/TypeScript tooling in Rust. Deep compiler + bundler expertise.","GitHub","https://github.com/nicedayfor"],
+
+  ["Jarred","Sumner","","Oven","https://linkedin.com/in/jarred-sumner","","Founder/CTO","Full-Stack Builder","Bun runtime creator. Deep systems + JavaScript runtime design. Ships complete runtime environments. Zig + C++ + TypeScript full-stack.","GitHub + Conference","https://github.com/Jarred-Sumner"],
+
+  ["Donny","JY","","Vercel","https://linkedin.com/in/kdy1","","Software Engineer","Full-Stack Builder","SWC (Speedy Web Compiler) creator. At Vercel building Turbopack. Rust + TypeScript tooling. Ships foundational build infrastructure used by millions.","GitHub + Vercel","https://github.com/kdy1"],
+
+  ["Miško","Hevery","","","https://linkedin.com/in/misko-hevery","","CTO","Full-Stack Builder","Angular creator. Now building Qwik (resumable framework). Deep web framework architecture. Ships innovative full-stack approaches. Builder who rethinks fundamentals.","GitHub + Conference","https://github.com/mhevery"]
+]

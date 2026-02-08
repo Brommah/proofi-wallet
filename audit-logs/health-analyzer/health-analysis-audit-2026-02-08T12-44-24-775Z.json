@@ -1,0 +1,263 @@
+{
+  "sessionId": "local_1770554644297_xwdmz3",
+  "startedAt": "2026-02-08T12:44:04.297Z",
+  "completedAt": "2026-02-08T12:44:19.426Z",
+  "config": {
+    "bucketId": "1229",
+    "outputPath": "/Users/martijnbroersma/clawd/audit-logs/health-analyzer",
+    "useLocalAI": true,
+    "verbose": false
+  },
+  "model": {
+    "name": "llama3.2:3b",
+    "digest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+    "ollamaVersion": "0.15.5",
+    "parameters": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "llama",
+      "families": [
+        "llama"
+      ],
+      "parameter_size": "3.2B",
+      "quantization_level": "Q4_K_M"
+    }
+  },
+  "inputData": {
+    "userId": "demo-user-001",
+    "dataType": "health-metrics",
+    "collectedAt": "2026-02-08T12:43:00.445Z",
+    "steps": [
+      {
+        "date": "2026-02-01",
+        "count": 8432,
+        "distance": 6200
+      },
+      {
+        "date": "2026-02-02",
+        "count": 5621,
+        "distance": 4100
+      },
+      {
+        "date": "2026-02-03",
+        "count": 12045,
+        "distance": 8900
+      },
+      {
+        "date": "2026-02-04",
+        "count": 7823,
+        "distance": 5700
+      },
+      {
+        "date": "2026-02-05",
+        "count": 9156,
+        "distance": 6800
+      },
+      {
+        "date": "2026-02-06",
+        "count": 4532,
+        "distance": 3300
+      },
+      {
+        "date": "2026-02-07",
+        "count": 11234,
+        "distance": 8200
+      }
+    ],
+    "sleep": [
+      {
+        "date": "2026-02-01",
+        "duration": 7.2,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-02",
+        "duration": 5.8,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-03",
+        "duration": 8.1,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-02-04",
+        "duration": 6.5,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-05",
+        "duration": 7.8,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-06",
+        "duration": 5.2,
+        "quality": "poor"
+      },
+      {
+        "date": "2026-02-07",
+        "duration": 7.5,
+        "quality": "good"
+      }
+    ],
+    "mood": [
+      {
+        "date": "2026-02-01",
+        "score": 7,
+        "notes": "Good day at work"
+      },
+      {
+        "date": "2026-02-02",
+        "score": 5,
+        "notes": "Tired"
+      },
+      {
+        "date": "2026-02-03",
+        "score": 8,
+        "notes": "Great workout"
+      },
+      {
+        "date": "2026-02-04",
+        "score": 6
+      },
+      {
+        "date": "2026-02-05",
+        "score": 7
+      },
+      {
+        "date": "2026-02-06",
+        "score": 4,
+        "notes": "Stressed"
+      },
+      {
+        "date": "2026-02-07",
+        "score": 8,
+        "notes": "Weekend!"
+      }
+    ]
+  },
+  "dataHash": "a4dfb32ae0f210efcbe6e662e8bbc75e10db0168edfff135c6405a1179af5844",
+  "resultHash": "5faa45925026ab5627f35eb98ad61321c9aa919bba38816dd03bd66d895b9881",
+  "outputCid": "baebb4icaegctsbw55nqtkf7vk4m5vfexgylc7jyk7eynpef7zbmwez5x2i",
+  "entries": [
+    {
+      "id": "audit_1770554644299_rg9w3l7c_0",
+      "timestamp": "2026-02-08T12:44:04.453Z",
+      "action": "data_fetched",
+      "details": {
+        "bucketId": "1229",
+        "source": "ddc",
+        "note": "Fetching encrypted data from DDC"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770554644299_rg9w3l7c_1",
+      "timestamp": "2026-02-08T12:44:04.571Z",
+      "action": "token_validated",
+      "details": {
+        "tokenId": "token_1770554582207_97b92a3c",
+        "issuer": "5DSxCBjQZ6P9fu2a34Gn9Ae6aJLMaiHJhveMTiMDCVCoazE1",
+        "sigAlg": "sr25519",
+        "note": "Token signature cryptographically verified"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770554644299_rg9w3l7c_2",
+      "timestamp": "2026-02-08T12:44:04.571Z",
+      "action": "data_decrypted",
+      "details": {
+        "note": "Decrypting data with capability token",
+        "tokenProvided": true,
+        "keyProvided": true
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770554644299_rg9w3l7c_3",
+      "timestamp": "2026-02-08T12:44:04.587Z",
+      "action": "inference_started",
+      "details": {
+        "model": "llama3.2:3b",
+        "modelDigest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+        "inputHash": "a4dfb32ae0f210efcbe6e662e8bbc75e10db0168edfff135c6405a1179af5844",
+        "note": "Starting health analysis"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770554644299_rg9w3l7c_4",
+      "timestamp": "2026-02-08T12:44:17.297Z",
+      "action": "inference_completed",
+      "details": {
+        "model": "llama3.2:3b",
+        "outputHash": "5faa45925026ab5627f35eb98ad61321c9aa919bba38816dd03bd66d895b9881",
+        "trendsCount": 1,
+        "recommendationsCount": 2,
+        "note": "Analysis complete"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770554644299_rg9w3l7c_5",
+      "timestamp": "2026-02-08T12:44:17.300Z",
+      "action": "output_encrypted",
+      "details": {
+        "outputHash": "5faa45925026ab5627f35eb98ad61321c9aa919bba38816dd03bd66d895b9881",
+        "ciphertextLength": 1960,
+        "note": "Output encrypted with user DEK"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770554644299_rg9w3l7c_6",
+      "timestamp": "2026-02-08T12:44:19.425Z",
+      "action": "output_stored",
+      "details": {
+        "cid": "baebb4icaegctsbw55nqtkf7vk4m5vfexgylc7jyk7eynpef7zbmwez5x2i",
+        "bucketId": "1229",
+        "size": 2001,
+        "encrypted": true,
+        "note": "Encrypted output stored to DDC"
+      },
+      "hashes": {}
+    }
+  ],
+  "insights": {
+    "generatedAt": "2026-02-08T12:44:17.297Z",
+    "summary": "The user has shown consistent improvement in step count and duration, but struggles with sleep quality. Mood scores are generally stable, with a few instances of stress. The data suggests the need for targeted interventions to address sleep quality.",
+    "trends": [
+      {
+        "category": "steps|sleep|mood",
+        "direction": "improving|decreasing|stable",
+        "description": "The user's step count and duration have improved, while their sleep quality has declined. Mood scores are generally stable."
+      }
+    ],
+    "recommendations": [
+      {
+        "priority": "medium",
+        "category": "sleep",
+        "title": "Improve Sleep Quality",
+        "description": "Establish a consistent sleep schedule, avoid caffeine and electronics before bedtime, and create a relaxing bedtime routine.",
+        "actionable": true
+      },
+      {
+        "priority": "low",
+        "category": "stress management",
+        "title": "Manage Stress",
+        "description": "Practice relaxation techniques such as deep breathing, meditation, or yoga to help manage stress.",
+        "actionable": true
+      }
+    ],
+    "alerts": []
+  },
+  "signature": "ee0850f8fd89b417ed5101ca5ff13436e1702a08ece58b9c5fd7147f9089a102",
+  "attestation": {
+    "blockHash": "0xcad44c6f6d7a085332b64a4738cd440a3ceccf36af52c9f13de4d4b4cfc41d99",
+    "blockNumber": 24282779,
+    "extrinsicHash": "0x4e4413c332558b09b40b9cef0e0a0cb532bd5a7ad057ff72e9ce1208ab38c9e5",
+    "attestationHash": "025fd2a0027e635a982c1a324ddd0aba360525126f54a385e8a0551a46ddc015"
+  }
+}

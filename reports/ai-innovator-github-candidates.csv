@@ -1,0 +1,207 @@
+github_username,name,location,company,bio,blog,twitter,followers,public_repos,source_repo,signal
+zhuohan123,Zhuohan Li, San Francisco Bay Area,vLLM / Meta,building @vllm-project at Meta | 🎓 cs phd @ 🌁 uc berkeley |  machine learning system |  the real agi is the friends we made along the way,https://zhuohan.li,zhuohan123,1501,21,vllm-project/vllm,high-influence; ai-bio; target-location
+gante,Joao Gante,London,,Senior Research Engineer @ Google DeepMind,,joao_gante,431,12,huggingface/transformers,notable-influence; ai-bio; production-focus; target-location
+tchaton,thomas chaton,London,Lightning.ai | Pytorch Lightning,Staff Research Engineer | Pytorch Lightning,https://www.linkedin.com/in/thomas-chaton-1529ba128/,,330,84,Lightning-AI/pytorch-lightning,notable-influence; ai-bio; production-focus; target-location
+zaptrem,Ryan Tremblay,SF & NY,Sonauto,Founder of sonauto.ai  Prev. CS & History @ Cornell -- PyTorch / React / ML / Diffusion / Python / Swift / Java / Other Stuff(TM),https://sonauto.ai/,zaptrem,46,61,mozilla/DeepSpeech,ai-bio; production-focus; target-location
+sanchit-gandhi,Sanchit Gandhi,"London, UK",@mistralai,Research Scientist @mistralai ,,,865,11,huggingface/transformers,high-influence; ai-bio; target-location
+nickscamara,Nicolas,San Francisco,Firecrawl,Founder @ Firecrawl - Love teaching and building products people love - Prev built Mendable - Brazilian 🇧🇷,firecrawl.dev,nickscamara_,754,69,langchain-ai/langchain,high-influence; production-focus; target-location
+TuanaCelik,Tuana Çelik,"Amsterdam, NL",@run-llama,DevRel @ LlamaIndex,https://tuana.dev,tuanacelik,457,86,run-llama/llama_index,notable-influence; ai-bio; target-location
+cpfiffer,Cameron,"San Francisco, CA",@letta-ai,AI and chill,cameron.pfiffer.org,cameron_pfiffer,444,119,outlines-dev/outlines,notable-influence; ai-bio; target-location
+comaniac,Cody Yu,"San Francisco, CA",@openai,LLM systems,https://comaniac.github.io,,397,56,vllm-project/vllm,notable-influence; ai-bio; target-location
+ydshieh,Yih-Dar,Paris,,Machine Learning Engineer,,,318,29,huggingface/transformers,notable-influence; ai-bio; target-location
+lgeiger,Lukas Geiger,London,@plumerai @larq ,deep learning scientist | astroparticle physicist | software engineer,www.linkedin.com/in/lgeiger,_lgeiger,288,181,vllm-project/vllm,notable-influence; ai-bio; target-location
+Disiok,Simon Suo,San Francisco,LlamaIndex,"LlamaIndex --- Prev: Research Scientist at Uber ATG, PhD Student at University of Toronto",simonsuo.com,,189,33,run-llama/llama_index,notable-influence; ai-bio; target-location
+ravi03071991,Ravi Theja,San Francisco,MistralAI,Applied AI @mistralai ,https://sites.google.com/view/ravi-theja,,175,79,run-llama/llama_index,notable-influence; ai-bio; target-location
+MekkCyber,Mohamed Mekkouri,Paris,Hugging Face,ML Research Engineer @huggingface,,mohamedmekkouri,119,123,huggingface/transformers,notable-influence; ai-bio; target-location
+krishnakalyan3,Krishna Kalyan,Munich,,Machine Learning | Distributed Systems ,krishnakalyan3.github.io,,106,280,Lightning-AI/pytorch-lightning,notable-influence; ai-bio; target-location
+alonsosilvaallende,Alonso Silva,"Paris, France",Nokia Bell Labs,AI Researcher at Nokia Bell Labs ,https://alonsosilvaallende.github.io/,alonsosilva,103,154,outlines-dev/outlines,notable-influence; ai-bio; target-location
+0xRaduan,Raduan A.,🌉 sf / 🇳🇱 ams,@databricks / @thesummarycompany,builder; ai hacker; engineer; software entrepreneur,https://raduan.xyz,0xRaduan,64,66,instructor-ai/instructor,ai-bio; target-location
+jplu,Julien Plu,Paris,LettrIA,PhD in NLP and Deep Learning. Now research scientist.,https://jplu.github.io/,julienplu,58,32,huggingface/transformers,ai-bio; target-location
+ServeurpersoCom,Pascal,Paris,,LLM pilot & prompt engineer,https://www.serveurperso.com,,28,79,ggerganov/llama.cpp,ai-bio; target-location
+RobinPicard,Robin Picard,Paris,@dottxt-ai ,Open source developer at @dottxt-ai ,,,19,10,outlines-dev/outlines,ai-bio; target-location
+indigoviolet,Venky Iyer,San Francisco,@additiveai ,"@additiveai (TR)  Previously @facebook, @finventures. ",www.romansix.org,,18,103,instructor-ai/instructor,ai-bio; target-location
+dtiarks,Daniel Tiarks,Munich,Cambrion,"OSS AI, information extraction, MLLMs, guided generation",https://docs.cambrion.io,,17,21,outlines-dev/outlines,ai-bio; target-location
+remi-or,Rémi Ouazan,Paris,Hugging Face,Kernel engineer at Hugging Face :hugs: also a transformers maintainer,,,9,28,huggingface/transformers,ai-bio; target-location
+LysandreJik,Lysandre Debut,Paris,Hugging Face,Chief OS Officer @ HF,Lysand.re,LysandreJik,1770,43,huggingface/transformers,high-influence; target-location
+jacoblee93,Jacob Lee,San Francisco,@langchain-ai,All the Langs,https://jacobscript.dev,hacubu,1330,92,langchain-ai/langchain,high-influence; target-location
+CatalinVoss,Catalin Voss,"San Francisco, CA",Stanford University,Co-Founder of @ElloTechnology,,,87,30,mozilla/DeepSpeech,production-focus; target-location
+nfcampos,Nuno Campos,San Francisco,@langchain-ai,Helping people build stuff. ,,nfcampos,977,75,langchain-ai/langchain,high-influence; target-location
+williamFalcon,William Falcon,"New York City, NY",Lightning AI,"PyTorch Lightning Creator. CEO @Lightning-AI . AI PhD Researcher @nyu.   Former @facebookresearch, Goldman Sachs, Columbia, NextGenVest (co-founder, acquired)",https://lightning.ai,_willfalcon,2462,125,Lightning-AI/pytorch-lightning,high-influence; ai-bio; production-focus
+simon-mo,Simon Mo,"Berkeley, CA",@inferact,"cofounder of @Inferact, lead maintainer of @vllm-project ",,simon_mo_,944,112,vllm-project/vllm,high-influence; ai-bio; production-focus
+lantiga,Luca Antiga,"Bergamo, Italy",Lightning AI,"CTO at Lightning AI / Co-founder at Orobix, Orobix Life, Tensorwerk",lantiga.github.io,lantiga,754,54,Lightning-AI/pytorch-lightning,high-influence; ai-bio; production-focus
+hinthornw,William FH,,LangChain,Engineering @ LangChain  Formerly:  ML Eng @ Robust Intelligence AI @ Microsoft Research,,WHinthorn,721,95,langchain-ai/langchain,high-influence; ai-bio; production-focus
+seldo,Laurie Voss,"San Francisco, CA",Arize AI,Web developer.,http://seldo.com,seldo,500,117,run-llama/llama_index,notable-influence; target-location
+imskr,Shubham Kumar,"Berlin, Germany",GitLab,Backend Engineer at GitLab | GSoC 2021 @gitlabhq and GSoC 2020 @mozilla,https://shubham-kumar.com,TheTweetOfSKR,388,110,mozilla/DeepSpeech,notable-influence; target-location
+ochafik,Olivier Chafik,London,Anthropic,Pragmatic programmer with some idealism left; Views expressed are my own; 🏳️‍🌈,https://ochafik.com,ochafik,340,377,ggerganov/llama.cpp,notable-influence; target-location
+mfuntowicz,Funtowicz Morgan,"Paris, France",@huggingface ,@huggingface | Low-level stuff   ,,,325,32,huggingface/transformers,notable-influence; target-location
+jon-chuang,,San Francisco,,Jonathan Chuang | Part-time neocortical rewirer,,,194,82,run-llama/llama_index,notable-influence; target-location
+savarin,Ezzeri Esa,San Francisco Bay Area,,Participant @ Recurse Center,,,132,109,instructor-ai/instructor,notable-influence; target-location
+ofermend,Ofer Mendelevitch,SF Bay,Vectara,Developer Relations @ Vectara,www.vectara.com,ofermend,93,36,langchain-ai/langchain|run-llama/llama_index,target-location
+jamesbraza,James Braza,"San Francisco Bay Area, CA, USA",AI Research @Future-House,Just a man eating spaghetti,jamesbraza.com,,90,22,run-llama/llama_index,target-location
+tslmy,Ming,San Francisco Bay Area,,Actively seeking opportunities to play boardgames off-line.,myli.page,,86,67,run-llama/llama_index,target-location
+sourabhdesai,Sourabh Desai,"San Francisco, CA",,Getting good one line at a time,,,83,41,run-llama/llama_index,target-location
+mauvilsa,Mauricio Villegas,"Berlin, Germany",@omni-us,I am a postdoc researcher/developer currently working at omni:us,https://scholar.google.com/citations?hl=en&user=18e7rpsAAAAJ&view_op=list_works&sortby=pubdate,,60,27,Lightning-AI/pytorch-lightning,target-location
+GeorgeFedoseev,George Fedoseev,"London, UK",wayve.ai,🌏 world modelling,georgefedoseev.com,,40,62,mozilla/DeepSpeech,target-location
+manskx,Mansy,"Munich, Germany",,@lumalabs ,https://www.linkedin.com/in/ahmedmansk,,30,17,Lightning-AI/pytorch-lightning,target-location
+sgugger,Sylvain Gugger,,,All things Machine Learning prev Hugging Face/fast.ai,,,3686,33,huggingface/transformers,high-influence; ai-bio
+stas00,Stas Bekman,"BC, Canada",Stasosphere Online Inc. / ,"Toolmaker. Author. Software creator, optimizer and harmonizer. Makes things work.  Current domains: LLM/Training/Inference/Scalability/Machine Learning",https://stasosphere.com/machine-learning/,StasBekman,2288,149,huggingface/transformers,high-influence; ai-bio
+NielsRogge,,Belgium,HuggingFace,"ML @HuggingFace. Interested in deep learning, NLP.   Contributed 40+ models to HuggingFace Transformers",nielsrogge.github.io,NielsRogge,4175,252,huggingface/transformers,high-influence; ai-bio
+Borda,Jirka Borovec,Prague,,Computer Vision  & Machine Learning  & Bio-Medical Imaging  & #DeepLearn  & Kaggle Master,,,3821,120,Lightning-AI/pytorch-lightning,high-influence; ai-bio
+borisdayma,Boris Dayma,,,Building free AI tools 🎉 ,,borisdayma,3147,89,Lightning-AI/pytorch-lightning,high-influence; ai-bio
+jxnl,Jason Liu,"New York, NY",567 Studio,indie consultant and educator previously ai/ml/ds @stitchfix @Facebook @nyu ,http://jxnl.co,jxnlco,1804,86,instructor-ai/instructor,high-influence; ai-bio
+carmocca,Carlos Mocholí,Spain,,Research Engineer,,carmocca,1619,33,Lightning-AI/pytorch-lightning,high-influence; ai-bio
+muellerzr,Zach Mueller,,@HuggingFace,"Passionate about Open Source and Deep Learning, working on 🤗 Accelerate",https://muellerminutes.substack.com/,TheZachMueller,1448,186,huggingface/transformers,high-influence; ai-bio
+bracesproul,Brace Sproul,,@langchain-ai,Trace tackler @ LangChain,sproul.dev,bracesproul,1397,68,langchain-ai/langchain,high-influence; ai-bio
+Yard1,Antoni Baum,,Member of Technical Staff @openai,Member of Technical Staff @openai | ex-@anyscale | Commiter @ray-project @vllm-project @pycaret ,,,364,110,vllm-project/vllm,notable-influence; ai-bio; production-focus
+mrm8488,Manuel Romero,"Murcia, Spain",ClibrAIn,NLP/NLG Senior Engineer. Team lead and Back-End senior dev. Scrum Master and PM/PO by Scrum Alliance.,mrm8488.github.io,mrm8488,322,318,huggingface/transformers,notable-influence; ai-bio; production-focus
+justusschock,Justus Schock,Düsseldorf,@Lightning-AI,Staff Research Engineer,,,255,73,Lightning-AI/pytorch-lightning,notable-influence; ai-bio; production-focus
+mdrxy,Mason Daugherty,"Cambridge, MA",,Engineering @langchain-ai,mdrxy.com,,233,21,langchain-ai/langchain,notable-influence; ai-bio; production-focus
+WoosukKwon,Woosuk Kwon,"Berkeley, CA",,@Inferact | @vllm-project,https://woosuk.me,woosuk_k,1217,8,vllm-project/vllm,high-influence; ai-bio
+rkooo567,SangBin Cho,,"Member of Technical Staff, xAI",MTS @ xAI | Previously @anyscale | Senior committer @ray-project | Committer @vllm-project & @sglang,https://www.linkedin.com/in/sang-cho/,,210,45,vllm-project/vllm,notable-influence; ai-bio; production-focus
+ColeMurray,Cole Murray,"San Diego, CA",,"AI/ML Consultant, 2nd-time Founder, Former Sr SDE @ Amazon",https://murraycole.com,_colemurray,204,113,run-llama/llama_index,notable-influence; ai-bio; production-focus
+ccurme,ccurme,,,"Engineering @ LangChain. Formerly: AI @ Microsoft, ML Eng @ Kensho Technologies.",,,201,8,langchain-ai/langchain,notable-influence; ai-bio; production-focus
+ethanwharris,Ethan Harris,,@Lightning-AI,Staff Research Engineer @Lightning-AI ,,,188,29,Lightning-AI/pytorch-lightning,notable-influence; ai-bio; production-focus
+fxmarty,,France,,anything deep learning deployment,,efxmarty,173,67,huggingface/transformers,notable-influence; ai-bio; production-focus
+ivanleomk,Ivan Leo,Singapore,567-labs,Full Stack programmer turned LLM affectionado. I am a core contributor to the instructor and kura package. :) ,ivanleomk@gmail.com,ivanleomk,149,183,instructor-ai/instructor,notable-influence; ai-bio; production-focus
+mspronesti,Massimiliano Pronesti,"Dublin, Ireland",IBM Research,"AI  💻 @IBM |  Mainly interested in Deep Learning, NLP, Software Engineering, and HPC.",,,138,41,langchain-ai/langchain,notable-influence; ai-bio; production-focus
+saattrupdan,Dan Saattrup Smart,"Copenhagen, Denmark",Alexandra Institute,"Principal AI Specialist, Mathematics PhD",saattrupdan.com,,122,45,outlines-dev/outlines,notable-influence; ai-bio; production-focus
+tlrmchlsmth,Tyler Michael Smith,,Red Hat,"Chief Architect, Inference Engineering @ Red Hat |  Committer @vllm-project ",,,120,39,vllm-project/vllm,notable-influence; ai-bio; production-focus
+Raj725,Rajendra Kadam,Ch. Sambhajinagar,Nearform,"Senior Software Engineer | 9+ years of experience | Python, Neo4j, Cypher, AI, RAG, LLMs, Django, FastAPI & more",,Raj__725,83,60,langchain-ai/langchain,ai-bio; production-focus
+3coins,Piyush Jain,,Amazon Web Services,"@langchain-ai maintainer, @jupyter-ai-contrib maintainer, @jupyter Distinguished Contributor, Principal Engineer @aws. ",,pjain7,73,85,langchain-ai/langchain,ai-bio; production-focus
+lakshyaag,Lakshya Agarwal,"Toronto, Ontario",,AI Engineering @ Bain & Co | Analytics @ McGill,lakshyaag.com,lakshyaag,71,104,instructor-ai/instructor,ai-bio; production-focus
+ngxson,Xuan-Son Nguyen,France,@huggingface ,The sky is blue. The sun is yellow. Here we go. There and back again.,https://ngxson.com,,1037,159,ggerganov/llama.cpp,high-influence; ai-bio
+joschkabraun,Joschka Braun,,Parea AI,Co-founder and CTO of Parea AI,https://joschkabraun.com,joschkabraun,33,19,instructor-ai/instructor,ai-bio; production-focus
+dmitsf,Dmitry Frolov,"New York, United States",Staff SWE @ Lightning AI,@gridai @Lightning-AI  @PyTorchLightning ,,,31,58,Lightning-AI/pytorch-lightning,ai-bio; production-focus
+khluu,Kevin H. Luu,,@Inferact,"Working on CI, release, cloud infrastructure for @vllm-project @Inferact ",,,29,17,vllm-project/vllm,ai-bio; production-focus
+pnkvalavala,Pavan Narasimha Karthik,Bhimavaram,,Senior AI Software Engineer @mightybot-ai | B.Tech @IITH,https://linktr.ee/pnkvalavala,pnkvalavala,28,18,instructor-ai/instructor,ai-bio; production-focus
+mattkindy,Matt Kindy,"Austin, TX",NimbusAI,Technical leader and engineer interested in working with data to solve problems - Founder @ NimbusAI,,,17,12,outlines-dev/outlines,ai-bio; production-focus
+a3lem,adriaan,Belgium,Klassif.ai,AI Lead @ klassif.ai,,,16,36,instructor-ai/instructor,ai-bio; production-focus
+taronaeo,Aaron Teo,Singapore,@IBM,"AI on Z, Inference Engines, IBM Z & LinuxONE @ IBM Technology Asia Pacific (APAC), Technology Engineer at IBM Client Engineering (Singapore)",,,11,33,ggerganov/llama.cpp,ai-bio; production-focus
+paulelliotco,Paul Elliot,,,Senior AI Engineer,,paulelliotco,3,21,instructor-ai/instructor,ai-bio; production-focus
+eyurtsev,Eugene Yurtsev,Boston,@langchain-ai,SWE | ML | Chief Data Kitten,eyurtsev.github.io,veryboldbagel,966,41,langchain-ai/langchain,high-influence; ai-bio
+tomasonjo,Tomaz Bratanic,,,Graph and ML enthusiast. Author of Graph algorithms: http://mng.bz/GGVN And Essential GraphRAG: https://www.manning.com/books/essential-graphrag,https://bratanic-tomaz.medium.com/,,924,91,langchain-ai/langchain|run-llama/llama_index,high-influence; ai-bio
+rlouf,Rémi Louf,"Bourron-Marlotte, France",.txt, Casual inference. CEO @ .txt ,www.thetypicalset.com,remilouf,560,53,huggingface/transformers|outlines-dev/outlines,high-influence; ai-bio
+sydney-runkle,Sydney Runkle,"Somerville, MA",@langchain-ai,"Software Engineer at @langchain-ai 🤓, coffee lover ☕, running enthusiast 🏃‍♀️, podcast addict 🎧, and pastry aficionado 🥐!",,sydneyrunkle,512,6,langchain-ai/langchain,high-influence; ai-bio
+pacman100,Sourab Mangrulkar,🇮🇳,Amazon,Applied Scientist & ML Engineer. ML and Deep Learning Enthusiast.,https://pacman100.github.io/,,508,53,huggingface/transformers,high-influence; ai-bio
+Rocketknight1,Matt,"Dublin, Ireland",@huggingface ,ML Engineer @ Hugging Face,,carrigmat,502,11,huggingface/transformers,high-influence; ai-bio
+thomwolf,Thomas Wolf,,@huggingface ,Co-founder @ Hugging Face,https://thomwolf.io,Thom_wolf,3361,79,huggingface/transformers,high-influence; production-focus
+julien-c,Julien Chaumond,"Brooklyn, NY",@huggingface ,CTO @huggingface,https://huggingface.co/julien-c,julien_c,2020,241,huggingface/transformers,high-influence; production-focus
+prusnak,Pavol Rusnak,₿ pavol@rusnak.io,Co-Founder @SatoshiLabs,✊ Strengthening individual power and independence via open-source software and hardware projects • @Bitcoin @Trezor @NixOS @TropicSquare,https://rusnak.io,pavolrusnak,1155,128,ggerganov/llama.cpp,high-influence; production-focus
+JRMeyer,Josh Meyer,planet earth,,voice & AI,jrmeyer.github.io,_josh_meyer_,474,101,mozilla/DeepSpeech,notable-influence; ai-bio
+sshleifer,Sam Shleifer,New York,,Research Engineer,https://twitter.com/sam_shleifer,sam_shleifer,440,89,huggingface/transformers,notable-influence; ai-bio
+VictorSanh,Victor SANH,New York City,@rilixai,AI Builder | Prev @huggingface,https://twitter.com/SanhEstPasMoi,SanhEstPasMoi,429,40,huggingface/transformers,notable-influence; ai-bio
+AstraBert,Clelia (Astra) Bertelli,Germany,@run-llama,"Pythonist, Gopher and aspiring Rustacean, building open source stuff with AI",https://clelia.dev,itsclelia,377,176,run-llama/llama_index,notable-influence; ai-bio
+mgoin,Michael Goin,Boston,@vllm-project @redhatofficial @neuralmagic,Open source inference optimization @vllm-project | @redhat | @neuralmagic,,mgoin_,356,75,vllm-project/vllm,notable-influence; ai-bio
+SkafteNicki,Nicki Skafte Detlefsen,Denmark,,"Associate Professor at section for Cognitive Systems (CogSys), Technical University of Denmark (DTU). Main focus: MLOPs and efficient ML",https://skaftenicki.github.io/,,319,48,Lightning-AI/pytorch-lightning,notable-influence; ai-bio
+JohannesGaessler,Johannes Gäßler,"Karlsruhe, Germany",Karlsruhe Institute of Technology,"Experimental particle physicist. Other interests: statistics, generative neural networks, hardware acceleration.",,,309,15,ggerganov/llama.cpp,notable-influence; ai-bio
+jeremyjordan,Jeremy Jordan,"Raleigh, NC",,Machine learning engineer. Broadly curious.  Twitter: @jeremyjordan,jeremyjordan.me,,264,31,Lightning-AI/pytorch-lightning,notable-influence; ai-bio
+SunMarc,Marc Sun,,Hugging Face ,Machine Learning Engineer @huggingface ,https://huggingface.co/,_marcsun,254,39,huggingface/transformers,notable-influence; ai-bio
+robertgshaw2-redhat,Robert Shaw,Boston,@RedHatOfficial,vllm and llm-d,,robertshaw21,241,78,vllm-project/vllm,notable-influence; ai-bio
+shibuiwilliam,shibuiwilliam,,,"Software engineer for backend, cloud, container, machine learning, LLM and AR. MENSA. https://amzn.to/43hVwtC https://amzn.to/3Uz5AdP",http://qiita.com/cvusk,,227,97,langchain-ai/langchain,notable-influence; ai-bio
+7flash,B. GOR,,Telegram @galaxygur,I love making my own sourdough and cheese  Building Galaxy: Distributed Inference Network ($GXY),Youtube @flashcodes (Igor Berlenko),berliangor,227,535,outlines-dev/outlines,notable-influence; ai-bio
+SomeoneSerge,Someone,"Helsinki, FI","Independent + Aalto U, former HSE & Skoltech","Applied mathematics, inverse graphics, computer vision (dense image correspondences), Nix",https://someonex.net,,227,153,ggerganov/llama.cpp,notable-influence; ai-bio
+nerdai,Andrei Fajardo,Toronto,nerdai solutions inc.,AI Researcher/Engineer ✦ Ex Founding Engineer @run-llama (LlamaIndex) ✦ PhD (UWaterloo) ✦ CIPT ,https://nerdai.io,_nerdai_,207,50,run-llama/llama_index,notable-influence; ai-bio
+KathyReid,Kathy Reid,"Geelong, Australia",@anucybernetics,"Speech, ML, Data + AI.  @ANUcybernetics in Canberra, AU & @common-voice @Mozilla-Data-Collective Ex @nvidia @Deakin @MycroftAI @linuxaustralia ",https://kathyreid.com.au,,182,173,mozilla/DeepSpeech,notable-influence; ai-bio
+zucchini-nlp,Raushan Turganbay,France,Hugging Face,ML Engineer at 🤗 | Generation & Multimodality,,RTurganbay,174,23,huggingface/transformers,notable-influence; ai-bio
+Cyrilvallez,Cyril Vallez,"Lausanne, Switzerland",@huggingface,Core Maintainer @ Transformers 🤗,https://ai-forge.ch/,,156,20,huggingface/transformers,notable-influence; ai-bio
+kaushikb11,Kaushik B,,,LLMs go brrrr,kaushikbokka@gmail.com,kaushik_bokka,143,82,Lightning-AI/pytorch-lightning,notable-influence; ai-bio
+hmellor,Harry Mellor,,@huggingface @vllm-project,ML Engineer @huggingface,,,138,19,vllm-project/vllm,notable-influence; ai-bio
+vowelparrot,VowelParrot,The Interwebs,LangChain,AI Developer & LLM Enthusiast.  Mostly stochastic.  Views are my own until I can get my employer to agree.,,,137,4,langchain-ai/langchain,notable-influence; ai-bio
+chaunceyjiang,Chauncey,,@DaoCloud ,Karmada/OpenELB/HAMi/vLLM approver cilium/istio member  ,,,127,81,vllm-project/vllm,notable-influence; ai-bio
+gardenia22,Nanshu,"Foster City, California",Meta,"LLM/NLP/ML @ Meta: LLM Post-Training, Tool Use & RAG, Multimodal, NLG, On Device AI, Privacy ML, and Integrity",http://nanshu.wang,,120,26,mozilla/DeepSpeech,notable-influence; ai-bio
+the-vampiire,,,,some of us will never sleep again,,,113,107,outlines-dev/outlines,notable-influence; ai-bio
+NickLucche,Nicolò Lucchesi,,Red Hat,I like ML that runs fast (and sometimes works too).,,,104,44,vllm-project/vllm,notable-influence; ai-bio
+daanzu,David Zurow,,,david.zurow at gmail,,,102,66,mozilla/DeepSpeech,notable-influence; ai-bio
+carlfm01,Carlos Fonseca,Costa Rica,,carlfm01@hotmail.com,,,88,65,mozilla/DeepSpeech,ai-bio
+isamu-isozaki,Isamu Isozaki,"Philadelphia, PA, USA",,Hi! I'm a student at Drexel University. I'm most interested in machine learning and robotics.,,,72,93,outlines-dev/outlines,ai-bio
+fnhirwa,Felix Hirwa Nshuti,Kigali-Rwanda,,ECE @ CMU | Computer Architecture | Compilers |  Machine Learning,https://fnhirwa.github.io/,fnhirwa,71,25,Lightning-AI/pytorch-lightning,ai-bio
+ProExpertProg,Luka Govedič,"Cambridge, MA",Red Hat,"@vllm-project maintainer | vLLM performance @redhatofficial | MIT B.S. 2022, M. Eng. 2023 | HPC, C++ & CUDA",proexpertprog.github.io,,66,27,vllm-project/vllm,ai-bio
+benlipkin,Ben Lipkin,"Cambridge, MA",MIT,"Researcher. LLMs, Bayes.",benlipkin.github.io,ben_lipkin,62,21,outlines-dev/outlines,ai-bio
+tdoublep,Thomas Parnell,"Zürich, Switzerland",@IBM ,Principle Research Scientist @IBM | Committer @vllm-project ,https://researcher.watson.ibm.com/researcher/view.php?person=zurich-TPA,,58,17,vllm-project/vllm,ai-bio
+dsikka,Dipika Sikka,New York,"@neuralmagic, Columbia University",Machine Learning Engineer @ Neural Magic ||  University of Waterloo 🍁,https://www.linkedin.com/in/dipika-sikka/,,56,15,vllm-project/vllm,ai-bio
+lapp0,Andrew Lapp,,, I work on transformers inference and training.,,,53,44,outlines-dev/outlines,ai-bio
+joelrorseth,Joel Rorseth,"Waterloo, Ontario",,PhD @ UWaterloo. Currently focused on explainability and interpretability for LLMs.,joelrorseth.github.io,JoelExplainsAI,44,36,run-llama/llama_index,ai-bio
+gvoysey,Graham Voysey,"Boston, MA",Boston University Hearing Research Center,Computational modeling of auditory processing in whales and humans @AuditoryBiophysicsLab;   Fancy deep learning at GeoDigital and @neurala.,http://gvoysey.github.io,,40,43,mozilla/DeepSpeech,ai-bio
+alexm-redhat,Alexander Matveev,"Boston, MA, USA",RedHat,@vllm-project,https://redhat.com,,33,9,vllm-project/vllm,ai-bio
+am17an,Aman Gupta,Singapore,,Local LLM enjoyer,,,33,23,ggerganov/llama.cpp,ai-bio
+Sai-Suraj-27,Sai-Suraj-27,,,AI & Open Source Software enthusiast. | IIT T'24,,Sai_Suraj_27,31,10,huggingface/transformers,ai-bio
+laitifranz,Francesco Laiti,,"University of Trento, IT",ML PhD @ UniTN,laitifranz.github.io,laitifranz,31,16,outlines-dev/outlines,ai-bio
+molbap,Pablo Montalvo,,,ML @huggingface ,,m_olbap,29,1,huggingface/transformers,ai-bio
+MatthewBonanni,Matthew Bonanni,"Boston, MA",Red Hat,"Machine Learning Engineer at Red Hat | Stanford PhD '25 | HPC, C++, CUDA, LLM inference",https://matthewbonanni.weebly.com/,,25,22,vllm-project/vllm,ai-bio
+vinhngx,Vinh Nguyen,"Melbourne, Australia",@NVIDIA,Deep Learning @NVIDIA,https://www.linkedin.com/in/xuanvinhnguyen/,,21,69,mozilla/DeepSpeech,ai-bio
+varun-sundar-rabindranath,Varun Sundar Rabindranath,"Boston, MA",Red Hat,"Software Engineer interested in the research areas Machine Learning, Natural Language Processing, Information Retrieval, Program Synthesis and Computer Vision",,,18,22,vllm-project/vllm,ai-bio
+alex-jw-brooks,Alex Brooks,,IBM,Machine Learning Engineer @ IBM Research,,,18,20,vllm-project/vllm,ai-bio
+hoesler,Christoph Hösler,Germany,@inovex,Full Stack Data Scientist and Solution Architect @inovex,,,15,52,outlines-dev/outlines,ai-bio
+yarikama,Yarikama,"Houston, Texas",,"🙌 TmljZSB0byBtZWV0IHlvdSEgCg==🙌  I am Yarikama, and my interests are in ML/DL, NLP, Generative AI, Backend.  ",https://www.yarikama.com,,13,32,run-llama/llama_index,ai-bio
+leloykun,Franz Louis Cesista,,,Math @ AdMU • prev ML Research Engineer @expedock • 2x IOI & 2x ICPC World Finalist,leloykun.github.io,leloykun,0,83,outlines-dev/outlines,ai-bio
+ggerganov,Georgi Gerganov,"Sofia, Bulgaria",@ggml-org ,I like big .vimrc and I cannot lie,https://ggerganov.com,ggerganov,18621,70,ggerganov/llama.cpp,high-influence
+rgbkrk,Kyle Kelley,"Santa Cruz, CA",Anaconda,Protocol Hacker,https://www.lambdaops.com,KyleRayKelley,1478,752,instructor-ai/instructor,high-influence
+cbornet,Christophe Bornet,"Bordeaux, France",@IBM,"JHipster core team member, OpenAPI-generator co-founder, Apache Pulsar committer, works @IBM",,,177,129,langchain-ai/langchain,notable-influence; production-focus
+fpingham,Francisco Ingham,"Buenos Aires, Argentina",,Founder @pampa-labs ,,,142,19,langchain-ai/langchain|instructor-ai/instructor,notable-influence; production-focus
+nateraw,Nathan Raw,,,               Pretending to program   ,nateraw.com,_nateraw,1093,126,Lightning-AI/pytorch-lightning,high-influence
+rlizzo,Rick Izzo,"Morristown, NJ",NVIDIA,"Software Engineer @NVIDIA   Previously Co-Founder, CTO @tensorwerk (acquired)",,,75,53,Lightning-AI/pytorch-lightning,production-focus
+nicoloboschi,Nicolò Boschi,Italy,@vectorize-io ,"Lead Software Engineer  @vectorize-io | ASF Member | Apache Pulsar PMC, Committer | Apache BookKeeper Committer",nicoloboschi.com,nicoloboschi,74,99,run-llama/llama_index,production-focus
+gabe-l-hart,Gabe Goodhart,Denver,IBM,Software Architect - IBM watsonx Platform,,gabe_l_hart,56,60,ggerganov/llama.cpp,production-focus
+neggert,Nic Eggert,"Minneapolis, MN",Stack AV,Staff Software Engineer @ StackAV,,,31,50,Lightning-AI/pytorch-lightning,production-focus
+ArthurZucker,Arthur,France,@huggingface,@huggingface ,,artzucker,715,38,huggingface/transformers,high-influence
+stefan-it,Stefan Schweter,"Bavarian Oberland, Germany",,"Researcher, M.Sc Computational Linguistics, Former student @ The Center for Information and Language Processing (CIS), LMU Munich",https://schweter.ml,,570,79,huggingface/transformers,high-influence
+teddykoker,Teddy Koker,"Cambridge, MA",MIT EECS,PhD student at MIT,https://teddykoker.com,teddykoker,507,39,Lightning-AI/pytorch-lightning,high-influence
+zou3519,Richard Zou,,,@pytorch core developer,,,397,59,vllm-project/vllm,notable-influence
+Anri-Lombard,Anri Lombard,Some Multiverse,ʕ•̫͡•ʔ-̫͡-ʕ•͓͡•ʔ-̫͡-ʔ,Claude's favourite cousin 🤖,https://anri-lombard.vercel.app/,,395,98,outlines-dev/outlines,notable-influence
+russellb,Russell Bryant,"Charleston, SC, USA","Red Hat, Inc., @vllm-project",Distinguished Engineer @ Red Hat,,,355,138,vllm-project/vllm,notable-influence
+mondaychen,Mengdi Chen,New York,Normal Computing,A good bot,https://mengdi.dev/,mengdi_en,347,55,outlines-dev/outlines,notable-influence
+rgerganov,Radoslav Gerganov,,,Programmer,https://xakcop.com,rgerganov,346,115,ggerganov/llama.cpp,notable-influence
+DarkLight1337,Cyrus Leung,Hong Kong,,PhD Candidate @ HKUST,,,336,12,vllm-project/vllm,notable-influence
+KuntaiDu,Kuntai Du,"University of Chicago, Chicago, Illinois",,"UChicago CS PhD, graduating",https://kuntaidu.github.io/aboutme,,333,32,vllm-project/vllm,notable-influence
+masci,Massimiliano Pippi,Italy,,ex @datadog @elastic @arduino,https://dev.pippi.im,,313,77,run-llama/llama_index,notable-influence
+MollySophia,Molly Sophia,The moon,,w/ @strongtz,momosan.cc,,307,94,ggerganov/llama.cpp,notable-influence
+brandonwillard,Brandon T. Willard,"Chicago, IL",.txt,applied math/stats person,https://brandonwillard.github.io/,BrandonTWillard,275,155,outlines-dev/outlines,notable-influence
+stevhliu,Steven Liu,Yay Area,@huggingface,developer docs @huggingface 🤗,https://www.stevhliu.com,stevhliu,255,15,huggingface/transformers,notable-influence
+piraka9011,Anas Abou Allaban,,tarteelAI,Roboticist. I talk to robots. ,https://tarteel.ai,AnasPwnapple,222,52,mozilla/DeepSpeech,notable-influence
+ericcurtin,Eric Curtin,,"Docker, Inc",https://gitlab.com/ecurtin https://gitlab.freedesktop.org/ecurtin       ,https://www.linkedin.com/in/curtine,,211,240,ggerganov/llama.cpp,notable-influence
+EmanuelCampos,Emanuel Ferreira,,LLamaIndex,Software Engineer,,manelferreira_,170,100,run-llama/llama_index,notable-influence
+mbchang,,,UC Berkeley,C.S. Ph.D. student at UC Berkeley,http://mbchang.github.io,,148,67,langchain-ai/langchain,notable-influence
+nicolai86,Raphael Randschau,"BC, Canada",,Software engineer from northern Germany. I'm interested in software at all levels.,https://www.nicolai86.eu,,141,82,Lightning-AI/pytorch-lightning,notable-influence
+strawgate,Bill Easton,"Madison, WI",Elastic.co,Want to see something neat?,strawgate.com,,127,107,run-llama/llama_index,notable-influence
+pwilkin,Piotr Wilkin (ilintar),"Warsaw, Poland",Syndatis BPM,"Philosopher, programmer, systems architect at Syndatis Ltd.",http://www.syndatis.com,ilintar,95,51,ggerganov/llama.cpp,contributor
+gtsiolis,George Tsiolis,"Athens, Greece",,Product Design at @LocalStack. Core Team at GitLab. 0→1 software design for remote teams.  ● ○ ○,geo.cv,gtsiolis,94,46,outlines-dev/outlines,contributor
+liugddx,Guangdong Liu,hefei,,Apache SeaTunnel PMC&Committer. Open source enthusiast.,wechat:liuggdx,,93,89,langchain-ai/langchain,contributor
+dogonthehorizon,Fernando Freire,"Portland, OR",@teem-finance,"I do things and sometimes they work out! ---  Founding Engineer @teem-finance, FP/PLT/Haskell journeyperson otherwise.",https://dogonthehorizon.com,dogonthehorizon,90,46,instructor-ai/instructor,contributor
+neilmehta24,Neil Mehta,New York,LM Studio (lmstudio.ai),🛠️ at LM Studio,,ostensiblyneil,77,9,outlines-dev/outlines,contributor
+cyyever,Yuanyuan Chen,Singapore,Nanyang Technological University,情不知所起，一往而深,,,71,159,huggingface/transformers,contributor
+dwks,,,,PhD in systems security @columbia,http://elfery.net,,68,43,mozilla/DeepSpeech,contributor
+KerfuffleV2,Kerfuffle,,,I like strawberry nicecream.,,,62,30,ggerganov/llama.cpp,contributor
+vasqu,Anton Vlasjuk,,,Pay Attention to Linear Recurrence,,,61,17,huggingface/transformers,contributor
+keenborder786,Mohammad Mohtashim,Lahore,Langchain,Love Making Stuff,https://www.linkedin.com/in/mohammad-mohtashim-khan-aa748217a/,,60,101,langchain-ai/langchain,contributor
+deependujha,Deependu,,,कर्मण्येवाधिकारस्ते |,https://deependujha.github.io/,deependu__,57,169,Lightning-AI/pytorch-lightning,contributor
+mathematiguy,Caleb Moses,cmos032@aucklanduni.ac.nz,@dragonfly-science,Compsci PhD student at McGill University and Mila Quebec,https://www.linkedin.com/in/caleb-moses-301974a6/,,56,215,mozilla/DeepSpeech,contributor
+hatianzhang,Haotian Zhang,,LlamaIndex,Beat Baseline.,https://cs.uwaterloo.ca/~h435zhan/,,54,26,run-llama/llama_index,contributor
+torymur,Victoria Terenina,"Lisbon, Portugal",,┬┴┬┴┤(･_├┬┴┬┴,,,54,9,outlines-dev/outlines,contributor
+AndreasKaratzas,Andreas Karatzas,"Austin, TX",AMD,The foundation of every state is the education of its youth.,,,53,66,vllm-project/vllm,contributor
+HanClinto,Clint Herron,"Ohio, USA",HanClinto Games LLC,"Artificially Intelligent, Naturally Curious",http://hanclin.to,HanClinto,49,43,ggerganov/llama.cpp,contributor
+allozaur,Aleksander Grygier,"Warsaw, Poland",@huggingface ,Everything but a dinosaur,https://bento.me/allozaur,,44,15,ggerganov/llama.cpp,contributor
+tinycrops,Matthew Hendricks,,,techno-utopian🥭propagandist,,tinycrops,40,311,instructor-ai/instructor,contributor
+Javtor,Javier Torres,"Cali, Colombia",LlamaIndex,ICPC World Finalist Moscow 2020,,,37,55,run-llama/llama_index,contributor
+max-muoto,Max Muoto,"Nashville, TN",@Quaestor-Technologies,Software Engineer at Standard Metrics. prev @google.,,max_muoto,33,69,instructor-ai/instructor,contributor
+h0rv,Robby,~/,@sweetspot-ai,Writer (of formal computer languages),horv.co,,32,60,instructor-ai/instructor,contributor
+jaelgu,Jael Gu,,Zilliz,Zilliz/Milvus Developer,,,31,33,run-llama/llama_index,contributor
+noooop,wang.yuqi,,@DaoCloud,"Hey, destroying stuff? That's easy. It's making stuff that's hard. - Swann StarCraft II",,,28,12,vllm-project/vllm,contributor
+matsumotosan,Shion Matsumoto,"Tampa, FL",@TKAI-LAB-Mali ,CS PhD student at University of South Florida,,,22,33,Lightning-AI/pytorch-lightning,contributor
+rshah713,Rohan Shah,,,CS @ NJIT Honors | @capitalone,,,21,10,instructor-ai/instructor|outlines-dev/outlines,contributor
+PhiBrandon,Brandon Phillips,,,The journey of learning starts with a commit.,bphil.tech,,20,60,instructor-ai/instructor,contributor
+gshtras,Gregory Shtrasberg,,AMD,PMTS Software Engineer @amd     a.k.a. @shtras,,,19,4,vllm-project/vllm,contributor
+eitanturok,Eitan Turok,,@databricks,Research Scientist,,,19,66,outlines-dev/outlines,contributor
+Anmol6,Anmol Jawandha,,,Engineer  🇨🇦 🇺🇸,anmoljawandha.com,anmolsj,17,42,instructor-ai/instructor,contributor
+Perdu,Célestin Matte,,,Freelance devops sysadmin. Ex-Privacy researcher - Wi-Fi & web tracking,https://cmatte.me,,17,51,outlines-dev/outlines,contributor
+reeselevine,Reese Levine,Santa Cruz,,PhD student at UC Santa Cruz,https://reeselevine.github.io,reeselevine,17,57,ggerganov/llama.cpp,contributor
+shawnz,Shawn Zivontsis,Toronto,@SwiftlyInc,Software Engineer at @SwiftlyInc,https://shawnz.org,,16,20,outlines-dev/outlines,contributor
+NormanTUD,Norman,,,Software phenomenologist,,,16,169,mozilla/DeepSpeech,contributor
+juandspy,Juan Díaz,,@RedHatInsights ,Red Hatter,,,14,64,mozilla/DeepSpeech,contributor
+arcaputo3,Richie Caputo,"Jupiter, FL",@MIT @TJC-LP,math and data guy ,,,12,620,instructor-ai/instructor,contributor
+mathemusician,Jv Kyle Eclarin,,,snakes and letters,,,12,52,Lightning-AI/pytorch-lightning,contributor
+reidliu41,Reid,,,JUST DO IT! ,,,10,23,vllm-project/vllm,contributor
+rendyfebry,Rendy Febry,"Jakarta, Indonesia",,Software Engineer,https://rendyfebry.github.io,,9,84,run-llama/llama_index,contributor
+jlondonobo,José Londoño,"Medellín, Colombia",Fourier Analytics,Building systems that give businesses their time back @fouriering,https://joselondono.co/,jlondonobo,9,48,instructor-ai/instructor,contributor
+aaronjimv,Aaron Jimenez,,,Systems engineer. Open source contributor.,,,7,29,run-llama/llama_index,contributor
+DangerousPotential,Zapiron,,,用科技让世界变得更美好,https://aicomputing.sg,,3,38,langchain-ai/langchain,contributor
+NanoNabla,Sebastian,,TU Dresden,employee at TU Dresden,,,0,36,mozilla/DeepSpeech,contributor

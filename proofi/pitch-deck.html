@@ -72,6 +72,24 @@
       z-index: 10000;
     }
 
+    /* Ambient glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 0% 50%, rgba(0, 255, 136, 0.04) 0%, transparent 40%),
+                  radial-gradient(ellipse at 100% 80%, rgba(255, 51, 102, 0.04) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: -1;
+      animation: ambientPulse 15s ease-in-out infinite;
+    }
+
+    @keyframes ambientPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
     /* ── Slide System ── */
     .deck {
       width: 100%;

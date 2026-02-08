@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proofi — The Consumer Layer for Cere</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --accent: #00d4ff;
+            --muted: #666;
+            --card-bg: #111;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+        }
+
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            border-bottom: 1px solid #222;
+            position: relative;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 0.875rem;
+            color: var(--muted);
+            font-family: 'SF Mono', monospace;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+
+        h1 .accent {
+            color: var(--accent);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--muted);
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .big-text {
+            font-size: 3rem;
+            font-weight: 600;
+            text-align: center;
+            max-width: 900px;
+            line-height: 1.3;
+        }
+
+        .quote {
+            font-size: 2rem;
+            font-style: italic;
+            color: var(--accent);
+            text-align: center;
+            max-width: 800px;
+            margin: 2rem 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card ul {
+            list-style: none;
+        }
+
+        .card li {
+            padding: 0.5rem 0;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card li::before {
+            content: "→";
+            color: var(--accent);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--accent);
+            color: var(--bg);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .tag.enterprise {
+            background: #7c3aed;
+        }
+
+        .tag.consumer {
+            background: var(--accent);
+        }
+
+        .diagram {
+            font-family: 'SF Mono', monospace;
+            font-size: 0.9rem;
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 1rem;
+            padding: 2rem;
+            white-space: pre;
+            line-height: 1.4;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .stats {
+            display: flex;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+
+        .timeline {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            max-width: 1000px;
+        }
+
+        .timeline-item {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: -1.5rem;
+            width: 1rem;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-week {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        .cta {
+            margin-top: 3rem;
+            padding: 1.5rem 3rem;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 1.25rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .footer-note {
+            position: absolute;
+            bottom: 2rem;
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        .comparison-table {
+            width: 100%;
+            max-width: 900px;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .comparison-table th {
+            color: var(--muted);
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .comparison-table td:nth-child(2),
+        .comparison-table td:nth-child(3) {
+            text-align: center;
+        }
+
+        .check {
+            color: #22c55e;
+        }
+
+        .cross {
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .timeline {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<section class="slide">
+    <span class="slide-number">01</span>
+    <div class="logo">Proof<span>i</span></div>
+    <h1 style="margin-top: 2rem;">The <span class="accent">Consumer Layer</span><br>for Cere</h1>
+    <p class="subtitle">CEF.AI serves enterprises. Proofi serves everyone else.</p>
+    <p class="footer-note">February 2026 • Mart Broersma</p>
+</section>
+
+<!-- Slide 2: The Gap -->
+<section class="slide">
+    <span class="slide-number">02</span>
+    <h2>The Gap</h2>
+    <p class="big-text">CEF.AI is building enterprise infrastructure.<br><br>Who's building for <span class="accent">consumers</span>?</p>
+</section>
+
+<!-- Slide 3: The Opportunity -->
+<section class="slide">
+    <span class="slide-number">03</span>
+    <h2>The Opportunity</h2>
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value">1B+</div>
+            <div class="stat-label">People want personal AI</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">73%</div>
+            <div class="stat-label">Don't trust Big Tech with data</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">$0</div>
+            <div class="stat-label">Consumer solutions on DDC</div>
+        </div>
+    </div>
+    <p class="quote" style="margin-top: 4rem;">"I want AI to help me. I don't want to give Google my life."</p>
+</section>
+
+<!-- Slide 4: Two Markets -->
+<section class="slide">
+    <span class="slide-number">04</span>
+    <h2>Two Markets, One Network</h2>
+    <div class="grid-2">
+        <div class="card">
+            <span class="tag enterprise">B2B ENTERPRISE</span>
+            <h3>🏢 CEF.AI</h3>
+            <ul>
+                <li>Managed infrastructure</li>
+                <li>Enterprise compliance</li>
+                <li>Platform-hosted agents</li>
+                <li>$100K+ ACV</li>
+                <li>12-month sales cycles</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="tag consumer">B2C CONSUMER</span>
+            <h3>👤 Proofi</h3>
+            <ul>
+                <li>Self-custodial keys</li>
+                <li>User controls everything</li>
+                <li>Open agent ecosystem</li>
+                <li>Freemium model</li>
+                <li>Self-serve adoption</li>
+            </ul>
+        </div>
+    </div>
+    <p class="subtitle" style="margin-top: 3rem;">Both use DDC. Both grow $CERE. Different customers.</p>
+</section>
+
+<!-- Slide 5: The Architecture -->
+<section class="slide">
+    <span class="slide-number">05</span>
+    <h2>How It Works</h2>
+    <div class="diagram">
+┌─────────────────────────────────────────────────────────────────┐
+│                     User's Browser                               │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │                  Proofi Extension                           │ │
+│  │   Keys stay here. Encryption happens here. User controls.   │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │
+                    ┌───────────▼───────────┐
+                    │      Cere DDC         │
+                    │  (Encrypted Blobs)    │
+                    │   DDC sees nothing    │
+                    └───────────┬───────────┘
+                                │ capability token
+                    ┌───────────▼───────────┐
+                    │   Any Agent Runtime   │
+                    │  Local • Cloud • Edge │
+                    │   Decrypt with token  │
+                    └───────────────────────┘</div>
+    <p class="subtitle" style="margin-top: 2rem;">User grants scoped, time-bound access. Revoke = instant.</p>
+</section>
+
+<!-- Slide 6: Key Difference -->
+<section class="slide">
+    <span class="slide-number">06</span>
+    <h2>The Key Difference</h2>
+    <table class="comparison-table">
+        <tr>
+            <th>Aspect</th>
+            <th>CEF.AI</th>
+            <th>Proofi</th>
+        </tr>
+        <tr>
+            <td>Who holds keys?</td>
+            <td>Platform vault</td>
+            <td><span class="accent">User's device</span></td>
+        </tr>
+        <tr>
+            <td>Who controls access?</td>
+            <td>Platform decides</td>
+            <td><span class="accent">User decides</span></td>
+        </tr>
+        <tr>
+            <td>Where do agents run?</td>
+            <td>Platform only</td>
+            <td><span class="accent">Anywhere</span></td>
+        </tr>
+        <tr>
+            <td>Cross-app data?</td>
+            <td>Same deployment</td>
+            <td><span class="accent">Native</span></td>
+        </tr>
+        <tr>
+            <td>Open source?</td>
+            <td>Partial</td>
+            <td><span class="accent">100%</span></td>
+        </tr>
+    </table>
+</section>
+
+<!-- Slide 7: What's Built -->
+<section class="slide">
+    <span class="slide-number">07</span>
+    <h2>What's Already Built</h2>
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value">2</div>
+            <div class="stat-label">Weeks of work</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">15+</div>
+            <div class="stat-label">Demo apps</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">1</div>
+            <div class="stat-label">Chrome extension</div>
+        </div>
+    </div>
+    <div class="grid-2" style="margin-top: 3rem;">
+        <div class="card">
+            <h3>✅ Done</h3>
+            <ul>
+                <li>Self-custodial wallet</li>
+                <li>Client-side encryption</li>
+                <li>DDC integration</li>
+                <li>Chrome extension</li>
+                <li>SDK for apps</li>
+                <li>15+ ecosystem demos</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>🚧 In Progress</h3>
+            <ul>
+                <li>Capability token engine</li>
+                <li>Agent SDK</li>
+                <li>Health data demo</li>
+                <li>Cross-app sync</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Slide 8: Roadmap -->
+<section class="slide">
+    <span class="slide-number">08</span>
+    <h2>8-Week Roadmap</h2>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-week">Week 1-2</div>
+            <div class="timeline-title">Token Engine</div>
+            <div class="timeline-desc">Grant/revoke access in extension</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-week">Week 3-4</div>
+            <div class="timeline-title">Agent SDK</div>
+            <div class="timeline-desc">Agents consume tokens, access data</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-week">Week 5-6</div>
+            <div class="timeline-title">Open Runtime</div>
+            <div class="timeline-desc">Run agents anywhere</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-week">Week 7-8</div>
+            <div class="timeline-title">Ecosystem</div>
+            <div class="timeline-desc">Agent registry, mobile</div>
+        </div>
+    </div>
+</section>
+
+<!-- Slide 9: Not Competition -->
+<section class="slide">
+    <span class="slide-number">09</span>
+    <h2>This Is Not Competition</h2>
+    <div class="diagram" style="text-align: center;">
+          CEF.AI                              Proofi
+       (Enterprise)                        (Consumer)
+            │                                  │
+            │      Different customers         │
+            │      Different sales motion      │
+            │      Different value props       │
+            │                                  │
+            └──────────────┬───────────────────┘
+                           │
+                           ▼
+                    ┌─────────────┐
+                    │  Cere DDC   │
+                    │             │
+                    │ Both use it │
+                    │ Both grow   │
+                    │   $CERE     │
+                    └─────────────┘</div>
+    <p class="quote" style="margin-top: 3rem;">Tesla and Toyota both sell cars. Both need roads. DDC is the road.</p>
+</section>
+
+<!-- Slide 10: The Ask -->
+<section class="slide">
+    <span class="slide-number">10</span>
+    <h2>The Ask</h2>
+    <p class="big-text">Let me build the <span class="accent">consumer layer</span><br>while CEF builds enterprise.</p>
+    <p class="subtitle" style="margin-top: 3rem;">Same goal. Same network. Different markets.</p>
+    <div style="margin-top: 4rem; text-align: center;">
+        <p style="font-size: 1.25rem; color: var(--muted);">DDC wins. $CERE wins. We all win.</p>
+    </div>
+</section>
+
+<!-- Slide 11: Vision -->
+<section class="slide">
+    <span class="slide-number">11</span>
+    <p class="quote" style="font-size: 2.5rem;">"DDC was always the answer.<br><br>CEF.AI makes it enterprise-ready.<br><br>Proofi makes it <span class="accent">human-ready</span>."</p>
+    <div class="logo" style="margin-top: 4rem;">Proof<span>i</span></div>
+</section>
+
+<script>
+    // Simple keyboard navigation
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            currentSlide = Math.min(currentSlide + 1, slides.length - 1);
+            slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            currentSlide = Math.max(currentSlide - 1, 0);
+            slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+</script>
+
+</body>
+</html>

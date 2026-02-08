@@ -1,0 +1,24 @@
+{
+  "name": "proofi-health-scripts",
+  "version": "1.0.0",
+  "description": "Proofi health data processing scripts",
+  "type": "module",
+  "scripts": {
+    "import": "tsx import-health-data.ts",
+    "scopes": "tsx scope-selector.ts",
+    "setup": "./setup-mac-mini.sh"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "fast-xml-parser": "^4.3.2",
+    "inquirer": "^9.2.12",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.10.0",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.2"
+  }
+}

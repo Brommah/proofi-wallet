@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProofiDrop — Wallet-to-Wallet File Transfer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Colors */
+      --void-black: #0A0A0F;
+      --deep-space: #12121A;
+      --nebula: #1A1A28;
+      --drop-cyan: #00E5CC;
+      --drop-cyan-glow: rgba(0, 229, 204, 0.2);
+      --pulse-violet: #8B5CF6;
+      --warning-amber: #F59E0B;
+      --secure-green: #10B981;
+      --error-red: #EF4444;
+      --ghost-white: rgba(255, 255, 255, 0.87);
+      --mist-gray: rgba(255, 255, 255, 0.7); /* was 0.5 - now WCAG AA compliant */
+      --faint-gray: rgba(255, 255, 255, 0.15); /* was 0.12 - slightly improved */
+      
+      /* Gradients */
+      --gradient-drop: linear-gradient(135deg, #00E5CC 0%, #00B4A2 50%, #8B5CF6 100%);
+      --gradient-void: radial-gradient(ellipse at top, #1A1A28 0%, #0A0A0F 70%);
+      --gradient-shield: linear-gradient(180deg, rgba(0,229,204,0.1) 0%, transparent 100%);
+      
+      /* Typography */
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 24px;
+      --space-6: 32px;
+      --space-7: 48px;
+      --space-8: 64px;
+      
+      /* Radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+    }
+    
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: var(--void-black);
+      color: var(--ghost-white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* ===== ANIMATED BACKGROUND ===== */
+    .background {
+      position: fixed;
+      inset: 0;
+      background: var(--gradient-void);
+      overflow: hidden;
+      z-index: -1;
+    }
+    
+    .background .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 20s infinite ease-in-out;
+    }
+    
+    .background .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: rgba(0, 229, 204, 0.06);
+      top: -10%;
+      left: 20%;
+      animation-delay: -5s;
+    }
+    
+    .background .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: rgba(139, 92, 246, 0.05);
+      bottom: 10%;
+      right: 10%;
+      animation-duration: 25s;
+    }
+    
+    .background .orb-3 {
+      width: 200px;
+      height: 200px;
+      background: rgba(0, 229, 204, 0.04);
+      top: 50%;
+      left: -5%;
+      animation-duration: 30s;
+      animation-delay: -10s;
+    }
+    
+    /* Floating drops pattern */
+    .background .drops {
+      position: absolute;
+      inset: 0;
+      opacity: 0.3;
+    }
+    
+    .background .drop {
+      position: absolute;
+      width: 8px;
+      height: 12px;
+      background: var(--drop-cyan);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0;
+      animation: dropFall 8s infinite linear;
+    }
+    
+    .background .drop:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .background .drop:nth-child(2) { left: 25%; animation-delay: 1.5s; }
+    .background .drop:nth-child(3) { left: 40%; animation-delay: 3s; }
+    .background .drop:nth-child(4) { left: 55%; animation-delay: 4.5s; }
+    .background .drop:nth-child(5) { left: 70%; animation-delay: 6s; }
+    .background .drop:nth-child(6) { left: 85%; animation-delay: 7.5s; }
+    
+    /* ===== KEYFRAMES ===== */
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(30px, -30px); }
+      50% { transform: translate(-20px, 20px); }
+      75% { transform: translate(20px, 30px); }
+    }
+    
+    @keyframes dropFall {
+      0% { top: -5%; opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { top: 105%; opacity: 0; }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    @keyframes dropBounce {
+      0% { transform: translateY(-20px) scale(0.8); opacity: 0; }
+      50% { transform: translateY(5px) scale(1.05); }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    
+    @keyframes ripple {
+      0% { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes dash {
+      to { stroke-dashoffset: 0; }
+    }
+    
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    
+    /* ===== LAYOUT ===== */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: var(--space-5);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* ===== HEADER ===== */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-5) 0;
+      margin-bottom: var(--space-6);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      position: relative;
+    }
+    
+    .logo-drop {
+      fill: url(#dropGradient);
+      filter: drop-shadow(0 4px 12px rgba(0, 229, 204, 0.3));
+      animation: breathe 4s infinite ease-in-out;
+    }
+    
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-drop);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .tagline {
+      font-size: 12px;
+      color: var(--mist-gray);
+      margin-top: 2px;
+    }
+    
+    /* ===== SECURITY BADGE ===== */
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--secure-green);
+    }
+    
+    .security-badge .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--secure-green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    /* ===== WALLET BUTTON ===== */
+    .wallet-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      background: var(--nebula);
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-md);
+      color: var(--ghost-white);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .wallet-btn:hover {
+      background: var(--deep-space);
+      border-color: var(--drop-cyan);
+      box-shadow: 0 0 20px rgba(0, 229, 204, 0.15);
+    }
+    
+    .wallet-btn.connected {
+      border-color: var(--secure-green);
+    }
+    
+    .wallet-btn .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--mist-gray);
+    }
+    
+    .wallet-btn.connected .status-dot {
+      background: var(--secure-green);
+      animation: pulse 2s infinite;
+    }
+    
+    /* ===== MAIN CARD ===== */
+    .main-card {
+      background: var(--deep-space);
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* ===== TAB TOGGLE ===== */
+    .tab-group {
+      display: flex;
+      background: var(--nebula);
+      border-radius: var(--radius-lg);
+      padding: 4px;
+      margin-bottom: var(--space-6);
+      position: relative;
+    }
+    
+    .tab-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      background: var(--gradient-drop);
+      background-size: 200% 200%;
+      animation: gradientShift 3s ease infinite;
+      border-radius: var(--radius-md);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .tab-group.receive .tab-slider {
+      transform: translateX(100%);
+    }
+    
+    .tab {
+      flex: 1;
+      padding: var(--space-3) var(--space-5);
+      border: none;
+      background: transparent;
+      color: var(--mist-gray);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+    
+    .tab.active {
+      color: var(--void-black);
+    }
+    
+    .tab-icon {
+      font-size: 18px;
+    }
+    
+    /* ===== DROPZONE ===== */
+    .dropzone {
+      flex: 1;
+      min-height: 200px;
+      background: var(--void-black);
+      border: 2px dashed rgba(0, 229, 204, 0.25);
+      border-radius: var(--radius-xl);
+      padding: var(--space-7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .dropzone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0, 229, 204, 0.03) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .dropzone:hover {
+      border-color: var(--drop-cyan);
+      box-shadow: 
+        0 0 40px rgba(0, 229, 204, 0.1),
+        inset 0 0 60px rgba(0, 229, 204, 0.03);
+    }
+    
+    .dropzone:hover::before {
+      opacity: 1;
+    }
+    
+    .dropzone.active {
+      border-style: solid;
+      border-color: transparent;
+      background: 
+        linear-gradient(var(--void-black), var(--void-black)) padding-box,
+        var(--gradient-drop) border-box;
+      box-shadow: 
+        0 0 60px rgba(0, 229, 204, 0.2),
+        inset 0 0 80px rgba(0, 229, 204, 0.05);
+    }
+    
+    .dropzone.active .drop-icon {
+      animation: dropBounce 0.5s ease-out;
+    }
+    
+    /* Ripple effect container */
+    .dropzone .ripples {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    
+    .dropzone .ripple {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100px;
+      height: 100px;
+      margin: -50px;
+      border-radius: 50%;
+      border: 2px solid var(--drop-cyan);
+      opacity: 0;
+    }
+    
+    .dropzone.success .ripple {
+      animation: ripple 0.8s ease-out forwards;
+    }
+    
+    .dropzone.success .ripple:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+    
+    .dropzone.success .ripple:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+    
+    .drop-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: var(--space-5);
+      position: relative;
+    }
+    
+    .drop-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .drop-icon .drop-shape {
+      fill: none;
+      stroke: var(--drop-cyan);
+      stroke-width: 2;
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      animation: dash 1.5s ease forwards;
+    }
+    
+    .drop-icon .arrow {
+      fill: var(--drop-cyan);
+      opacity: 0;
+      animation: dropBounce 0.5s 0.8s ease-out forwards;
+    }
+    
+    .dropzone-text {
+      text-align: center;
+    }
+    
+    .dropzone-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      color: var(--ghost-white);
+    }
+    
+    .dropzone-hint {
+      font-size: 14px;
+      color: var(--mist-gray);
+    }
+    
+    .dropzone-limit {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-top: var(--space-4);
+      padding: var(--space-2) var(--space-3);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      color: var(--mist-gray);
+    }
+    
+    /* ===== FILE PREVIEW ===== */
+    .file-preview {
+      display: none;
+      background: var(--nebula);
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-top: var(--space-4);
+      animation: dropBounce 0.4s ease-out;
+    }
+    
+    .file-preview.show {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    
+    .file-icon-box {
+      width: 48px;
+      height: 48px;
+      background: var(--gradient-shield);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+    
+    .file-icon-box .icon {
+      font-size: 24px;
+    }
+    
+    .file-icon-box .lock {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      font-size: 12px;
+      background: var(--void-black);
+      padding: 2px;
+      border-radius: 4px;
+    }
+    
+    .file-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .file-name {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    
+    .file-meta {
+      font-size: 13px;
+      color: var(--mist-gray);
+    }
+    
+    .file-remove {
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-sm);
+      color: var(--mist-gray);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .file-remove:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--error-red);
+      color: var(--error-red);
+    }
+    
+    /* ===== FORM FIELDS ===== */
+    .form-section {
+      margin-top: var(--space-5);
+    }
+    
+    .form-row {
+      margin-bottom: var(--space-4);
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--mist-gray);
+      margin-bottom: var(--space-2);
+    }
+    
+    .input-wrapper {
+      position: relative;
+    }
+    
+    .input {
+      width: 100%;
+      background: var(--void-black);
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ghost-white);
+      transition: all 0.2s ease;
+    }
+    
+    .input::placeholder {
+      color: rgba(255, 255, 255, 0.6); /* explicit value for WCAG AA compliance */
+    }
+    
+    .input:focus {
+      outline: none;
+      border-color: var(--drop-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 229, 204, 0.12);
+    }
+    
+    .input.wallet {
+      font-family: var(--font-mono);
+      padding-right: 48px;
+    }
+    
+    .input-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--mist-gray);
+    }
+    
+    .inline-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+    
+    .select {
+      width: 100%;
+      background: var(--void-black);
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ghost-white);
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23808080' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+    
+    .select:focus {
+      outline: none;
+      border-color: var(--drop-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 229, 204, 0.12);
+    }
+    
+    .select option {
+      background: var(--deep-space);
+    }
+    
+    /* ===== BUTTON ===== */
+    .btn-primary {
+      width: 100%;
+      padding: 16px 32px;
+      background: var(--gradient-drop);
+      background-size: 200% 200%;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--void-black);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    
+    .btn-primary:hover {
+      animation: gradientShift 2s ease infinite;
+      box-shadow: 0 8px 32px rgba(0, 229, 204, 0.25);
+      transform: translateY(-2px);
+    }
+    
+    .btn-primary:hover::before {
+      transform: translateX(100%);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      animation: none;
+    }
+    
+    .btn-primary:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .btn-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+    
+    /* ===== RECEIVE TAB ===== */
+    .receive-panel {
+      display: none;
+      flex: 1;
+    }
+    
+    .receive-panel.show {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-7);
+    }
+    
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+    }
+    
+    .empty-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    
+    .empty-text {
+      font-size: 14px;
+      color: var(--mist-gray);
+      max-width: 280px;
+    }
+    
+    /* ===== INCOMING FILE ===== */
+    .incoming-files {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .incoming-file {
+      background: var(--nebula);
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      animation: dropBounce 0.4s ease-out;
+    }
+    
+    .incoming-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+    
+    .sender-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-drop);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--void-black);
+      font-weight: 600;
+    }
+    
+    .sender-info {
+      flex: 1;
+    }
+    
+    .sender-address {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--mist-gray);
+    }
+    
+    .file-time {
+      font-size: 12px;
+      color: var(--mist-gray);
+    }
+    
+    .incoming-file-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--void-black);
+      border-radius: var(--radius-md);
+    }
+    
+    .btn-download {
+      padding: var(--space-3) var(--space-4);
+      background: transparent;
+      border: 1px solid var(--drop-cyan);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--drop-cyan);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-download:hover {
+      background: rgba(0, 229, 204, 0.1);
+    }
+    
+    /* ===== PROGRESS STATE ===== */
+    .progress-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-7);
+      text-align: center;
+    }
+    
+    .progress-container.show {
+      display: flex;
+      animation: dropBounce 0.4s ease-out;
+    }
+    
+    .progress-ring {
+      width: 120px;
+      height: 120px;
+      margin-bottom: var(--space-5);
+      position: relative;
+    }
+    
+    .progress-ring svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    
+    .progress-ring .bg {
+      fill: none;
+      stroke: var(--nebula);
+      stroke-width: 8;
+    }
+    
+    .progress-ring .progress {
+      fill: none;
+      stroke: url(#progressGradient);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 314;
+      stroke-dashoffset: 314;
+      transition: stroke-dashoffset 0.3s ease;
+    }
+    
+    .progress-percent {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+    }
+    
+    .progress-label {
+      font-size: 14px;
+      color: var(--mist-gray);
+      margin-bottom: var(--space-2);
+    }
+    
+    .progress-detail {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--mist-gray);
+    }
+    
+    /* ===== SUCCESS STATE ===== */
+    .success-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-7);
+      text-align: center;
+    }
+    
+    .success-container.show {
+      display: flex;
+    }
+    
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: var(--space-5);
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      animation: dropBounce 0.5s ease-out;
+    }
+    
+    .success-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      color: var(--secure-green);
+    }
+    
+    .success-text {
+      font-size: 14px;
+      color: var(--mist-gray);
+      margin-bottom: var(--space-5);
+    }
+    
+    .share-link-box {
+      width: 100%;
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+    
+    .share-link-input {
+      flex: 1;
+      background: var(--void-black);
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--ghost-white);
+    }
+    
+    .btn-copy {
+      padding: 12px 20px;
+      background: var(--nebula);
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ghost-white);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .btn-copy:hover {
+      background: var(--deep-space);
+      border-color: var(--drop-cyan);
+    }
+    
+    .btn-copy.copied {
+      border-color: var(--secure-green);
+      color: var(--secure-green);
+    }
+    
+    .btn-new {
+      padding: var(--space-3) var(--space-5);
+      background: transparent;
+      border: 1px solid var(--faint-gray);
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ghost-white);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-new:hover {
+      border-color: var(--ghost-white);
+    }
+    
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center;
+      padding: var(--space-5) 0;
+      margin-top: var(--space-5);
+    }
+    
+    .footer-text {
+      font-size: 13px;
+      color: var(--mist-gray);
+    }
+    
+    .footer-link {
+      color: var(--drop-cyan);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+    
+    .footer-link:hover {
+      opacity: 0.8;
+    }
+    
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+      .container {
+        padding: var(--space-4);
+      }
+      
+      .header {
+        flex-direction: column;
+        gap: var(--space-4);
+        text-align: center;
+      }
+      
+      .main-card {
+        padding: var(--space-4);
+      }
+      
+      .dropzone {
+        padding: var(--space-5);
+        min-height: 180px;
+      }
+      
+      .inline-inputs {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="background">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="drops">
+      <div class="drop"></div>
+      <div class="drop"></div>
+      <div class="drop"></div>
+      <div class="drop"></div>
+      <div class="drop"></div>
+      <div class="drop"></div>
+    </div>
+  </div>
+  
+  <!-- SVG Definitions -->
+  <svg width="0" height="0">
+    <defs>
+      <linearGradient id="dropGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#00E5CC"/>
+        <stop offset="100%" style="stop-color:#8B5CF6"/>
+      </linearGradient>
+      <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#00E5CC"/>
+        <stop offset="50%" style="stop-color:#00B4A2"/>
+        <stop offset="100%" style="stop-color:#8B5CF6"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="logo-drop" d="M22 4C22 4 8 16 8 26C8 33.732 14.268 40 22 40C29.732 40 36 33.732 36 26C36 16 22 4 22 4Z"/>
+            <path d="M22 14L22 28M22 28L16 22M22 28L28 22" stroke="#0A0A0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text">ProofiDrop</div>
+          <div class="tagline">Wallet-to-Wallet • Encrypted</div>
+        </div>
+      </div>
+      
+      <button class="wallet-btn connected" id="walletBtn">
+        <span class="status-dot"></span>
+        <span>0x8f3...a2b1</span>
+      </button>
+    </header>
+    
+    <!-- Main Card -->
+    <main class="main-card">
+      <!-- Tabs -->
+      <div class="tab-group" id="tabGroup">
+        <div class="tab-slider"></div>
+        <button class="tab active" data-tab="send">
+          <span class="tab-icon">📤</span>
+          <span>Send</span>
+        </button>
+        <button class="tab" data-tab="receive">
+          <span class="tab-icon">📥</span>
+          <span>Receive</span>
+        </button>
+      </div>
+      
+      <!-- Send Panel -->
+      <div class="send-panel" id="sendPanel">
+        <!-- Dropzone -->
+        <div class="dropzone" id="dropzone">
+          <div class="ripples">
+            <div class="ripple"></div>
+            <div class="ripple"></div>
+            <div class="ripple"></div>
+          </div>
+          
+          <div class="drop-icon">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path class="drop-shape" d="M40 8C40 8 16 28 16 44C16 57.255 26.745 68 40 68C53.255 68 64 57.255 64 44C64 28 40 8 40 8Z"/>
+              <path class="arrow" d="M40 30L40 50M40 50L30 40M40 50L50 40"/>
+            </svg>
+          </div>
+          
+          <div class="dropzone-text">
+            <div class="dropzone-title">Drop file here or click to browse</div>
+            <div class="dropzone-hint">Your file will be encrypted before transfer</div>
+          </div>
+          
+          <div class="dropzone-limit">
+            <span>🔐</span>
+            <span>Max 100MB • Any file type</span>
+          </div>
+        </div>
+        
+        <!-- File Preview -->
+        <div class="file-preview" id="filePreview">
+          <div class="file-icon-box">
+            <span class="icon">📄</span>
+            <span class="lock">🔐</span>
+          </div>
+          <div class="file-info">
+            <div class="file-name" id="fileName">document.pdf</div>
+            <div class="file-meta" id="fileMeta">2.4 MB • Ready to send</div>
+          </div>
+          <button class="file-remove" id="fileRemove">✕</button>
+        </div>
+        
+        <!-- Form -->
+        <div class="form-section">
+          <div class="form-row">
+            <label class="form-label">Recipient</label>
+            <div class="input-wrapper">
+              <input type="text" class="input wallet" placeholder="0x... or leave empty for link share">
+              <span class="input-icon">👤</span>
+            </div>
+          </div>
+          
+          <div class="inline-inputs">
+            <div class="form-row">
+              <label class="form-label">Expires</label>
+              <select class="select">
+                <option>24 hours</option>
+                <option>7 days</option>
+                <option>30 days</option>
+                <option>Never</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Max Downloads</label>
+              <select class="select">
+                <option>1</option>
+                <option>5</option>
+                <option>10</option>
+                <option>Unlimited</option>
+              </select>
+            </div>
+          </div>
+          
+          <button class="btn-primary" id="sendBtn" disabled>
+            <span class="btn-content">
+              <span>🚀</span>
+              <span>Send Securely</span>
+            </span>
+          </button>
+        </div>
+        
+        <!-- Progress State -->
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="bg" cx="60" cy="60" r="50"/>
+              <circle class="progress" id="progressRing" cx="60" cy="60" r="50"/>
+            </svg>
+            <div class="progress-percent" id="progressPercent">0%</div>
+          </div>
+          <div class="progress-label">Encrypting & Uploading...</div>
+          <div class="progress-detail" id="progressDetail">0 KB / 2.4 MB</div>
+        </div>
+        
+        <!-- Success State -->
+        <div class="success-container" id="successContainer">
+          <div class="success-icon">✓</div>
+          <div class="success-title">File Dropped!</div>
+          <div class="success-text">Your encrypted file is ready to be received</div>
+          
+          <div class="share-link-box">
+            <input type="text" class="share-link-input" value="https://proofi.app/drop/x7k9m2..." readonly>
+            <button class="btn-copy" id="copyBtn">
+              <span>📋</span>
+              <span>Copy</span>
+            </button>
+          </div>
+          
+          <button class="btn-new" id="newBtn">Drop Another File</button>
+        </div>
+      </div>
+      
+      <!-- Receive Panel -->
+      <div class="receive-panel" id="receivePanel">
+        <div class="security-badge" style="align-self: flex-start; margin-bottom: var(--space-5);">
+          <span class="dot"></span>
+          <span>End-to-end encrypted</span>
+        </div>
+        
+        <div class="incoming-files">
+          <div class="incoming-file">
+            <div class="incoming-header">
+              <div class="sender-avatar">0x</div>
+              <div class="sender-info">
+                <div class="sender-address">0x1234...5678</div>
+                <div class="file-time">2 minutes ago</div>
+              </div>
+            </div>
+            <div class="incoming-file-card">
+              <div class="file-icon-box">
+                <span class="icon">📄</span>
+                <span class="lock">🔐</span>
+              </div>
+              <div class="file-info">
+                <div class="file-name">contract_v2.pdf</div>
+                <div class="file-meta">1.2 MB • Encrypted</div>
+              </div>
+              <button class="btn-download">Download</button>
+            </div>
+          </div>
+        </div>
+        
+        <!--
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div class="empty-title">No incoming files</div>
+          <div class="empty-text">Files sent to your wallet will appear here. Share your address to receive files.</div>
+        </div>
+        -->
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <p class="footer-text">
+        Powered by <a href="#" class="footer-link">Proofi</a> • 
+        <span class="security-badge" style="margin-left: 8px; padding: 4px 10px;">
+          <span class="dot"></span>
+          E2E Encrypted
+        </span>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Tab switching
+    const tabGroup = document.getElementById('tabGroup');
+    const tabs = document.querySelectorAll('.tab');
+    const sendPanel = document.getElementById('sendPanel');
+    const receivePanel = document.getElementById('receivePanel');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const activeTab = tab.dataset.tab;
+        
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        if (activeTab === 'receive') {
+          tabGroup.classList.add('receive');
+          sendPanel.style.display = 'none';
+          receivePanel.classList.add('show');
+        } else {
+          tabGroup.classList.remove('receive');
+          sendPanel.style.display = 'block';
+          receivePanel.classList.remove('show');
+        }
+      });
+    });
+    
+    // Dropzone interactions
+    const dropzone = document.getElementById('dropzone');
+    const filePreview = document.getElementById('filePreview');
+    const sendBtn = document.getElementById('sendBtn');
+    const progressContainer = document.getElementById('progressContainer');
+    const successContainer = document.getElementById('successContainer');
+    const formSection = document.querySelector('.form-section');
+    
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('active');
+    });
+    
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('active');
+    });
+    
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('active');
+      dropzone.classList.add('success');
+      
+      setTimeout(() => {
+        dropzone.classList.remove('success');
+        showFilePreview();
+      }, 800);
+    });
+    
+    dropzone.addEventListener('click', () => {
+      // Simulate file selection
+      dropzone.classList.add('success');
+      setTimeout(() => {
+        dropzone.classList.remove('success');
+        showFilePreview();
+      }, 600);
+    });
+    
+    function showFilePreview() {
+      dropzone.style.display = 'none';
+      filePreview.classList.add('show');
+      sendBtn.disabled = false;
+    }
+    
+    function hideFilePreview() {
+      dropzone.style.display = 'flex';
+      filePreview.classList.remove('show');
+      sendBtn.disabled = true;
+    }
+    
+    document.getElementById('fileRemove').addEventListener('click', hideFilePreview);
+    
+    // Send button / Progress simulation
+    sendBtn.addEventListener('click', () => {
+      filePreview.style.display = 'none';
+      formSection.style.display = 'none';
+      progressContainer.classList.add('show');
+      
+      let progress = 0;
+      const progressRing = document.getElementById('progressRing');
+      const progressPercent = document.getElementById('progressPercent');
+      const progressDetail = document.getElementById('progressDetail');
+      const circumference = 314; // 2 * PI * 50
+      
+      const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 100) progress = 100;
+        
+        const offset = circumference - (progress / 100) * circumference;
+        progressRing.style.strokeDashoffset = offset;
+        progressPercent.textContent = Math.round(progress) + '%';
+        progressDetail.textContent = `${Math.round(progress * 24)} KB / 2.4 MB`;
+        
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            progressContainer.classList.remove('show');
+            successContainer.classList.add('show');
+          }, 500);
+        }
+      }, 200);
+    });
+    
+    // Copy button
+    const copyBtn = document.getElementById('copyBtn');
+    copyBtn.addEventListener('click', () => {
+      copyBtn.classList.add('copied');
+      copyBtn.innerHTML = '<span>✓</span><span>Copied!</span>';
+      
+      setTimeout(() => {
+        copyBtn.classList.remove('copied');
+        copyBtn.innerHTML = '<span>📋</span><span>Copy</span>';
+      }, 2000);
+    });
+    
+    // New file button
+    document.getElementById('newBtn').addEventListener('click', () => {
+      successContainer.classList.remove('show');
+      filePreview.style.display = 'none';
+      formSection.style.display = 'block';
+      dropzone.style.display = 'flex';
+      sendBtn.disabled = true;
+    });
+    
+    // Wallet button simulation
+    const walletBtn = document.getElementById('walletBtn');
+    walletBtn.addEventListener('click', () => {
+      if (walletBtn.classList.contains('connected')) {
+        walletBtn.classList.remove('connected');
+        walletBtn.innerHTML = '<span class="status-dot"></span><span>Connect Wallet</span>';
+      } else {
+        walletBtn.classList.add('connected');
+        walletBtn.innerHTML = '<span class="status-dot"></span><span>0x8f3...a2b1</span>';
+      }
+    });
+  </script>
+</body>
+</html>

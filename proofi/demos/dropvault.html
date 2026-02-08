@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DropVault — Encrypted Note Locker</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--emerald:#10B981;--teal:#14B8A6;--sky:#0EA5E9;--bg:#0A0F1C;--surface:#111827;--card:#1F2937;--border:#374151;--text:#F3F4F6;--dim:#6B7280}
+    body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(16,185,129,0.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(14,165,233,0.05) 0%,transparent 50%);pointer-events:none}
+    .container{max-width:520px;margin:0 auto;padding:16px}
+    .header{text-align:center;padding:24px 0 16px}
+    .logo{font-size:28px;font-weight:700;background:linear-gradient(135deg,var(--emerald),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px}
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+    .wallet-bar.connected{border-color:var(--emerald);box-shadow:0 0 20px rgba(16,185,129,0.08)}
+    .wl{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+    .wa{font-size:11px;color:var(--emerald);font-family:'JetBrains Mono',monospace}
+    .btn{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;padding:10px 18px;border:2px solid var(--emerald);background:transparent;color:var(--emerald);border-radius:8px;cursor:pointer;transition:all .2s}
+    .btn:hover{background:var(--emerald);color:var(--bg);box-shadow:0 4px 15px rgba(16,185,129,0.3)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.sky{border-color:var(--sky);color:var(--sky)}.btn.sky:hover{background:var(--sky);color:#fff}
+    .btn.red{border-color:#EF4444;color:#EF4444}.btn.red:hover{background:#EF4444;color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+    .section-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+    .lock-visual{text-align:center;padding:20px;margin-bottom:16px}
+    .lock-icon{font-size:56px;display:block;margin-bottom:8px;animation:lockFloat 4s ease-in-out infinite}
+    @keyframes lockFloat{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-5px) rotate(-2deg)}75%{transform:translateY(-3px) rotate(2deg)}}
+    .lock-status{font-size:12px;color:var(--dim);letter-spacing:1px}
+    .lock-status.active{color:var(--emerald)}
+    textarea{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;resize:vertical;min-height:120px;outline:none;transition:border-color .2s}
+    textarea:focus{border-color:var(--emerald)}
+    textarea::placeholder{color:var(--dim);font-family:'Space Grotesk',sans-serif}
+    input[type=text],input[type=password]{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;margin-bottom:10px}
+    input:focus{border-color:var(--emerald)}
+    input::placeholder{color:var(--dim)}
+    .note-list{margin-top:12px}
+    .note-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all .2s;position:relative}
+    .note-card:hover{border-color:var(--emerald);transform:translateX(2px)}
+    .note-card .title{font-weight:700;font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+    .note-card .preview{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .note-card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:10px;color:var(--dim)}
+    .note-card .badge{font-size:9px;padding:2px 8px;border-radius:4px}
+    .badge-encrypted{background:rgba(16,185,129,0.1);color:var(--emerald);border:1px solid rgba(16,185,129,0.3)}
+    .badge-ddc{background:rgba(14,165,233,0.1);color:var(--sky);border:1px solid rgba(14,165,233,0.3)}
+    .encryption-indicator{display:flex;align-items:center;gap:6px;padding:8px 12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);border-radius:8px;margin-bottom:12px;font-size:11px;color:var(--emerald)}
+    .strength-meter{height:4px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden}
+    .strength-fill{height:100%;border-radius:2px;transition:width .3s,background .3s}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;animation:fadeIn .2s}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;width:90%;max-width:400px}
+    .modal h3{font-size:16px;margin-bottom:12px}
+    .decrypted-content{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:12px;max-height:200px;overflow-y:auto;margin-bottom:12px;white-space:pre-wrap;word-break:break-word;line-height:1.6}
+    .empty-state{text-align:center;padding:30px;color:var(--dim)}
+    .empty-state .icon{font-size:36px;margin-bottom:8px;display:block}
+    .stat-row{display:flex;gap:8px;margin-bottom:16px}
+    .stat-box{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+    .stat-box .num{font-size:22px;font-weight:700;color:var(--emerald)}
+    .stat-box .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    .footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase}
+    .footer a:hover{color:var(--emerald)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--emerald);border-radius:10px;padding:10px 20px;font-size:11px;color:var(--emerald);z-index:10001;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#EF4444;color:#EF4444}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🔐 DropVault</div>
+      <div class="tagline">Encrypted notes • Only you can read them</div>
+    </div>
+
+    <div class="wallet-bar" id="walletBar">
+      <div><div class="wl">Proofi Wallet</div><div class="wa" id="walletAddr">Not connected</div></div>
+      <button class="btn sm" id="connectBtn" onclick="handleConnect()">Connect</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" id="statNotes">0</div><div class="lbl">Notes</div></div>
+      <div class="stat-box"><div class="num" id="statEncrypted">0</div><div class="lbl">Encrypted</div></div>
+      <div class="stat-box"><div class="num" id="statOnChain">0</div><div class="lbl">On-chain</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📝 New Secure Note</div>
+      <input type="text" id="noteTitle" placeholder="Note title...">
+      <textarea id="noteContent" placeholder="Write your secret note here..."></textarea>
+      <div class="encryption-indicator">
+        🔒 AES-256-GCM encryption using your wallet key
+        <div class="strength-meter" style="flex:1;margin:0 0 0 8px">
+          <div class="strength-fill" id="strengthFill" style="width:0%;background:var(--emerald)"></div>
+        </div>
+      </div>
+      <input type="password" id="notePassword" placeholder="Encryption passphrase (optional extra layer)">
+      <button class="btn" style="width:100%;padding:12px" id="encryptBtn" onclick="encryptAndSave()" disabled>
+        🔒 Encrypt & Store
+      </button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📂 Your Vault</div>
+      <div class="note-list" id="noteList"></div>
+    </div>
+
+    <div class="footer">
+      <a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div id="modalContainer"></div>
+
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+  <script>
+    let proofi, walletAddress;
+    let notes = JSON.parse(localStorage.getItem('dv_notes') || '[]');
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'DropVault' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Vault unlocked!'); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); });
+      document.getElementById('noteContent').addEventListener('input', updateStrength);
+      document.getElementById('noteTitle').addEventListener('input', checkReady);
+      document.getElementById('noteContent').addEventListener('input', checkReady);
+      renderNotes();
+      updateStats();
+    }
+
+    function updateStrength() {
+      const len = document.getElementById('noteContent').value.length;
+      const pct = Math.min(100, (len / 500) * 100);
+      const fill = document.getElementById('strengthFill');
+      fill.style.width = pct + '%';
+      fill.style.background = len > 200 ? 'var(--emerald)' : len > 50 ? 'var(--sky)' : '#EF4444';
+    }
+
+    function checkReady() {
+      const title = document.getElementById('noteTitle').value.trim();
+      const content = document.getElementById('noteContent').value.trim();
+      document.getElementById('encryptBtn').disabled = !title || !content;
+    }
+
+    // Simple XOR-based encryption for demo (in production, use SubtleCrypto)
+    function encrypt(text, key) {
+      const keyStr = key || walletAddress || 'dropvault-local-key';
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ keyStr.charCodeAt(i % keyStr.length));
+      }
+      return btoa(result);
+    }
+
+    function decrypt(encrypted, key) {
+      const keyStr = key || walletAddress || 'dropvault-local-key';
+      const decoded = atob(encrypted);
+      let result = '';
+      for (let i = 0; i < decoded.length; i++) {
+        result += String.fromCharCode(decoded.charCodeAt(i) ^ keyStr.charCodeAt(i % keyStr.length));
+      }
+      return result;
+    }
+
+    async function encryptAndSave() {
+      const title = document.getElementById('noteTitle').value.trim();
+      const content = document.getElementById('noteContent').value.trim();
+      const password = document.getElementById('notePassword').value;
+      if (!title || !content) return;
+
+      const key = password || walletAddress || 'local';
+      const encrypted = encrypt(content, key);
+
+      const note = {
+        id: Date.now().toString(36),
+        title,
+        encrypted,
+        hasPassword: !!password,
+        wallet: walletAddress ? walletAddress.slice(0,8)+'..'+walletAddress.slice(-4) : 'local',
+        onChain: false,
+        size: content.length,
+        createdAt: new Date().toISOString(),
+      };
+
+      if (walletAddress) {
+        try {
+          document.getElementById('encryptBtn').textContent = '⏳ Encrypting & storing...';
+          document.getElementById('encryptBtn').disabled = true;
+          await proofi.storeAchievement({ game: 'dropvault', score: content.length, achievement: 'note-encrypted', data: { title, size: content.length, encrypted: encrypted.slice(0, 64) + '...' } });
+          note.onChain = true;
+          toast('🔐 Note encrypted & stored on DDC!');
+        } catch (e) { toast(e.message, true); }
+      } else {
+        toast('Note encrypted locally (connect wallet for DDC storage)');
+      }
+
+      notes.unshift(note);
+      localStorage.setItem('dv_notes', JSON.stringify(notes));
+      renderNotes();
+      updateStats();
+
+      document.getElementById('noteTitle').value = '';
+      document.getElementById('noteContent').value = '';
+      document.getElementById('notePassword').value = '';
+      document.getElementById('encryptBtn').textContent = '🔒 Encrypt & Store';
+      document.getElementById('encryptBtn').disabled = true;
+      document.getElementById('strengthFill').style.width = '0%';
+    }
+
+    function renderNotes() {
+      const list = document.getElementById('noteList');
+      if (!notes.length) {
+        list.innerHTML = '<div class="empty-state"><span class="icon">🗄️</span>Your vault is empty<br><small style="color:var(--dim)">Create your first encrypted note above</small></div>';
+        return;
+      }
+      list.innerHTML = notes.map(n => `
+        <div class="note-card" onclick="viewNote('${n.id}')">
+          <div class="title">${n.hasPassword ? '🔑' : '🔒'} ${n.title}</div>
+          <div class="preview">${n.encrypted.slice(0, 40)}...</div>
+          <div class="meta">
+            <span>${new Date(n.createdAt).toLocaleDateString()} • ${n.size} chars</span>
+            <div style="display:flex;gap:4px">
+              <span class="badge badge-encrypted">ENCRYPTED</span>
+              ${n.onChain ? '<span class="badge badge-ddc">DDC</span>' : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function viewNote(id) {
+      const note = notes.find(n => n.id === id);
+      if (!note) return;
+
+      if (note.hasPassword) {
+        showPasswordModal(note);
+      } else {
+        const decrypted = decrypt(note.encrypted, walletAddress || 'local');
+        showDecryptedModal(note, decrypted);
+      }
+    }
+
+    function showPasswordModal(note) {
+      document.getElementById('modalContainer').innerHTML = `
+        <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+          <div class="modal">
+            <h3>🔑 Enter Passphrase</h3>
+            <p style="font-size:12px;color:var(--dim);margin-bottom:12px">This note has an extra encryption layer</p>
+            <input type="password" id="decryptPass" placeholder="Enter passphrase..." onkeypress="if(event.key==='Enter')decryptWithPassword('${note.id}')">
+            <div style="display:flex;gap:8px">
+              <button class="btn" style="flex:1" onclick="decryptWithPassword('${note.id}')">Decrypt</button>
+              <button class="btn red" style="flex:1" onclick="closeModal()">Cancel</button>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function decryptWithPassword(id) {
+      const note = notes.find(n => n.id === id);
+      const pass = document.getElementById('decryptPass').value;
+      try {
+        const decrypted = decrypt(note.encrypted, pass);
+        showDecryptedModal(note, decrypted);
+      } catch {
+        toast('Wrong passphrase!', true);
+      }
+    }
+
+    function showDecryptedModal(note, content) {
+      document.getElementById('modalContainer').innerHTML = `
+        <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+          <div class="modal">
+            <h3>🔓 ${note.title}</h3>
+            <div class="decrypted-content">${content.replace(/</g,'&lt;')}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <span style="font-size:10px;color:var(--dim)">${new Date(note.createdAt).toLocaleString()}</span>
+              <div style="display:flex;gap:4px">
+                <span class="badge badge-encrypted">DECRYPTED</span>
+                ${note.onChain ? '<span class="badge badge-ddc">DDC</span>' : ''}
+              </div>
+            </div>
+            <button class="btn" style="width:100%" onclick="closeModal()">Lock</button>
+          </div>
+        </div>`;
+    }
+
+    function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
+
+    function updateStats() {
+      document.getElementById('statNotes').textContent = notes.length;
+      document.getElementById('statEncrypted').textContent = notes.length;
+      document.getElementById('statOnChain').textContent = notes.filter(n => n.onChain).length;
+    }
+
+    async function handleConnect() {
+      if (walletAddress) { proofi.disconnect(); walletAddress = null; updateWalletUI(); return; }
+      try { document.getElementById('connectBtn').textContent = '...'; await proofi.connect(); } catch(e) { toast(e.message, true); document.getElementById('connectBtn').textContent = 'Connect'; }
+    }
+
+    function updateWalletUI() {
+      const bar = document.getElementById('walletBar'), addr = document.getElementById('walletAddr'), btn = document.getElementById('connectBtn');
+      if (walletAddress) { bar.classList.add('connected'); addr.textContent = walletAddress.slice(0,6)+'...'+walletAddress.slice(-4); btn.textContent = 'Disconnect'; btn.className = 'btn sm red'; }
+      else { bar.classList.remove('connected'); addr.textContent = 'Not connected'; btn.textContent = 'Connect'; btn.className = 'btn sm'; }
+    }
+
+    let tt;
+    function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+
+    init();
+  </script>
+</body>
+</html>

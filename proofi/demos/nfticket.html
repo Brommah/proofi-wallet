@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFTicket — Decentralized Event Tickets</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--magenta:#D946EF;--violet:#8B5CF6;--pink:#EC4899;--sky:#38BDF8;--bg:#0F0720;--surface:#1A1036;--card:#251A4A;--border:#362560;--text:#F5F0FF;--dim:#8B7EB0}
+    body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(217,70,239,0.1) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(139,92,246,0.06) 0%,transparent 40%);pointer-events:none}
+    .container{max-width:520px;margin:0 auto;padding:16px}
+    .header{text-align:center;padding:20px 0 16px}
+    .logo{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--magenta),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px}
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+    .wallet-bar.connected{border-color:var(--magenta);box-shadow:0 0 20px rgba(217,70,239,0.1)}
+    .wl{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}.wa{font-size:11px;color:var(--magenta);font-family:monospace}
+    .btn{font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;padding:10px 18px;border:2px solid var(--magenta);background:transparent;color:var(--magenta);border-radius:8px;cursor:pointer;transition:all .2s}
+    .btn:hover{background:var(--magenta);color:#fff;box-shadow:0 4px 15px rgba(217,70,239,0.3)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.violet{border-color:var(--violet);color:var(--violet)}.btn.violet:hover{background:var(--violet);color:#fff}
+    .btn.red{border-color:#EF4444;color:#EF4444}.btn.red:hover{background:#EF4444;color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+    .tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--surface);border-radius:10px;padding:3px}
+    .tab{flex:1;padding:10px;text-align:center;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--dim);transition:all .2s}
+    .tab.active{background:var(--card);color:var(--text)}
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+    input[type=text],input[type=date],input[type=number]{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Poppins',sans-serif;font-size:13px;outline:none;margin-bottom:8px}
+    input:focus{border-color:var(--magenta)}input::placeholder{color:var(--dim)}
+    .event-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;transition:all .25s}
+    .event-card:hover{border-color:rgba(217,70,239,0.4);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+    .event-banner{height:100px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .event-banner .gradient{position:absolute;inset:0}
+    .event-banner .emoji{font-size:40px;position:relative;z-index:1}
+    .event-info{padding:14px}
+    .event-name{font-size:16px;font-weight:700;margin-bottom:4px}
+    .event-details{font-size:11px;color:var(--dim);display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+    .event-details span{display:flex;align-items:center;gap:3px}
+    .event-footer{display:flex;justify-content:space-between;align-items:center}
+    .ticket-count{font-size:11px;color:var(--dim)}
+    .ticket-count .avail{color:var(--magenta);font-weight:700}
+    .my-ticket{background:var(--surface);border:2px solid var(--magenta);border-radius:14px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
+    .my-ticket::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--magenta),var(--violet),var(--pink))}
+    .ticket-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+    .ticket-event{font-size:16px;font-weight:700}
+    .ticket-id{font-size:9px;color:var(--dim);font-family:monospace}
+    .ticket-badge{padding:3px 10px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(217,70,239,0.15);color:var(--magenta);border:1px solid rgba(217,70,239,0.3)}
+    .qr-container{text-align:center;margin:12px 0;padding:16px;background:white;border-radius:10px;display:inline-block;width:100%}
+    .qr-code{width:140px;height:140px;margin:0 auto;display:block;image-rendering:pixelated}
+    .qr-label{font-size:10px;color:#333;margin-top:6px;font-weight:600;font-family:monospace}
+    .ticket-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:8px}
+    .ticket-meta .onchain{color:var(--magenta)}
+    .stat-row{display:flex;gap:8px;margin-bottom:16px}
+    .stat-box{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+    .stat-box .num{font-size:22px;font-weight:800;color:var(--magenta)}
+    .stat-box .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    .empty{text-align:center;padding:30px;color:var(--dim)}.empty .icon{font-size:36px;display:block;margin-bottom:8px}
+    .footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase}.footer a:hover{color:var(--magenta)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--magenta);border-radius:10px;padding:10px 20px;font-size:11px;color:var(--magenta);z-index:10000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#EF4444;color:#EF4444}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🎫 NFTicket</div>
+      <div class="tagline">Verifiable event tickets • Proof of attendance on DDC</div>
+    </div>
+    <div class="wallet-bar" id="walletBar">
+      <div><div class="wl">Proofi Wallet</div><div class="wa" id="walletAddr">Not connected</div></div>
+      <button class="btn sm" id="connectBtn" onclick="handleConnect()">Connect</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" id="sEvents">0</div><div class="lbl">Events</div></div>
+      <div class="stat-box"><div class="num" id="sTickets">0</div><div class="lbl">Tickets Issued</div></div>
+      <div class="stat-box"><div class="num" id="sMine">0</div><div class="lbl">My Tickets</div></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('events')">Events</div>
+      <div class="tab" onclick="switchTab('tickets')">My Tickets</div>
+      <div class="tab" onclick="switchTab('create')">Create Event</div>
+    </div>
+
+    <div id="tab-events"><div id="eventList"></div></div>
+    <div id="tab-tickets" style="display:none"><div id="ticketList"></div></div>
+    <div id="tab-create" style="display:none">
+      <div class="section">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px">🎉 Create Event</div>
+        <input type="text" id="eventName" placeholder="Event name...">
+        <input type="text" id="eventLocation" placeholder="📍 Location...">
+        <input type="date" id="eventDate">
+        <input type="number" id="eventCapacity" placeholder="Max tickets (e.g. 100)" min="1">
+        <button class="btn" style="width:100%;padding:12px" onclick="createEvent()" id="createBtn" disabled>🎫 Create Event</button>
+      </div>
+    </div>
+
+    <div class="footer"><a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script src="proofi-sdk.js"></script>
+  <script>
+    const GRADIENTS = [
+      'linear-gradient(135deg,#D946EF,#8B5CF6)','linear-gradient(135deg,#EC4899,#F43F5E)',
+      'linear-gradient(135deg,#38BDF8,#6366F1)','linear-gradient(135deg,#F59E0B,#EF4444)',
+      'linear-gradient(135deg,#10B981,#06B6D4)','linear-gradient(135deg,#8B5CF6,#3B82F6)',
+    ];
+    const EMOJIS = ['🎵','🎤','🎨','💻','🏆','🎭','🎪','🚀','🌟','🎬'];
+    let proofi, walletAddress;
+    let events = JSON.parse(localStorage.getItem('nt_events') || 'null');
+    let myTickets = JSON.parse(localStorage.getItem('nt_tickets') || '[]');
+
+    if (!events) {
+      events = [
+        { id:'e1', name:'Web3 Berlin Meetup', location:'Factory Berlin', date:'2024-03-15', capacity:100, claimed:67, emoji:'💻', gradient:GRADIENTS[2], creator:'5Grw...' },
+        { id:'e2', name:'Cere Network Launch Party', location:'Amsterdam HQ', date:'2024-03-20', capacity:50, claimed:42, emoji:'🚀', gradient:GRADIENTS[0], creator:'5FHn...' },
+        { id:'e3', name:'DeFi Music Festival', location:'Lisbon, Portugal', date:'2024-04-10', capacity:200, claimed:156, emoji:'🎵', gradient:GRADIENTS[1], creator:'5DAA...' },
+        { id:'e4', name:'Decentralized Art Exhibition', location:'Digital Gallery', date:'2024-04-25', capacity:80, claimed:23, emoji:'🎨', gradient:GRADIENTS[4], creator:'5HGj...' },
+      ];
+      localStorage.setItem('nt_events', JSON.stringify(events));
+    }
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'NFTicket' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Wallet connected!'); renderEvents(); renderTickets(); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); });
+      ['eventName','eventLocation','eventDate','eventCapacity'].forEach(id => document.getElementById(id).addEventListener('input', checkCreate));
+      renderEvents(); renderTickets(); updateStats();
+    }
+
+    function switchTab(n) {
+      const tabs = ['events','tickets','create'];
+      document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active',tabs[i]===n));
+      tabs.forEach(t => document.getElementById('tab-'+t).style.display = t===n?'block':'none');
+    }
+
+    function checkCreate() {
+      const n=document.getElementById('eventName').value.trim(), l=document.getElementById('eventLocation').value.trim(), d=document.getElementById('eventDate').value, c=document.getElementById('eventCapacity').value;
+      document.getElementById('createBtn').disabled = !n||!l||!d||!c;
+    }
+
+    async function createEvent() {
+      const name=document.getElementById('eventName').value.trim(), location=document.getElementById('eventLocation').value.trim(), date=document.getElementById('eventDate').value, capacity=parseInt(document.getElementById('eventCapacity').value);
+      const event = { id:'e'+Date.now().toString(36), name, location, date, capacity, claimed:0, emoji:EMOJIS[Math.floor(Math.random()*EMOJIS.length)], gradient:GRADIENTS[Math.floor(Math.random()*GRADIENTS.length)], creator:walletAddress?walletAddress.slice(0,6)+'...':'Anon' };
+
+      if (walletAddress) {
+        try { await proofi.storeAchievement({ game:'nfticket', score:capacity, achievement:'event-created', data:{name,location,date,capacity} }); event.onChain=true; toast('🎫 Event created on-chain!'); } catch(e){toast(e.message,true)}
+      }
+
+      events.unshift(event);
+      localStorage.setItem('nt_events', JSON.stringify(events));
+      renderEvents(); updateStats();
+      ['eventName','eventLocation','eventDate','eventCapacity'].forEach(id => document.getElementById(id).value='');
+      switchTab('events');
+    }
+
+    async function claimTicket(eventId) {
+      if (!walletAddress) { toast('Connect wallet first!', true); return; }
+      const event = events.find(e => e.id===eventId);
+      if (!event) return;
+      if (myTickets.find(t => t.eventId===eventId)) { toast('Already claimed!', true); return; }
+      if (event.claimed >= event.capacity) { toast('Sold out!', true); return; }
+
+      const ticket = {
+        id: 'T-'+Date.now().toString(36).toUpperCase(),
+        eventId, eventName: event.name, eventDate: event.date, eventLocation: event.location,
+        emoji: event.emoji, gradient: event.gradient,
+        wallet: walletAddress.slice(0,8)+'..'+walletAddress.slice(-4),
+        claimedAt: new Date().toISOString(), onChain: false,
+      };
+
+      try {
+        await proofi.storeAchievement({ game:'nfticket', score:1, achievement:'ticket-claimed', data:{ eventName:event.name, ticketId:ticket.id } });
+        ticket.onChain = true;
+        toast('🎫 Ticket claimed & stored on DDC!');
+      } catch(e) { toast(e.message, true); }
+
+      event.claimed++;
+      myTickets.unshift(ticket);
+      localStorage.setItem('nt_events', JSON.stringify(events));
+      localStorage.setItem('nt_tickets', JSON.stringify(myTickets));
+      renderEvents(); renderTickets(); updateStats();
+      switchTab('tickets');
+    }
+
+    function generateQR(text) {
+      // Simple QR-like pattern using canvas for demo
+      const canvas = document.createElement('canvas');
+      canvas.width = 140; canvas.height = 140;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0,0,140,140);
+      ctx.fillStyle = '#000';
+      // Generate deterministic pattern from text
+      let hash = 0;
+      for (let i = 0; i < text.length; i++) hash = ((hash << 5) - hash) + text.charCodeAt(i);
+      const size = 7;
+      const cellSize = 140 / (size * 2 + 1);
+      // Position markers
+      [[0,0],[0,size+1],[size+1,0]].forEach(([row,col]) => {
+        for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
+          if (r===0||r===4||c===0||c===4||(r>=1&&r<=3&&c>=1&&c<=3&&(r===2&&c===2||r===0||r===4||c===0||c===4))) {
+            ctx.fillRect((col+c)*cellSize, (row+r)*cellSize, cellSize-1, cellSize-1);
+          }
+        }
+      });
+      // Data cells
+      for (let r = 0; r < size*2+1; r++) for (let c = 0; c < size*2+1; c++) {
+        if (r < 5 && c < 5) continue; if (r < 5 && c > size) continue; if (r > size && c < 5) continue;
+        hash = ((hash << 5) - hash + r * c + 7) | 0;
+        if ((hash & 3) < 2) ctx.fillRect(c*cellSize, r*cellSize, cellSize-1, cellSize-1);
+      }
+      return canvas.toDataURL();
+    }
+
+    function renderEvents() {
+      const list = document.getElementById('eventList');
+      list.innerHTML = events.map(e => {
+        const hasClaimed = myTickets.find(t => t.eventId===e.id);
+        const soldOut = e.claimed >= e.capacity;
+        return `
+          <div class="event-card">
+            <div class="event-banner"><div class="gradient" style="background:${e.gradient}"></div><span class="emoji">${e.emoji}</span></div>
+            <div class="event-info">
+              <div class="event-name">${e.name}</div>
+              <div class="event-details">
+                <span>📅 ${new Date(e.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                <span>📍 ${e.location}</span>
+              </div>
+              <div class="event-footer">
+                <div class="ticket-count"><span class="avail">${e.capacity-e.claimed}</span> / ${e.capacity} available</div>
+                ${hasClaimed ? '<span class="ticket-badge">✓ Claimed</span>' :
+                  soldOut ? '<span style="color:var(--dim);font-size:11px">Sold out</span>' :
+                  `<button class="btn sm" onclick="claimTicket('${e.id}')">Claim Ticket</button>`}
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderTickets() {
+      const list = document.getElementById('ticketList');
+      if (!myTickets.length) { list.innerHTML = '<div class="empty"><span class="icon">🎫</span>No tickets yet<br><small style="color:var(--dim)">Claim tickets from events</small></div>'; updateStats(); return; }
+      list.innerHTML = myTickets.map(t => `
+        <div class="my-ticket">
+          <div class="ticket-header">
+            <div><div class="ticket-event">${t.emoji} ${t.eventName}</div><div class="ticket-id">${t.id}</div></div>
+            <span class="ticket-badge">${t.onChain?'ON-CHAIN':'LOCAL'}</span>
+          </div>
+          <div style="font-size:11px;color:var(--dim);margin-bottom:8px">📅 ${t.eventDate} • 📍 ${t.eventLocation}</div>
+          <div class="qr-container">
+            <img class="qr-code" src="${generateQR(t.id+t.wallet)}" alt="QR">
+            <div class="qr-label">${t.id}</div>
+          </div>
+          <div class="ticket-meta">
+            <span>🔗 ${t.wallet}</span>
+            <span class="onchain">${t.onChain?'✓ Verified on DDC':'⏳ Local only'}</span>
+          </div>
+        </div>
+      `).join('');
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('sEvents').textContent = events.length;
+      document.getElementById('sTickets').textContent = events.reduce((s,e) => s+e.claimed, 0);
+      document.getElementById('sMine').textContent = myTickets.length;
+    }
+
+    async function handleConnect() {
+      if(walletAddress){proofi.disconnect();walletAddress=null;updateWalletUI();return}
+      try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){toast(e.message,true);document.getElementById('connectBtn').textContent='Connect'}
+    }
+    function updateWalletUI() {
+      const bar=document.getElementById('walletBar'),addr=document.getElementById('walletAddr'),btn=document.getElementById('connectBtn');
+      if(walletAddress){bar.classList.add('connected');addr.textContent=walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);btn.textContent='Disconnect';btn.className='btn sm red'}
+      else{bar.classList.remove('connected');addr.textContent='Not connected';btn.textContent='Connect';btn.className='btn sm'}
+    }
+    let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+    init();
+  </script>
+</body>
+</html>

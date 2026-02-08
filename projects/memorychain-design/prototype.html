@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemoryChain - Design Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Primary Palette */
+            --cream: #FDF8F3;
+            --warm-ivory: #F5EDE4;
+            --dusty-rose: #D4A5A5;
+            --sage-green: #9CAF88;
+            --deep-burgundy: #6B4444;
+            
+            /* Extended Palette */
+            --soft-blush: #E8D4D4;
+            --muted-gold: #8B7355; /* was #C9B896 - darker for WCAG AA on cream bg */
+            --charcoal: #3A3A3A;
+            --light-sage: #D4E1CC;
+            
+            /* Typography */
+            --font-display: 'Caveat', cursive;
+            --font-body: 'Lora', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background: var(--cream);
+            color: var(--charcoal);
+            min-height: 100vh;
+        }
+        
+        /* Layout */
+        .app {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--warm-ivory);
+            padding: var(--space-xl);
+            border-right: 2px solid var(--soft-blush);
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--deep-burgundy);
+            margin-bottom: var(--space-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .nav-title {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted-gold);
+            margin-bottom: var(--space-md);
+        }
+        
+        .nav-item {
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .nav-item:hover {
+            background: var(--soft-blush);
+        }
+        
+        .nav-item.active {
+            background: var(--dusty-rose);
+            color: white;
+        }
+        
+        /* Calendar Mini */
+        .calendar-mini {
+            background: var(--cream);
+            border-radius: 12px;
+            padding: var(--space-md);
+            border: 1px solid var(--soft-blush);
+        }
+        
+        .calendar-header {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--deep-burgundy);
+            text-align: center;
+            margin-bottom: var(--space-md);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        
+        .calendar-day {
+            padding: var(--space-xs);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .calendar-day.has-entry {
+            background: var(--light-sage);
+            color: var(--deep-burgundy);
+        }
+        
+        .calendar-day.today {
+            background: var(--dusty-rose);
+            color: white;
+        }
+        
+        /* Main Content */
+        .main {
+            padding: var(--space-2xl);
+            max-width: 800px;
+        }
+        
+        .page-header {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            color: var(--deep-burgundy);
+        }
+        
+        /* Entry Card */
+        .entry-card {
+            background: white;
+            border-radius: 12px;
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            box-shadow: 0 2px 8px rgba(107, 68, 68, 0.08);
+            border: 1px solid var(--soft-blush);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .entry-card:hover {
+            box-shadow: 0 8px 24px rgba(107, 68, 68, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        /* Notebook holes */
+        .entry-card::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                var(--dusty-rose) 10%,
+                var(--dusty-rose) 90%,
+                transparent 100%
+            );
+            opacity: 0.3;
+        }
+        
+        .notebook-holes {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .hole {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--cream);
+            border: 2px solid var(--soft-blush);
+        }
+        
+        .entry-content {
+            padding-left: var(--space-xl);
+        }
+        
+        .entry-date {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--muted-gold);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .entry-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--deep-burgundy);
+            margin-bottom: var(--space-md);
+        }
+        
+        .entry-excerpt {
+            color: var(--charcoal);
+            line-height: 1.7;
+            margin-bottom: var(--space-md);
+        }
+        
+        .entry-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            font-size: 0.875rem;
+        }
+        
+        .tag {
+            background: var(--light-sage);
+            color: var(--sage-green);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        
+        .encrypted-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--dusty-rose);
+            font-size: 0.75rem;
+        }
+        
+        /* Chain connector */
+        .chain-connector {
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(
+                to bottom,
+                var(--sage-green),
+                var(--dusty-rose)
+            );
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .chain-connector::before,
+        .chain-connector::after {
+            content: '🔗';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+        }
+        
+        .chain-connector::before { top: -8px; }
+        .chain-connector::after { bottom: -8px; }
+        
+        /* New Entry Button */
+        .new-entry-btn {
+            position: fixed;
+            bottom: var(--space-xl);
+            right: var(--space-xl);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--dusty-rose), var(--sage-green));
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(212, 165, 165, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .new-entry-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 24px rgba(212, 165, 165, 0.5);
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-2xl);
+            color: var(--muted-gold);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+        }
+        
+        .empty-state-text {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+        }
+        
+        /* ===== RESPONSIVE FIXES ===== */
+        @media (max-width: 768px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .main {
+                padding: var(--space-lg);
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .entry-card {
+                padding: var(--space-lg);
+            }
+            
+            .entry-content {
+                padding-left: var(--space-md);
+            }
+            
+            .notebook-holes {
+                left: 8px;
+            }
+            
+            .entry-card::before {
+                left: 16px;
+            }
+            
+            .new-entry-btn {
+                width: 56px;
+                height: 56px;
+                font-size: 1.5rem;
+                bottom: var(--space-lg);
+                right: var(--space-lg);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main {
+                padding: var(--space-md);
+            }
+            
+            .page-title {
+                font-size: 1.75rem;
+            }
+            
+            .entry-title {
+                font-size: 1.5rem;
+            }
+            
+            .entry-excerpt {
+                font-size: 0.9rem;
+            }
+            
+            .entry-date {
+                font-size: 0.75rem;
+            }
+            
+            .entry-meta {
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+            }
+            
+            .chain-connector {
+                height: 24px;
+            }
+        }
+        
+        @media (max-width: 375px) {
+            .entry-card {
+                padding: var(--space-md);
+            }
+            
+            .entry-content {
+                padding-left: var(--space-sm);
+            }
+            
+            .notebook-holes {
+                display: none;
+            }
+            
+            .entry-card::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">📔</span>
+                MemoryChain
+            </div>
+            
+            <nav class="nav-section">
+                <div class="nav-title">Navigate</div>
+                <div class="nav-item active">📝 All Entries</div>
+                <div class="nav-item">⭐ Favorites</div>
+                <div class="nav-item">🏷️ Tags</div>
+                <div class="nav-item">🔍 Search</div>
+            </nav>
+            
+            <div class="nav-section">
+                <div class="nav-title">January 2025</div>
+                <div class="calendar-mini">
+                    <div class="calendar-header">◀ January 2025 ▶</div>
+                    <div class="calendar-grid">
+                        <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                        <span></span><span></span><span></span><span class="calendar-day has-entry">1</span><span class="calendar-day">2</span><span class="calendar-day has-entry">3</span><span class="calendar-day">4</span>
+                        <span class="calendar-day has-entry">5</span><span class="calendar-day">6</span><span class="calendar-day has-entry">7</span><span class="calendar-day">8</span><span class="calendar-day has-entry">9</span><span class="calendar-day">10</span><span class="calendar-day">11</span>
+                        <span class="calendar-day">12</span><span class="calendar-day has-entry">13</span><span class="calendar-day">14</span><span class="calendar-day today">15</span><span class="calendar-day">16</span><span class="calendar-day">17</span><span class="calendar-day">18</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="nav-section">
+                <div class="nav-title">Security</div>
+                <div class="nav-item">🔒 Lock Diary</div>
+                <div class="nav-item">⚙️ Settings</div>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <header class="page-header">
+                <h1 class="page-title">My Memories</h1>
+            </header>
+            
+            <!-- Entry 1 -->
+            <article class="entry-card">
+                <div class="notebook-holes">
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                </div>
+                <div class="entry-content">
+                    <div class="entry-date">
+                        📅 Wednesday, January 15, 2025 • 10:34 AM
+                    </div>
+                    <h2 class="entry-title">A beautiful day for new beginnings...</h2>
+                    <p class="entry-excerpt">
+                        The morning light filtered through the curtains, casting gentle shadows across the room. 
+                        I realized today that sometimes the smallest moments carry the most weight. 
+                        A cup of coffee, a quiet thought, the sound of rain...
+                    </p>
+                    <div class="entry-meta">
+                        <span class="tag">#reflection</span>
+                        <span class="tag">#morning</span>
+                        <span class="encrypted-badge">🔒 encrypted</span>
+                    </div>
+                </div>
+            </article>
+            
+            <div class="chain-connector"></div>
+            
+            <!-- Entry 2 -->
+            <article class="entry-card">
+                <div class="notebook-holes">
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                </div>
+                <div class="entry-content">
+                    <div class="entry-date">
+                        📅 Monday, January 13, 2025 • 8:15 PM
+                    </div>
+                    <h2 class="entry-title">Dinner with old friends</h2>
+                    <p class="entry-excerpt">
+                        We laughed until our sides hurt, remembering stories from years ago. 
+                        It's funny how some friendships just pick up exactly where they left off, 
+                        as if no time has passed at all...
+                    </p>
+                    <div class="entry-meta">
+                        <span class="tag">#friends</span>
+                        <span class="tag">#grateful</span>
+                        <span class="encrypted-badge">🔒 encrypted</span>
+                    </div>
+                </div>
+            </article>
+            
+            <div class="chain-connector"></div>
+            
+            <!-- Entry 3 -->
+            <article class="entry-card">
+                <div class="notebook-holes">
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                    <div class="hole"></div>
+                </div>
+                <div class="entry-content">
+                    <div class="entry-date">
+                        📅 Friday, January 10, 2025 • 3:42 PM
+                    </div>
+                    <h2 class="entry-title">First snow of the year ❄️</h2>
+                    <p class="entry-excerpt">
+                        Watched the snowflakes drift down past my window for what felt like hours. 
+                        There's something magical about the first snow — it makes the world feel fresh and full of possibility...
+                    </p>
+                    <div class="entry-meta">
+                        <span class="tag">#winter</span>
+                        <span class="tag">#peaceful</span>
+                        <span class="encrypted-badge">🔒 encrypted</span>
+                    </div>
+                </div>
+            </article>
+            
+            <button class="new-entry-btn" title="New Entry">✍️</button>
+        </main>
+    </div>
+</body>
+</html>

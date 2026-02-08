@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi Wallet</title>
+  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="lib/token-ui.css">
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-logo-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00E5FF"/>
+              <stop offset="100%" stop-color="#00FF88"/>
+            </linearGradient>
+          </defs>
+          <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="url(#logoGrad)" stroke-width="1.5" fill="none"/>
+          <path d="M12 6L7 9v6l5 3 5-3V9l-5-3z" fill="url(#logoGrad)" opacity="0.2"/>
+          <circle cx="12" cy="12" r="2.5" fill="url(#logoGrad)"/>
+        </svg>
+      </div>
+      <div class="header-title">Proof<span>i</span></div>
+    </div>
+    <div class="header-status">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Disconnected</span>
+    </div>
+  </header>
+
+  <!-- ── Connect Screen ── -->
+  <div class="connect-screen" id="connectScreen">
+    <div class="connect-glow"></div>
+    <div class="connect-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+        <defs>
+          <linearGradient id="connectGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00E5FF"/>
+            <stop offset="100%" stop-color="#00FF88"/>
+          </linearGradient>
+        </defs>
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="url(#connectGrad)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="url(#connectGrad)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h2 class="connect-title">Connect Your Wallet</h2>
+    <p class="connect-desc">Link your Proofi wallet to manage credentials, explore the ecosystem, and interact with dApps.</p>
+    <button class="btn btn-primary btn-block" id="connectBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+      </svg>
+      Connect Proofi Wallet
+    </button>
+    <div class="connect-features">
+      <div class="feature-item">
+        <span class="feature-icon">🔐</span>
+        <span>Self-sovereign identity</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">☁️</span>
+        <span>DDC credential storage</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">⚡</span>
+        <span>11 ecosystem apps</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Dashboard ── -->
+  <div class="dashboard" id="dashboard" style="display:none">
+    <div class="content">
+
+      <!-- Wallet Card -->
+      <div class="wallet-card">
+        <div class="wallet-card-bg"></div>
+        <div class="wallet-card-content">
+          <div class="wallet-label">Wallet Address</div>
+          <div class="wallet-row">
+            <span class="wallet-address" id="walletAddress">—</span>
+            <button class="copy-btn" id="copyBtn" title="Copy address">📋</button>
+          </div>
+          <div class="wallet-actions">
+            <button class="btn btn-ghost btn-sm" id="openWalletBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              Open Wallet
+            </button>
+            <button class="btn btn-ghost btn-sm" id="openExplorerBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              Explorer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value gradient-text" id="balanceValue">—</div>
+          <div class="stat-label">CERE Balance</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="credentialCount">—</div>
+          <div class="stat-label">Credentials</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="lastActivity">—</div>
+          <div class="stat-label">Last Active</div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="credentials">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          Credentials
+        </button>
+        <button class="tab-btn" data-tab="tokens">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <circle cx="12" cy="16" r="1"/>
+          </svg>
+          Access
+        </button>
+        <button class="tab-btn" data-tab="ecosystem">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          Ecosystem
+        </button>
+        <button class="tab-btn" data-tab="settings">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Settings
+        </button>
+      </div>
+
+      <!-- Tab Panels -->
+
+      <!-- Credentials Panel -->
+      <div class="tab-panel active" id="panel-credentials">
+        <div id="credentialsList">
+          <div class="empty-state">
+            <div class="empty-state-icon">📜</div>
+            <div class="empty-state-text">
+              No credentials yet.<br>
+              Play Neural Reflex or use a dApp to earn some!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Access Tokens Panel -->
+      <div class="tab-panel" id="panel-tokens">
+        <div id="tokenPanelContent">
+          <!-- Token UI renders here -->
+        </div>
+      </div>
+
+      <!-- Ecosystem Panel -->
+      <div class="tab-panel" id="panel-ecosystem">
+        <div class="ecosystem-grid" id="ecosystemGrid"></div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="tab-panel" id="panel-settings">
+        <div class="settings-group">
+          <div class="settings-label">Account</div>
+          <div class="settings-item">
+            <div>
+              <div class="settings-item-label">Connected Account</div>
+              <div class="settings-item-desc" id="settingsEmail">—</div>
+            </div>
+          </div>
+          <div class="settings-item">
+            <div>
+              <div class="settings-item-label">Connected Since</div>
+              <div class="settings-item-desc" id="settingsConnectedAt">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-label">Preferences</div>
+          <div class="settings-item">
+            <div>
+              <div class="settings-item-label">Dark Mode</div>
+              <div class="settings-item-desc">Toggle dark/light theme</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="themeToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-item">
+            <div>
+              <div class="settings-item-label">Notifications</div>
+              <div class="settings-item-desc">Badge alerts for dApps</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notifToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-label">Danger Zone</div>
+          <button class="btn btn-danger btn-block btn-sm" id="disconnectBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Disconnect Wallet
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <a href="#" id="footerLink">proofi-virid.vercel.app</a>
+    <span class="footer-sep">·</span>
+    <span class="footer-version">v0.1.0</span>
+  </footer>
+
+  <!-- Proofi Capability Token Engine -->
+  <script src="lib/crypto-utils.js"></script>
+  <script src="lib/key-manager.js"></script>
+  <script src="lib/capability-token.js"></script>
+  <script src="lib/token-ui.js"></script>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

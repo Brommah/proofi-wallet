@@ -1,0 +1,41 @@
+[
+  {
+    "claimId": "claim_3b68bffb-e76",
+    "claimType": "DiplomaCredential",
+    "subjectWallet": "5DSxCBjQZ6P9fu2a34Gn9Ae6aJLMaiHJhveMTiMDCVCoazE1",
+    "subjectName": "Martijn Broersma",
+    "documentText": "UNIVERSITEIT TWENTE\nFaculty of Electrical Engineering, Mathematics and Computer Science\n\nThis is to certify that Martijn Broersma has successfully completed the requirements for the degree of Bachelor of Science in Computer Science, graduating cum laude on June 15, 2023.\n\nSigned: Prof. Dr. J. van Hillegersberg, Dean",
+    "documentName": "diploma_ut_2023.pdf",
+    "metadata": {
+      "institution": "Universiteit Twente",
+      "degree": "BSc Computer Science",
+      "graduationDate": "2023-06-15",
+      "honors": "cum laude"
+    },
+    "status": "approved",
+    "submittedAt": "2026-02-02T19:09:29.030Z",
+    "ddcCid": "baebb4ifw3twcvjecbto4k6m76srlndec22fuq7sldbksy44sidnsf23i4q",
+    "credentialCid": "baebb4ignhh34tigtx6bawy43ybctbdl7z3ohkko62iyxcex4hlt5bk72iq",
+    "rejectionReason": null,
+    "approvedAt": "2026-02-02T19:09:41.201Z"
+  },
+  {
+    "claimId": "claim_a422ba16-bd9",
+    "claimType": "EmploymentCredential",
+    "subjectWallet": "5DSxCBjQZ6P9fu2a34Gn9Ae6aJLMaiHJhveMTiMDCVCoazE1",
+    "subjectName": "Martijn Broersma",
+    "documentText": "EMPLOYMENT VERIFICATION\n\nThis letter confirms that Martijn Broersma has been employed at Cere Network B.V. as Head of Product since January 2021.\n\nCurrent status: Active\nDepartment: Product & Engineering\n\nSigned: Fred Jin, CEO",
+    "documentName": "employment_verification_cere.pdf",
+    "metadata": {
+      "company": "Cere Network",
+      "position": "Head of Product",
+      "startDate": "2021-01-15"
+    },
+    "status": "approved",
+    "submittedAt": "2026-02-02T19:11:09.247Z",
+    "ddcCid": "baebb4iaevxyi46ce7yiughh23caeiumpbwdwhierg2kjztz3ryjfgfqlxy",
+    "credentialCid": "baebb4ihwm3lksumd47vspybm5lona3vkhpjh7bxkrbnfdfymrhebqz5fyi",
+    "rejectionReason": null,
+    "approvedAt": "2026-02-02T19:16:44.846Z"
+  }
+]

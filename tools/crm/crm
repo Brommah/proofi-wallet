@@ -1,0 +1,505 @@
+#!/bin/bash
+# Personal CRM - A simple contact relationship manager
+# Usage: crm <command> [arguments]
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DB_FILE="${CRM_DB:-$SCRIPT_DIR/contacts.json}"
+BACKUP_DIR="$SCRIPT_DIR/backup"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Ensure jq is available
+if ! command -v jq &> /dev/null; then
+    echo -e "${RED}Error: jq is required. Install with: brew install jq${NC}"
+    exit 1
+fi
+
+# Initialize DB if it doesn't exist
+init_db() {
+    if [[ ! -f "$DB_FILE" ]]; then
+        echo '{
+  "contacts": [],
+  "tags": ["friend", "professional", "investor", "mentor", "client"],
+  "metadata": {"version": "1.0", "created_at": "'$(date +%Y-%m-%d)'", "last_backup": ""}
+}' > "$DB_FILE"
+        echo -e "${GREEN}Created new database at $DB_FILE${NC}"
+    fi
+}
+
+# Generate simple ID
+gen_id() {
+    echo "c$(date +%s)$(( RANDOM % 1000 ))"
+}
+
+# Get today's date
+today() {
+    date +%Y-%m-%d
+}
+
+# Find contact by name (case-insensitive partial match) or ID
+find_contact() {
+    local query="$1"
+    jq -r --arg q "$query" '.contacts[] | select(.id == $q or (.name | ascii_downcase | contains($q | ascii_downcase)))' "$DB_FILE"
+}
+
+# Get contact index by ID
+get_contact_index() {
+    local id="$1"
+    jq -r --arg id "$id" '.contacts | to_entries[] | select(.value.id == $id) | .key' "$DB_FILE"
+}
+
+# Command: list
+cmd_list() {
+    local tag_filter=""
+    local stale_days=""
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --tag) tag_filter="$2"; shift 2 ;;
+            --stale) stale_days="$2"; shift 2 ;;
+            *) shift ;;
+        esac
+    done
+    
+    local filter=".contacts"
+    
+    if [[ -n "$tag_filter" ]]; then
+        filter="$filter | map(select(.tags | contains([\"$tag_filter\"])))"
+    fi
+    
+    if [[ -n "$stale_days" ]]; then
+        local cutoff=$(date -v-${stale_days}d +%Y-%m-%d 2>/dev/null || date -d "-$stale_days days" +%Y-%m-%d)
+        filter="$filter | map(select(.last_interaction == \"\" or .last_interaction < \"$cutoff\"))"
+    fi
+    
+    echo -e "${BLUE}Contacts:${NC}"
+    jq -r "$filter | .[] | \"  [\(.id)] \(.name)\" + (if .company != \"\" then \" @ \(.company)\" else \"\" end) + (if .tags | length > 0 then \" [\(.tags | join(\", \"))]\" else \"\" end)" "$DB_FILE"
+}
+
+# Command: show
+cmd_show() {
+    local query="$1"
+    if [[ -z "$query" ]]; then
+        echo -e "${RED}Usage: crm show <name-or-id>${NC}"
+        exit 1
+    fi
+    
+    local contact=$(find_contact "$query")
+    if [[ -z "$contact" ]]; then
+        echo -e "${RED}Contact not found: $query${NC}"
+        exit 1
+    fi
+    
+    echo "$contact" | jq -r '
+        "========================================",
+        "  \(.name)",
+        "========================================",
+        (if .company != "" then "Company: \(.company)" else empty end),
+        (if .role != "" then "Role: \(.role)" else empty end),
+        (if .how_we_met != "" then "How we met: \(.how_we_met)" else empty end),
+        "",
+        (if .email != "" then "Email: \(.email)" else empty end),
+        (if .phone != "" then "Phone: \(.phone)" else empty end),
+        (if .linkedin != "" then "LinkedIn: \(.linkedin)" else empty end),
+        (if .twitter != "" then "Twitter: \(.twitter)" else empty end),
+        "",
+        (if .tags | length > 0 then "Tags: \(.tags | join(", "))" else empty end),
+        (if .birthday != "" then "Birthday: \(.birthday)" else empty end),
+        (if .last_interaction != "" then "Last interaction: \(.last_interaction)" else "Last interaction: Never" end),
+        (if .next_followup != "" then "Follow-up: \(.next_followup)" else empty end),
+        "",
+        "Notes:",
+        (if .notes | length > 0 then (.notes | reverse | .[:5][] | "  [\(.date)] \(.content)") else "  (no notes)" end)
+    '
+}
+
+# Command: add
+cmd_add() {
+    local name="$1"
+    shift
+    
+    if [[ -z "$name" ]]; then
+        echo -e "${RED}Usage: crm add \"Name\" [--company X] [--role Y] [--tags a,b] [--how-met \"...\"]${NC}"
+        exit 1
+    fi
+    
+    local company="" role="" tags="[]" how_met="" email="" linkedin="" twitter=""
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --company) company="$2"; shift 2 ;;
+            --role) role="$2"; shift 2 ;;
+            --tags) tags=$(echo "$2" | jq -R 'split(",") | map(gsub("^\\s+|\\s+$"; ""))'); shift 2 ;;
+            --how-met) how_met="$2"; shift 2 ;;
+            --email) email="$2"; shift 2 ;;
+            --linkedin) linkedin="$2"; shift 2 ;;
+            --twitter) twitter="$2"; shift 2 ;;
+            *) shift ;;
+        esac
+    done
+    
+    local id=$(gen_id)
+    local now=$(today)
+    
+    local new_contact=$(jq -n \
+        --arg id "$id" \
+        --arg name "$name" \
+        --arg company "$company" \
+        --arg role "$role" \
+        --arg how_met "$how_met" \
+        --arg email "$email" \
+        --arg linkedin "$linkedin" \
+        --arg twitter "$twitter" \
+        --argjson tags "$tags" \
+        --arg now "$now" \
+        '{
+            id: $id,
+            name: $name,
+            company: $company,
+            role: $role,
+            how_we_met: $how_met,
+            email: $email,
+            phone: "",
+            linkedin: $linkedin,
+            twitter: $twitter,
+            tags: $tags,
+            birthday: "",
+            last_interaction: "",
+            next_followup: "",
+            notes: [],
+            created_at: $now,
+            updated_at: $now
+        }')
+    
+    jq --argjson contact "$new_contact" '.contacts += [$contact]' "$DB_FILE" > "$DB_FILE.tmp" && mv "$DB_FILE.tmp" "$DB_FILE"
+    
+    echo -e "${GREEN}✓ Added: $name [$id]${NC}"
+}
+
+# Command: edit
+cmd_edit() {
+    local query="$1"
+    shift
+    
+    if [[ -z "$query" ]]; then
+        echo -e "${RED}Usage: crm edit <name-or-id> --field value${NC}"
+        exit 1
+    fi
+    
+    local contact=$(find_contact "$query")
+    if [[ -z "$contact" ]]; then
+        echo -e "${RED}Contact not found: $query${NC}"
+        exit 1
+    fi
+    
+    local id=$(echo "$contact" | jq -r '.id')
+    local updates=""
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --name) updates="$updates | .name = \"$2\""; shift 2 ;;
+            --company) updates="$updates | .company = \"$2\""; shift 2 ;;
+            --role) updates="$updates | .role = \"$2\""; shift 2 ;;
+            --how-met) updates="$updates | .how_we_met = \"$2\""; shift 2 ;;
+            --email) updates="$updates | .email = \"$2\""; shift 2 ;;
+            --phone) updates="$updates | .phone = \"$2\""; shift 2 ;;
+            --linkedin) updates="$updates | .linkedin = \"$2\""; shift 2 ;;
+            --twitter) updates="$updates | .twitter = \"$2\""; shift 2 ;;
+            --birthday) updates="$updates | .birthday = \"$2\""; shift 2 ;;
+            --tags) 
+                local tags=$(echo "$2" | jq -R 'split(",") | map(gsub("^\\s+|\\s+$"; ""))')
+                updates="$updates | .tags = $tags"
+                shift 2 ;;
+            *) shift ;;
+        esac
+    done
+    
+    if [[ -z "$updates" ]]; then
+        echo -e "${YELLOW}No updates specified${NC}"
+        exit 1
+    fi
+    
+    updates="$updates | .updated_at = \"$(today)\""
+    
+    jq --arg id "$id" "(.contacts[] | select(.id == \$id)) |= (. $updates)" "$DB_FILE" > "$DB_FILE.tmp" && mv "$DB_FILE.tmp" "$DB_FILE"
+    
+    echo -e "${GREEN}✓ Updated: $(echo "$contact" | jq -r '.name')${NC}"
+}
+
+# Command: delete
+cmd_delete() {
+    local query="$1"
+    
+    if [[ -z "$query" ]]; then
+        echo -e "${RED}Usage: crm delete <name-or-id>${NC}"
+        exit 1
+    fi
+    
+    local contact=$(find_contact "$query")
+    if [[ -z "$contact" ]]; then
+        echo -e "${RED}Contact not found: $query${NC}"
+        exit 1
+    fi
+    
+    local id=$(echo "$contact" | jq -r '.id')
+    local name=$(echo "$contact" | jq -r '.name')
+    
+    read -p "Delete $name? [y/N] " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        jq --arg id "$id" '.contacts |= map(select(.id != $id))' "$DB_FILE" > "$DB_FILE.tmp" && mv "$DB_FILE.tmp" "$DB_FILE"
+        echo -e "${GREEN}✓ Deleted: $name${NC}"
+    else
+        echo "Cancelled"
+    fi
+}
+
+# Command: log (add interaction note)
+cmd_log() {
+    local query="$1"
+    local note="$2"
+    
+    if [[ -z "$query" || -z "$note" ]]; then
+        echo -e "${RED}Usage: crm log <name-or-id> \"Note about interaction\"${NC}"
+        exit 1
+    fi
+    
+    local contact=$(find_contact "$query")
+    if [[ -z "$contact" ]]; then
+        echo -e "${RED}Contact not found: $query${NC}"
+        exit 1
+    fi
+    
+    local id=$(echo "$contact" | jq -r '.id')
+    local now=$(today)
+    
+    local new_note=$(jq -n --arg date "$now" --arg content "$note" '{date: $date, content: $content}')
+    
+    jq --arg id "$id" --argjson note "$new_note" --arg now "$now" \
+        '(.contacts[] | select(.id == $id)) |= (.notes += [$note] | .last_interaction = $now | .updated_at = $now)' \
+        "$DB_FILE" > "$DB_FILE.tmp" && mv "$DB_FILE.tmp" "$DB_FILE"
+    
+    echo -e "${GREEN}✓ Logged interaction with $(echo "$contact" | jq -r '.name')${NC}"
+}
+
+# Command: followup
+cmd_followup() {
+    local query="$1"
+    local date="$2"
+    
+    if [[ -z "$query" ]]; then
+        echo -e "${RED}Usage: crm followup <name-or-id> [date]${NC}"
+        exit 1
+    fi
+    
+    local contact=$(find_contact "$query")
+    if [[ -z "$contact" ]]; then
+        echo -e "${RED}Contact not found: $query${NC}"
+        exit 1
+    fi
+    
+    local id=$(echo "$contact" | jq -r '.id')
+    
+    if [[ -z "$date" ]]; then
+        # Clear follow-up
+        jq --arg id "$id" --arg now "$(today)" \
+            '(.contacts[] | select(.id == $id)) |= (.next_followup = "" | .updated_at = $now)' \
+            "$DB_FILE" > "$DB_FILE.tmp" && mv "$DB_FILE.tmp" "$DB_FILE"
+        echo -e "${GREEN}✓ Cleared follow-up for $(echo "$contact" | jq -r '.name')${NC}"
+    else
+        jq --arg id "$id" --arg date "$date" --arg now "$(today)" \
+            '(.contacts[] | select(.id == $id)) |= (.next_followup = $date | .updated_at = $now)' \
+            "$DB_FILE" > "$DB_FILE.tmp" && mv "$DB_FILE.tmp" "$DB_FILE"
+        echo -e "${GREEN}✓ Set follow-up for $(echo "$contact" | jq -r '.name') on $date${NC}"
+    fi
+}
+
+# Command: search
+cmd_search() {
+    local query="$1"
+    
+    if [[ -z "$query" ]]; then
+        echo -e "${RED}Usage: crm search <query>${NC}"
+        exit 1
+    fi
+    
+    echo -e "${BLUE}Search results for '$query':${NC}"
+    jq -r --arg q "$query" '.contacts[] | select(
+        (.name | ascii_downcase | contains($q | ascii_downcase)) or
+        (.company | ascii_downcase | contains($q | ascii_downcase)) or
+        (.role | ascii_downcase | contains($q | ascii_downcase)) or
+        (.how_we_met | ascii_downcase | contains($q | ascii_downcase)) or
+        (.notes[].content | ascii_downcase | contains($q | ascii_downcase))
+    ) | "  [\(.id)] \(.name)" + (if .company != "" then " @ \(.company)" else "" end)' "$DB_FILE"
+}
+
+# Command: stale (contacts not interacted with recently)
+cmd_stale() {
+    local days="${1:-30}"
+    local cutoff=$(date -v-${days}d +%Y-%m-%d 2>/dev/null || date -d "-$days days" +%Y-%m-%d)
+    
+    echo -e "${YELLOW}Contacts not reached in $days+ days:${NC}"
+    jq -r --arg cutoff "$cutoff" '.contacts[] | select(.last_interaction == "" or .last_interaction < $cutoff) | "  [\(.id)] \(.name)" + (if .last_interaction != "" then " (last: \(.last_interaction))" else " (never)" end)' "$DB_FILE"
+}
+
+# Command: upcoming (follow-ups due soon)
+cmd_upcoming() {
+    local now=$(today)
+    local week=$(date -v+7d +%Y-%m-%d 2>/dev/null || date -d "+7 days" +%Y-%m-%d)
+    
+    echo -e "${BLUE}Follow-ups due:${NC}"
+    
+    # Overdue
+    local overdue=$(jq -r --arg now "$now" '.contacts[] | select(.next_followup != "" and .next_followup < $now) | "  🔴 [\(.id)] \(.name) - \(.next_followup) (OVERDUE)"' "$DB_FILE")
+    if [[ -n "$overdue" ]]; then
+        echo -e "${RED}Overdue:${NC}"
+        echo "$overdue"
+    fi
+    
+    # This week
+    local thisweek=$(jq -r --arg now "$now" --arg week "$week" '.contacts[] | select(.next_followup != "" and .next_followup >= $now and .next_followup <= $week) | "  🟡 [\(.id)] \(.name) - \(.next_followup)"' "$DB_FILE")
+    if [[ -n "$thisweek" ]]; then
+        echo -e "${YELLOW}This week:${NC}"
+        echo "$thisweek"
+    fi
+    
+    # Later
+    local later=$(jq -r --arg week "$week" '.contacts[] | select(.next_followup != "" and .next_followup > $week) | "  🟢 [\(.id)] \(.name) - \(.next_followup)"' "$DB_FILE")
+    if [[ -n "$later" ]]; then
+        echo -e "${GREEN}Later:${NC}"
+        echo "$later"
+    fi
+}
+
+# Command: birthdays
+cmd_birthdays() {
+    local days="${1:-30}"
+    local now=$(date +%m-%d)
+    local future=$(date -v+${days}d +%m-%d 2>/dev/null || date -d "+$days days" +%m-%d)
+    
+    echo -e "${BLUE}Birthdays in the next $days days:${NC}"
+    
+    # This is a simplified check - handles wrap-around year imperfectly
+    jq -r --arg now "$now" --arg future "$future" '
+        .contacts[] | select(.birthday != "") |
+        .birthday as $bd | ($bd | split("-") | .[1:] | join("-")) as $mmdd |
+        select(
+            ($now <= $future and $mmdd >= $now and $mmdd <= $future) or
+            ($now > $future and ($mmdd >= $now or $mmdd <= $future))
+        ) |
+        "  🎂 \(.name) - \(.birthday)"
+    ' "$DB_FILE"
+}
+
+# Command: backup
+cmd_backup() {
+    mkdir -p "$BACKUP_DIR"
+    local backup_file="$BACKUP_DIR/contacts_$(date +%Y%m%d_%H%M%S).json"
+    cp "$DB_FILE" "$backup_file"
+    
+    # Update last_backup in metadata
+    jq --arg date "$(today)" '.metadata.last_backup = $date' "$DB_FILE" > "$DB_FILE.tmp" && mv "$DB_FILE.tmp" "$DB_FILE"
+    
+    echo -e "${GREEN}✓ Backed up to $backup_file${NC}"
+    
+    # Keep only last 10 backups
+    ls -t "$BACKUP_DIR"/contacts_*.json 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
+}
+
+# Command: export
+cmd_export() {
+    local format="${1:-json}"
+    
+    case $format in
+        json)
+            jq '.' "$DB_FILE"
+            ;;
+        csv)
+            echo "id,name,company,role,email,phone,linkedin,twitter,tags,last_interaction,next_followup"
+            jq -r '.contacts[] | [.id, .name, .company, .role, .email, .phone, .linkedin, .twitter, (.tags | join(";")), .last_interaction, .next_followup] | @csv' "$DB_FILE"
+            ;;
+        *)
+            echo -e "${RED}Unknown format: $format (use json or csv)${NC}"
+            exit 1
+            ;;
+    esac
+}
+
+# Command: tags
+cmd_tags() {
+    echo -e "${BLUE}Available tags:${NC}"
+    jq -r '.tags[]' "$DB_FILE" | while read tag; do
+        local count=$(jq --arg tag "$tag" '[.contacts[] | select(.tags | contains([$tag]))] | length' "$DB_FILE")
+        echo "  $tag ($count)"
+    done
+}
+
+# Command: help
+cmd_help() {
+    cat << 'EOF'
+Personal CRM - Contact Relationship Manager
+
+Usage: crm <command> [arguments]
+
+Commands:
+  list [--tag TAG] [--stale DAYS]    List all contacts
+  show <name-or-id>                   Show contact details
+  add "Name" [options]                Add new contact
+  edit <name-or-id> --field value     Edit contact
+  delete <name-or-id>                 Delete contact
+  
+  log <name> "note"                   Log an interaction
+  followup <name> [date]              Set/clear follow-up date
+  
+  search <query>                      Search contacts
+  stale [days]                        Find neglected contacts (default: 30 days)
+  upcoming                            Show due follow-ups
+  birthdays [days]                    Show upcoming birthdays
+  
+  backup                              Create backup
+  export [json|csv]                   Export contacts
+  tags                                List all tags with counts
+
+Add options:
+  --company, --role, --tags, --how-met, --email, --linkedin, --twitter
+
+Edit options:
+  --name, --company, --role, --how-met, --email, --phone,
+  --linkedin, --twitter, --birthday, --tags
+
+Examples:
+  crm add "John Doe" --company "Acme" --tags "client,tech"
+  crm log "John" "Had coffee, discussed project"
+  crm followup "John" 2025-02-01
+  crm stale 14
+EOF
+}
+
+# Main
+init_db
+
+case "${1:-help}" in
+    list)     shift; cmd_list "$@" ;;
+    show)     shift; cmd_show "$@" ;;
+    add)      shift; cmd_add "$@" ;;
+    edit)     shift; cmd_edit "$@" ;;
+    delete)   shift; cmd_delete "$@" ;;
+    log)      shift; cmd_log "$@" ;;
+    followup) shift; cmd_followup "$@" ;;
+    search)   shift; cmd_search "$@" ;;
+    stale)    shift; cmd_stale "$@" ;;
+    upcoming) shift; cmd_upcoming "$@" ;;
+    birthdays) shift; cmd_birthdays "$@" ;;
+    backup)   shift; cmd_backup "$@" ;;
+    export)   shift; cmd_export "$@" ;;
+    tags)     shift; cmd_tags "$@" ;;
+    help|--help|-h) cmd_help ;;
+    *)        echo -e "${RED}Unknown command: $1${NC}"; cmd_help; exit 1 ;;
+esac

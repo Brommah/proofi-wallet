@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi - Health Data Scope Selector</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --low: #22c55e;
+      --low-bg: #dcfce7;
+      --medium: #f59e0b;
+      --medium-bg: #fef3c7;
+      --high: #ef4444;
+      --high-bg: #fee2e2;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: var(--text-muted);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--bg);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--card);
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .scope-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .scope-card {
+      background: var(--card);
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .scope-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    }
+
+    .scope-card.selected {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(99, 102, 241, 0.02) 100%);
+    }
+
+    .scope-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .scope-icon {
+      font-size: 28px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border-radius: 10px;
+    }
+
+    .scope-info {
+      flex: 1;
+    }
+
+    .scope-title {
+      font-weight: 600;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scope-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .sensitivity-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .sensitivity-low {
+      background: var(--low-bg);
+      color: var(--low);
+    }
+
+    .sensitivity-medium {
+      background: var(--medium-bg);
+      color: var(--medium);
+    }
+
+    .sensitivity-high {
+      background: var(--high-bg);
+      color: var(--high);
+    }
+
+    .checkbox {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .scope-card.selected .checkbox {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox svg {
+      width: 14px;
+      height: 14px;
+      stroke: white;
+      stroke-width: 3;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .scope-card.selected .checkbox svg {
+      opacity: 1;
+    }
+
+    .preview-section {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .preview-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .preview-data {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+    }
+
+    .preview-item {
+      font-size: 12px;
+    }
+
+    .preview-label {
+      color: var(--text-muted);
+    }
+
+    .preview-value {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .summary {
+      margin-top: 24px;
+      padding: 20px;
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .summary-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .summary-count {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .selected-scopes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .selected-tag {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: var(--bg);
+      border-radius: 20px;
+      font-size: 13px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .save-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+
+    .save-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 480px) {
+      .scope-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .controls {
+        flex-direction: column;
+      }
+
+      .filter-group {
+        margin-left: 0;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔐 Select Health Data to Share</h1>
+      <p>Choose which health metrics you want to include in your proof</p>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="selectAll">Select All</button>
+      <button class="btn" id="selectNone">Select None</button>
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="low">🟢 Low</button>
+        <button class="filter-btn" data-filter="medium">🟡 Medium</button>
+        <button class="filter-btn" data-filter="high">🔴 High</button>
+      </div>
+    </div>
+
+    <div class="scope-grid" id="scopeGrid"></div>
+
+    <div class="summary">
+      <div class="summary-header">
+        <span class="summary-title">Selected Scopes</span>
+        <span class="summary-count" id="summaryCount">0 selected</span>
+      </div>
+      <div class="selected-scopes" id="selectedScopes">
+        <span style="color: var(--text-muted); font-size: 14px;">No scopes selected</span>
+      </div>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--low)"></div>
+          <span>Low sensitivity</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--medium)"></div>
+          <span>Medium sensitivity</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--high)"></div>
+          <span>High sensitivity</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top: 16px; width: 100%;" id="saveBtn">
+        💾 Save Preferences
+      </button>
+    </div>
+  </div>
+
+  <div class="save-toast" id="saveToast">✓ Preferences saved!</div>
+
+  <script type="module">
+    import { HEALTH_SCOPES, SENSITIVITY_LEVELS, STORAGE_KEY, loadPreferences, savePreferences } from './health-scopes.js';
+
+    let selectedScopes = new Set();
+    let currentFilter = 'all';
+
+    // Load saved preferences
+    function initPreferences() {
+      const saved = loadPreferences();
+      if (saved && saved.scopes) {
+        selectedScopes = new Set(saved.scopes);
+      }
+    }
+
+    // Render scope cards
+    function renderScopes() {
+      const grid = document.getElementById('scopeGrid');
+      const filtered = HEALTH_SCOPES.filter(scope => 
+        currentFilter === 'all' || scope.sensitivity === currentFilter
+      );
+
+      grid.innerHTML = filtered.map(scope => `
+        <div class="scope-card ${selectedScopes.has(scope.id) ? 'selected' : ''}" data-id="${scope.id}">
+          <div class="checkbox">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 13l4 4L19 7" stroke="currentColor"/>
+            </svg>
+          </div>
+          <div class="scope-header">
+            <div class="scope-icon">${scope.icon}</div>
+            <div class="scope-info">
+              <div class="scope-title">
+                ${scope.name}
+                <span class="sensitivity-badge sensitivity-${scope.sensitivity}">
+                  ${scope.sensitivity}
+                </span>
+              </div>
+              <div class="scope-desc">${scope.description}</div>
+            </div>
+          </div>
+          <div class="preview-section">
+            <div class="preview-title">📊 Sample Data Preview</div>
+            <div class="preview-data">
+              ${Object.entries(scope.sampleData).map(([key, value]) => `
+                <div class="preview-item">
+                  <div class="preview-label">${formatLabel(key)}</div>
+                  <div class="preview-value">${value}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Add click handlers
+      grid.querySelectorAll('.scope-card').forEach(card => {
+        card.addEventListener('click', () => toggleScope(card.dataset.id));
+      });
+
+      updateSummary();
+    }
+
+    // Toggle scope selection
+    function toggleScope(id) {
+      if (selectedScopes.has(id)) {
+        selectedScopes.delete(id);
+      } else {
+        selectedScopes.add(id);
+      }
+      renderScopes();
+    }
+
+    // Update summary section
+    function updateSummary() {
+      const container = document.getElementById('selectedScopes');
+      const count = document.getElementById('summaryCount');
+
+      count.textContent = `${selectedScopes.size} selected`;
+
+      if (selectedScopes.size === 0) {
+        container.innerHTML = '<span style="color: var(--text-muted); font-size: 14px;">No scopes selected</span>';
+        return;
+      }
+
+      const selected = HEALTH_SCOPES.filter(s => selectedScopes.has(s.id));
+      container.innerHTML = selected.map(scope => `
+        <div class="selected-tag">
+          <span>${scope.icon}</span>
+          <span>${scope.name}</span>
+        </div>
+      `).join('');
+    }
+
+    // Format camelCase labels
+    function formatLabel(str) {
+      return str.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+    }
+
+    // Show save toast
+    function showToast() {
+      const toast = document.getElementById('saveToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // Event listeners
+    document.getElementById('selectAll').addEventListener('click', () => {
+      HEALTH_SCOPES.forEach(s => selectedScopes.add(s.id));
+      renderScopes();
+    });
+
+    document.getElementById('selectNone').addEventListener('click', () => {
+      selectedScopes.clear();
+      renderScopes();
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      savePreferences(Array.from(selectedScopes));
+      showToast();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderScopes();
+      });
+    });
+
+    // Initialize
+    initPreferences();
+    renderScopes();
+
+    // Export for external access
+    window.ProofiScopeSelector = {
+      getSelected: () => Array.from(selectedScopes),
+      setSelected: (scopes) => {
+        selectedScopes = new Set(scopes);
+        renderScopes();
+      },
+      save: () => {
+        savePreferences(Array.from(selectedScopes));
+        showToast();
+      }
+    };
+  </script>
+</body>
+</html>

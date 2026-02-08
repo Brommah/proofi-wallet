@@ -1,0 +1,330 @@
+{
+  "sessionId": "local_1770553602845_zek7mb",
+  "startedAt": "2026-02-08T12:26:42.845Z",
+  "completedAt": "2026-02-08T12:26:59.321Z",
+  "config": {
+    "bucketId": "1229",
+    "outputPath": "/Users/martijnbroersma/clawd/audit-logs/health-analyzer",
+    "useLocalAI": true,
+    "verbose": false
+  },
+  "model": {
+    "name": "llama3.2:3b",
+    "digest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+    "ollamaVersion": "0.15.5",
+    "parameters": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "llama",
+      "families": [
+        "llama"
+      ],
+      "parameter_size": "3.2B",
+      "quantization_level": "Q4_K_M"
+    }
+  },
+  "inputData": {
+    "steps": [
+      {
+        "date": "2026-01-26",
+        "count": 9565,
+        "distance": 7643
+      },
+      {
+        "date": "2026-01-27",
+        "count": 8495,
+        "distance": 7233
+      },
+      {
+        "date": "2026-01-28",
+        "count": 6887,
+        "distance": 8782
+      },
+      {
+        "date": "2026-01-29",
+        "count": 8438,
+        "distance": 5946
+      },
+      {
+        "date": "2026-01-30",
+        "count": 12195,
+        "distance": 5248
+      },
+      {
+        "date": "2026-01-31",
+        "count": 13994,
+        "distance": 7081
+      },
+      {
+        "date": "2026-02-01",
+        "count": 9266,
+        "distance": 8350
+      },
+      {
+        "date": "2026-02-02",
+        "count": 8175,
+        "distance": 5349
+      },
+      {
+        "date": "2026-02-03",
+        "count": 11790,
+        "distance": 7336
+      },
+      {
+        "date": "2026-02-04",
+        "count": 15504,
+        "distance": 5240
+      },
+      {
+        "date": "2026-02-05",
+        "count": 11596,
+        "distance": 5967
+      },
+      {
+        "date": "2026-02-06",
+        "count": 15526,
+        "distance": 6987
+      },
+      {
+        "date": "2026-02-07",
+        "count": 15304,
+        "distance": 8925
+      },
+      {
+        "date": "2026-02-08",
+        "count": 11869,
+        "distance": 4642
+      }
+    ],
+    "sleep": [
+      {
+        "date": "2026-01-26",
+        "duration": 6.341846203482175,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-01-27",
+        "duration": 6.743412312801225,
+        "quality": "good"
+      },
+      {
+        "date": "2026-01-28",
+        "duration": 7.373120969512271,
+        "quality": "good"
+      },
+      {
+        "date": "2026-01-29",
+        "duration": 6.05981229582261,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-01-30",
+        "duration": 8.105140726661897,
+        "quality": "good"
+      },
+      {
+        "date": "2026-01-31",
+        "duration": 6.011015750887624,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-01",
+        "duration": 5.948172119423593,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-02",
+        "duration": 6.0269997910723525,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-02-03",
+        "duration": 6.968085944983256,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-02-04",
+        "duration": 8.099230364713575,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-05",
+        "duration": 7.61690959058468,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-06",
+        "duration": 8.029920937234802,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-07",
+        "duration": 8.003284795065381,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-08",
+        "duration": 7.190267066093417,
+        "quality": "fair"
+      }
+    ],
+    "mood": [
+      {
+        "date": "2026-01-26",
+        "score": 6,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-01-27",
+        "score": 5
+      },
+      {
+        "date": "2026-01-28",
+        "score": 8
+      },
+      {
+        "date": "2026-01-29",
+        "score": 9,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-01-30",
+        "score": 5
+      },
+      {
+        "date": "2026-01-31",
+        "score": 5
+      },
+      {
+        "date": "2026-02-01",
+        "score": 6,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-02",
+        "score": 6
+      },
+      {
+        "date": "2026-02-03",
+        "score": 6
+      },
+      {
+        "date": "2026-02-04",
+        "score": 8,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-05",
+        "score": 8
+      },
+      {
+        "date": "2026-02-06",
+        "score": 6
+      },
+      {
+        "date": "2026-02-07",
+        "score": 6,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-08",
+        "score": 5
+      }
+    ]
+  },
+  "dataHash": "b01becfab84aa1a52c7d71c0a10ae5b5969cc13fdcdea148766dcbf930103081",
+  "resultHash": "6129d84ec1ab95e95b2673e7ae2406e46562be2d79ac21c4a35ad590a8a3ac38",
+  "outputCid": "baebb4iftyfkj5sgc5kndihd7stdijy3gwevbcchoh4twe4lfsnxtkdaola",
+  "entries": [
+    {
+      "id": "audit_1770553602846_3ahqu017_0",
+      "timestamp": "2026-02-08T12:26:43.015Z",
+      "action": "data_fetched",
+      "details": {
+        "bucketId": "1229",
+        "source": "ddc",
+        "note": "Fetching encrypted data from DDC"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553602846_3ahqu017_1",
+      "timestamp": "2026-02-08T12:26:43.015Z",
+      "action": "data_decrypted",
+      "details": {
+        "note": "Decrypting data with capability token",
+        "tokenProvided": false,
+        "keyProvided": false
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553602846_3ahqu017_2",
+      "timestamp": "2026-02-08T12:26:43.321Z",
+      "action": "inference_started",
+      "details": {
+        "model": "llama3.2:3b",
+        "modelDigest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+        "inputHash": "b01becfab84aa1a52c7d71c0a10ae5b5969cc13fdcdea148766dcbf930103081",
+        "note": "Starting health analysis"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553602846_3ahqu017_3",
+      "timestamp": "2026-02-08T12:26:57.591Z",
+      "action": "inference_completed",
+      "details": {
+        "model": "llama3.2:3b",
+        "outputHash": "6129d84ec1ab95e95b2673e7ae2406e46562be2d79ac21c4a35ad590a8a3ac38",
+        "trendsCount": 1,
+        "recommendationsCount": 2,
+        "note": "Analysis complete"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553602846_3ahqu017_4",
+      "timestamp": "2026-02-08T12:26:59.319Z",
+      "action": "output_stored",
+      "details": {
+        "cid": "baebb4iftyfkj5sgc5kndihd7stdijy3gwevbcchoh4twe4lfsnxtkdaola",
+        "bucketId": "1229",
+        "size": 1443,
+        "encrypted": false,
+        "note": "Signed plaintext stored to DDC"
+      },
+      "hashes": {}
+    }
+  ],
+  "insights": {
+    "generatedAt": "2026-02-08T12:26:57.591Z",
+    "summary": "Individual health data indicates a general improvement in step count and sleep quality, but fluctuations in mood scores are observed.",
+    "trends": [
+      {
+        "category": "steps|sleep|mood",
+        "direction": "improving|stable|declining",
+        "description": "The overall trend shows an increase in steps taken, with occasional stable periods for sleep quality and fluctuating mood scores.",
+        "period": "2026-01-26 to 2026-02-08"
+      }
+    ],
+    "recommendations": [
+      {
+        "priority": "high",
+        "category": "exercise",
+        "title": "Increase physical activity",
+        "description": "Regular exercise can help improve overall health and well-being.",
+        "actionable": true
+      },
+      {
+        "priority": "medium",
+        "category": "sleep",
+        "title": "Establish a consistent sleep schedule",
+        "description": "Getting adequate sleep is crucial for physical and mental health.",
+        "actionable": true
+      }
+    ],
+    "alerts": []
+  },
+  "signature": "977faed94e95bdcec1a5ed6b15d0f10eadd42d603b7d15234ef3e3cac7707020"
+}

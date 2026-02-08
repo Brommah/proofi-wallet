@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DropVault — Your Secrets, Fortified</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Primary Colors */
+      --vault-black: #0D0F12;
+      --steel-gray: #1A1D24;
+      --graphite: #2A2E38;
+      
+      /* Accent Colors */
+      --emerald-glow: #10B981;
+      --deep-emerald: #047857;
+      --vault-gold: #D4AF37;
+      --burnished-gold: #B8860B;
+      
+      /* Semantic */
+      --alert-red: #DC2626;
+      --caution-amber: #F59E0B;
+      
+      /* Text - WCAG AA compliant */
+      --pure-white: #FFFFFF;
+      --soft-gray: #C4C4CC; /* was #A1A1AA - now 8.2:1 on vault-black */
+      --muted: #8A8A94; /* was #52525B - now 5.1:1 on vault-black, WCAG AA */
+      
+      /* Effects */
+      --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.15);
+      --gradient-secure: linear-gradient(135deg, #10B981 0%, #047857 100%);
+      --gradient-premium: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--vault-black);
+      color: var(--pure-white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* ========== VAULT PATTERN BACKGROUND ========== */
+    .vault-pattern {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    
+    .vault-pattern::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      background: 
+        radial-gradient(circle, transparent 180px, var(--graphite) 181px, transparent 182px),
+        radial-gradient(circle, transparent 280px, var(--graphite) 281px, transparent 282px),
+        radial-gradient(circle, transparent 380px, var(--graphite) 381px, transparent 382px);
+      opacity: 0.03;
+    }
+    
+    /* ========== LOGIN CONTAINER ========== */
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* ========== LOGO ========== */
+    .logo {
+      margin-bottom: 48px;
+      text-align: center;
+    }
+    
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+    
+    .vault-door {
+      width: 80px;
+      height: 80px;
+      border: 3px solid var(--vault-gold);
+      border-radius: 50%;
+      position: relative;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    
+    .vault-door::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      border: 2px solid var(--vault-gold);
+      border-radius: 50%;
+    }
+    
+    .vault-door::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      background: var(--vault-gold);
+      border-radius: 50%;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+      50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.4); }
+    }
+    
+    .logo-text {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--gradient-premium);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .tagline {
+      color: var(--soft-gray);
+      font-size: 14px;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    
+    /* ========== GLASS CARD ========== */
+    .glass-card {
+      background: rgba(26, 29, 36, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+    }
+    
+    .glass-card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    
+    /* ========== FORM ========== */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--soft-gray);
+      margin-bottom: 8px;
+    }
+    
+    .form-input {
+      width: 100%;
+      background: var(--vault-black);
+      border: 1px solid var(--graphite);
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: var(--pure-white);
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--emerald-glow);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    
+    .form-input::placeholder {
+      color: var(--soft-gray); /* was var(--muted) - now WCAG AA compliant */
+    }
+    
+    .form-input.secure {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.1em;
+    }
+    
+    .input-wrapper {
+      position: relative;
+    }
+    
+    .input-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    
+    .input-icon:hover {
+      color: var(--soft-gray);
+    }
+    
+    /* ========== BUTTONS ========== */
+    .btn {
+      width: 100%;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    
+    .btn-primary {
+      background: var(--gradient-secure);
+      color: var(--pure-white);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .btn-premium {
+      background: var(--gradient-premium);
+      color: var(--vault-black);
+    }
+    
+    .btn-ghost {
+      background: transparent;
+      color: var(--soft-gray);
+      margin-top: 16px;
+    }
+    
+    .btn-ghost:hover {
+      color: var(--pure-white);
+    }
+    
+    /* ========== SECURITY INDICATOR ========== */
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--emerald-glow);
+      margin-top: 24px;
+    }
+    
+    .security-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--emerald-glow);
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    
+    /* ========== DIVIDER ========== */
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 24px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--graphite);
+    }
+    
+    .divider span {
+      padding: 0 16px;
+    }
+    
+    /* ========== DASHBOARD PREVIEW ========== */
+    .dashboard {
+      display: none;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .dashboard.active {
+      display: block;
+    }
+    
+    .login-container.hidden {
+      display: none;
+    }
+    
+    /* Top Bar */
+    .topbar {
+      background: rgba(26, 29, 36, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--graphite);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .topbar-brand .mini-vault {
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--vault-gold);
+      border-radius: 50%;
+      position: relative;
+    }
+    
+    .topbar-brand .mini-vault::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background: var(--vault-gold);
+      border-radius: 50%;
+    }
+    
+    .search-bar {
+      flex: 1;
+      max-width: 400px;
+      margin: 0 32px;
+    }
+    
+    .search-bar input {
+      width: 100%;
+      background: var(--vault-black);
+      border: 1px solid var(--graphite);
+      border-radius: 8px;
+      padding: 10px 16px;
+      color: var(--pure-white);
+      font-size: 14px;
+    }
+    
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--steel-gray);
+      border: 1px solid var(--graphite);
+      border-radius: 8px;
+      color: var(--soft-gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .icon-btn:hover {
+      color: var(--pure-white);
+      border-color: var(--emerald-glow);
+    }
+    
+    /* Main Layout */
+    .main-layout {
+      display: flex;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      min-height: calc(100vh - 65px);
+      background: var(--steel-gray);
+      border-right: 1px solid var(--graphite);
+      padding: 24px 16px;
+    }
+    
+    .sidebar-nav {
+      list-style: none;
+    }
+    
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: var(--soft-gray);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 4px;
+    }
+    
+    .sidebar-item:hover {
+      background: var(--graphite);
+      color: var(--pure-white);
+    }
+    
+    .sidebar-item.active {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--emerald-glow);
+    }
+    
+    .sidebar-divider {
+      height: 1px;
+      background: var(--graphite);
+      margin: 16px 0;
+    }
+    
+    .sidebar-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 8px 16px;
+    }
+    
+    /* Content */
+    .content {
+      flex: 1;
+      padding: 32px;
+    }
+    
+    .content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    
+    .content-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .btn-new {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--gradient-secure);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-new:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+    
+    /* Note Cards Grid */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    
+    .note-card {
+      background: var(--steel-gray);
+      border: 1px solid var(--graphite);
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+    
+    .note-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, 
+        rgba(255,255,255,0.02) 0%, 
+        transparent 50%, 
+        rgba(0,0,0,0.05) 100%
+      );
+      pointer-events: none;
+    }
+    
+    .note-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--emerald-glow);
+      box-shadow: var(--shadow-glow);
+    }
+    
+    .note-card.locked {
+      border-color: var(--vault-gold);
+    }
+    
+    .note-card.locked:hover {
+      border-color: var(--vault-gold);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    }
+    
+    .note-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--vault-black);
+      border-radius: 12px;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    
+    .note-card.locked .note-icon {
+      background: rgba(212, 175, 55, 0.1);
+    }
+    
+    .note-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .note-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    
+    .note-count {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .lock-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 18px;
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      
+      .search-bar {
+        display: none;
+      }
+      
+      .glass-card {
+        padding: 24px;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Pattern -->
+  <div class="vault-pattern"></div>
+  
+  <!-- Login Screen -->
+  <div class="login-container" id="loginScreen">
+    <div class="logo">
+      <div class="logo-icon">
+        <div class="vault-door"></div>
+      </div>
+      <div class="logo-text">DropVault</div>
+      <div class="tagline">Your secrets, fortified.</div>
+    </div>
+    
+    <div class="glass-card">
+      <h2>Unlock Your Vault</h2>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="you@example.com" value="demo@dropvault.io">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Master Password</label>
+          <div class="input-wrapper">
+            <input type="password" class="form-input secure" placeholder="••••••••••••" value="supersecret">
+            <span class="input-icon">👁️</span>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+          🔓 Unlock Vault
+        </button>
+        
+        <button type="button" class="btn btn-ghost">
+          Forgot password?
+        </button>
+      </form>
+      
+      <div class="divider"><span>or</span></div>
+      
+      <button class="btn btn-premium">
+        ✨ Create New Vault
+      </button>
+      
+      <div class="security-badge">
+        <span>End-to-end encrypted</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Dashboard -->
+  <div class="dashboard" id="dashboard">
+    <nav class="topbar">
+      <div class="topbar-brand">
+        <div class="mini-vault"></div>
+        <span>DropVault</span>
+      </div>
+      
+      <div class="search-bar">
+        <input type="text" placeholder="Search your vault...">
+      </div>
+      
+      <div class="topbar-actions">
+        <button class="icon-btn">🔔</button>
+        <button class="icon-btn">⚙️</button>
+        <button class="icon-btn" id="logoutBtn">👤</button>
+      </div>
+    </nav>
+    
+    <div class="main-layout">
+      <aside class="sidebar">
+        <ul class="sidebar-nav">
+          <li class="sidebar-item active">
+            <span>📁</span> All Notes
+          </li>
+          <li class="sidebar-item">
+            <span>🔒</span> Encrypted
+          </li>
+          <li class="sidebar-item">
+            <span>⭐</span> Starred
+          </li>
+          <li class="sidebar-item">
+            <span>🗑️</span> Trash
+          </li>
+        </ul>
+        
+        <div class="sidebar-divider"></div>
+        
+        <div class="sidebar-label">Tags</div>
+        <ul class="sidebar-nav">
+          <li class="sidebar-item">
+            <span style="color: var(--emerald-glow);">●</span> Work
+          </li>
+          <li class="sidebar-item">
+            <span style="color: var(--vault-gold);">●</span> Personal
+          </li>
+          <li class="sidebar-item">
+            <span style="color: var(--alert-red);">●</span> Urgent
+          </li>
+        </ul>
+      </aside>
+      
+      <main class="content">
+        <div class="content-header">
+          <h1 class="content-title">My Vault</h1>
+          <button class="btn-new">
+            <span>+</span> New Note
+          </button>
+        </div>
+        
+        <div class="notes-grid">
+          <div class="note-card locked">
+            <span class="lock-badge">🔒</span>
+            <div class="note-icon">🔐</div>
+            <div class="note-title">Passwords</div>
+            <div class="note-meta">
+              <span class="note-count">📄 12 items</span>
+              <span>Updated 2h ago</span>
+            </div>
+          </div>
+          
+          <div class="note-card">
+            <div class="note-icon">💡</div>
+            <div class="note-title">Ideas</div>
+            <div class="note-meta">
+              <span class="note-count">📄 3 items</span>
+              <span>Updated 1d ago</span>
+            </div>
+          </div>
+          
+          <div class="note-card locked">
+            <span class="lock-badge">🔒</span>
+            <div class="note-icon">🔑</div>
+            <div class="note-title">Private Keys</div>
+            <div class="note-meta">
+              <span class="note-count">📄 7 items</span>
+              <span>Updated 3d ago</span>
+            </div>
+          </div>
+          
+          <div class="note-card">
+            <div class="note-icon">📝</div>
+            <div class="note-title">Meeting Notes</div>
+            <div class="note-meta">
+              <span class="note-count">📄 24 items</span>
+              <span>Updated 5h ago</span>
+            </div>
+          </div>
+          
+          <div class="note-card locked">
+            <span class="lock-badge">🔒</span>
+            <div class="note-icon">💳</div>
+            <div class="note-title">Financial</div>
+            <div class="note-meta">
+              <span class="note-count">📄 9 items</span>
+              <span>Updated 1w ago</span>
+            </div>
+          </div>
+          
+          <div class="note-card">
+            <div class="note-icon">🎯</div>
+            <div class="note-title">Goals 2025</div>
+            <div class="note-meta">
+              <span class="note-count">📄 5 items</span>
+              <span>Updated 2w ago</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  <script>
+    // Login form submission
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Simulate vault unlocking
+      const btn = this.querySelector('.btn-primary');
+      btn.textContent = '🔄 Unlocking...';
+      
+      setTimeout(() => {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.add('active');
+      }, 1000);
+    });
+    
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('dashboard').classList.remove('active');
+      document.querySelector('.btn-primary').textContent = '🔓 Unlock Vault';
+    });
+    
+    // Password visibility toggle
+    document.querySelector('.input-icon').addEventListener('click', function() {
+      const input = this.previousElementSibling;
+      if (input.type === 'password') {
+        input.type = 'text';
+        this.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        this.textContent = '👁️';
+      }
+    });
+  </script>
+</body>
+</html>

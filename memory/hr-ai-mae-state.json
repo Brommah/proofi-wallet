@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-03T13:00:00",
+  "mae_by_role": {
+    "Principal": {"n": 10, "mae": 2.0},
+    "AI Innovator": {"n": 10, "mae": 2.7},
+    "Blockchain": {"n": 1, "mae": 2.5},
+    "FA": {"n": 3, "mae": 0.33},
+    "AI Engineer": {"n": 2, "mae": 2.75}
+  }
+}

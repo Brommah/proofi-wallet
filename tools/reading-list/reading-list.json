@@ -1,0 +1,252 @@
+{
+  "items": [
+    {
+      "id": "p73a88ie",
+      "url": "https://arxiv.org/abs/2303.08774",
+      "title": "GPT-4 Technical Report",
+      "source": "arxiv.org",
+      "added": "2026-01-26T21:16:57Z",
+      "status": "unread",
+      "priority": "P1",
+      "categories": [
+        "ai"
+      ],
+      "tags": [
+        "gpt4",
+        "openai",
+        "llm"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "2t86g5v7",
+      "url": "https://arxiv.org/abs/2307.09288",
+      "title": "Llama 2: Open Foundation and Fine-Tuned Chat Models",
+      "source": "arxiv.org",
+      "added": "2026-01-26T21:16:58Z",
+      "status": "unread",
+      "priority": "P1",
+      "categories": [
+        "ai"
+      ],
+      "tags": [
+        "llama",
+        "meta",
+        "llm"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "8t9kb9n0",
+      "url": "https://arxiv.org/abs/2312.00752",
+      "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+      "source": "arxiv.org",
+      "added": "2026-01-26T21:16:58Z",
+      "status": "unread",
+      "priority": "P2",
+      "categories": [
+        "ai"
+      ],
+      "tags": [
+        "mamba",
+        "state-space",
+        "attention"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "8yl9lkhi",
+      "url": "https://arxiv.org/abs/2401.02954",
+      "title": "Mixtral of Experts",
+      "source": "arxiv.org",
+      "added": "2026-01-26T21:16:58Z",
+      "status": "unread",
+      "priority": "P2",
+      "categories": [
+        "ai"
+      ],
+      "tags": [
+        "mixtral",
+        "moe"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "or1fze4h",
+      "url": "https://arxiv.org/abs/2402.05120",
+      "title": "Constitutional AI: Harmlessness from AI Feedback",
+      "source": "arxiv.org",
+      "added": "2026-01-26T21:16:58Z",
+      "status": "unread",
+      "priority": "P1",
+      "categories": [
+        "ai"
+      ],
+      "tags": [
+        "claude",
+        "constitution"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "4o38cm0w",
+      "url": "https://vitalik.eth.limo/general/2024/05/09/multidim.html",
+      "title": "Multidimensional gas pricing",
+      "source": "vitalik.eth.limo",
+      "added": "2026-01-26T21:17:10Z",
+      "status": "unread",
+      "priority": "P2",
+      "categories": [
+        "crypto"
+      ],
+      "tags": [
+        "ethereum",
+        "scaling",
+        "vitalik"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "5qsxqvw9",
+      "url": "https://www.paradigm.xyz/2024/04/blobspace",
+      "title": "Understanding Blobspace",
+      "source": "paradigm.xyz",
+      "added": "2026-01-26T21:17:10Z",
+      "status": "unread",
+      "priority": "P3",
+      "categories": [
+        "crypto"
+      ],
+      "tags": [
+        "ethereum",
+        "blobs",
+        "4844"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "gkk0v0r4",
+      "url": "https://stratechery.com/2024/the-ai-value-chain/",
+      "title": "The AI Value Chain - Stratechery",
+      "source": "stratechery.com",
+      "added": "2026-01-26T21:17:10Z",
+      "status": "unread",
+      "priority": "P1",
+      "categories": [
+        "business"
+      ],
+      "tags": [
+        "ai",
+        "strategy",
+        "value-chain"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "7qxdx6zo",
+      "url": "https://www.notboring.co/p/not-boring-2024-predictions",
+      "title": "Not Boring 2024 Predictions",
+      "source": "notboring.co",
+      "added": "2026-01-26T21:17:10Z",
+      "status": "unread",
+      "priority": "P3",
+      "categories": [
+        "business"
+      ],
+      "tags": [
+        "predictions",
+        "trends"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "fl6egbdk",
+      "url": "https://www.sequoiacap.com/article/generative-ai-a-creative-new-world/",
+      "title": "Generative AI: A Creative New World",
+      "source": "sequoiacap.com",
+      "added": "2026-01-26T21:17:10Z",
+      "status": "unread",
+      "priority": "P2",
+      "categories": [
+        "business"
+      ],
+      "tags": [
+        "ai",
+        "sequoia",
+        "investment"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    },
+    {
+      "id": "6jib7yzt",
+      "url": "https://a16zcrypto.com/posts/article/state-of-crypto-2024/",
+      "title": "State of Crypto 2024 - a16z",
+      "source": "a16zcrypto.com",
+      "added": "2026-01-26T21:17:15Z",
+      "status": "unread",
+      "priority": "P2",
+      "categories": [
+        "crypto"
+      ],
+      "tags": [
+        "a16z",
+        "report",
+        "trends"
+      ],
+      "summary": null,
+      "keyTakeaways": [],
+      "notes": "",
+      "estimatedReadTime": null,
+      "completedAt": null
+    }
+  ],
+  "categories": [
+    "ai",
+    "crypto",
+    "business",
+    "tech",
+    "research",
+    "tools"
+  ],
+  "lastUpdated": "2026-01-26T21:17:15Z"
+}

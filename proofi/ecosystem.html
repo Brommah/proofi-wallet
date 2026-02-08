@@ -59,6 +59,20 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Subtle gradient overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.03) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 100%, rgba(255,255,255,0.02) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
     /* ===== NAV ===== */
     nav {
       position: sticky;
@@ -146,10 +160,14 @@
       border: none;
       border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(255,255,255,0.1);
     }
-    .connect-btn:hover { opacity: 0.9; }
-    .connect-btn:active { transform: scale(0.97); }
+    .connect-btn:hover { 
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.2);
+    }
+    .connect-btn:active { transform: scale(0.97) translateY(0); }
     .connect-btn.connected {
       background: transparent;
       color: var(--text);
@@ -306,13 +324,29 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      transition: background 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       text-decoration: none;
       color: inherit;
       position: relative;
     }
-    .app-card:hover { background: var(--card-hover); }
+    .app-card:hover { 
+      background: var(--card-hover); 
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    .app-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .app-card:hover::after { opacity: 1; }
     .app-card-top {
       display: flex;
       align-items: flex-start;

@@ -1,0 +1,22 @@
+{
+  "name": "proofi-chrome-extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Proofi Wallet — Self-custodial data wallet Chrome extension",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "build:watch": "node build.js --watch",
+    "icons": "node generate-icons.js",
+    "dev": "npm run icons && npm run build:watch",
+    "package": "npm run icons && npm run build && cd dist && zip -r ../proofi-wallet.zip ."
+  },
+  "dependencies": {
+    "@polkadot/keyring": "^14.0.1",
+    "@polkadot/util": "^14.0.1",
+    "@polkadot/util-crypto": "^14.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

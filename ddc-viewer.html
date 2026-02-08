@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DDC CID Viewer — Cere Mainnet</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, Arial, sans-serif; background: #0f0f23; color: #e0e0e0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
+h1 { color: #fff; margin-bottom: 8px; font-size: 28px; }
+.subtitle { color: #888; margin-bottom: 32px; }
+.card { background: #1a1a2e; border-radius: 12px; padding: 24px; width: 100%; max-width: 700px; margin-bottom: 20px; }
+.label { color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.value { font-family: 'Courier New', monospace; font-size: 14px; color: #7ae7bf; word-break: break-all; margin-bottom: 16px; }
+.content { background: #0f0f23; border-radius: 8px; padding: 16px; font-family: 'Courier New', monospace; font-size: 13px; color: #e0e0e0; white-space: pre-wrap; word-break: break-word; line-height: 1.6; }
+.status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.status.live { background: #1a3a1a; color: #7ae7bf; }
+.status.loading { background: #3a3a1a; color: #fbd75b; }
+.status.error { background: #3a1a1a; color: #ff887c; }
+.meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.meta-item { background: #0f0f23; border-radius: 8px; padding: 12px; }
+.meta-item .label { margin-bottom: 2px; }
+.meta-item .value { margin-bottom: 0; font-size: 13px; }
+.pretty-json .key { color: #7ae7bf; }
+.pretty-json .string { color: #fbd75b; }
+.pretty-json .number { color: #ff887c; }
+</style>
+</head>
+<body>
+<h1>🔗 DDC CID Viewer</h1>
+<p class="subtitle">Cere Mainnet — Decentralized Data Cloud</p>
+
+<div class="card">
+<div class="label">Content Identifier (CID)</div>
+<div class="value" id="cid">baebb4ig4ze5l2hunoocrpx6nkoxxw45vuirs35doiylyxyvipixo4vz5nu</div>
+
+<div class="meta">
+<div class="meta-item">
+<div class="label">Bucket</div>
+<div class="value">1229</div>
+</div>
+<div class="meta-item">
+<div class="label">Network</div>
+<div class="value">Cere Mainnet Beta</div>
+</div>
+<div class="meta-item">
+<div class="label">Owner Wallet</div>
+<div class="value" style="font-size:11px;">5DSxCBjQZ6P9fu2a34Gn9Ae6aJLMaiHJhveMTiMDCVCoazE1</div>
+</div>
+<div class="meta-item">
+<div class="label">Bucket Access</div>
+<div class="value">🌐 Public</div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+<div class="label" style="margin:0;">Stored Content</div>
+<span class="status live">✅ LIVE ON MAINNET</span>
+</div>
+<div class="content" id="content"><div class="pretty-json">{
+  <span class="key">"type"</span>: <span class="string">"agent-memory"</span>,
+  <span class="key">"from"</span>: <span class="string">"claudemart"</span>,
+  <span class="key">"timestamp"</span>: <span class="string">"2026-02-01T22:17:28.797Z"</span>,
+  <span class="key">"content"</span>: <span class="string">"First message from Claudemart on DDC. Hello decentralized world! 🌍"</span>,
+  <span class="key">"metadata"</span>: {
+    <span class="key">"agent"</span>: <span class="string">"claudemart"</span>,
+    <span class="key">"owner"</span>: <span class="string">"mart"</span>,
+    <span class="key">"purpose"</span>: <span class="string">"memory-sync-test"</span>
+  }
+}</div></div>
+</div>
+
+<div class="card" style="background: #1a2a1a; border: 1px solid #2a4a2a;">
+<div class="label">What This Proves</div>
+<ul style="margin-top:8px; padding-left:20px; line-height:2; color:#ccc;">
+<li>Agent (Claudemart) stored data on <strong style="color:#7ae7bf;">Cere DDC Mainnet</strong></li>
+<li>Content is <strong style="color:#7ae7bf;">content-addressed</strong> — CID guarantees data integrity</li>
+<li>Bucket is <strong style="color:#7ae7bf;">public</strong> — anyone with the CID can read</li>
+<li>This is the first step toward agent-to-agent data exchange</li>
+</ul>
+</div>
+
+<p style="color:#555; margin-top:20px; font-size:12px;">
+Read via SDK: <code style="color:#888;">client.read(new FileUri(1229n, "baebb4ig..."));</code>
+</p>
+</body>
+</html>

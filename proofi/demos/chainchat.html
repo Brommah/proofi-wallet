@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChainChat — Verified Wallet Messaging</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--green:#22C55E;--emerald:#10B981;--teal:#14B8A6;--blue:#3B82F6;--bg:#0A0A0A;--surface:#141414;--card:#1E1E1E;--border:#2E2E2E;--text:#F5F5F5;--dim:#737373}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+    .container{max-width:520px;margin:0 auto;padding:0;width:100%;display:flex;flex-direction:column;min-height:100vh}
+    .app-header{padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+    .app-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:6px}
+    .app-title .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .online-count{font-size:10px;color:var(--dim)}
+    .wallet-status{display:flex;align-items:center;gap:6px}
+    .wallet-chip{padding:4px 10px;border-radius:20px;font-size:10px;font-family:monospace;background:var(--card);border:1px solid var(--border);color:var(--dim)}
+    .wallet-chip.active{border-color:var(--green);color:var(--green);background:rgba(34,197,94,0.08)}
+    .btn{font-family:'Inter',sans-serif;font-weight:600;font-size:11px;padding:6px 12px;border:1px solid var(--green);background:transparent;color:var(--green);border-radius:6px;cursor:pointer;transition:all .2s}
+    .btn:hover{background:var(--green);color:var(--bg)}
+    .btn.red{border-color:#EF4444;color:#EF4444}.btn.red:hover{background:#EF4444;color:#fff}
+    .channels{display:flex;gap:4px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto}
+    .channel{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--dim);white-space:nowrap;transition:all .15s}
+    .channel.active{border-color:var(--green);color:var(--green);background:rgba(34,197,94,0.08)}
+    .channel:hover:not(.active){border-color:var(--dim);color:var(--text)}
+    .chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+    .msg{max-width:85%;display:flex;flex-direction:column}
+    .msg.mine{align-self:flex-end}
+    .msg.other{align-self:flex-start}
+    .msg-bubble{padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;position:relative}
+    .msg.mine .msg-bubble{background:var(--green);color:var(--bg);border-bottom-right-radius:4px}
+    .msg.other .msg-bubble{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px}
+    .msg-sender{font-size:10px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:4px}
+    .msg.mine .msg-sender{text-align:right;color:var(--dim);justify-content:flex-end}
+    .msg.other .msg-sender{color:var(--emerald)}
+    .verified-badge{font-size:8px;padding:1px 4px;background:rgba(34,197,94,0.15);color:var(--green);border-radius:3px;font-weight:700}
+    .msg-time{font-size:9px;color:var(--dim);margin-top:3px}
+    .msg.mine .msg-time{text-align:right}
+    .system-msg{text-align:center;font-size:11px;color:var(--dim);padding:8px 0;display:flex;align-items:center;justify-content:center;gap:6px}
+    .system-msg::before,.system-msg::after{content:'';flex:1;height:1px;background:var(--border)}
+    .input-area{padding:12px 16px;background:var(--surface);border-top:1px solid var(--border);position:sticky;bottom:0}
+    .input-row{display:flex;gap:8px;align-items:center}
+    .msg-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:10px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+    .msg-input:focus{border-color:var(--green)}
+    .msg-input::placeholder{color:var(--dim)}
+    .send-btn{width:38px;height:38px;border-radius:50%;border:none;background:var(--green);color:var(--bg);font-size:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+    .send-btn:hover{box-shadow:0 2px 10px rgba(34,197,94,0.4);transform:scale(1.05)}
+    .send-btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+    .encrypt-indicator{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--dim);padding:4px 0;justify-content:center}
+    .typing-indicator{font-size:11px;color:var(--dim);padding:4px 16px;font-style:italic;min-height:20px}
+    .footer{text-align:center;padding:8px;background:var(--surface);border-top:1px solid var(--border)}
+    .footer a{color:var(--dim);text-decoration:none;font-size:8px;letter-spacing:1px;text-transform:uppercase}.footer a:hover{color:var(--green)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--green);border-radius:10px;padding:10px 20px;font-size:11px;color:var(--green);z-index:10000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#EF4444;color:#EF4444}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app-header">
+      <div>
+        <div class="app-title">💬 ChainChat <span class="dot"></span></div>
+        <div class="online-count" id="onlineCount">3 wallets online</div>
+      </div>
+      <div class="wallet-status">
+        <span class="wallet-chip" id="walletChip">Not connected</span>
+        <button class="btn" id="connectBtn" onclick="handleConnect()">Connect</button>
+      </div>
+    </div>
+
+    <div class="channels" id="channelList"></div>
+
+    <div class="chat-area" id="chatArea"></div>
+
+    <div class="typing-indicator" id="typingIndicator"></div>
+
+    <div class="input-area">
+      <div class="encrypt-indicator">🔒 End-to-end encrypted with wallet keys</div>
+      <div class="input-row">
+        <input class="msg-input" id="msgInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMessage()">
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>↑</button>
+      </div>
+    </div>
+
+    <div class="footer"><a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script src="proofi-sdk.js"></script>
+  <script>
+    const CHANNELS = [
+      { id:'general', name:'# general', icon:'💬' },
+      { id:'dev', name:'# dev-talk', icon:'💻' },
+      { id:'trading', name:'# trading', icon:'📈' },
+      { id:'random', name:'# random', icon:'🎲' },
+    ];
+
+    const WALLETS = ['5Grwva..Makdg','5FHneW..PJ9B3','5DAAnr..VvBZn','5HGjWA..T4GK','5CiPPs..ZsWN'];
+
+    const DEMO_MESSAGES = {
+      general: [
+        { sender:'5Grwva..Makdg', text:'Hey everyone! Just connected my Proofi wallet. This is so smooth! 🚀', time: -3600000*2, verified:true },
+        { sender:'5FHneW..PJ9B3', text:'Welcome! The best part is every message is cryptographically signed by your wallet', time: -3600000*1.5, verified:true },
+        { sender:'5DAAnr..VvBZn', text:'No fake accounts, no impersonation. Your wallet IS your identity', time: -3600000, verified:true },
+        { sender:'5HGjWA..T4GK', text:'I love that messages are stored on DDC. Persistent and verifiable 💎', time: -1800000, verified:true },
+        { sender:'5Grwva..Makdg', text:'Has anyone tried the NFTicket app yet? Got my ticket for the Berlin meetup!', time: -600000, verified:true },
+      ],
+      dev: [
+        { sender:'5FHneW..PJ9B3', text:'Just integrated the Proofi SDK in my dApp. Literally 5 lines of code.', time: -7200000, verified:true },
+        { sender:'5DAAnr..VvBZn', text:'The storeAchievement API is fire. Storing game scores on DDC with one call', time: -5400000, verified:true },
+        { sender:'5FHneW..PJ9B3', text:'Pro tip: use the credential endpoint for structured data, memo for simple text', time: -3600000, verified:true },
+      ],
+      trading: [
+        { sender:'5HGjWA..T4GK', text:'CERE looking strong today! 📈', time: -7200000, verified:true },
+        { sender:'5CiPPs..ZsWN', text:'The DDC storage narrative is underrated. Real utility!', time: -3600000, verified:true },
+      ],
+      random: [
+        { sender:'5DAAnr..VvBZn', text:'Anyone else playing CryptoQuest? My warrior is level 5 already 😤', time: -5400000, verified:true },
+        { sender:'5Grwva..Makdg', text:'DropVault is my new favorite. Finally encrypted notes that actually work', time: -3600000, verified:true },
+        { sender:'5CiPPs..ZsWN', text:'The SkillBadge JavaScript quiz is harder than I thought 😅', time: -1800000, verified:true },
+      ],
+    };
+
+    let proofi, walletAddress;
+    let currentChannel = 'general';
+    let messages = JSON.parse(localStorage.getItem('cc_messages') || '{}');
+    let sentMessages = JSON.parse(localStorage.getItem('cc_sent') || '{}');
+
+    // Initialize messages from demo data
+    CHANNELS.forEach(ch => {
+      if (!messages[ch.id]) {
+        messages[ch.id] = DEMO_MESSAGES[ch.id].map(m => ({
+          ...m,
+          time: Date.now() + m.time,
+          id: Math.random().toString(36).slice(2),
+        }));
+      }
+    });
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'ChainChat' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Connected! Messages signed with your wallet'); renderMessages(); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); renderMessages(); });
+      document.getElementById('msgInput').addEventListener('input', function() {
+        document.getElementById('sendBtn').disabled = !this.value.trim();
+      });
+      renderChannels();
+      renderMessages();
+      simulateTyping();
+    }
+
+    function renderChannels() {
+      document.getElementById('channelList').innerHTML = CHANNELS.map(ch =>
+        `<div class="channel ${ch.id===currentChannel?'active':''}" onclick="switchChannel('${ch.id}')">${ch.icon} ${ch.name}</div>`
+      ).join('');
+    }
+
+    function switchChannel(id) {
+      currentChannel = id;
+      renderChannels();
+      renderMessages();
+    }
+
+    function renderMessages() {
+      const area = document.getElementById('chatArea');
+      const msgs = messages[currentChannel] || [];
+      const myAddr = walletAddress ? walletAddress.slice(0,6)+'..'+walletAddress.slice(-5) : null;
+
+      area.innerHTML = '<div class="system-msg">🔒 Messages are end-to-end encrypted</div>' +
+        msgs.map(m => {
+          const isMine = myAddr && m.sender === myAddr;
+          const time = new Date(m.time).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+          return `
+            <div class="msg ${isMine?'mine':'other'}">
+              <div class="msg-sender">
+                ${isMine?'':'<span style="font-family:monospace">'+m.sender+'</span>'}
+                ${m.verified?'<span class="verified-badge">✓ VERIFIED</span>':''}
+                ${isMine?'You':''}
+              </div>
+              <div class="msg-bubble">${m.text.replace(/</g,'&lt;')}</div>
+              <div class="msg-time">${time}${m.onChain?' • on DDC':''}</div>
+            </div>`;
+        }).join('');
+
+      area.scrollTop = area.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('msgInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const myAddr = walletAddress ? walletAddress.slice(0,6)+'..'+walletAddress.slice(-5) : 'Anon';
+      const msg = {
+        id: Math.random().toString(36).slice(2),
+        sender: myAddr, text, time: Date.now(),
+        verified: !!walletAddress, onChain: false,
+      };
+
+      if (walletAddress) {
+        try {
+          await proofi.storeAchievement({ game:'chainchat', score:1, achievement:'message-sent', data:{ channel:currentChannel, text:text.slice(0,100) } });
+          msg.onChain = true;
+        } catch (e) { /* silent fail for messages */ }
+      }
+
+      if (!messages[currentChannel]) messages[currentChannel] = [];
+      messages[currentChannel].push(msg);
+      localStorage.setItem('cc_messages', JSON.stringify(messages));
+
+      input.value = '';
+      document.getElementById('sendBtn').disabled = true;
+      renderMessages();
+
+      // Simulate reply after short delay
+      setTimeout(() => simulateReply(text), 1500 + Math.random() * 3000);
+    }
+
+    function simulateReply(context) {
+      const replies = [
+        'Interesting point! 🤔','That makes total sense','💯 Agreed!','Nice! Tell me more','🚀🚀🚀',
+        'The future of decentralized comms','Verified and immutable!','Based take','This is the way',
+        'Love how every message is signed by the sender\'s wallet','web3 social ftw 🔥',
+      ];
+      const wallet = WALLETS[Math.floor(Math.random()*WALLETS.length)];
+      const msg = { id:Math.random().toString(36).slice(2), sender:wallet, text:replies[Math.floor(Math.random()*replies.length)], time:Date.now(), verified:true };
+      messages[currentChannel].push(msg);
+      localStorage.setItem('cc_messages', JSON.stringify(messages));
+      renderMessages();
+    }
+
+    function simulateTyping() {
+      setInterval(() => {
+        const indicator = document.getElementById('typingIndicator');
+        if (Math.random() > 0.7) {
+          const wallet = WALLETS[Math.floor(Math.random()*WALLETS.length)];
+          indicator.textContent = wallet + ' is typing...';
+          setTimeout(() => indicator.textContent = '', 2000 + Math.random()*2000);
+        }
+      }, 5000);
+    }
+
+    async function handleConnect() {
+      if(walletAddress){proofi.disconnect();walletAddress=null;updateWalletUI();return}
+      try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){toast(e.message,true);document.getElementById('connectBtn').textContent='Connect'}
+    }
+
+    function updateWalletUI() {
+      const chip=document.getElementById('walletChip'), btn=document.getElementById('connectBtn');
+      if(walletAddress){chip.textContent=walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);chip.classList.add('active');btn.textContent='×';btn.className='btn red'}
+      else{chip.textContent='Not connected';chip.classList.remove('active');btn.textContent='Connect';btn.className='btn'}
+    }
+
+    let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+    init();
+  </script>
+</body>
+</html>

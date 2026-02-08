@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtMint — Pixel Art Creator & Provenance Proof</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--coral:#FF6B6B;--yellow:#FFE66D;--mint:#4ECDC4;--purple:#A855F7;--bg:#0D0D12;--surface:#16161F;--card:#1E1E2A;--border:#2D2D3D;--text:#F0F0F5;--dim:#6B6B80}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(255,107,107,0.06) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(78,205,196,0.05) 0%,transparent 40%);pointer-events:none}
+    .container{max-width:520px;margin:0 auto;padding:16px}
+    .header{text-align:center;padding:20px 0 16px}
+    .logo{font-size:28px;font-weight:700;background:linear-gradient(135deg,var(--coral),var(--yellow),var(--mint));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px}
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+    .wallet-bar.connected{border-color:var(--mint);box-shadow:0 0 20px rgba(78,205,196,0.08)}
+    .wl{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}.wa{font-size:11px;color:var(--mint);font-family:monospace}
+    .btn{font-family:'Inter',sans-serif;font-weight:700;font-size:12px;padding:10px 18px;border:2px solid var(--coral);background:transparent;color:var(--coral);border-radius:8px;cursor:pointer;transition:all .2s}
+    .btn:hover{background:var(--coral);color:#fff;box-shadow:0 4px 15px rgba(255,107,107,0.3)}
+    .btn.sm{padding:7px 14px;font-size:10px}
+    .btn.mint{border-color:var(--mint);color:var(--mint)}.btn.mint:hover{background:var(--mint);color:var(--bg)}
+    .btn.purple{border-color:var(--purple);color:var(--purple)}.btn.purple:hover{background:var(--purple);color:#fff}
+    .btn.red{border-color:#EF4444;color:#EF4444}.btn.red:hover{background:#EF4444;color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed}
+    .canvas-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+    .canvas-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .canvas-title{font-size:14px;font-weight:700}
+    .canvas-size{font-size:10px;color:var(--dim);font-family:'Space Mono',monospace}
+    .pixel-canvas{display:grid;gap:1px;background:var(--border);border:2px solid var(--border);border-radius:4px;margin-bottom:12px;cursor:crosshair;touch-action:none;aspect-ratio:1}
+    .pixel{background:#1a1a2e;transition:background .05s}
+    .pixel:hover{opacity:.8}
+    .color-palette{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}
+    .color-swatch{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s}
+    .color-swatch:hover{transform:scale(1.15)}
+    .color-swatch.active{border-color:white;box-shadow:0 0 10px rgba(255,255,255,0.3);transform:scale(1.1)}
+    .tools{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+    .tool{padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:11px;cursor:pointer;background:transparent;color:var(--dim);transition:all .15s}
+    .tool:hover{border-color:var(--coral);color:var(--coral)}
+    .tool.active{border-color:var(--coral);color:var(--coral);background:rgba(255,107,107,0.08)}
+    .grid-size{display:flex;gap:4px;align-items:center;margin-bottom:12px}
+    .grid-size label{font-size:11px;color:var(--dim)}
+    .grid-size select{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--text);font-size:11px}
+    .actions{display:flex;gap:8px}
+    .actions .btn{flex:1;font-size:11px;padding:10px}
+    .gallery{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+    .gallery-title{font-size:14px;font-weight:700;margin-bottom:12px}
+    .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .gallery-item{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .2s}
+    .gallery-item:hover{border-color:var(--coral);transform:translateY(-2px)}
+    .gallery-item canvas{width:100%;aspect-ratio:1;display:block;image-rendering:pixelated}
+    .gallery-item .info{padding:6px 8px}
+    .gallery-item .name{font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .gallery-item .meta{font-size:8px;color:var(--dim);display:flex;justify-content:space-between;margin-top:2px}
+    .gallery-item .badge{font-size:7px;padding:1px 4px;background:rgba(78,205,196,0.1);color:var(--mint);border-radius:3px}
+    .provenance{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:10px;font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);line-height:1.8}
+    .provenance .label{color:var(--mint);font-weight:700}
+    .empty{text-align:center;padding:30px;color:var(--dim);font-size:12px}.empty .icon{font-size:36px;display:block;margin-bottom:8px}
+    .footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase}.footer a:hover{color:var(--coral)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--mint);border-radius:10px;padding:10px 20px;font-size:11px;color:var(--mint);z-index:10000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{border-color:#EF4444;color:#EF4444}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;width:90%;max-width:400px}
+    .modal canvas{width:100%;image-rendering:pixelated;border-radius:8px;margin-bottom:12px}
+    input[type=text]{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;margin-bottom:8px}
+    input:focus{border-color:var(--coral)}input::placeholder{color:var(--dim)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🎨 ArtMint</div>
+      <div class="tagline">Create pixel art • Prove authorship on-chain</div>
+    </div>
+    <div class="wallet-bar" id="walletBar">
+      <div><div class="wl">Proofi Wallet</div><div class="wa" id="walletAddr">Not connected</div></div>
+      <button class="btn sm" id="connectBtn" onclick="handleConnect()">Connect</button>
+    </div>
+
+    <div class="canvas-section">
+      <div class="canvas-header">
+        <span class="canvas-title">🖌️ Canvas</span>
+        <span class="canvas-size" id="canvasSize">16×16</span>
+      </div>
+      <div class="grid-size">
+        <label>Size:</label>
+        <select id="gridSelect" onchange="changeGrid(this.value)">
+          <option value="8">8×8</option>
+          <option value="16" selected>16×16</option>
+          <option value="32">32×32</option>
+        </select>
+      </div>
+      <div class="tools" id="toolBar">
+        <button class="tool active" onclick="setTool(this,'draw')">✏️ Draw</button>
+        <button class="tool" onclick="setTool(this,'erase')">🧹 Erase</button>
+        <button class="tool" onclick="setTool(this,'fill')">🪣 Fill</button>
+        <button class="tool" onclick="clearCanvas()">🗑️ Clear</button>
+      </div>
+      <div class="color-palette" id="palette"></div>
+      <div class="pixel-canvas" id="pixelGrid"></div>
+      <div class="actions">
+        <button class="btn mint" onclick="mintArt()">🎨 Mint on DDC</button>
+        <button class="btn purple" onclick="downloadArt()">⬇️ Download</button>
+      </div>
+    </div>
+
+    <div class="gallery">
+      <div class="gallery-title">🖼️ Your Gallery</div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+
+    <div class="footer"><a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a></div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <div id="modalContainer"></div>
+
+  <script src="proofi-sdk.js"></script>
+  <script>
+    const COLORS = ['#FF6B6B','#FFE66D','#4ECDC4','#A855F7','#FF9A8B','#88D8B0','#6C5CE7','#FD79A8','#00CEC9','#FAB1A0','#74B9FF','#55E6C1','#F8A5C2','#778BEB','#E77F67','#CF6A87','#1a1a2e','#FFFFFF','#000000','#808080'];
+    let gridSize = 16, pixels = [], currentColor = COLORS[0], currentTool = 'draw', isDrawing = false;
+    let proofi, walletAddress;
+    let artworks = JSON.parse(localStorage.getItem('am_artworks') || '[]');
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'ArtMint' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Wallet connected! Your art will be signed'); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); });
+      renderPalette();
+      initGrid(gridSize);
+      renderGallery();
+    }
+
+    function renderPalette() {
+      document.getElementById('palette').innerHTML = COLORS.map(c =>
+        `<div class="color-swatch ${c===currentColor?'active':''}" style="background:${c}" onclick="pickColor(this,'${c}')"></div>`
+      ).join('');
+    }
+
+    function pickColor(el, color) {
+      currentColor = color;
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      currentTool = 'draw';
+      document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+      document.querySelector('.tool').classList.add('active');
+    }
+
+    function setTool(el, tool) {
+      currentTool = tool;
+      document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+    }
+
+    function changeGrid(size) {
+      gridSize = parseInt(size);
+      document.getElementById('canvasSize').textContent = gridSize + '×' + gridSize;
+      initGrid(gridSize);
+    }
+
+    function initGrid(size) {
+      pixels = new Array(size * size).fill('#1a1a2e');
+      const grid = document.getElementById('pixelGrid');
+      grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+      grid.innerHTML = '';
+      for (let i = 0; i < size * size; i++) {
+        const pixel = document.createElement('div');
+        pixel.className = 'pixel';
+        pixel.style.background = pixels[i];
+        pixel.dataset.index = i;
+        pixel.addEventListener('pointerdown', (e) => { isDrawing = true; paintPixel(i); e.preventDefault(); });
+        pixel.addEventListener('pointerenter', () => { if (isDrawing) paintPixel(i); });
+        grid.appendChild(pixel);
+      }
+      document.addEventListener('pointerup', () => isDrawing = false);
+    }
+
+    function paintPixel(idx) {
+      if (currentTool === 'draw') {
+        pixels[idx] = currentColor;
+        document.getElementById('pixelGrid').children[idx].style.background = currentColor;
+      } else if (currentTool === 'erase') {
+        pixels[idx] = '#1a1a2e';
+        document.getElementById('pixelGrid').children[idx].style.background = '#1a1a2e';
+      } else if (currentTool === 'fill') {
+        floodFill(idx, pixels[idx], currentColor);
+        const grid = document.getElementById('pixelGrid');
+        pixels.forEach((c, i) => grid.children[i].style.background = c);
+      }
+    }
+
+    function floodFill(idx, targetColor, fillColor) {
+      if (targetColor === fillColor) return;
+      if (idx < 0 || idx >= pixels.length) return;
+      if (pixels[idx] !== targetColor) return;
+      pixels[idx] = fillColor;
+      const row = Math.floor(idx / gridSize), col = idx % gridSize;
+      if (col > 0) floodFill(idx - 1, targetColor, fillColor);
+      if (col < gridSize - 1) floodFill(idx + 1, targetColor, fillColor);
+      if (row > 0) floodFill(idx - gridSize, targetColor, fillColor);
+      if (row < gridSize - 1) floodFill(idx + gridSize, targetColor, fillColor);
+    }
+
+    function clearCanvas() {
+      pixels.fill('#1a1a2e');
+      const grid = document.getElementById('pixelGrid');
+      for (let i = 0; i < pixels.length; i++) grid.children[i].style.background = '#1a1a2e';
+    }
+
+    function pixelsToCanvas(pixelArr, size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      pixelArr.forEach((c, i) => {
+        ctx.fillStyle = c;
+        ctx.fillRect(i % size, Math.floor(i / size), 1, 1);
+      });
+      return canvas;
+    }
+
+    function downloadArt() {
+      const scale = 16;
+      const canvas = document.createElement('canvas');
+      canvas.width = gridSize * scale; canvas.height = gridSize * scale;
+      const ctx = canvas.getContext('2d');
+      pixels.forEach((c, i) => {
+        ctx.fillStyle = c;
+        ctx.fillRect((i % gridSize) * scale, Math.floor(i / gridSize) * scale, scale, scale);
+      });
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = 'artmint-' + Date.now() + '.png';
+      a.click();
+      toast('Image downloaded!');
+    }
+
+    async function mintArt() {
+      // Check if canvas is blank
+      if (pixels.every(p => p === '#1a1a2e')) { toast('Draw something first!', true); return; }
+
+      const nameInput = prompt('Name your artwork:');
+      if (!nameInput) return;
+
+      const art = {
+        id: Date.now().toString(36),
+        name: nameInput,
+        pixels: [...pixels],
+        size: gridSize,
+        artist: walletAddress ? walletAddress.slice(0,8)+'..'+walletAddress.slice(-4) : 'Anonymous',
+        onChain: false,
+        date: new Date().toISOString(),
+        hash: simpleHash(pixels.join(',')),
+      };
+
+      if (walletAddress) {
+        try {
+          toast('Minting on DDC...');
+          await proofi.storeAchievement({ game:'artmint', score:gridSize*gridSize, achievement:'art-minted', data:{
+            name: nameInput, size: gridSize, hash: art.hash,
+            palette: [...new Set(pixels.filter(p => p !== '#1a1a2e'))],
+          }});
+          art.onChain = true;
+          toast('🎨 Art minted with provenance proof on DDC!');
+        } catch (e) { toast(e.message, true); }
+      } else { toast('Saved locally (connect wallet to mint on-chain)'); }
+
+      artworks.unshift(art);
+      localStorage.setItem('am_artworks', JSON.stringify(artworks));
+      renderGallery();
+    }
+
+    function simpleHash(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+      return 'h' + Math.abs(hash).toString(16).padStart(8,'0');
+    }
+
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      if (!artworks.length) {
+        grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><span class="icon">🖼️</span>No artworks yet<br><small>Create your first pixel masterpiece!</small></div>';
+        return;
+      }
+      grid.innerHTML = '';
+      artworks.forEach((art, idx) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.onclick = () => viewArt(idx);
+        const canvas = pixelsToCanvas(art.pixels, art.size);
+        item.innerHTML = `
+          <div style="background:#1a1a2e"></div>
+          <div class="info">
+            <div class="name">${art.name}</div>
+            <div class="meta">
+              <span>${art.size}×${art.size}</span>
+              ${art.onChain?'<span class="badge">DDC</span>':''}
+            </div>
+          </div>`;
+        item.querySelector('div').replaceWith(canvas);
+        grid.appendChild(item);
+      });
+    }
+
+    function viewArt(idx) {
+      const art = artworks[idx];
+      const canvas = pixelsToCanvas(art.pixels, art.size);
+      canvas.style.imageRendering = 'pixelated';
+      const date = new Date(art.date).toLocaleDateString();
+      document.getElementById('modalContainer').innerHTML = `
+        <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+          <div class="modal">
+            <h3 style="font-size:18px;margin-bottom:12px">${art.name}</h3>
+            <div id="artCanvas"></div>
+            <div class="provenance">
+              <div><span class="label">Artist:</span> ${art.artist}</div>
+              <div><span class="label">Size:</span> ${art.size}×${art.size}</div>
+              <div><span class="label">Date:</span> ${date}</div>
+              <div><span class="label">Hash:</span> ${art.hash}</div>
+              <div><span class="label">Status:</span> ${art.onChain?'✅ Minted on DDC':'⏳ Local only'}</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn" style="flex:1" onclick="loadToCanvas(${idx});closeModal()">Edit</button>
+              <button class="btn mint" style="flex:1" onclick="closeModal()">Close</button>
+            </div>
+          </div>
+        </div>`;
+      document.getElementById('artCanvas').appendChild(canvas);
+    }
+
+    function loadToCanvas(idx) {
+      const art = artworks[idx];
+      gridSize = art.size;
+      document.getElementById('gridSelect').value = art.size;
+      document.getElementById('canvasSize').textContent = art.size + '×' + art.size;
+      initGrid(art.size);
+      pixels = [...art.pixels];
+      const grid = document.getElementById('pixelGrid');
+      pixels.forEach((c, i) => grid.children[i].style.background = c);
+    }
+
+    function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
+
+    async function handleConnect() {
+      if(walletAddress){proofi.disconnect();walletAddress=null;updateWalletUI();return}
+      try{document.getElementById('connectBtn').textContent='...';await proofi.connect()}catch(e){toast(e.message,true);document.getElementById('connectBtn').textContent='Connect'}
+    }
+    function updateWalletUI() {
+      const bar=document.getElementById('walletBar'),addr=document.getElementById('walletAddr'),btn=document.getElementById('connectBtn');
+      if(walletAddress){bar.classList.add('connected');addr.textContent=walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);btn.textContent='Disconnect';btn.className='btn sm red'}
+      else{bar.classList.remove('connected');addr.textContent='Not connected';btn.textContent='Connect';btn.className='btn sm'}
+    }
+    let tt;function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(e?' error':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000)}
+    init();
+  </script>
+</body>
+</html>

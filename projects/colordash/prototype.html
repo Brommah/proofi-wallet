@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ColorDash - Stroop Color Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-red:    #FF3B3B;
+      --color-blue:   #3B82F6;
+      --color-yellow: #FBBF24;
+      --color-green:  #22C55E;
+      --bg-dark:      #0F0F1A;
+      --bg-card:      #1A1A2E;
+      --text-primary: #FFFFFF;
+      --text-muted:   #9CA3AF;
+      --accent-glow:  #A855F7;
+      --success:      #10B981;
+      --error:        #EF4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .game-container {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-card);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--color-red), var(--color-blue), var(--color-yellow), var(--color-green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      font-weight: 600;
+    }
+
+    .score { color: var(--color-yellow); }
+    .streak { color: #FF6B35; }
+
+    /* Settings Toggle */
+    .settings-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.05);
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .cb-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .cb-toggle input {
+      display: none;
+    }
+
+    .toggle-switch {
+      width: 48px;
+      height: 26px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 13px;
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.3s;
+    }
+
+    .cb-toggle input:checked + .toggle-switch {
+      background: var(--accent-glow);
+    }
+
+    .cb-toggle input:checked + .toggle-switch::after {
+      transform: translateX(22px);
+    }
+
+    .toggle-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Pattern Legend */
+    .pattern-legend {
+      display: none;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .cb-mode .pattern-legend {
+      display: grid;
+    }
+
+    .legend-item {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .legend-symbol {
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+    /* Word Display */
+    .word-display {
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .pattern-indicator {
+      font-family: monospace;
+      font-size: 24px;
+      opacity: 0;
+      margin-bottom: 8px;
+      letter-spacing: 4px;
+      transition: opacity 0.3s;
+    }
+
+    .cb-mode .pattern-indicator {
+      opacity: 1;
+    }
+
+    .color-word {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 64px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
+    }
+
+    .color-word.correct {
+      animation: pulse-correct 0.4s ease-out;
+    }
+
+    .color-word.wrong {
+      animation: shake 0.4s ease-out;
+    }
+
+    @keyframes pulse-correct {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-15px); }
+      75% { transform: translateX(15px); }
+    }
+
+    /* Timer */
+    .timer-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .timer-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--error), var(--color-yellow), var(--success));
+      background-size: 200% 100%;
+      border-radius: 3px;
+      transition: width 0.1s linear;
+    }
+
+    /* Button Grid */
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .color-btn {
+      position: relative;
+      height: 90px;
+      border: none;
+      border-radius: 16px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .color-btn:hover {
+      transform: scale(1.03);
+    }
+
+    .color-btn:active {
+      transform: scale(0.97);
+    }
+
+    .color-btn.red { background: var(--color-red); box-shadow: 0 8px 30px rgba(255,59,59,0.4); }
+    .color-btn.blue { background: var(--color-blue); box-shadow: 0 8px 30px rgba(59,130,246,0.4); }
+    .color-btn.yellow { background: var(--color-yellow); color: #1A1A2E; box-shadow: 0 8px 30px rgba(251,191,36,0.4); }
+    .color-btn.green { background: var(--color-green); box-shadow: 0 8px 30px rgba(34,197,94,0.4); }
+
+    .btn-pattern {
+      font-family: monospace;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .cb-mode .btn-pattern {
+      opacity: 0.9;
+    }
+
+    /* Color-blind Pattern Overlays */
+    .color-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .cb-mode .color-btn.red::after {
+      opacity: 1;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 6px,
+        rgba(255,255,255,0.4) 6px,
+        rgba(255,255,255,0.4) 12px
+      );
+    }
+
+    .cb-mode .color-btn.blue::after {
+      opacity: 1;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 8px,
+        rgba(255,255,255,0.4) 8px,
+        rgba(255,255,255,0.4) 14px
+      );
+    }
+
+    .cb-mode .color-btn.yellow::after {
+      opacity: 1;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(0,0,0,0.35) 6px, transparent 6px),
+        radial-gradient(circle at 50% 20%, rgba(0,0,0,0.35) 6px, transparent 6px),
+        radial-gradient(circle at 80% 20%, rgba(0,0,0,0.35) 6px, transparent 6px),
+        radial-gradient(circle at 20% 50%, rgba(0,0,0,0.35) 6px, transparent 6px),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0.35) 6px, transparent 6px),
+        radial-gradient(circle at 80% 50%, rgba(0,0,0,0.35) 6px, transparent 6px),
+        radial-gradient(circle at 20% 80%, rgba(0,0,0,0.35) 6px, transparent 6px),
+        radial-gradient(circle at 50% 80%, rgba(0,0,0,0.35) 6px, transparent 6px),
+        radial-gradient(circle at 80% 80%, rgba(0,0,0,0.35) 6px, transparent 6px);
+    }
+
+    .cb-mode .color-btn.green::after {
+      opacity: 1;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 8px,
+        rgba(255,255,255,0.4) 8px,
+        rgba(255,255,255,0.4) 14px
+      );
+    }
+
+    /* Game Over */
+    .game-over {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(15,15,26,0.95);
+      border-radius: 24px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .game-over.show {
+      display: flex;
+    }
+
+    .game-over h2 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 36px;
+    }
+
+    .final-score {
+      font-size: 64px;
+      font-weight: 700;
+      color: var(--color-yellow);
+    }
+
+    .play-again {
+      padding: 16px 48px;
+      background: var(--accent-glow);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .play-again:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(168,85,247,0.5);
+    }
+
+    /* Grayscale test mode (for testing) */
+    .grayscale-test {
+      filter: grayscale(100%);
+    }
+
+    .test-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .test-toggle:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* Instructions */
+    .instructions {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container" id="gameContainer">
+    <!-- Header -->
+    <div class="header">
+      <div class="title">ColorDash</div>
+      <div class="stats">
+        <span class="score">⭐ <span id="score">0</span></span>
+        <span class="streak">🔥 <span id="streak">0</span></span>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="settings-bar">
+      <label class="cb-toggle">
+        <input type="checkbox" id="cbMode">
+        <span class="toggle-switch"></span>
+        <span class="toggle-label">Color-Blind Mode</span>
+      </label>
+      <div class="pattern-legend">
+        <div class="legend-item">
+          <div class="legend-symbol">///</div>
+          <div>Rood</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-symbol">═══</div>
+          <div>Blauw</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-symbol">• • •</div>
+          <div>Geel</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-symbol">|||</div>
+          <div>Groen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Word Display -->
+    <div class="word-display">
+      <div class="pattern-indicator" id="patternIndicator">///</div>
+      <div class="color-word" id="colorWord">ROOD</div>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer-bar">
+      <div class="timer-fill" id="timerFill" style="width: 100%"></div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="button-grid">
+      <button class="color-btn red" data-color="red">
+        <span>Rood</span>
+        <span class="btn-pattern">///</span>
+      </button>
+      <button class="color-btn blue" data-color="blue">
+        <span>Blauw</span>
+        <span class="btn-pattern">═══</span>
+      </button>
+      <button class="color-btn yellow" data-color="yellow">
+        <span>Geel</span>
+        <span class="btn-pattern">• • •</span>
+      </button>
+      <button class="color-btn green" data-color="green">
+        <span>Groen</span>
+        <span class="btn-pattern">|||</span>
+      </button>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+      Klik op de <strong>kleur</strong> van het woord, niet wat het zegt!<br>
+      <small>(Toetsen: R, B, G, Y of 1, 2, 3, 4)</small>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div class="game-over" id="gameOver">
+      <h2>Game Over!</h2>
+      <div class="final-score" id="finalScore">0</div>
+      <button class="play-again" id="playAgain">Opnieuw Spelen</button>
+    </div>
+  </div>
+
+  <!-- Grayscale Test Button -->
+  <button class="test-toggle" id="grayscaleTest">
+    🔍 Toggle Grayscale Test
+  </button>
+
+  <script>
+    // Game State
+    const state = {
+      score: 0,
+      streak: 0,
+      timeLeft: 100,
+      isPlaying: true,
+      currentColor: null
+    };
+
+    // Colors & Patterns
+    const colors = {
+      red:    { name: 'Rood',  hex: '#FF3B3B', pattern: '///' },
+      blue:   { name: 'Blauw', hex: '#3B82F6', pattern: '═══' },
+      yellow: { name: 'Geel',  hex: '#FBBF24', pattern: '• • •' },
+      green:  { name: 'Groen', hex: '#22C55E', pattern: '|||' }
+    };
+    const colorKeys = Object.keys(colors);
+
+    // DOM Elements
+    const colorWord = document.getElementById('colorWord');
+    const patternIndicator = document.getElementById('patternIndicator');
+    const scoreEl = document.getElementById('score');
+    const streakEl = document.getElementById('streak');
+    const timerFill = document.getElementById('timerFill');
+    const gameOver = document.getElementById('gameOver');
+    const finalScore = document.getElementById('finalScore');
+    const cbModeToggle = document.getElementById('cbMode');
+    const gameContainer = document.getElementById('gameContainer');
+
+    // Color-blind mode persistence
+    if (localStorage.getItem('colorBlindMode') === 'true') {
+      cbModeToggle.checked = true;
+      gameContainer.classList.add('cb-mode');
+    }
+
+    cbModeToggle.addEventListener('change', () => {
+      gameContainer.classList.toggle('cb-mode', cbModeToggle.checked);
+      localStorage.setItem('colorBlindMode', cbModeToggle.checked);
+    });
+
+    // Grayscale test
+    document.getElementById('grayscaleTest').addEventListener('click', () => {
+      document.body.classList.toggle('grayscale-test');
+    });
+
+    // Generate new word
+    function newRound() {
+      // Pick random word and random display color (often different = Stroop effect)
+      const wordKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+      let displayKey;
+      
+      // 70% chance of mismatch for Stroop challenge
+      if (Math.random() < 0.7) {
+        do {
+          displayKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+        } while (displayKey === wordKey);
+      } else {
+        displayKey = wordKey;
+      }
+
+      state.currentColor = displayKey;
+      
+      // Update display
+      colorWord.textContent = colors[wordKey].name;
+      colorWord.style.color = colors[displayKey].hex;
+      patternIndicator.textContent = colors[displayKey].pattern;
+    }
+
+    // Handle answer
+    function checkAnswer(selectedColor) {
+      if (!state.isPlaying) return;
+
+      const correct = selectedColor === state.currentColor;
+      
+      // Visual feedback
+      colorWord.classList.remove('correct', 'wrong');
+      void colorWord.offsetWidth; // Trigger reflow
+      colorWord.classList.add(correct ? 'correct' : 'wrong');
+
+      if (correct) {
+        state.score++;
+        state.streak++;
+        state.timeLeft = Math.min(100, state.timeLeft + 10); // Bonus time
+      } else {
+        state.streak = 0;
+        state.timeLeft -= 20;
+      }
+
+      updateUI();
+      
+      if (state.timeLeft <= 0) {
+        endGame();
+      } else {
+        newRound();
+      }
+    }
+
+    // Update UI
+    function updateUI() {
+      scoreEl.textContent = state.score;
+      streakEl.textContent = state.streak;
+      timerFill.style.width = state.timeLeft + '%';
+      
+      // Timer color based on time
+      const hue = (state.timeLeft / 100) * 120; // 0 = red, 120 = green
+      timerFill.style.background = `hsl(${hue}, 70%, 50%)`;
+    }
+
+    // Game timer
+    let timerInterval;
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (!state.isPlaying) return;
+        state.timeLeft -= 1;
+        updateUI();
+        if (state.timeLeft <= 0) {
+          endGame();
+        }
+      }, 100);
+    }
+
+    // End game
+    function endGame() {
+      state.isPlaying = false;
+      clearInterval(timerInterval);
+      finalScore.textContent = state.score;
+      gameOver.classList.add('show');
+    }
+
+    // Restart game
+    function restartGame() {
+      state.score = 0;
+      state.streak = 0;
+      state.timeLeft = 100;
+      state.isPlaying = true;
+      gameOver.classList.remove('show');
+      updateUI();
+      newRound();
+      startTimer();
+    }
+
+    // Event listeners
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        checkAnswer(btn.dataset.color);
+      });
+    });
+
+    document.getElementById('playAgain').addEventListener('click', restartGame);
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      const keyMap = {
+        'r': 'red', '1': 'red',
+        'b': 'blue', '2': 'blue',
+        'g': 'green', '4': 'green',
+        'y': 'yellow', '3': 'yellow'
+      };
+      if (keyMap[e.key.toLowerCase()]) {
+        checkAnswer(keyMap[e.key.toLowerCase()]);
+      }
+    });
+
+    // Initialize
+    newRound();
+    startTimer();
+  </script>
+</body>
+</html>

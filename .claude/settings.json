@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/pre-tool-guard.sh",
+            "timeout": 5,
+            "statusMessage": "🛡️ Checking guardrails..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/audit-log.sh",
+            "timeout": 3,
+            "statusMessage": "📝 Logging..."
+          }
+        ]
+      }
+    ]
+  }
+}

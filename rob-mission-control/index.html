@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROB Mission Control</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-2: #1a1a26;
+    --border: #2a2a3a;
+    --text: #e0e0e8;
+    --text-dim: #8888a0;
+    --accent: #6B4EE6;
+    --accent-glow: rgba(107,78,230,0.15);
+    --green: #22C55E;
+    --green-dim: rgba(34,197,94,0.15);
+    --red: #EF4444;
+    --red-dim: rgba(239,68,68,0.15);
+    --amber: #F59E0B;
+    --amber-dim: rgba(245,158,11,0.15);
+    --blue: #3B82F6;
+    --blue-dim: rgba(59,130,246,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  
+  /* Header */
+  .header { 
+    padding:16px 24px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--surface);
+  }
+  .header h1 { font-size:18px; font-weight:700; display:flex; align-items:center; gap:10px; }
+  .header h1 span.logo { color:var(--accent); font-size:14px; background:var(--accent-glow); padding:4px 10px; border-radius:6px; }
+  .header .meta { font-size:12px; color:var(--text-dim); display:flex; gap:16px; }
+  .header .meta .live { color:var(--green); display:flex; align-items:center; gap:4px; }
+  .header .meta .live::before { content:''; width:6px; height:6px; background:var(--green); border-radius:50%; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  
+  /* Layout */
+  .container { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:20px; max-width:1600px; margin:0 auto; }
+  @media(max-width:1000px) { .container { grid-template-columns:1fr; } }
+  .full-width { grid-column:1/-1; }
+  
+  /* Cards */
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .card-header h2 { font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .card-header .badge { font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500; }
+  .badge-green { background:var(--green-dim); color:var(--green); }
+  .badge-red { background:var(--red-dim); color:var(--red); }
+  .badge-amber { background:var(--amber-dim); color:var(--amber); }
+  .badge-blue { background:var(--blue-dim); color:var(--blue); }
+  .badge-purple { background:var(--accent-glow); color:var(--accent); }
+  .card-body { padding:16px 18px; }
+  
+  /* Status Grid */
+  .status-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media(max-width:800px) { .status-grid { grid-template-columns:repeat(2,1fr); } }
+  .status-item { background:var(--surface-2); border-radius:8px; padding:14px; }
+  .status-item .label { font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .status-item .value { font-size:22px; font-weight:700; }
+  .status-item .sub { font-size:11px; color:var(--text-dim); margin-top:4px; }
+  
+  /* Environment Status */
+  .env-row { display:flex; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+  .env-row:last-child { border-bottom:none; }
+  .env-name { font-weight:600; width:100px; font-size:13px; }
+  .env-url { font-size:12px; color:var(--text-dim); flex:1; font-family:monospace; }
+  .env-status { display:flex; align-items:center; gap:6px; font-size:12px; }
+  .dot { width:8px; height:8px; border-radius:50%; }
+  .dot-green { background:var(--green); box-shadow:0 0 8px var(--green); }
+  .dot-red { background:var(--red); box-shadow:0 0 8px var(--red); }
+  .dot-amber { background:var(--amber); box-shadow:0 0 8px var(--amber); }
+  
+  /* Bug List */
+  .bug-item { padding:12px; background:var(--surface-2); border-radius:8px; margin-bottom:8px; border-left:3px solid var(--red); }
+  .bug-item.p1 { border-left-color:var(--amber); }
+  .bug-item.p2 { border-left-color:var(--blue); }
+  .bug-item .bug-title { font-size:13px; font-weight:600; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+  .bug-item .bug-desc { font-size:12px; color:var(--text-dim); line-height:1.5; }
+  .bug-item code { background:var(--bg); padding:1px 5px; border-radius:3px; font-size:11px; color:var(--accent); }
+  
+  /* Agent List */
+  .agent-row { display:flex; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); gap:12px; }
+  .agent-row:last-child { border-bottom:none; }
+  .agent-icon { width:32px; height:32px; border-radius:8px; background:var(--accent-glow); display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .agent-info { flex:1; }
+  .agent-name { font-size:13px; font-weight:600; }
+  .agent-meta { font-size:11px; color:var(--text-dim); }
+  
+  /* Model Grid */
+  .model-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:10px; }
+  .model-card { background:var(--surface-2); border-radius:8px; padding:12px; }
+  .model-card .model-name { font-size:12px; font-weight:600; margin-bottom:4px; }
+  .model-card .model-type { font-size:10px; color:var(--text-dim); margin-bottom:6px; }
+  .model-card .model-stats { display:flex; gap:12px; font-size:11px; color:var(--text-dim); }
+  .model-card .model-stats span { display:flex; align-items:center; gap:3px; }
+  
+  /* Roadmap */
+  .roadmap-phase { margin-bottom:16px; }
+  .roadmap-phase .phase-header { font-size:13px; font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+  .roadmap-item { display:flex; align-items:center; padding:6px 0; font-size:12px; gap:8px; }
+  .roadmap-item .check { width:16px; height:16px; border-radius:4px; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+  .roadmap-item .check.done { background:var(--green); border-color:var(--green); color:white; }
+  .roadmap-item .check.progress { background:var(--amber); border-color:var(--amber); color:white; }
+  
+  /* UX Score */
+  .ux-scores { display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:10px; }
+  .ux-score { background:var(--surface-2); border-radius:8px; padding:12px; text-align:center; }
+  .ux-score .page-name { font-size:11px; color:var(--text-dim); margin-bottom:6px; }
+  .ux-score .score { font-size:28px; font-weight:700; }
+  .ux-score .score.bad { color:var(--red); }
+  .ux-score .score.meh { color:var(--amber); }
+  .ux-score .score.ok { color:var(--blue); }
+  .ux-score .score.good { color:var(--green); }
+  .ux-score .max { font-size:11px; color:var(--text-dim); }
+  
+  /* API Explorer */
+  .api-item { font-family:monospace; font-size:12px; padding:8px 12px; background:var(--surface-2); border-radius:6px; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+  .api-method { font-weight:700; width:50px; text-align:center; padding:2px 6px; border-radius:3px; font-size:10px; }
+  .api-method.get { color:var(--green); background:var(--green-dim); }
+  .api-method.post { color:var(--blue); background:var(--blue-dim); }
+  .api-path { color:var(--text); }
+  .api-status { margin-left:auto; font-size:11px; }
+  
+  /* Tabs */
+  .tabs { display:flex; gap:2px; padding:0 18px; background:var(--surface); border-bottom:1px solid var(--border); }
+  .tab { padding:10px 14px; font-size:12px; color:var(--text-dim); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
+  .tab:hover { color:var(--text); }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  
+  /* Comparison */
+  table.compare { width:100%; font-size:12px; border-collapse:collapse; }
+  table.compare th { text-align:left; padding:8px; color:var(--text-dim); font-size:11px; border-bottom:1px solid var(--border); }
+  table.compare td { padding:8px; border-bottom:1px solid var(--border); }
+  table.compare .yes { color:var(--green); }
+  table.compare .no { color:var(--red); }
+  table.compare .partial { color:var(--amber); }
+  
+  /* Links */
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span class="logo">ROB</span> Mission Control Center</h1>
+  <div class="meta">
+    <div class="live">Live Audit</div>
+    <div>2026-02-02 01:20 CET</div>
+    <div>Audited by: Claudemart</div>
+  </div>
+</div>
+
+<div class="container">
+  
+  <!-- System Status -->
+  <div class="card full-width">
+    <div class="card-header">
+      <h2>⚡ System Status</h2>
+      <span class="badge badge-amber">PARTIALLY OPERATIONAL</span>
+    </div>
+    <div class="card-body">
+      <div class="status-grid">
+        <div class="status-item">
+          <div class="label">Environments</div>
+          <div class="value">3</div>
+          <div class="sub">Dev · Staging · Prod</div>
+        </div>
+        <div class="status-item">
+          <div class="label">Agents</div>
+          <div class="value" style="color:var(--amber)">3</div>
+          <div class="sub">All read-only (DB locked)</div>
+        </div>
+        <div class="status-item">
+          <div class="label">Models</div>
+          <div class="value" style="color:var(--green)">7</div>
+          <div class="sub">2.5M total invocations</div>
+        </div>
+        <div class="status-item">
+          <div class="label">Critical Bugs</div>
+          <div class="value" style="color:var(--red)">5</div>
+          <div class="sub">2 P0, 1 P1, 2 P2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Environments -->
+  <div class="card">
+    <div class="card-header">
+      <h2>🌐 Environments</h2>
+    </div>
+    <div class="card-body">
+      <div class="env-row">
+        <div class="env-name">Prod</div>
+        <div class="env-url">rob.cere.io</div>
+        <div class="env-status">
+          <div class="dot dot-amber"></div>
+          <span style="color:var(--amber)">Read-Only DB</span>
+        </div>
+      </div>
+      <div class="env-row">
+        <div class="env-name">Staging</div>
+        <div class="env-url">rob.stage.cere.io</div>
+        <div class="env-status">
+          <div class="dot dot-green"></div>
+          <span style="color:var(--green)">Online</span>
+        </div>
+      </div>
+      <div class="env-row">
+        <div class="env-name">Devnet</div>
+        <div class="env-url">rob.dev.cere.io</div>
+        <div class="env-status">
+          <div class="dot dot-red"></div>
+          <span style="color:var(--red)">No Write Access</span>
+        </div>
+      </div>
+      <div class="env-row">
+        <div class="env-name">Runtime</div>
+        <div class="env-url">compute.devnet.ddc-dragon.com</div>
+        <div class="env-status">
+          <div class="dot dot-green"></div>
+          <span style="color:var(--green)">Healthy</span>
+        </div>
+      </div>
+      <div class="env-row">
+        <div class="env-name">API</div>
+        <div class="env-url">api.rob.cere.io</div>
+        <div class="env-status">
+          <div class="dot dot-amber"></div>
+          <span style="color:var(--amber)">Reads OK</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bugs -->
+  <div class="card">
+    <div class="card-header">
+      <h2>🐛 Critical Bugs</h2>
+      <span class="badge badge-red">5 OPEN</span>
+    </div>
+    <div class="card-body">
+      <div class="bug-item">
+        <div class="bug-title"><span class="badge badge-red">P0</span> Agent Creation: Missing Metadata</div>
+        <div class="bug-desc">Frontend sends tasks without <code>metadata: {}</code> → <code>tasks.0.metadata must be an object</code>. Fix: add empty metadata to task payload.</div>
+      </div>
+      <div class="bug-item">
+        <div class="bug-title"><span class="badge badge-red">P0</span> Prod MySQL Read-Only</div>
+        <div class="bug-desc">All write ops fail: <code>MySQL server is running with --read-only option</code>. No agent/service creation possible.</div>
+      </div>
+      <div class="bug-item p1">
+        <div class="bug-title"><span class="badge badge-amber">P1</span> Devnet Service Creation Silent Fail</div>
+        <div class="bug-desc">Click "Create Service" → dialog → fill name → submit → nothing happens. No error shown.</div>
+      </div>
+      <div class="bug-item p2">
+        <div class="bug-title"><span class="badge badge-blue">P2</span> Model Mismatch</div>
+        <div class="bug-desc">Registry shows 7 models, agent wizard shows 5. No indication which models work with which agent types.</div>
+      </div>
+      <div class="bug-item p2">
+        <div class="bug-title"><span class="badge badge-blue">P2</span> Error Messages Hidden</div>
+        <div class="bug-desc">UI shows "Request failed with status code 400" instead of actual API error. Need to check devtools for real message.</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Agents -->
+  <div class="card">
+    <div class="card-header">
+      <h2>🤖 Agent Registry</h2>
+      <span class="badge badge-purple">3 AGENTS</span>
+    </div>
+    <div class="card-body">
+      <div class="agent-row">
+        <div class="agent-icon">⚡</div>
+        <div class="agent-info">
+          <div class="agent-name">Simple Test</div>
+          <div class="agent-meta">Programmable · 0 tools · 1 task · Oct 27, 2025</div>
+        </div>
+        <span class="badge badge-green">ACTIVE</span>
+      </div>
+      <div class="agent-row">
+        <div class="agent-icon">➕</div>
+        <div class="agent-info">
+          <div class="agent-name">Sum agent</div>
+          <div class="agent-meta">Programmable · "Adds two numbers" · Jul 29, 2025</div>
+        </div>
+        <span class="badge badge-green">ACTIVE</span>
+      </div>
+      <div class="agent-row">
+        <div class="agent-icon">🧪</div>
+        <div class="agent-info">
+          <div class="agent-name">Test</div>
+          <div class="agent-meta">Programmable · 0 tools · 1 task · Oct 27, 2025</div>
+        </div>
+        <span class="badge badge-green">ACTIVE</span>
+      </div>
+      <div class="agent-row" style="opacity:0.4; border-left:2px dashed var(--red); padding-left:10px;">
+        <div class="agent-icon" style="background:var(--red-dim)">❌</div>
+        <div class="agent-info">
+          <div class="agent-name">Claudemart <span style="color:var(--red); font-size:11px;">(BLOCKED)</span></div>
+          <div class="agent-meta">LLM · Qwen 2.5 · Cannot create: DB read-only</div>
+        </div>
+        <span class="badge badge-red">BLOCKED</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Models -->
+  <div class="card">
+    <div class="card-header">
+      <h2>🧠 Model Registry</h2>
+      <span class="badge badge-purple">7 MODELS · 2.5M INVOCATIONS</span>
+    </div>
+    <div class="card-body">
+      <div class="model-grid">
+        <div class="model-card" style="border:1px solid var(--accent);">
+          <div class="model-name">🦙 Llama 3.2 11B Vision</div>
+          <div class="model-type">Text Generation · Multimodal</div>
+          <div class="model-stats"><span>⚡ 850ms</span><span>📊 145K</span><span>💾 22GB</span></div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">📱 MobileNetV2</div>
+          <div class="model-type">Image Classification</div>
+          <div class="model-stats"><span>⚡ 28ms</span><span>📊 1.2M</span><span>💾 14MB</span></div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">👁️ OWL-ViT</div>
+          <div class="model-type">Zero-shot Object Detection</div>
+          <div class="model-stats"><span>⚡ 133ms</span><span>📊 89K</span><span>💾 320MB</span></div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">✂️ SAM2 Hiera Large</div>
+          <div class="model-type">Image Segmentation</div>
+          <div class="model-stats"><span>⚡ 288ms</span><span>📊 12.8K</span><span>💾 850MB</span></div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">🎨 SDXL Base 1.0</div>
+          <div class="model-type">Text to Image</div>
+          <div class="model-stats"><span>⚡ 3.2s</span><span>📊 892K</span><span>💾 6.9GB</span></div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">🖌️ SDXL Inpainting</div>
+          <div class="model-type">Image Editing</div>
+          <div class="model-stats"><span>⚡ 4.2s</span><span>📊 78.5K</span><span>💾 7.2GB</span></div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">🎙️ Whisper Large v3</div>
+          <div class="model-type">Speech Recognition</div>
+          <div class="model-stats"><span>⚡ 8.5s</span><span>📊 45.9K</span><span>💾 3.1GB</span></div>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding:8px 12px; background:var(--amber-dim); border-radius:6px; font-size:11px; color:var(--amber);">
+        ⚠️ LLM Agent dropdown shows 5 additional models (Qwen 2.5, Phi-3, Hermes-2, Mistral-7B, Llama 3.1) not listed in the Model Registry
+      </div>
+    </div>
+  </div>
+  
+  <!-- UX Scores -->
+  <div class="card">
+    <div class="card-header">
+      <h2>📊 UX Scores by Page</h2>
+      <span class="badge badge-red">AVG: 3.1/10</span>
+    </div>
+    <div class="card-body">
+      <div class="ux-scores">
+        <div class="ux-score">
+          <div class="page-name">Home</div>
+          <div class="score meh">4</div>
+          <div class="max">/10</div>
+        </div>
+        <div class="ux-score">
+          <div class="page-name">Agent Registry</div>
+          <div class="score bad">2</div>
+          <div class="max">/10</div>
+        </div>
+        <div class="ux-score">
+          <div class="page-name">Create Agent</div>
+          <div class="score bad">1</div>
+          <div class="max">/10</div>
+        </div>
+        <div class="ux-score">
+          <div class="page-name">Model Registry</div>
+          <div class="score ok">5</div>
+          <div class="max">/10</div>
+        </div>
+        <div class="ux-score">
+          <div class="page-name">Data Services</div>
+          <div class="score bad">3</div>
+          <div class="max">/10</div>
+        </div>
+        <div class="ux-score">
+          <div class="page-name">Devnet</div>
+          <div class="score bad">1</div>
+          <div class="max">/10</div>
+        </div>
+        <div class="ux-score">
+          <div class="page-name">Login/Auth</div>
+          <div class="score ok">5</div>
+          <div class="max">/10</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Competitive -->
+  <div class="card">
+    <div class="card-header">
+      <h2>⚔️ Competitive Comparison</h2>
+    </div>
+    <div class="card-body">
+      <table class="compare">
+        <tr>
+          <th>Feature</th><th>ROB Now</th><th>Vercel</th><th>Railway</th><th>Replicate</th><th>HuggingFace</th>
+        </tr>
+        <tr>
+          <td>Deploy from UI</td>
+          <td class="no">❌ Broken</td><td class="yes">✅</td><td class="yes">✅</td><td class="yes">✅</td><td class="yes">✅</td>
+        </tr>
+        <tr>
+          <td>Agent testing</td>
+          <td class="no">❌</td><td>N/A</td><td>N/A</td><td class="yes">✅</td><td class="yes">✅</td>
+        </tr>
+        <tr>
+          <td>Model playground</td>
+          <td class="no">❌</td><td>N/A</td><td>N/A</td><td class="yes">✅</td><td class="yes">✅</td>
+        </tr>
+        <tr>
+          <td>Quick start</td>
+          <td class="no">❌</td><td class="yes">✅</td><td class="yes">✅</td><td class="yes">✅</td><td class="yes">✅</td>
+        </tr>
+        <tr>
+          <td>Decentralized storage</td>
+          <td class="yes">✅ DDC</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td>
+        </tr>
+        <tr>
+          <td>Verifiable compute</td>
+          <td class="yes">✅ DAC</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td>
+        </tr>
+        <tr>
+          <td>Merkle proof audit</td>
+          <td class="yes">✅</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td>
+        </tr>
+      </table>
+      <div style="margin-top:12px; padding:10px; background:var(--accent-glow); border-radius:8px; font-size:12px; line-height:1.6;">
+        <strong>💡 Key insight:</strong> ROB has <strong>3 unique features no competitor has</strong> (DDC, DAC, Merkle proofs), but they're invisible because basic UX is broken. Fix the table stakes, then highlight the differentiators.
+      </div>
+    </div>
+  </div>
+  
+  <!-- API Explorer -->
+  <div class="card">
+    <div class="card-header">
+      <h2>🔌 API Surface</h2>
+      <span class="badge badge-purple">api.rob.cere.io</span>
+    </div>
+    <div class="card-body">
+      <div class="api-item">
+        <span class="api-method get">GET</span>
+        <span class="api-path">/rms-node-backend/agent-registry</span>
+        <span class="api-status" style="color:var(--green)">✅ 200</span>
+      </div>
+      <div class="api-item">
+        <span class="api-method post">POST</span>
+        <span class="api-path">/rms-node-backend/agent-registry</span>
+        <span class="api-status" style="color:var(--red)">❌ 400/500</span>
+      </div>
+      <div class="api-item">
+        <span class="api-method get">GET</span>
+        <span class="api-path">/rms-node-backend/model-registry</span>
+        <span class="api-status" style="color:var(--green)">✅ 200</span>
+      </div>
+      <div class="api-item">
+        <span class="api-method get">GET</span>
+        <span class="api-path">/rms-node-backend/data-services</span>
+        <span class="api-status" style="color:var(--green)">✅ 200</span>
+      </div>
+      <div style="margin-top:8px; font-size:11px; color:var(--text-dim);">
+        Auth: JWT Bearer token via Cere Wallet (ed25519) · OTP email verification
+      </div>
+    </div>
+  </div>
+  
+  <!-- Roadmap -->
+  <div class="card full-width">
+    <div class="card-header">
+      <h2>🗺️ UX Improvement Roadmap</h2>
+    </div>
+    <div class="card-body" style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+      <div class="roadmap-phase">
+        <div class="phase-header"><span class="badge badge-red">WEEK 1</span> Critical Fixes</div>
+        <div class="roadmap-item"><div class="check">1</div> Fix task.metadata bug in frontend</div>
+        <div class="roadmap-item"><div class="check">2</div> Fix MySQL read-only on prod</div>
+        <div class="roadmap-item"><div class="check">3</div> Show real API errors in UI</div>
+        <div class="roadmap-item"><div class="check">4</div> Fix devnet service creation</div>
+        <div class="roadmap-item"><div class="check">5</div> Add system health indicator</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-header"><span class="badge badge-amber">WEEKS 2-4</span> UX Overhaul</div>
+        <div class="roadmap-item"><div class="check">6</div> Collapse wizard: 5 steps → 2 steps</div>
+        <div class="roadmap-item"><div class="check">7</div> Add Quick Start templates</div>
+        <div class="roadmap-item"><div class="check">8</div> Add Agent test playground</div>
+        <div class="roadmap-item"><div class="check">9</div> Rich model selector with stats</div>
+        <div class="roadmap-item"><div class="check">10</div> Rename: Ontology→Schema, Engagement→Workflow</div>
+        <div class="roadmap-item"><div class="check">11</div> Add invocation logs per agent</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-header"><span class="badge badge-green">WEEKS 5-8</span> Differentiation</div>
+        <div class="roadmap-item"><div class="check">12</div> Visual workflow builder</div>
+        <div class="roadmap-item"><div class="check">13</div> DDC storage explorer</div>
+        <div class="roadmap-item"><div class="check">14</div> DAC verification viewer</div>
+        <div class="roadmap-item"><div class="check">15</div> Cost dashboard per agent</div>
+        <div class="roadmap-item"><div class="check">16</div> CLI companion (rob deploy/invoke/logs)</div>
+        <div class="roadmap-item"><div class="check">17</div> Team management & API keys</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Data Service Deep Dive -->
+  <div class="card full-width">
+    <div class="card-header">
+      <h2>📦 "Bullish" Data Service — Structure</h2>
+      <span class="badge badge-green">ACTIVE</span>
+    </div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px;">
+        <div class="status-item">
+          <div class="label">Rafts</div>
+          <div class="value">4</div>
+          <div class="sub">Active pipelines</div>
+        </div>
+        <div class="status-item">
+          <div class="label">Data Sources</div>
+          <div class="value">1</div>
+          <div class="sub">Connected</div>
+        </div>
+        <div class="status-item">
+          <div class="label">Agents</div>
+          <div class="value" style="color:var(--text-dim)">0</div>
+          <div class="sub">None attached</div>
+        </div>
+        <div class="status-item">
+          <div class="label">Status</div>
+          <div class="value" style="color:var(--green); font-size:16px;">Active</div>
+          <div class="sub">Running normally</div>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--text-dim); line-height:1.8;">
+        <strong>Navigation items:</strong> Dashboard · Ontology · Applications · Engagements · Data Sources · Rafts · Streams · Agents<br>
+        <strong>Issues:</strong> 8 nav items is too many · "Ontology" and "Engagements" are confusing terminology · Agents page empty with no suggested actions · No visual representation of data flow
+      </div>
+    </div>
+  </div>
+  
+  <!-- The Vision -->
+  <div class="card full-width" style="border-color:var(--accent);">
+    <div class="card-header" style="background:var(--accent-glow);">
+      <h2>🎯 The Vision: 5-Click Deploy</h2>
+    </div>
+    <div class="card-body">
+      <div style="display:flex; align-items:center; gap:20px; justify-content:center; padding:20px 0; flex-wrap:wrap;">
+        <div style="text-align:center; padding:16px 20px; background:var(--surface-2); border-radius:10px; min-width:120px;">
+          <div style="font-size:24px; margin-bottom:4px;">🔐</div>
+          <div style="font-size:12px; font-weight:600;">Login</div>
+          <div style="font-size:10px; color:var(--text-dim);">Email + OTP</div>
+        </div>
+        <div style="color:var(--accent); font-size:20px;">→</div>
+        <div style="text-align:center; padding:16px 20px; background:var(--surface-2); border-radius:10px; min-width:120px;">
+          <div style="font-size:24px; margin-bottom:4px;">📋</div>
+          <div style="font-size:12px; font-weight:600;">Pick Template</div>
+          <div style="font-size:10px; color:var(--text-dim);">Chatbot / Classifier</div>
+        </div>
+        <div style="color:var(--accent); font-size:20px;">→</div>
+        <div style="text-align:center; padding:16px 20px; background:var(--surface-2); border-radius:10px; min-width:120px;">
+          <div style="font-size:24px; margin-bottom:4px;">⚙️</div>
+          <div style="font-size:12px; font-weight:600;">Configure</div>
+          <div style="font-size:10px; color:var(--text-dim);">Name + Prompt</div>
+        </div>
+        <div style="color:var(--accent); font-size:20px;">→</div>
+        <div style="text-align:center; padding:16px 20px; background:var(--surface-2); border-radius:10px; min-width:120px;">
+          <div style="font-size:24px; margin-bottom:4px;">🚀</div>
+          <div style="font-size:12px; font-weight:600;">Deploy</div>
+          <div style="font-size:10px; color:var(--text-dim);">One click</div>
+        </div>
+        <div style="color:var(--accent); font-size:20px;">→</div>
+        <div style="text-align:center; padding:16px 20px; background:var(--accent-glow); border:1px solid var(--accent); border-radius:10px; min-width:120px;">
+          <div style="font-size:24px; margin-bottom:4px;">💬</div>
+          <div style="font-size:12px; font-weight:600;">Test & Use</div>
+          <div style="font-size:10px; color:var(--text-dim);">Chat + cURL + Logs</div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:12px; font-size:13px; color:var(--text-dim);">
+        <strong style="color:var(--text);">Current:</strong> ∞ minutes (blocked by bugs) → <strong style="color:var(--green);">Target:</strong> 2 minutes from landing to deployed agent
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<div style="padding:20px 24px; text-align:center; color:var(--text-dim); font-size:11px; border-top:1px solid var(--border);">
+  ROB Mission Control · Built by Claudemart · Based on live audit of rob.cere.io & rob.dev.cere.io · 2026-02-02
+  <br>Strategy doc: <a href="./docs/ROB-UX-STRATEGY-v3.md">ROB-UX-STRATEGY-v3.md</a> · Previous: <a href="./docs/ROB-UI-PRD-v2.md">ROB-UI-PRD-v2.md</a>
+</div>
+
+</body>
+</html>

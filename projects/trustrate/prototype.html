@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustRate — Verified Reviews Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Primary Colors */
+            --deep-navy: #1A2B4A;
+            --royal-blue: #2B4A8C;
+            --ocean-blue: #3D5A9E;
+            
+            /* Accent Colors */
+            --warm-amber: #E8A838;
+            --golden-honey: #F4C45A;
+            --sunset-orange: #E87B38;
+            
+            /* Neutrals */
+            --pure-white: #FFFFFF;
+            --cloud-white: #F8FAFC;
+            --silver-mist: #E2E8F0;
+            --slate-gray: #536271; /* was #64748B - now 5.1:1 on white, WCAG AA */
+            --charcoal: #334155;
+            
+            /* Semantic */
+            --verified-green: #10B981;
+            --alert-red: #EF4444;
+            
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(26, 43, 74, 0.05);
+            --shadow-md: 0 4px 6px rgba(26, 43, 74, 0.07);
+            --shadow-lg: 0 10px 15px rgba(26, 43, 74, 0.1);
+            --shadow-xl: 0 20px 25px rgba(26, 43, 74, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background: var(--cloud-white);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: var(--pure-white);
+            padding: 16px 0;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--deep-navy);
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--deep-navy);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--warm-amber);
+            font-size: 20px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--charcoal);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--royal-blue);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--royal-blue);
+            color: var(--pure-white);
+        }
+        
+        .btn-primary:hover {
+            background: var(--deep-navy);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background: var(--warm-amber);
+            color: var(--deep-navy);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--golden-honey);
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            width: 48px;
+            height: 48px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--deep-navy);
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .hamburger:hover {
+            background: var(--silver-mist);
+        }
+        
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--pure-white);
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+        
+        .mobile-nav.open {
+            transform: translateX(0);
+        }
+        
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .close-menu {
+            width: 48px;
+            height: 48px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 28px;
+            color: var(--charcoal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .close-menu:hover {
+            background: var(--silver-mist);
+        }
+        
+        .mobile-nav-links {
+            list-style: none;
+            flex: 1;
+        }
+        
+        .mobile-nav-links li {
+            margin-bottom: 8px;
+        }
+        
+        .mobile-nav-links a {
+            display: block;
+            padding: 16px;
+            color: var(--charcoal);
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+        
+        .mobile-nav-links a:hover {
+            background: var(--cloud-white);
+            color: var(--royal-blue);
+        }
+        
+        .mobile-nav .btn {
+            margin-top: auto;
+            text-align: center;
+        }
+        
+        body.menu-open {
+            overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+            
+            .nav-links, .nav-container > .btn {
+                display: none;
+            }
+            
+            .nav-container {
+                padding: 0 16px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 24px;
+            }
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--royal-blue) 100%);
+            padding: 80px 24px;
+            text-align: center;
+            color: var(--pure-white);
+        }
+        
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+        
+        .hero h1 span {
+            color: var(--warm-amber);
+        }
+        
+        .hero p {
+            font-size: 20px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 48px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--warm-amber);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* Trust Widget */
+        .trust-widget-section {
+            padding: 64px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--deep-navy);
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .widgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        /* Trust Score Card */
+        .trust-score-card {
+            background: var(--pure-white);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        
+        .trust-score-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--slate-gray);
+            margin-bottom: 16px;
+        }
+        
+        .trust-score-number {
+            font-family: var(--font-display);
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--deep-navy);
+            line-height: 1;
+        }
+        
+        .stars {
+            color: var(--warm-amber);
+            font-size: 24px;
+            margin: 12px 0;
+            letter-spacing: 2px;
+        }
+        
+        .review-count {
+            color: var(--slate-gray);
+            font-size: 14px;
+        }
+        
+        .rating-bars {
+            margin-top: 24px;
+            text-align: left;
+        }
+        
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .rating-bar-label {
+            width: 20px;
+            color: var(--charcoal);
+        }
+        
+        .rating-bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--silver-mist);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .rating-bar-fill {
+            height: 100%;
+            background: var(--warm-amber);
+            border-radius: 4px;
+        }
+        
+        .rating-bar-count {
+            width: 40px;
+            color: var(--slate-gray);
+            text-align: right;
+        }
+        
+        /* Review Card */
+        .review-card {
+            background: var(--pure-white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .review-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .reviewer {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .reviewer-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--royal-blue), var(--ocean-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pure-white);
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .reviewer-info h4 {
+            font-weight: 600;
+            color: var(--deep-navy);
+            margin-bottom: 4px;
+        }
+        
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #ECFDF5;
+            color: var(--verified-green);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .verified-badge::before {
+            content: "✓";
+            font-weight: 700;
+        }
+        
+        .review-rating {
+            text-align: right;
+        }
+        
+        .review-rating .stars {
+            font-size: 16px;
+            margin: 0;
+        }
+        
+        .review-date {
+            font-size: 12px;
+            color: var(--slate-gray);
+            margin-top: 4px;
+        }
+        
+        .review-content {
+            color: var(--charcoal);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        
+        .review-actions {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .review-action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--slate-gray);
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .review-action:hover {
+            color: var(--royal-blue);
+        }
+        
+        /* Badge Showcase */
+        .badge-section {
+            background: var(--deep-navy);
+            padding: 64px 24px;
+        }
+        
+        .badge-section .section-title {
+            color: var(--pure-white);
+        }
+        
+        .badges-grid {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .badge {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .badge-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--warm-amber);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .badge-info {
+            text-align: left;
+        }
+        
+        .badge-score {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--deep-navy);
+        }
+        
+        .badge-label {
+            font-size: 12px;
+            color: var(--slate-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--charcoal);
+            color: var(--silver-mist);
+            padding: 48px 24px;
+            text-align: center;
+        }
+        
+        footer .logo {
+            justify-content: center;
+            color: var(--pure-white);
+            margin-bottom: 24px;
+        }
+        
+        footer .logo-icon {
+            background: var(--warm-amber);
+            color: var(--deep-navy);
+        }
+        
+        footer p {
+            opacity: 0.7;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">★✓</div>
+                TrustRate
+            </a>
+            <ul class="nav-links">
+                <li><a href="#">For Business</a></li>
+                <li><a href="#">Write a Review</a></li>
+                <li><a href="#">Categories</a></li>
+                <li><a href="#">How it Works</a></li>
+            </ul>
+            <button class="btn btn-primary">Get Started</button>
+            <button class="hamburger" onclick="toggleMenu()">☰</button>
+        </div>
+    </nav>
+    
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <a href="#" class="logo">
+                <div class="logo-icon">★✓</div>
+                TrustRate
+            </a>
+            <button class="close-menu" onclick="toggleMenu()">✕</button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="#" onclick="toggleMenu()">For Business</a></li>
+            <li><a href="#" onclick="toggleMenu()">Write a Review</a></li>
+            <li><a href="#" onclick="toggleMenu()">Categories</a></li>
+            <li><a href="#" onclick="toggleMenu()">How it Works</a></li>
+        </ul>
+        <button class="btn btn-primary" onclick="toggleMenu()">Get Started</button>
+    </div>
+    
+    <script>
+        function toggleMenu() {
+            const nav = document.getElementById('mobileNav');
+            const body = document.body;
+            nav.classList.toggle('open');
+            body.classList.toggle('menu-open');
+        }
+    </script>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Reviews You Can <span>Trust</span></h1>
+        <p>Every review on TrustRate is verified. Real customers, real experiences, real transparency.</p>
+        <div>
+            <button class="btn btn-secondary" style="margin-right: 12px;">Find a Business</button>
+            <button class="btn btn-primary">Write a Review</button>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-number">2.4M+</div>
+                <div class="stat-label">Verified Reviews</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">150K+</div>
+                <div class="stat-label">Businesses</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">99.2%</div>
+                <div class="stat-label">Authenticity Rate</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Widgets Section -->
+    <section class="trust-widget-section">
+        <h2 class="section-title">Trust Score Components</h2>
+        <div class="widgets-grid">
+            <!-- Trust Score Card -->
+            <div class="trust-score-card">
+                <div class="trust-score-title">TrustRate Score</div>
+                <div class="trust-score-number">4.8</div>
+                <div class="stars">★★★★★</div>
+                <div class="review-count">Based on <strong>1,247</strong> verified reviews</div>
+                <div class="rating-bars">
+                    <div class="rating-bar">
+                        <span class="rating-bar-label">5★</span>
+                        <div class="rating-bar-track">
+                            <div class="rating-bar-fill" style="width: 72%"></div>
+                        </div>
+                        <span class="rating-bar-count">892</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="rating-bar-label">4★</span>
+                        <div class="rating-bar-track">
+                            <div class="rating-bar-fill" style="width: 19%"></div>
+                        </div>
+                        <span class="rating-bar-count">231</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="rating-bar-label">3★</span>
+                        <div class="rating-bar-track">
+                            <div class="rating-bar-fill" style="width: 6%"></div>
+                        </div>
+                        <span class="rating-bar-count">74</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="rating-bar-label">2★</span>
+                        <div class="rating-bar-track">
+                            <div class="rating-bar-fill" style="width: 2%"></div>
+                        </div>
+                        <span class="rating-bar-count">31</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span class="rating-bar-label">1★</span>
+                        <div class="rating-bar-track">
+                            <div class="rating-bar-fill" style="width: 1%"></div>
+                        </div>
+                        <span class="rating-bar-count">19</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Card 1 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer">
+                        <div class="reviewer-avatar">JD</div>
+                        <div class="reviewer-info">
+                            <h4>John Dekker</h4>
+                            <span class="verified-badge">Verified Purchase</span>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">★★★★★</div>
+                        <div class="review-date">2 days ago</div>
+                    </div>
+                </div>
+                <p class="review-content">
+                    "Absolutely fantastic service! The team went above and beyond to help me. 
+                    Quick delivery, excellent communication, and the product quality exceeded my expectations. 
+                    Highly recommend to anyone looking for reliability."
+                </p>
+                <div class="review-actions">
+                    <span class="review-action">👍 Helpful (23)</span>
+                    <span class="review-action">💬 Reply</span>
+                    <span class="review-action">🔗 Share</span>
+                </div>
+            </div>
+
+            <!-- Review Card 2 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer">
+                        <div class="reviewer-avatar" style="background: linear-gradient(135deg, var(--warm-amber), var(--sunset-orange));">SM</div>
+                        <div class="reviewer-info">
+                            <h4>Sarah Martinez</h4>
+                            <span class="verified-badge">Verified Purchase</span>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">★★★★☆</div>
+                        <div class="review-date">1 week ago</div>
+                    </div>
+                </div>
+                <p class="review-content">
+                    "Great experience overall. The ordering process was smooth and intuitive. 
+                    Delivery was on time. Only minor feedback: would love more color options. 
+                    Will definitely order again!"
+                </p>
+                <div class="review-actions">
+                    <span class="review-action">👍 Helpful (15)</span>
+                    <span class="review-action">💬 Reply</span>
+                    <span class="review-action">🔗 Share</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Badge Showcase -->
+    <section class="badge-section">
+        <h2 class="section-title">Embeddable Trust Badges</h2>
+        <div class="badges-grid">
+            <div class="badge">
+                <div class="badge-icon">★</div>
+                <div class="badge-info">
+                    <div class="badge-score">4.8/5</div>
+                    <div class="badge-label">TrustRate Verified</div>
+                </div>
+            </div>
+            <div class="badge">
+                <div class="badge-icon">✓</div>
+                <div class="badge-info">
+                    <div class="badge-score">1,247</div>
+                    <div class="badge-label">Verified Reviews</div>
+                </div>
+            </div>
+            <div class="badge">
+                <div class="badge-icon">🏆</div>
+                <div class="badge-info">
+                    <div class="badge-score">Top Rated</div>
+                    <div class="badge-label">2024 Excellence</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <a href="#" class="logo">
+            <div class="logo-icon">★✓</div>
+            TrustRate
+        </a>
+        <p>Where Trust Meets Transparency™</p>
+        <p style="margin-top: 24px;">© 2025 TrustRate. All reviews are verified.</p>
+    </footer>
+</body>
+</html>

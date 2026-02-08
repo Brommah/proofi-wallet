@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-01-30T09:02:00+01:00",
+  "roles": {
+    "AI Innovator": {"n": 10, "mae": 2.95},
+    "Blockchain Engineer": {"n": 6, "mae": 1.08},
+    "Founder's Associate (Business Ops)": {"n": 10, "mae": 4.70},
+    "Principal Fullstack Engineer": {"n": 2, "mae": 1.00}
+  },
+  "overall": {"n": 28, "mae": 3.04}
+}

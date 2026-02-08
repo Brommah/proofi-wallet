@@ -1,0 +1,248 @@
+{
+  "sessionId": "local_1770553791594_zmm51h",
+  "startedAt": "2026-02-08T12:29:51.594Z",
+  "completedAt": "2026-02-08T12:30:08.093Z",
+  "config": {
+    "bucketId": "1229",
+    "outputPath": "/Users/martijnbroersma/clawd/audit-logs/health-analyzer",
+    "useLocalAI": true,
+    "verbose": false
+  },
+  "model": {
+    "name": "llama3.2:3b",
+    "digest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+    "ollamaVersion": "0.15.5",
+    "parameters": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "llama",
+      "families": [
+        "llama"
+      ],
+      "parameter_size": "3.2B",
+      "quantization_level": "Q4_K_M"
+    }
+  },
+  "inputData": {
+    "userId": "demo-user-001",
+    "dataType": "health-metrics",
+    "collectedAt": "2026-02-08T12:29:05.973Z",
+    "steps": [
+      {
+        "date": "2026-02-01",
+        "count": 8432,
+        "distance": 6200
+      },
+      {
+        "date": "2026-02-02",
+        "count": 5621,
+        "distance": 4100
+      },
+      {
+        "date": "2026-02-03",
+        "count": 12045,
+        "distance": 8900
+      },
+      {
+        "date": "2026-02-04",
+        "count": 7823,
+        "distance": 5700
+      },
+      {
+        "date": "2026-02-05",
+        "count": 9156,
+        "distance": 6800
+      },
+      {
+        "date": "2026-02-06",
+        "count": 4532,
+        "distance": 3300
+      },
+      {
+        "date": "2026-02-07",
+        "count": 11234,
+        "distance": 8200
+      }
+    ],
+    "sleep": [
+      {
+        "date": "2026-02-01",
+        "duration": 7.2,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-02",
+        "duration": 5.8,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-03",
+        "duration": 8.1,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-02-04",
+        "duration": 6.5,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-05",
+        "duration": 7.8,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-06",
+        "duration": 5.2,
+        "quality": "poor"
+      },
+      {
+        "date": "2026-02-07",
+        "duration": 7.5,
+        "quality": "good"
+      }
+    ],
+    "mood": [
+      {
+        "date": "2026-02-01",
+        "score": 7,
+        "notes": "Good day at work"
+      },
+      {
+        "date": "2026-02-02",
+        "score": 5,
+        "notes": "Tired"
+      },
+      {
+        "date": "2026-02-03",
+        "score": 8,
+        "notes": "Great workout"
+      },
+      {
+        "date": "2026-02-04",
+        "score": 6
+      },
+      {
+        "date": "2026-02-05",
+        "score": 7
+      },
+      {
+        "date": "2026-02-06",
+        "score": 4,
+        "notes": "Stressed"
+      },
+      {
+        "date": "2026-02-07",
+        "score": 8,
+        "notes": "Weekend!"
+      }
+    ]
+  },
+  "dataHash": "00ab97d311e35d2c0849bea754b5896923166395d25dacfd29168e5c76a1bcc4",
+  "resultHash": "0344935b921371b21380946f09271fade8b16283e932638c578f3bd1606ac0d0",
+  "outputCid": "baebb4ifu3xacabhde76fkk44fznmsermxhsgvzynfvhrd5ipyiip37zn6m",
+  "entries": [
+    {
+      "id": "audit_1770553791595_jdccqorg_0",
+      "timestamp": "2026-02-08T12:29:51.745Z",
+      "action": "data_fetched",
+      "details": {
+        "bucketId": "1229",
+        "source": "ddc",
+        "note": "Fetching encrypted data from DDC"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553791595_jdccqorg_1",
+      "timestamp": "2026-02-08T12:29:51.854Z",
+      "action": "data_decrypted",
+      "details": {
+        "note": "Decrypting data with capability token",
+        "tokenProvided": true,
+        "keyProvided": true
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553791595_jdccqorg_2",
+      "timestamp": "2026-02-08T12:29:51.868Z",
+      "action": "inference_started",
+      "details": {
+        "model": "llama3.2:3b",
+        "modelDigest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+        "inputHash": "00ab97d311e35d2c0849bea754b5896923166395d25dacfd29168e5c76a1bcc4",
+        "note": "Starting health analysis"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553791595_jdccqorg_3",
+      "timestamp": "2026-02-08T12:30:05.967Z",
+      "action": "inference_completed",
+      "details": {
+        "model": "llama3.2:3b",
+        "outputHash": "0344935b921371b21380946f09271fade8b16283e932638c578f3bd1606ac0d0",
+        "trendsCount": 3,
+        "recommendationsCount": 1,
+        "note": "Analysis complete"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553791595_jdccqorg_4",
+      "timestamp": "2026-02-08T12:30:05.971Z",
+      "action": "output_encrypted",
+      "details": {
+        "outputHash": "0344935b921371b21380946f09271fade8b16283e932638c578f3bd1606ac0d0",
+        "ciphertextLength": 2004,
+        "note": "Output encrypted with user DEK"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553791595_jdccqorg_5",
+      "timestamp": "2026-02-08T12:30:08.092Z",
+      "action": "output_stored",
+      "details": {
+        "cid": "baebb4ifu3xacabhde76fkk44fznmsermxhsgvzynfvhrd5ipyiip37zn6m",
+        "bucketId": "1229",
+        "size": 2045,
+        "encrypted": true,
+        "note": "Encrypted output stored to DDC"
+      },
+      "hashes": {}
+    }
+  ],
+  "insights": {
+    "generatedAt": "2026-02-08T12:30:05.967Z",
+    "summary": "The user's health metrics show a general trend of improving physical activity, with some fluctuation in sleep quality and mood scores. Overall, the data suggests a stable but slightly declining mood over the past week.",
+    "trends": [
+      {
+        "category": "steps",
+        "direction": "improving",
+        "description": "The user's daily step count has been increasing steadily over the past few days."
+      },
+      {
+        "category": "sleep",
+        "direction": "stable",
+        "description": "The user's sleep quality has remained relatively consistent, with some minor variations in duration and quality."
+      },
+      {
+        "category": "mood",
+        "direction": "declining",
+        "description": "The user's mood scores have been decreasing over the past week, indicating a potential trend of stress or burnout."
+      }
+    ],
+    "recommendations": [
+      {
+        "priority": "high",
+        "category": "exercise",
+        "title": "Increase Daily Physical Activity",
+        "description": "Aim for at least 30 minutes of moderate-intensity exercise per day to help improve overall health and mood.",
+        "actionable": true
+      }
+    ],
+    "alerts": []
+  },
+  "signature": "06776fbfda6dfeac088c432b232bb24a2d0d007c48cf9762e3e4603d97107c0a"
+}

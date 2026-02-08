@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TokenGate — Visual Identity Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --obsidian: #0A0A0B;
+            --gold: #D4AF37;
+            --gold-light: #F5E6A3;
+            --platinum: #E5E4E2;
+            --amethyst: #2D1B4E;
+            --velvet: #4A1C6B;
+            --midnight: #0D1B2A;
+            --success: #2ECC71;
+            --error: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--obsidian);
+            color: var(--platinum);
+            min-height: 100vh;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0A0A0B 0%, #2D1B4E 50%, #0A0A0B 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            background: linear-gradient(90deg, #D4AF37 0%, #F5E6A3 25%, #D4AF37 50%, #F5E6A3 75%, #D4AF37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .tagline {
+            font-size: 18px;
+            color: var(--platinum);
+            opacity: 1; /* was 0.8 - now fully visible for WCAG AA */
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 48px;
+        }
+
+        /* Gate Component */
+        .gate-container {
+            position: relative;
+            width: 400px;
+            padding: 48px;
+            background: rgba(13, 27, 42, 0.8);
+            border-radius: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .gate-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .gate-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .gate-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--gold);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 24px 0;
+        }
+
+        .wallet-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .wallet-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: rgba(45, 27, 78, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            color: var(--platinum);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .wallet-btn:hover {
+            background: rgba(74, 28, 107, 0.6);
+            border-color: var(--gold);
+            transform: translateX(4px);
+        }
+
+        .wallet-btn .emoji {
+            font-size: 24px;
+        }
+
+        .connect-main {
+            width: 100%;
+            margin-top: 24px;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #D4AF37, #B8860B);
+            border: none;
+            border-radius: 12px;
+            color: var(--obsidian);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .connect-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .status-text {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--platinum);
+            opacity: 0.85; /* was 0.6 - now WCAG AA compliant */
+        }
+
+        /* Color Palette Section */
+        .section {
+            padding: 80px 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 48px;
+            color: var(--gold);
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .color-card {
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--midnight);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .color-swatch {
+            height: 120px;
+        }
+
+        .color-info {
+            padding: 16px;
+        }
+
+        .color-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .color-hex {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--gold);
+        }
+
+        /* Access Cards */
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .tier-card {
+            padding: 32px;
+            background: var(--midnight);
+            border-radius: 16px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+            border-color: var(--gold);
+        }
+
+        .tier-card.gold {
+            background: linear-gradient(135deg, var(--midnight), var(--amethyst));
+            border-color: var(--gold);
+        }
+
+        .tier-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .tier-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .tier-card.gold .tier-name {
+            color: var(--gold);
+        }
+
+        .tier-tokens {
+            font-size: 14px;
+            color: var(--platinum);
+            opacity: 0.7;
+            margin-bottom: 16px;
+        }
+
+        .tier-features {
+            font-size: 14px;
+            color: var(--platinum);
+        }
+
+        /* Verified Badge */
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #D4AF37, #F5E6A3);
+            border-radius: 24px;
+            color: var(--obsidian);
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Velvet Rope Animation */
+        .rope-container {
+            display: flex;
+            justify-content: center;
+            gap: 200px;
+            margin: 48px 0;
+        }
+
+        .stanchion {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stanchion-top {
+            width: 20px;
+            height: 20px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .stanchion-pole {
+            width: 8px;
+            height: 80px;
+            background: linear-gradient(180deg, var(--gold), #B8860B);
+            border-radius: 4px;
+        }
+
+        .stanchion-base {
+            width: 40px;
+            height: 10px;
+            background: var(--gold);
+            border-radius: 5px;
+        }
+
+        .velvet-rope {
+            position: absolute;
+            width: 200px;
+            height: 8px;
+            background: linear-gradient(90deg, #8B0000, #DC143C, #8B0000);
+            border-radius: 4px;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: ropeWave 3s ease-in-out infinite;
+            box-shadow: 0 4px 20px rgba(220, 20, 60, 0.3);
+        }
+
+        @keyframes ropeWave {
+            0%, 100% { transform: translateX(-50%) rotate(-2deg); }
+            50% { transform: translateX(-50%) rotate(2deg); }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 48px;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: var(--platinum);
+            opacity: 0.85; /* was 0.5 - now WCAG AA compliant */
+        }
+        
+        /* ===== RESPONSIVE FIXES ===== */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 24px;
+                min-height: auto;
+            }
+            
+            .logo {
+                font-size: 42px;
+            }
+            
+            .tagline {
+                font-size: 14px;
+                letter-spacing: 0.08em;
+            }
+            
+            .gate-container {
+                width: 100%;
+                max-width: 400px;
+                padding: 36px 24px;
+            }
+            
+            .section {
+                padding: 48px 24px;
+            }
+            
+            .section-title {
+                font-size: 32px;
+                margin-bottom: 32px;
+            }
+            
+            .color-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            .tier-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .tier-card {
+                padding: 24px;
+            }
+            
+            .rope-container {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero {
+                padding: 40px 16px;
+            }
+            
+            .logo {
+                font-size: 32px;
+            }
+            
+            .tagline {
+                font-size: 12px;
+                margin-bottom: 32px;
+            }
+            
+            .gate-container {
+                padding: 28px 20px;
+                border-radius: 16px;
+            }
+            
+            .gate-icon {
+                font-size: 36px;
+            }
+            
+            .gate-title {
+                font-size: 20px;
+            }
+            
+            .wallet-btn {
+                padding: 14px 18px;
+                font-size: 14px;
+            }
+            
+            .connect-main {
+                padding: 16px 24px;
+                font-size: 14px;
+            }
+            
+            .section {
+                padding: 32px 16px;
+            }
+            
+            .section-title {
+                font-size: 24px;
+            }
+            
+            .color-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .color-swatch {
+                height: 80px;
+            }
+        }
+        
+        @media (max-width: 375px) {
+            .logo {
+                font-size: 28px;
+            }
+            
+            .gate-container {
+                padding: 24px 16px;
+            }
+            
+            .wallet-btn {
+                padding: 12px 14px;
+                font-size: 13px;
+                gap: 8px;
+            }
+            
+            .wallet-btn .emoji {
+                font-size: 20px;
+            }
+            
+            .tier-name {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="logo">TokenGate</h1>
+        <p class="tagline">Your Wallet is Your Key</p>
+        
+        <div class="gate-container">
+            <div class="gate-header">
+                <div class="gate-icon">🔐</div>
+                <h2 class="gate-title">Verify Ownership</h2>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="wallet-buttons">
+                <button class="wallet-btn">
+                    <span class="emoji">🦊</span>
+                    <span>MetaMask</span>
+                </button>
+                <button class="wallet-btn">
+                    <span class="emoji">🌈</span>
+                    <span>Rainbow</span>
+                </button>
+                <button class="wallet-btn">
+                    <span class="emoji">👻</span>
+                    <span>Phantom</span>
+                </button>
+            </div>
+            
+            <button class="connect-main">Connect Wallet</button>
+            
+            <p class="status-text">Holding: 0 / 1 token required</p>
+        </div>
+    </section>
+
+    <!-- Color Palette -->
+    <section class="section">
+        <h2 class="section-title">Color Palette</h2>
+        <div class="color-grid">
+            <div class="color-card">
+                <div class="color-swatch" style="background: #0A0A0B;"></div>
+                <div class="color-info">
+                    <div class="color-name">Obsidian Black</div>
+                    <div class="color-hex">#0A0A0B</div>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-swatch" style="background: #D4AF37;"></div>
+                <div class="color-info">
+                    <div class="color-name">Champagne Gold</div>
+                    <div class="color-hex">#D4AF37</div>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-swatch" style="background: #E5E4E2;"></div>
+                <div class="color-info">
+                    <div class="color-name">Platinum Silver</div>
+                    <div class="color-hex">#E5E4E2</div>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-swatch" style="background: #2D1B4E;"></div>
+                <div class="color-info">
+                    <div class="color-name">Deep Amethyst</div>
+                    <div class="color-hex">#2D1B4E</div>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-swatch" style="background: #4A1C6B;"></div>
+                <div class="color-info">
+                    <div class="color-name">Velvet Purple</div>
+                    <div class="color-hex">#4A1C6B</div>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-swatch" style="background: #0D1B2A;"></div>
+                <div class="color-info">
+                    <div class="color-name">Midnight Blue</div>
+                    <div class="color-hex">#0D1B2A</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Access Tiers -->
+    <section class="section">
+        <h2 class="section-title">Access Tiers</h2>
+        
+        <div style="text-align: center; margin-bottom: 24px;">
+            <span class="verified-badge">✓ Verified Holder</span>
+        </div>
+        
+        <div class="tier-grid">
+            <div class="tier-card">
+                <div class="tier-icon">🥉</div>
+                <h3 class="tier-name">Bronze</h3>
+                <p class="tier-tokens">1 Token Required</p>
+                <p class="tier-features">Basic Content Access</p>
+            </div>
+            <div class="tier-card">
+                <div class="tier-icon">🥈</div>
+                <h3 class="tier-name">Silver</h3>
+                <p class="tier-tokens">5 Tokens Required</p>
+                <p class="tier-features">Premium Content</p>
+            </div>
+            <div class="tier-card gold">
+                <div class="tier-icon">🥇</div>
+                <h3 class="tier-name">Gold</h3>
+                <p class="tier-tokens">10 Tokens Required</p>
+                <p class="tier-features">VIP All Access</p>
+            </div>
+        </div>
+        
+        <!-- Velvet Rope Visual -->
+        <div class="rope-container" style="position: relative; margin-top: 80px;">
+            <div class="stanchion">
+                <div class="stanchion-top"></div>
+                <div class="stanchion-pole"></div>
+                <div class="stanchion-base"></div>
+            </div>
+            <div class="velvet-rope"></div>
+            <div class="stanchion">
+                <div class="stanchion-top"></div>
+                <div class="stanchion-pole"></div>
+                <div class="stanchion-base"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">TokenGate Design System v1.0 — The Velvet Rope of Web3</p>
+    </footer>
+</body>
+</html>

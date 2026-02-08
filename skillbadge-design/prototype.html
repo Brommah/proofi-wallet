@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillBadge - Level Up Your Learning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Primary */
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      
+      /* Achievement Tiers */
+      --bronze: linear-gradient(135deg, #cd7f32 0%, #8b4513 100%);
+      --silver: linear-gradient(135deg, #e8e8e8 0%, #a8a8a8 100%);
+      --gold: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+      --platinum: linear-gradient(135deg, #e5e4e2 0%, #a0b2c6 100%);
+      --diamond: linear-gradient(135deg, #b9f2ff 0%, #00bcd4 100%);
+      
+      /* Semantic */
+      --success: #10b981;
+      --progress: #f59e0b;
+      --locked: #4b5563;
+      --xp-blue: #3b82f6;
+      --streak-orange: #f97316;
+      
+      /* Backgrounds */
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      
+      /* Typography */
+      --font-display: 'Nunito', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-dark);
+      color: #f1f5f9;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav a:hover, .nav a.active {
+      color: #f1f5f9;
+    }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .xp-badge {
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--xp-blue);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .streak-badge {
+      background: rgba(249, 115, 22, 0.2);
+      color: var(--streak-orange);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Main Content */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 3rem 0;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 span {
+      background: var(--gradient-hero);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #94a3b8;
+      font-size: 1.25rem;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Level Progress */
+    .level-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .level-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .level-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .level-number {
+      width: 64px;
+      height: 64px;
+      background: var(--gradient-primary);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
+
+    .level-text h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .level-text p {
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .xp-display {
+      text-align: right;
+    }
+
+    .xp-display .current {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .xp-display .total {
+      color: #64748b;
+    }
+
+    .progress-bar {
+      height: 16px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 72%;
+      background: var(--gradient-primary);
+      border-radius: 8px;
+      position: relative;
+      animation: progressShine 2s ease-in-out infinite;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(rgba(255,255,255,0.3), transparent);
+      border-radius: 8px 8px 0 0;
+    }
+
+    @keyframes progressShine {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.1); }
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2.5rem 0 1.5rem;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .view-all {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .view-all:hover {
+      color: #764ba2;
+    }
+
+    /* Badge Grid */
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .badge {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.3s;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid transparent;
+    }
+
+    .badge:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .badge--gold {
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  var(--gold) border-box;
+    }
+
+    .badge--silver {
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  var(--silver) border-box;
+    }
+
+    .badge--bronze {
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  var(--bronze) border-box;
+    }
+
+    .badge--diamond {
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  var(--diamond) border-box;
+    }
+
+    .badge--locked {
+      opacity: 0.5;
+    }
+
+    .badge-icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1rem;
+      background: var(--bg-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      position: relative;
+    }
+
+    .badge--gold .badge-icon {
+      background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.2));
+    }
+
+    .badge--silver .badge-icon {
+      background: linear-gradient(135deg, rgba(192,192,192,0.2), rgba(128,128,128,0.2));
+    }
+
+    .badge--bronze .badge-icon {
+      background: linear-gradient(135deg, rgba(205,127,50,0.2), rgba(139,69,19,0.2));
+    }
+
+    .badge--diamond .badge-icon {
+      background: linear-gradient(135deg, rgba(185,242,255,0.2), rgba(0,188,212,0.2));
+    }
+
+    .badge--earned .badge-icon::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: inherit;
+      filter: blur(16px);
+      opacity: 0.5;
+      z-index: -1;
+    }
+
+    .badge h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .badge p {
+      color: #64748b;
+      font-size: 0.8rem;
+    }
+
+    .badge-stars {
+      margin-top: 0.5rem;
+      color: #ffd700;
+      letter-spacing: 2px;
+    }
+
+    .badge--locked .badge-icon::before {
+      content: '🔒';
+      position: absolute;
+      font-size: 1.25rem;
+    }
+
+    /* Skill Tree */
+    .skill-tree {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-path {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      padding: 1rem 0;
+    }
+
+    .skill-path::before {
+      content: '';
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 50%;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+    }
+
+    .skill-node {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 4px solid var(--locked);
+      background: var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.2s, border-color 0.3s;
+    }
+
+    .skill-node:hover {
+      transform: scale(1.1);
+    }
+
+    .skill-node--completed {
+      border-color: var(--success);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .skill-node--current {
+      border-color: #667eea;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+      50% { box-shadow: 0 0 0 16px rgba(102, 126, 234, 0); }
+    }
+
+    .skill-node--locked {
+      filter: grayscale(1);
+      opacity: 0.5;
+    }
+
+    .skill-label {
+      position: absolute;
+      bottom: -30px;
+      white-space: nowrap;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Achievement Popup (Demo) */
+    .achievement-popup {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      border: 2px solid;
+      border-image: var(--gold) 1;
+      animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .popup-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      animation: bounce 0.6s ease-out 0.3s;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .popup-content h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: #ffd700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    .popup-content p {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .popup-xp {
+      color: var(--xp-blue);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      🏆 SkillBadge
+    </div>
+    <nav class="nav">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Badges</a>
+      <a href="#">Skills</a>
+      <a href="#">Leaderboard</a>
+    </nav>
+    <div class="user-area">
+      <span class="xp-badge">⚡ 2,450 XP</span>
+      <span class="streak-badge">🔥 12 days</span>
+      <div class="avatar">M</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Welcome back, <span>Martijn!</span></h1>
+      <p>You're making great progress. Keep learning to unlock more badges and level up!</p>
+    </section>
+
+    <!-- Level Progress -->
+    <section class="level-card">
+      <div class="level-header">
+        <div class="level-info">
+          <div class="level-number">12</div>
+          <div class="level-text">
+            <h3>Skill Explorer</h3>
+            <p>550 XP to Level 13</p>
+          </div>
+        </div>
+        <div class="xp-display">
+          <span class="current">2,450</span>
+          <span class="total"> / 3,000 XP</span>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value">24</div>
+        <div class="stat-label">Badges Earned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-value">156</div>
+        <div class="stat-label">Lessons Done</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value">12</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-value">89%</div>
+        <div class="stat-label">Accuracy</div>
+      </div>
+    </div>
+
+    <!-- Recent Badges -->
+    <div class="section-header">
+      <h2>🏅 Recent Badges</h2>
+      <a href="#" class="view-all">View all →</a>
+    </div>
+    <div class="badge-grid">
+      <div class="badge badge--gold badge--earned">
+        <div class="badge-icon">💻</div>
+        <h4>Code Warrior</h4>
+        <p>50 challenges</p>
+        <div class="badge-stars">★★★★★</div>
+      </div>
+      <div class="badge badge--diamond badge--earned">
+        <div class="badge-icon">🧠</div>
+        <h4>Quick Learner</h4>
+        <p>Learn 5 skills</p>
+        <div class="badge-stars">★★★★☆</div>
+      </div>
+      <div class="badge badge--silver badge--earned">
+        <div class="badge-icon">📝</div>
+        <h4>Note Taker</h4>
+        <p>100 notes</p>
+        <div class="badge-stars">★★★☆☆</div>
+      </div>
+      <div class="badge badge--bronze badge--earned">
+        <div class="badge-icon">🎯</div>
+        <h4>Sharpshooter</h4>
+        <p>95% accuracy</p>
+        <div class="badge-stars">★★★☆☆</div>
+      </div>
+      <div class="badge badge--locked">
+        <div class="badge-icon">🚀</div>
+        <h4>Speedster</h4>
+        <p>10 quick wins</p>
+        <div class="badge-stars">☆☆☆☆☆</div>
+      </div>
+      <div class="badge badge--locked">
+        <div class="badge-icon">🌟</div>
+        <h4>All-Star</h4>
+        <p>50 badges</p>
+        <div class="badge-stars">☆☆☆☆☆</div>
+      </div>
+    </div>
+
+    <!-- Skill Tree -->
+    <div class="section-header">
+      <h2>🌳 JavaScript Mastery</h2>
+      <a href="#" class="view-all">View path →</a>
+    </div>
+    <section class="skill-tree">
+      <div class="skill-path">
+        <div class="skill-node skill-node--completed">
+          📘
+          <span class="skill-label">Basics</span>
+        </div>
+        <div class="skill-node skill-node--completed">
+          🔧
+          <span class="skill-label">Functions</span>
+        </div>
+        <div class="skill-node skill-node--completed">
+          📦
+          <span class="skill-label">Objects</span>
+        </div>
+        <div class="skill-node skill-node--current">
+          ⚡
+          <span class="skill-label">Async</span>
+        </div>
+        <div class="skill-node skill-node--locked">
+          🔮
+          <span class="skill-label">Advanced</span>
+        </div>
+        <div class="skill-node skill-node--locked">
+          👑
+          <span class="skill-label">Master</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Achievement Popup Demo -->
+  <div class="achievement-popup">
+    <div class="popup-icon">🏆</div>
+    <div class="popup-content">
+      <h4>🎉 Achievement Unlocked!</h4>
+      <p>Code Warrior</p>
+      <div class="popup-xp">+500 XP earned</div>
+    </div>
+  </div>
+</body>
+</html>

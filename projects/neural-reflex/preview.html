@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Reflex - Design Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-electric-blue: #00D4FF;
+            --color-neon-pink: #FF0080;
+            --color-cyber-green: #00FF9F;
+            --color-plasma-purple: #8B00FF;
+            --color-deep-void: #0A0A12;
+            --color-dark-matter: #12121C;
+            --color-chrome: #C0C0C0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--color-deep-void);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Scanline overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Logo */
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            margin: 40px 0 10px;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--color-electric-blue), var(--color-neon-pink), var(--color-cyber-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow-text 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-text {
+            from {
+                filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+            }
+            to {
+                filter: drop-shadow(0 0 30px rgba(255, 0, 128, 0.8));
+            }
+        }
+
+        .tagline {
+            text-align: center;
+            color: var(--color-chrome);
+            font-size: 0.9rem;
+            letter-spacing: 0.3em;
+            margin-bottom: 40px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px 24px;
+            margin: 12px 0;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-electric-blue), #0099cc);
+            color: var(--color-deep-void);
+            box-shadow: 
+                0 0 10px rgba(0, 212, 255, 0.5),
+                0 0 30px rgba(0, 212, 255, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 0 20px rgba(0, 212, 255, 0.8),
+                0 0 50px rgba(0, 212, 255, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-electric-blue);
+            border: 2px solid var(--color-electric-blue);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Game Cards Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: var(--color-dark-matter);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-electric-blue), var(--color-neon-pink));
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-electric-blue);
+            box-shadow: 
+                0 0 20px rgba(0, 212, 255, 0.3),
+                0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-chrome);
+            margin-bottom: 8px;
+            letter-spacing: 0.1em;
+        }
+
+        .card-value {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-value.blue { color: var(--color-electric-blue); }
+        .card-value.green { color: var(--color-cyber-green); }
+        .card-value.pink { color: var(--color-neon-pink); }
+        .card-value.purple { color: var(--color-plasma-purple); }
+
+        /* Timer Display */
+        .timer-display {
+            background: var(--color-dark-matter);
+            border: 2px solid var(--color-electric-blue);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 
+                0 0 30px rgba(0, 212, 255, 0.2),
+                inset 0 0 50px rgba(0, 212, 255, 0.05);
+            animation: pulse-border 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% {
+                box-shadow: 
+                    0 0 10px rgba(0, 212, 255, 0.2),
+                    inset 0 0 30px rgba(0, 212, 255, 0.05);
+            }
+            50% {
+                box-shadow: 
+                    0 0 40px rgba(0, 212, 255, 0.5),
+                    inset 0 0 50px rgba(0, 212, 255, 0.1);
+            }
+        }
+
+        .timer-label {
+            font-size: 0.8rem;
+            color: var(--color-chrome);
+            letter-spacing: 0.2em;
+            margin-bottom: 10px;
+        }
+
+        .timer-value {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--color-electric-blue);
+            text-shadow: 
+                0 0 10px var(--color-electric-blue),
+                0 0 30px rgba(0, 212, 255, 0.5);
+            animation: number-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes number-glow {
+            from {
+                text-shadow: 
+                    0 0 5px var(--color-electric-blue),
+                    0 0 15px rgba(0, 212, 255, 0.3);
+            }
+            to {
+                text-shadow: 
+                    0 0 20px var(--color-electric-blue),
+                    0 0 40px rgba(0, 212, 255, 0.6);
+            }
+        }
+
+        .timer-best {
+            margin-top: 15px;
+            color: var(--color-cyber-green);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 30px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--color-chrome);
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 73%;
+            background: linear-gradient(90deg, var(--color-cyber-green), var(--color-electric-blue));
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 255, 159, 0.5);
+            animation: progress-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes progress-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Color Swatches */
+        .swatches {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 40px 0 20px;
+        }
+
+        .swatch {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px currentColor;
+            transition: transform 0.2s;
+        }
+
+        .swatch:hover {
+            transform: scale(1.2);
+        }
+
+        .swatch.blue { background: var(--color-electric-blue); color: var(--color-electric-blue); }
+        .swatch.pink { background: var(--color-neon-pink); color: var(--color-neon-pink); }
+        .swatch.green { background: var(--color-cyber-green); color: var(--color-cyber-green); }
+        .swatch.purple { background: var(--color-plasma-purple); color: var(--color-plasma-purple); }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6); /* was 0.3 - now WCAG AA compliant */
+            font-size: 0.75rem;
+            margin-top: 40px;
+            padding-bottom: 20px;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--color-electric-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 10s infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 2s; background: var(--color-neon-pink);"></div>
+    <div class="particle" style="left: 50%; animation-delay: 4s; background: var(--color-cyber-green);"></div>
+    <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 8s; background: var(--color-plasma-purple);"></div>
+
+    <div class="container">
+        <h1 class="logo">NEURAL REFLEX</h1>
+        <p class="tagline">— TRAIN YOUR BRAIN —</p>
+
+        <button class="btn btn-primary">⚡ QUICK PLAY</button>
+        <button class="btn btn-secondary">◆ CHALLENGE MODE</button>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <div class="card-title">REACTION</div>
+                <div class="card-value blue">0.23s</div>
+            </div>
+            <div class="card">
+                <div class="card-icon">🧠</div>
+                <div class="card-title">MEMORY</div>
+                <div class="card-value green">Lvl 12</div>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <div class="card-title">ACCURACY</div>
+                <div class="card-value pink">94%</div>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔥</div>
+                <div class="card-title">STREAK</div>
+                <div class="card-value purple">x7</div>
+            </div>
+        </div>
+
+        <div class="timer-display">
+            <div class="timer-label">YOUR TIME</div>
+            <div class="timer-value">0.247s</div>
+            <div class="timer-best">▼ BEST: 0.189s</div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>DAILY GOAL</span>
+                <span>73%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="swatches">
+            <div class="swatch blue" title="#00D4FF"></div>
+            <div class="swatch pink" title="#FF0080"></div>
+            <div class="swatch green" title="#00FF9F"></div>
+            <div class="swatch purple" title="#8B00FF"></div>
+        </div>
+
+        <div class="footer">
+            Neural Reflex Design Preview v1.0<br>
+            Electric Blue • Neon Pink • Cyber Green
+        </div>
+    </div>
+</body>
+</html>

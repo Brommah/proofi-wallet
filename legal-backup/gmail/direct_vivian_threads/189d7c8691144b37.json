@@ -1,0 +1,249 @@
+{
+  "downloaded": null,
+  "thread": {
+    "historyId": "7474828",
+    "id": "189d7c8691144b37",
+    "messages": [
+      {
+        "historyId": "7474828",
+        "id": "189d7c8691144b37",
+        "internalDate": "1691542344000",
+        "labelIds": [
+          "CATEGORY_FORUMS",
+          "INBOX"
+        ],
+        "payload": {
+          "body": {},
+          "headers": [
+            {
+              "name": "Delivered-To",
+              "value": "martijn@cere.network"
+            },
+            {
+              "name": "Received",
+              "value": "by 2002:a05:6a10:b696:b0:4e4:d2f1:ba38 with SMTP id n22csp1513589pxv;        Tue, 8 Aug 2023 17:53:02 -0700 (PDT)"
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a0d:cb05:0:b0:56d:3d83:15cb with SMTP id n5-20020a0dcb05000000b0056d3d8315cbmr1359433ywd.44.1691542382744;        Tue, 08 Aug 2023 17:53:02 -0700 (PDT)"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=3; a=rsa-sha256; t=1691542382; cv=pass;        d=google.com; s=arc-20160816;        b=OT5TItI0PNQpEWn+dZqqkJmcIN1wv2cQM1R2ss+DkEkTOX4MhXjU+pd0A9cGTD/4U8         JP3JcnvQZpSBBkJMHEYcJktdkVf/FdZAwYfVLpqo4LShMB5ZEe2XbPz+kTvEHyHRHbFA         uoOekXUtRTkeLyrnM0hJK4EPgABZz7K1D8aiuwEU2KE09fCENelaY1Hi+32yRfKAiIyO         NXstr3CvAo0wd8YpXhQ/LGigakt0AktEDRDu+qosnUmpEOybLk9FpUpqueOhUtt6SB6z         fzdD7DCDHTGNz/7q21ZHFuvn+usDeilnKMvZNphAbx8K5hEjDRtzdgz48sklbcZWq6oD         8urQ=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=list-unsubscribe:list-archive:list-help:list-post:list-id         :mailing-list:precedence:cc:to:subject:message-id:date:from         :mime-version:sender:dkim-signature;        bh=S4WwXFwM7lkuR8zDgT+gLhWF729A3Va+WdH2+nYibkY=;        fh=4UApbOKZwHONkOLvn8vbwaGDlVy0p1JfyL+eJIM3dUY=;        b=b04fesIMfQIlPPehdH3Qf11zzWLwBOnqP90JM8isRRd1cSh758FC+86rBjbUT4gtvq         W1u5azr6iahBjsJzZ+VuEKM5lPt2DKAYZrNIsOFyclKMsryDIsIO9514N/461W/u1jiC         feGdJPMCoHWBdquZKiWd5Qk9wodntDkOwF103F2dU7i1qnLp19oPk7tJ2AcxqWpgYKMh         YgVGZIAKzUSiVAZGGlUgjUuG1+w1r0gmEG7FfwbWUPVjHlahKnSFFp0YIP39i2XkY55K         PAyPzPkPWe9+DaFNrRhl9q1qQ+LG1VIyPwVyQGDOHXtYPQ0MUh2TxFVQl1XHMvsx1mqn         gjow=="
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=3; mx.google.com;       dkim=pass header.i=@cere.network header.s=google header.b=YaPO5lmd;       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);       spf=pass (google.com: domain of team+bncbcn37zo7yaorb3wgzotamgqedrnn55q@cere.network designates 209.85.220.69 as permitted sender) smtp.mailfrom=team+bncBCN37ZO7YAORB3WGZOTAMGQEDRNN55Q@cere.network;       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE arc=pass) header.from=gmail.com"
+            },
+            {
+              "name": "Return-Path",
+              "value": "\u003cteam+bncBCN37ZO7YAORB3WGZOTAMGQEDRNN55Q@cere.network\u003e"
+            },
+            {
+              "name": "Received",
+              "value": "from mail-sor-f69.google.com (mail-sor-f69.google.com. [209.85.220.69])        by mx.google.com with SMTPS id y73-20020a25324c000000b00cb24346f58dsor2688092yby.15.2023.08.08.17.53.02        for \u003cmartijn@cere.network\u003e        (Google Transport Security);        Tue, 08 Aug 2023 17:53:02 -0700 (PDT)"
+            },
+            {
+              "name": "Received-SPF",
+              "value": "pass (google.com: domain of team+bncbcn37zo7yaorb3wgzotamgqedrnn55q@cere.network designates 209.85.220.69 as permitted sender) client-ip=209.85.220.69;"
+            },
+            {
+              "name": "Authentication-Results",
+              "value": "mx.google.com;       dkim=pass header.i=@cere.network header.s=google header.b=YaPO5lmd;       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);       spf=pass (google.com: domain of team+bncbcn37zo7yaorb3wgzotamgqedrnn55q@cere.network designates 209.85.220.69 as permitted sender) smtp.mailfrom=team+bncBCN37ZO7YAORB3WGZOTAMGQEDRNN55Q@cere.network;       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE arc=pass) header.from=gmail.com"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=2; a=rsa-sha256; t=1691542382; cv=pass;        d=google.com; s=arc-20160816;        b=mnM7rqAVk2PTjv+sUfM5PpkoYg65vwt+5fjjzLDIOBQGAXzzzz6c7zj6aj2utja+R/         qm0rut9wQiZ6Bhk+8DlR353e3Uevaqxfq+eFQOOidtXD5KLIGr0G/LK4fL1/0hFMkrwI         s88ZNj9LcPGsG49Sycstq4yo4LzSup5hW+vvWUrQMqUAGv/0JK9RZawmJXjj7EiCPsyZ         oUi+rYdrF8k6YgSTxqtvAO7EDZcPwoUGRzWYt5U4XQFji29bk7b3wruN85wcarpqV4cF         byaBFyEpit/NnNk6K474c0IEL9dDNeKkj96lrtY+OIpTBYLQ4PICLzYDgshcZlofkcSk         U79A=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=list-unsubscribe:list-archive:list-help:list-post:list-id         :mailing-list:precedence:cc:to:subject:message-id:date:from         :mime-version:sender:dkim-signature;        bh=S4WwXFwM7lkuR8zDgT+gLhWF729A3Va+WdH2+nYibkY=;        fh=4UApbOKZwHONkOLvn8vbwaGDlVy0p1JfyL+eJIM3dUY=;        b=fAxGd7vD8Q+Vw7VIhBO4EBNlOihT9tBxwg6HRg5moeLvmC42Zi8A1ifmw3yvLSiJ/O         AtMc3gda6X9uBWG7Hbap0JMrK4D08mb5quZb6bczqmA8KFF5UDcANcHmoc8V2JhBcw4v         9ybL+qPHt5UpMnHzysFPpm2JHT2rMOwe1SWdWFzHuojA1xrR8cFjJ3odXMyPfkVVQhJY         0jmEoAvPKbVqcMApJBmjMlVh3mOAamge2ZzNkkajzPTtcmdIyGeYFTPANM4dhf9a9yRD         vRQFm2rdGEVxeC3TuAOqjGkB1xljetVvS4JCE8RxKNXg6szcXBYA1QGJmEbxWf0RhKdI         c0Ng=="
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=2; mx.google.com;       dkim=pass header.i=@gmail.com header.s=20221208 header.b=YOpOY3+H;       spf=pass (google.com: domain of kevinhsu1008@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=kevinhsu1008@gmail.com;       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com"
+            },
+            {
+              "name": "DKIM-Signature",
+              "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=cere.network; s=google; t=1691542382; x=1692147182;        h=list-unsubscribe:list-archive:list-help:list-post:list-id         :mailing-list:precedence:x-original-authentication-results         :x-original-sender:cc:to:subject:message-id:date:from:mime-version         :sender:from:to:cc:subject:date:message-id:reply-to;        bh=S4WwXFwM7lkuR8zDgT+gLhWF729A3Va+WdH2+nYibkY=;        b=YaPO5lmd7nys7rSt6zj9Vo4+qNjKYVmEEEAa+yVis8uOp8J4lRgW1bxBbGwexuXziR         tj7zXpFR4IyP7UZCNOyYnx4Tw86B0L/eI0fBq87HXEYuYnz+qIgEsmYYxEfGLEj1WWh3         6ElQhZscixH8Ff490TH1M+xMWfuwziXGXJMnrzPzrJVXlOmIlKXSeFS8rbkH9B6wwu3Q         rbkXY33USwM84IKOecjyExsn4V+7A+fZ1UptB196B/KP0Nd/IfFkPS8NR2OLlfW39lg6         x3hxZQ4tbJ91vX552GveG54ae1xDJQmze47AqbB7YzMi7P4xX+48pRzQch2sQhLL8N+T         GQpg=="
+            },
+            {
+              "name": "X-Google-DKIM-Signature",
+              "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=1e100.net; s=20221208; t=1691542382; x=1692147182;        h=list-unsubscribe:list-archive:list-help:list-post         :x-spam-checked-in-group:list-id:mailing-list:precedence         :x-original-authentication-results:x-original-sender:cc:to:subject         :message-id:date:from:mime-version:x-beenthere:x-gm-message-state         :sender:from:to:cc:subject:date:message-id:reply-to;        bh=S4WwXFwM7lkuR8zDgT+gLhWF729A3Va+WdH2+nYibkY=;        b=UJD+gRPlzPWS0fRXQ6jTqHEq2UWUk2YSjWVGLosc9Q6SE0YwvbJbsR3RQABEOmp16G         DMekQ0xWpokiPSAod8meLyo89gx9Yesn2wY09pgVTUtx/BXrPT7rt5rwy3De9QwwVXVJ         aKJ22hk4L8Dqwg3ffYJ/3fE4C20lvvCS8hOtmgQ1Y6a0ghBkt5kBWP8EIoTDYk3g2b+N         PDyecVip6IdlrTMLgvC0v29qMJSb6i0n93vWyZeaSSgBdMH3WxBDr4gO4C5MunOOSEDp         L3EfMlTerkj7RgEnpKu5qFAdKbOdNF21RvP1EhbuSJWzz/q9QKN4CB593+gumh5eymas         Kz0Q=="
+            },
+            {
+              "name": "Sender",
+              "value": "team@cere.network"
+            },
+            {
+              "name": "X-Gm-Message-State",
+              "value": "AOJu0YyoWU6qZO+S4Vyd/IS3o6sLl/rMoSPTr1xGZV3j0m8NsiZCp//I 6Bn3iNl09vRxa6gr3YXlZshbiQ=="
+            },
+            {
+              "name": "X-Google-Smtp-Source",
+              "value": "AGHT+IFuoC+pjXqy95AiMKxUc7nawOa5i90cbQ0j6vqSuqZpxsXlteQaz5JuOD/LEOFP6zpDJmifrQ=="
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a25:1042:0:b0:d4c:2a34:e574 with SMTP id 63-20020a251042000000b00d4c2a34e574mr1040234ybq.34.1691542382257;        Tue, 08 Aug 2023 17:53:02 -0700 (PDT)"
+            },
+            {
+              "name": "X-BeenThere",
+              "value": "team@cere.network"
+            },
+            {
+              "name": "Received",
+              "value": "by 2002:a05:6902:1241:b0:cf7:1e16:f4cc with SMTP id t1-20020a056902124100b00cf71e16f4ccls2344514ybu.0.-pod-prod-08-us; Tue, 08 Aug 2023 17:53:01 -0700 (PDT)"
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a0d:ea4d:0:b0:570:899f:3a52 with SMTP id t74-20020a0dea4d000000b00570899f3a52mr1373823ywe.35.1691542381540;        Tue, 08 Aug 2023 17:53:01 -0700 (PDT)"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=1; a=rsa-sha256; t=1691542381; cv=none;        d=google.com; s=arc-20160816;        b=nXiZ/xyBT1CiEm/665QjmfUV6RHDQN8NTpRt1B7upcufupzy8Zqb08YMRX5mcu71Dw         4gicbVOBQnXlBZQIdky3Zq9YVSAQ3tlL0+TEY3ndrYHEhe0s9K9x5X7d5+OZpBx2HPhp         AWs5pSZGn4jqNqJDrwkM9gqPs6O4A9QZXdUVErPdnQbDIbRC+OBbGZieAacTTp0vT8hM         zWdxlywf+xsnSr1hhebNzrIiGeGUF6Y2t9gdCkxS4Q0DQ9BF4pCvHVeWQ65y6vXIZka0         /na2V7qjIIb7yLuIyNa9U3w4whGrKWQt7UTw7PykN6/5h/Emzbgj4LUJXjBCpCxpsX9y         jpQA=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;        bh=yFXwqkwKJGAEje16tGpgFCAGWphIOgon3tV4PhWj8k0=;        fh=4UApbOKZwHONkOLvn8vbwaGDlVy0p1JfyL+eJIM3dUY=;        b=rGyYp0QBJ1Zr0F/IfvgCIw/hD17EA7bA/0cRQlxPes5Fnk/wWWPtuNpAZZU7s3n4TC         0pX/LIJPpRP9hPEGuRByastM5ZleHhddHFfbh3eQ9XnT7HF4HO3GPhNjRPNDmqQSkku9         4biQw2zxsMZbc4hRn4Ydcm/RKXuJm9EeYQW6s1Uxa7bngvAqkiZx8meCrIH7thwI7zIR         S2DZZYrd73api1O8xRLJPosQilL+fHSz/JDQn2lm2AbpPt2OGwIZ8eB+5PZg5d5qONWX         ctmTdWGK+YTWi6RjRUO9piOSixWfjFk/dpMs6yD3Xg/6PyY2AzXucV9fp+hWwNQwqx+Q         knwA=="
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=1; mx.google.com;       dkim=pass header.i=@gmail.com header.s=20221208 header.b=YOpOY3+H;       spf=pass (google.com: domain of kevinhsu1008@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=kevinhsu1008@gmail.com;       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com"
+            },
+            {
+              "name": "Received",
+              "value": "from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])        by mx.google.com with SMTPS id t14-20020a81830e000000b0058441fc3863sor3303350ywf.14.2023.08.08.17.53.01        for \u003cteam@cere.network\u003e        (Google Transport Security);        Tue, 08 Aug 2023 17:53:01 -0700 (PDT)"
+            },
+            {
+              "name": "Received-SPF",
+              "value": "pass (google.com: domain of kevinhsu1008@gmail.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;"
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a0d:dd42:0:b0:589:642d:6d84 with SMTP id g63-20020a0ddd42000000b00589642d6d84mr1429483ywe.23.1691542381052; Tue, 08 Aug 2023 17:53:01 -0700 (PDT)"
+            },
+            {
+              "name": "MIME-Version",
+              "value": "1.0"
+            },
+            {
+              "name": "From",
+              "value": "Yingkai Xu \u003ckevinhsu1008@gmail.com\u003e"
+            },
+            {
+              "name": "Date",
+              "value": "Tue, 8 Aug 2023 18:52:24 -0600"
+            },
+            {
+              "name": "Message-ID",
+              "value": "\u003cCAHfCQzm88LN7KqPrCZpWBar9Ezr7s3KX5arA+=ik0m+WTCAz1Q@mail.gmail.com\u003e"
+            },
+            {
+              "name": "Subject",
+              "value": "$CERE Token Distribution Request"
+            },
+            {
+              "name": "To",
+              "value": "team@cere.network"
+            },
+            {
+              "name": "Cc",
+              "value": "vivian@lucenblockchain.com"
+            },
+            {
+              "name": "Content-Type",
+              "value": "multipart/alternative; boundary=\"000000000000bec7a1060272e66c\""
+            },
+            {
+              "name": "X-Original-Sender",
+              "value": "kevinhsu1008@gmail.com"
+            },
+            {
+              "name": "X-Original-Authentication-Results",
+              "value": "mx.google.com;       dkim=pass header.i=@gmail.com header.s=20221208 header.b=YOpOY3+H;       spf=pass (google.com: domain of kevinhsu1008@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=kevinhsu1008@gmail.com;       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com"
+            },
+            {
+              "name": "Precedence",
+              "value": "list"
+            },
+            {
+              "name": "Mailing-list",
+              "value": "list team@cere.network; contact team+owners@cere.network"
+            },
+            {
+              "name": "List-ID",
+              "value": "\u003cteam.cere.network\u003e"
+            },
+            {
+              "name": "X-Spam-Checked-In-Group",
+              "value": "team@cere.network"
+            },
+            {
+              "name": "X-Google-Group-Id",
+              "value": "1002441098853"
+            },
+            {
+              "name": "List-Post",
+              "value": "\u003chttps://groups.google.com/a/cere.network/group/team/post\u003e, \u003cmailto:team@cere.network\u003e"
+            },
+            {
+              "name": "List-Help",
+              "value": "\u003chttps://support.google.com/a/cere.network/bin/topic.py?topic=25838\u003e, \u003cmailto:team+help@cere.network\u003e"
+            },
+            {
+              "name": "List-Archive",
+              "value": "\u003chttps://groups.google.com/a/cere.network/group/team/\u003e"
+            },
+            {
+              "name": "List-Unsubscribe",
+              "value": "\u003cmailto:googlegroups-manage+1002441098853+unsubscribe@googlegroups.com\u003e, \u003chttps://groups.google.com/a/cere.network/group/team/subscribe\u003e"
+            }
+          ],
+          "mimeType": "multipart/alternative",
+          "parts": [
+            {
+              "body": {
+                "data": "SGkgQ2VyZSBUZWFtLA0KDQpJIGhvcGUgdGhpcyBlbWFpbCBmaW5kcyB5b3Ugd2VsbC4gSSBhbSB3cml0aW5nIHRvIGVtcGhhc2l6ZSB0aGUgcHJlc3NpbmcNCm5lZWQgZm9yIHRoZSBkaXN0cmlidXRpb24gb2YgdG9rZW5zIHJlbGF0ZWQgdG8gdGhlIENlcmUgTmV0d29yay4gQXMgYQ0KcGFydGljaXBhbnQgaW4gdGhlIFN0cmF0ZWdpYyByb3VuZCBpbnZlc3RtZW50ICgxIENFUkUgVG9rZW4gPSAkMC4wMDMgVVNEKSwNCkkgaGF2ZSBjb250cmlidXRlZCBhIHRvdGFsIG9mICQ0MCwwMDAgb3V0IG9mIHRoZSAkMTAwLDAwMCBhbGxvY2F0aW9uLCB3aXRoDQpWaXZpYW4gTGl1IGFjdGluZyBhcyB0aGUgaW52ZXN0bWVudCBsZWFkIGFuZCBzaWduYXRvcnkuDQoNCk91ciBpbnZlc3RtZW50IGlzIGNvbnRpbmdlbnQgdXBvbiB0aGUgdGltZWx5IGRpc3RyaWJ1dGlvbiBvZiB0b2tlbnMgYXMgcGVyDQp0aGUgU0FGVCBhZ3JlZW1lbnQuIEl0IGlzIGltcGVyYXRpdmUgdGhhdCB5b3UgZXhwZWRpdGUgdGhpcyBwcm9jZXNzIHRvDQphbGlnbiB3aXRoIHRoZSBjb21taXRtZW50cyBtYWRlIGR1cmluZyB0aGUgU3RyYXRlZ2ljIHJvdW5kLiBGYWlsdXJlIHRvDQpkaXN0cmlidXRlIHRoZSBhcHByb3ByaWF0ZSBxdWFudGl0eSBvZiB0b2tlbnMgaW4gYWNjb3JkYW5jZSB3aXRoIHRoZQ0KYWdyZWVkLXVwb24gYW1vdW50IG1heSBsZWF2ZSB1cyB3aXRoIG5vIGNob2ljZSBidXQgdG8gc2VlayBsZWdhbCBjb3Vuc2VsIHRvDQphZGRyZXNzIHRoaXMgbWF0dGVyLiBBbHRlcm5hdGl2ZWx5LCB5b3UgY2FuIGNob29zZSB0byByZWZ1bmQgdGhlIGZ1bGwNCmFtb3VudCBvZiBpbnZlc3RtZW50IHRvIHJlc29sdmUgdGhpcyBpc3N1ZS4NCg0KVml2aWFuIExpdSwgaW4gdGhpcyBlbWFpbCBsb29wLCBjYW4gcHJvdmlkZSBhbnkgU0FGVCBhbmQgZnVuZCB0cmFuc2FjdGlvbnMNCnRvIHN1cHBvcnQgdGhpcyAkMTAwLDAwMCBTdHJhdGVnaWMgcm91bmQgaW52ZXN0bWVudC4gVG8gYXZvaWQgYW55DQptaXN1bmRlcnN0YW5kaW5ncyBvciBwb3RlbnRpYWwgbGVnYWwgYWN0aW9ucywgSSBraW5kbHkgcmVxdWVzdCBhbiBpbW1lZGlhdGUNCnJlc3BvbnNlIG91dGxpbmluZyB0aGUgc3RlcHMgeW91IGludGVuZCB0byB0YWtlIHRvIHJlY3RpZnkgdGhpcyBzaXR1YXRpb24uDQpBIGNsZWFyIHRpbWVsaW5lIGZvciB0b2tlbiBkaXN0cmlidXRpb24sIGFsb25nIHdpdGggdGhlIGNvcnJlc3BvbmRpbmcNCnByb2NlZHVyZSwgd291bGQgYmUgZ3JlYXRseSBhcHByZWNpYXRlZC4NCg0KVGhhbmsgeW91IGZvciB5b3VyIHByb21wdCBhdHRlbnRpb24gdG8gdGhpcyBtYXR0ZXIuIEkgbG9vayBmb3J3YXJkIHRvIGENCnN3aWZ0IHJlc29sdXRpb24uIElmIHlvdSBuZWVkIHRvIHNjaGVkdWxlIGEgbWVldGluZywgcGxlYXNlIGZpbmQgYW4NCmF2YWlsYWJsZSB0aW1lIHNsb3QgdmlhIHRoZSBsaW5rOiBodHRwczovL2NhbGVuZGx5LmNvbS9rZXZpbmhzdTEwMDgvMzBtaW4NCg0KU2luY2VyZWx5LA0KDQpZaW5na2FpIFh1DQoNCi0tIA0KVGhpcyBtZXNzYWdlIG1heSBjb250YWluIGNvbmZpZGVudGlhbCBvciBwcml2aWxlZ2VkIGluZm9ybWF0aW9uLiBJZiB5b3UgYXJlDQpub3QgdGhlIGFkZHJlc3NlZSBvciBhdXRob3JpemVkIHRvIHJlY2VpdmUgdGhpcyBmb3IgdGhlIGFkZHJlc3NlZSwgeW91IG11c3QNCm5vdCB1c2UsIGNvcHksIGRpc2Nsb3NlIG9yIHRha2UgYW55IGFjdGlvbiBiYXNlZCBvbiB0aGlzIG1lc3NhZ2Ugb3IgYW55DQppbmZvcm1hdGlvbiBoZXJlaW4uICBJZiB5b3UgaGF2ZSByZWNlaXZlZCB0aGlzIG1lc3NhZ2UgaW4gZXJyb3IsIHBsZWFzZQ0KYWR2aXNlIHRoZSBzZW5kZXIgaW1tZWRpYXRlbHkgYnkgcmVwbHkgZS1tYWlsIGFuZCBkZWxldGUgdGhpcyBtZXNzYWdlLg0KVGhhbmsgeW91IGZvciB5b3VyIGNvb3BlcmF0aW9uLg0KDQo=",
+                "size": 1928
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/plain; charset=\"UTF-8\""
+                }
+              ],
+              "mimeType": "text/plain",
+              "partId": "0"
+            },
+            {
+              "body": {
+                "data": "PGRpdiBkaXI9Imx0ciI-SGkgQ2VyZSBUZWFtLDxkaXY-PGJyPjwvZGl2PjxkaXY-SSBob3BlIHRoaXMgZW1haWwgZmluZHMgeW91IHdlbGwuIEkgYW0gd3JpdGluZyB0byBlbXBoYXNpemUgdGhlIHByZXNzaW5nIG5lZWQgZm9yIHRoZSBkaXN0cmlidXRpb24gb2YgdG9rZW5zIHJlbGF0ZWQgdG8gdGhlIENlcmUgTmV0d29yay4gQXMgYSBwYXJ0aWNpcGFudCBpbiB0aGUgU3RyYXRlZ2ljIHJvdW5kIGludmVzdG1lbnQgKDEgQ0VSRSBUb2tlbiA9ICQwLjAwMyBVU0QpLCBJIGhhdmUgY29udHJpYnV0ZWQgYSB0b3RhbCBvZiAkNDAsMDAwIG91dCBvZiB0aGUgJDEwMCwwMDAgYWxsb2NhdGlvbiwgd2l0aCBWaXZpYW4gTGl1IGFjdGluZyBhcyB0aGUgaW52ZXN0bWVudCBsZWFkIGFuZCBzaWduYXRvcnkuPGJyPjxicj5PdXIgaW52ZXN0bWVudCBpcyBjb250aW5nZW50IHVwb24gdGhlIHRpbWVseSBkaXN0cmlidXRpb24gb2YgdG9rZW5zIGFzIHBlciB0aGUgU0FGVCBhZ3JlZW1lbnQuIEl0IGlzIGltcGVyYXRpdmUgdGhhdCB5b3UgZXhwZWRpdGUgdGhpcyBwcm9jZXNzIHRvIGFsaWduIHdpdGggdGhlIGNvbW1pdG1lbnRzIG1hZGUgZHVyaW5nIHRoZSBTdHJhdGVnaWMgcm91bmQuIEZhaWx1cmUgdG8gZGlzdHJpYnV0ZSB0aGUgYXBwcm9wcmlhdGUgcXVhbnRpdHkgb2YgdG9rZW5zIGluIGFjY29yZGFuY2Ugd2l0aCB0aGUgYWdyZWVkLXVwb24gYW1vdW50IG1heSBsZWF2ZSB1cyB3aXRoIG5vIGNob2ljZSBidXQgdG8gc2VlayBsZWdhbCBjb3Vuc2VsIHRvIGFkZHJlc3MgdGhpcyBtYXR0ZXIuIEFsdGVybmF0aXZlbHksIHlvdSBjYW4gY2hvb3NlIHRvIHJlZnVuZCB0aGUgZnVsbCBhbW91bnQgb2YgaW52ZXN0bWVudCB0byByZXNvbHZlIHRoaXPCoGlzc3VlLjxicj48YnI-Vml2aWFuIExpdSwgaW4gdGhpcyBlbWFpbCBsb29wLCBjYW4gcHJvdmlkZSBhbnkgU0FGVCBhbmQgZnVuZCB0cmFuc2FjdGlvbnMgdG8gc3VwcG9ydCB0aGlzICQxMDAsMDAwIFN0cmF0ZWdpYyByb3VuZCBpbnZlc3RtZW50LiBUbyBhdm9pZCBhbnkgbWlzdW5kZXJzdGFuZGluZ3Mgb3IgcG90ZW50aWFsIGxlZ2FsIGFjdGlvbnMsIEkga2luZGx5IHJlcXVlc3QgYW4gaW1tZWRpYXRlIHJlc3BvbnNlIG91dGxpbmluZyB0aGUgc3RlcHMgeW91IGludGVuZCB0byB0YWtlIHRvIHJlY3RpZnkgdGhpcyBzaXR1YXRpb24uIEEgY2xlYXIgdGltZWxpbmUgZm9yIHRva2VuIGRpc3RyaWJ1dGlvbiwgYWxvbmcgd2l0aCB0aGUgY29ycmVzcG9uZGluZyBwcm9jZWR1cmUsIHdvdWxkIGJlIGdyZWF0bHkgYXBwcmVjaWF0ZWQuPGJyPjxicj5UaGFuayB5b3UgZm9yIHlvdXIgcHJvbXB0IGF0dGVudGlvbiB0byB0aGlzIG1hdHRlci4gSSBsb29rIGZvcndhcmQgdG8gYSBzd2lmdCByZXNvbHV0aW9uLiBJZiB5b3UgbmVlZCB0byBzY2hlZHVsZSBhIG1lZXRpbmcsIHBsZWFzZSBmaW5kIGFuIGF2YWlsYWJsZSB0aW1lIHNsb3QgdmlhIHRoZSBsaW5rOsKgPGEgaHJlZj0iaHR0cHM6Ly9jYWxlbmRseS5jb20va2V2aW5oc3UxMDA4LzMwbWluIj5odHRwczovL2NhbGVuZGx5LmNvbS9rZXZpbmhzdTEwMDgvMzBtaW48L2E-PGJyPjxicj5TaW5jZXJlbHksPGJyPjxicj5ZaW5na2FpIFh1PGJyIGNsZWFyPSJhbGwiPjxkaXY-PGJyPjwvZGl2PjxzcGFuIGNsYXNzPSJnbWFpbF9zaWduYXR1cmVfcHJlZml4Ij4tLSA8L3NwYW4-PGJyPjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJnbWFpbF9zaWduYXR1cmUiIGRhdGEtc21hcnRtYWlsPSJnbWFpbF9zaWduYXR1cmUiPjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTpWZXJkYW5hO2ZvbnQtc2l6ZToxNHB4O2xpbmUtaGVpZ2h0OjIxcHg7YmFja2dyb3VuZC1jb2xvcjpyZ2IoMjU1LDI1NSwyNTUpIj5UaGlzIG1lc3NhZ2UgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG9yIHByaXZpbGVnZWQgaW5mb3JtYXRpb24uwqBJZiB5b3UgYXJlIG5vdCB0aGUgYWRkcmVzc2VlIG9yIGF1dGhvcml6ZWQgdG8gcmVjZWl2ZSB0aGlzIGZvciB0aGUgYWRkcmVzc2VlLCB5b3UgbXVzdCBub3QgdXNlLCBjb3B5LCBkaXNjbG9zZSBvciB0YWtlIGFueSBhY3Rpb24gYmFzZWQgb24gdGhpcyBtZXNzYWdlIG9yIGFueSBpbmZvcm1hdGlvbiBoZXJlaW4uwqAgSWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBtZXNzYWdlIGluIGVycm9yLCBwbGVhc2UgYWR2aXNlIHRoZSBzZW5kZXIgaW1tZWRpYXRlbHkgYnkgcmVwbHkgZS1tYWlsIGFuZCBkZWxldGUgdGhpcyBtZXNzYWdlLsKgIFRoYW5rIHlvdSBmb3IgeW91ciBjb29wZXJhdGlvbi48L3NwYW4-DQo8L2Rpdj48L2Rpdj48L2Rpdj4NCg0K",
+                "size": 2289
+              },
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html; charset=\"UTF-8\""
+                },
+                {
+                  "name": "Content-Transfer-Encoding",
+                  "value": "quoted-printable"
+                }
+              ],
+              "mimeType": "text/html",
+              "partId": "1"
+            }
+          ]
+        },
+        "sizeEstimate": 15633,
+        "snippet": "Hi Cere Team, I hope this email finds you well. I am writing to emphasize the pressing need for the distribution of tokens related to the Cere Network. As a participant in the Strategic round",
+        "threadId": "189d7c8691144b37"
+      }
+    ]
+  }
+}

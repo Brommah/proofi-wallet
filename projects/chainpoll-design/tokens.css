@@ -1,0 +1,68 @@
+/* ChainPoll Design Tokens */
+
+:root {
+  /* Primary Colors */
+  --color-navy: #1B2A4E;
+  --color-white: #FFFFFF;
+  --color-civic-red: #C41E3A;
+  
+  /* Secondary Colors */
+  --color-slate: #64748B;
+  --color-light-gray: #F1F5F9;
+  --color-success: #059669;
+  --color-gold: #D4AF37;
+  
+  /* Blockchain Accents */
+  --color-chain-blue: #3B82F6;
+  --color-hash-purple: #7C3AED;
+  
+  /* Typography */
+  --font-heading: 'Libre Baskerville', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 3rem;
+  
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(27, 42, 78, 0.05);
+  --shadow-md: 0 2px 8px rgba(27, 42, 78, 0.08);
+  --shadow-lg: 0 4px 16px rgba(27, 42, 78, 0.12);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0F172A;
+    --color-surface: #1E293B;
+    --color-text: #F1F5F9;
+    --color-text-muted: #94A3B8;
+  }
+}

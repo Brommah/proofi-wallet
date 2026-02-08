@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoQuest — RPG Character Creator</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--gold:#FFD700;--purple:#9B59B6;--red:#E74C3C;--green:#2ECC71;--blue:#3498DB;--bg:#0D0D1A;--surface:#1A1A2E;--border:#2A2A3E;--text:#E8E8F0;--dim:#6B6B8D}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(155,89,182,0.08) 0%,transparent 60%);pointer-events:none}
+    .container{max-width:480px;margin:0 auto;padding:16px}
+    .header{text-align:center;padding:24px 0 16px}
+    .logo{font-family:'Press Start 2P',monospace;font-size:20px;color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,0.4);margin-bottom:4px}
+    .tagline{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+    .wallet-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:16px}
+    .wallet-bar.connected{border-color:var(--green);box-shadow:0 0 15px rgba(46,204,113,0.1)}
+    .wallet-info .label{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+    .wallet-info .addr{font-size:11px;color:var(--green);font-family:monospace}
+    .btn{font-family:'Inter',sans-serif;font-weight:700;font-size:12px;padding:10px 20px;border:2px solid var(--gold);background:transparent;color:var(--gold);border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:1px;text-transform:uppercase}
+    .btn:hover{background:var(--gold);color:var(--bg);box-shadow:0 0 20px rgba(255,215,0,0.3)}
+    .btn:active{transform:scale(0.97)}
+    .btn.small{padding:7px 14px;font-size:10px}
+    .btn.green{border-color:var(--green);color:var(--green)}.btn.green:hover{background:var(--green);color:var(--bg)}
+    .btn.purple{border-color:var(--purple);color:var(--purple)}.btn.purple:hover{background:var(--purple);color:#fff}
+    .btn.red{border-color:var(--red);color:var(--red)}.btn.red:hover{background:var(--red);color:#fff}
+    .btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px}
+    .section-title{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--gold);margin-bottom:12px;letter-spacing:1px}
+    .class-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .class-card{background:rgba(255,255,255,0.03);border:2px solid var(--border);border-radius:8px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+    .class-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+    .class-card.selected{border-color:var(--gold);background:rgba(255,215,0,0.05);box-shadow:0 0 20px rgba(255,215,0,0.1)}
+    .class-card.selected::after{content:'✓';position:absolute;top:6px;right:8px;color:var(--gold);font-size:12px;font-weight:bold}
+    .class-icon{font-size:32px;margin-bottom:6px;display:block}
+    .class-name{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--text);margin-bottom:3px}
+    .class-desc{font-size:10px;color:var(--dim)}
+    .stat-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .stat-label{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--dim);width:50px;text-align:right}
+    .stat-bar-bg{flex:1;height:16px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;position:relative;border:1px solid var(--border)}
+    .stat-bar-fill{height:100%;transition:width .4s ease;border-radius:2px}
+    .stat-value{font-family:'Press Start 2P',monospace;font-size:8px;width:28px;text-align:center}
+    .stat-btns{display:flex;gap:3px}
+    .stat-btn{width:20px;height:20px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:3px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .stat-btn:hover{border-color:var(--gold);color:var(--gold)}
+    .stat-btn:disabled{opacity:.2;cursor:not-allowed}
+    .points-left{text-align:center;font-family:'Press Start 2P',monospace;font-size:9px;color:var(--gold);margin-bottom:12px;padding:8px;background:rgba(255,215,0,0.05);border-radius:6px}
+    .name-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Press Start 2P',monospace;font-size:10px;outline:none;transition:border-color .2s}
+    .name-input:focus{border-color:var(--gold)}
+    .name-input::placeholder{color:var(--dim);font-family:'Inter',sans-serif;font-size:11px}
+    .character-preview{text-align:center;padding:20px;position:relative}
+    .char-sprite{font-size:64px;margin-bottom:8px;display:block;animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .char-preview-name{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--gold);margin-bottom:4px}
+    .char-preview-class{font-size:11px;color:var(--dim)}
+    .char-preview-stats{display:flex;justify-content:center;gap:12px;margin-top:10px}
+    .preview-stat{text-align:center}
+    .preview-stat .val{font-family:'Press Start 2P',monospace;font-size:12px;margin-bottom:2px}
+    .preview-stat .lbl{font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+    .saved-characters{margin-top:12px}
+    .saved-char{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;margin-bottom:6px}
+    .saved-char .icon{font-size:24px}
+    .saved-char .info{flex:1}
+    .saved-char .name{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--text)}
+    .saved-char .meta{font-size:10px;color:var(--dim);margin-top:2px}
+    .saved-char .badge{font-size:8px;padding:3px 8px;background:rgba(46,204,113,0.1);color:var(--green);border:1px solid rgba(46,204,113,0.3);border-radius:4px}
+    .footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+    .footer a{color:var(--dim);text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase;transition:color .15s}
+    .footer a:hover{color:var(--gold)}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:2px solid var(--green);border-radius:8px;padding:10px 20px;font-size:11px;color:var(--green);z-index:10000;transition:transform .3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .toast.error{border-color:var(--red);color:var(--red)}
+    @media(max-width:400px){.container{padding:10px}.logo{font-size:16px}.class-grid{gap:6px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">⚔️ CRYPTOQUEST</div>
+      <div class="tagline">Forge your hero • Seal on-chain</div>
+    </div>
+
+    <div class="wallet-bar" id="walletBar">
+      <div class="wallet-info">
+        <div class="label">Proofi Wallet</div>
+        <div class="addr" id="walletAddr">Not connected</div>
+      </div>
+      <button class="btn small" id="connectBtn" onclick="handleConnect()">Connect</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">1. Choose Class</div>
+      <div class="class-grid" id="classGrid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">2. Name Your Hero</div>
+      <input class="name-input" id="heroName" placeholder="Enter hero name..." maxlength="20">
+    </div>
+
+    <div class="section">
+      <div class="section-title">3. Distribute Stats</div>
+      <div class="points-left" id="pointsLeft">Points remaining: 10</div>
+      <div id="statsContainer"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Preview</div>
+      <div class="character-preview" id="charPreview">
+        <span class="char-sprite" id="charSprite">❓</span>
+        <div class="char-preview-name" id="previewName">???</div>
+        <div class="char-preview-class" id="previewClass">Select a class</div>
+        <div class="char-preview-stats" id="previewStats"></div>
+      </div>
+    </div>
+
+    <button class="btn green" style="width:100%;padding:14px;font-size:13px;margin-bottom:16px" id="saveBtn" onclick="saveCharacter()" disabled>
+      ⚔️ FORGE CHARACTER ON-CHAIN
+    </button>
+
+    <div class="section" id="savedSection" style="display:none">
+      <div class="section-title">🏰 Your Heroes</div>
+      <div class="saved-characters" id="savedList"></div>
+    </div>
+
+    <div class="footer">
+      <a href="https://proofi-virid.vercel.app" target="_blank">⚡ Powered by Proofi × Cere DDC</a>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://proofi-virid.vercel.app/proofi-sdk.js"></script>
+  <script>
+    const CLASSES = [
+      { id: 'warrior', name: 'Warrior', icon: '⚔️', desc: 'Melee powerhouse', color: '#E74C3C', baseStats: { STR: 5, DEX: 2, INT: 1, VIT: 4, LCK: 1 } },
+      { id: 'mage', name: 'Mage', icon: '🧙', desc: 'Arcane master', color: '#9B59B6', baseStats: { STR: 1, DEX: 2, INT: 5, VIT: 2, LCK: 3 } },
+      { id: 'rogue', name: 'Rogue', icon: '🗡️', desc: 'Swift assassin', color: '#2ECC71', baseStats: { STR: 2, DEX: 5, INT: 2, VIT: 2, LCK: 2 } },
+      { id: 'paladin', name: 'Paladin', icon: '🛡️', desc: 'Holy defender', color: '#3498DB', baseStats: { STR: 3, DEX: 1, INT: 3, VIT: 5, LCK: 1 } },
+      { id: 'ranger', name: 'Ranger', icon: '🏹', desc: 'Nature striker', color: '#27AE60', baseStats: { STR: 2, DEX: 4, INT: 2, VIT: 2, LCK: 3 } },
+      { id: 'necro', name: 'Necro', icon: '💀', desc: 'Death bringer', color: '#8E44AD', baseStats: { STR: 1, DEX: 1, INT: 5, VIT: 3, LCK: 3 } },
+    ];
+
+    const STAT_NAMES = ['STR', 'DEX', 'INT', 'VIT', 'LCK'];
+    const STAT_COLORS = { STR: '#E74C3C', DEX: '#2ECC71', INT: '#9B59B6', VIT: '#3498DB', LCK: '#FFD700' };
+    const MAX_POINTS = 10;
+
+    let selectedClass = null;
+    let bonusStats = { STR: 0, DEX: 0, INT: 0, VIT: 0, LCK: 0 };
+    let pointsUsed = 0;
+    let proofi, walletAddress;
+    let savedCharacters = JSON.parse(localStorage.getItem('cq_characters') || '[]');
+
+    function init() {
+      proofi = new ProofiSDK({ appName: 'CryptoQuest' });
+      proofi.on('connected', d => { walletAddress = d.address; updateWalletUI(); toast('Wallet connected!'); });
+      proofi.on('disconnected', () => { walletAddress = null; updateWalletUI(); });
+      renderClasses();
+      renderStats();
+      renderSaved();
+      document.getElementById('heroName').addEventListener('input', updatePreview);
+    }
+
+    function renderClasses() {
+      const grid = document.getElementById('classGrid');
+      grid.innerHTML = CLASSES.map(c => `
+        <div class="class-card" id="class-${c.id}" onclick="selectClass('${c.id}')">
+          <span class="class-icon">${c.icon}</span>
+          <div class="class-name">${c.name}</div>
+          <div class="class-desc">${c.desc}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectClass(id) {
+      selectedClass = CLASSES.find(c => c.id === id);
+      document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('class-' + id).classList.add('selected');
+      bonusStats = { STR: 0, DEX: 0, INT: 0, VIT: 0, LCK: 0 };
+      pointsUsed = 0;
+      renderStats();
+      updatePreview();
+    }
+
+    function renderStats() {
+      const container = document.getElementById('statsContainer');
+      document.getElementById('pointsLeft').textContent = `Points remaining: ${MAX_POINTS - pointsUsed}`;
+      container.innerHTML = STAT_NAMES.map(stat => {
+        const base = selectedClass ? selectedClass.baseStats[stat] : 0;
+        const bonus = bonusStats[stat];
+        const total = base + bonus;
+        const pct = Math.min(100, (total / 15) * 100);
+        return `
+          <div class="stat-row">
+            <span class="stat-label">${stat}</span>
+            <div class="stat-bar-bg">
+              <div class="stat-bar-fill" style="width:${pct}%;background:${STAT_COLORS[stat]}"></div>
+            </div>
+            <span class="stat-value" style="color:${STAT_COLORS[stat]}">${total}</span>
+            <div class="stat-btns">
+              <button class="stat-btn" onclick="changeStat('${stat}',-1)" ${bonus <= 0 ? 'disabled' : ''}>−</button>
+              <button class="stat-btn" onclick="changeStat('${stat}',1)" ${pointsUsed >= MAX_POINTS ? 'disabled' : ''}>+</button>
+            </div>
+          </div>`;
+      }).join('');
+      checkSaveReady();
+    }
+
+    function changeStat(stat, delta) {
+      if (delta > 0 && pointsUsed >= MAX_POINTS) return;
+      if (delta < 0 && bonusStats[stat] <= 0) return;
+      bonusStats[stat] += delta;
+      pointsUsed += delta;
+      renderStats();
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const name = document.getElementById('heroName').value.trim();
+      const sprite = document.getElementById('charSprite');
+      const pName = document.getElementById('previewName');
+      const pClass = document.getElementById('previewClass');
+      const pStats = document.getElementById('previewStats');
+      sprite.textContent = selectedClass ? selectedClass.icon : '❓';
+      pName.textContent = name || '???';
+      pClass.textContent = selectedClass ? `Level 1 ${selectedClass.name}` : 'Select a class';
+      if (selectedClass) {
+        pStats.innerHTML = STAT_NAMES.map(s => {
+          const val = selectedClass.baseStats[s] + bonusStats[s];
+          return `<div class="preview-stat"><div class="val" style="color:${STAT_COLORS[s]}">${val}</div><div class="lbl">${s}</div></div>`;
+        }).join('');
+      }
+      checkSaveReady();
+    }
+
+    function checkSaveReady() {
+      const name = document.getElementById('heroName').value.trim();
+      document.getElementById('saveBtn').disabled = !selectedClass || !name;
+    }
+
+    async function saveCharacter() {
+      const name = document.getElementById('heroName').value.trim();
+      if (!selectedClass || !name) return;
+      const stats = {};
+      STAT_NAMES.forEach(s => stats[s] = selectedClass.baseStats[s] + bonusStats[s]);
+      const character = { name, class: selectedClass.id, className: selectedClass.name, icon: selectedClass.icon, stats, level: 1, createdAt: new Date().toISOString() };
+
+      if (walletAddress) {
+        try {
+          document.getElementById('saveBtn').textContent = '⏳ Forging...';
+          document.getElementById('saveBtn').disabled = true;
+          await proofi.storeAchievement({ game: 'cryptoquest', score: Object.values(stats).reduce((a, b) => a + b, 0), achievement: 'character-created', data: character });
+          character.onChain = true;
+          toast('⚔️ Character forged on-chain!');
+        } catch (e) {
+          toast(e.message, true);
+        }
+      } else {
+        character.onChain = false;
+        toast('Character saved locally (connect wallet to store on-chain)');
+      }
+
+      savedCharacters.unshift(character);
+      localStorage.setItem('cq_characters', JSON.stringify(savedCharacters));
+      renderSaved();
+      document.getElementById('saveBtn').textContent = '⚔️ FORGE CHARACTER ON-CHAIN';
+      document.getElementById('saveBtn').disabled = false;
+      document.getElementById('heroName').value = '';
+      selectedClass = null;
+      bonusStats = { STR: 0, DEX: 0, INT: 0, VIT: 0, LCK: 0 };
+      pointsUsed = 0;
+      document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+      renderStats();
+      updatePreview();
+    }
+
+    function renderSaved() {
+      const section = document.getElementById('savedSection');
+      const list = document.getElementById('savedList');
+      if (!savedCharacters.length) { section.style.display = 'none'; return; }
+      section.style.display = 'block';
+      list.innerHTML = savedCharacters.map(c => `
+        <div class="saved-char">
+          <span class="icon">${c.icon}</span>
+          <div class="info">
+            <div class="name">${c.name}</div>
+            <div class="meta">Lv.${c.level} ${c.className} • ${Object.values(c.stats).reduce((a,b)=>a+b,0)} total stats</div>
+          </div>
+          ${c.onChain ? '<span class="badge">ON-CHAIN</span>' : '<span class="badge" style="color:var(--dim);border-color:var(--border);background:transparent">LOCAL</span>'}
+        </div>
+      `).join('');
+    }
+
+    async function handleConnect() {
+      if (walletAddress) { proofi.disconnect(); walletAddress = null; updateWalletUI(); return; }
+      try { document.getElementById('connectBtn').textContent = '...'; await proofi.connect(); } catch (e) { toast(e.message, true); document.getElementById('connectBtn').textContent = 'Connect'; }
+    }
+
+    function updateWalletUI() {
+      const bar = document.getElementById('walletBar');
+      const addr = document.getElementById('walletAddr');
+      const btn = document.getElementById('connectBtn');
+      if (walletAddress) { bar.classList.add('connected'); addr.textContent = walletAddress.slice(0,6)+'...'+walletAddress.slice(-4); btn.textContent = 'Disconnect'; btn.classList.add('red'); btn.classList.remove('small'); }
+      else { bar.classList.remove('connected'); addr.textContent = 'Not connected'; btn.textContent = 'Connect'; btn.classList.remove('red'); btn.classList.add('small'); }
+    }
+
+    let toastTimer;
+    function toast(msg, err=false) { const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show'+(err?' error':''); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className='toast',3000); }
+
+    init();
+  </script>
+</body>
+</html>

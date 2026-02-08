@@ -288,6 +288,12 @@
     .btn-primary:hover {
       background: var(--accent-hover);
       border-color: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
     }
 
     .btn-secondary {
@@ -308,7 +314,14 @@
       text-decoration: none;
     }
 
-    .btn-secondary:hover { border-color: var(--border-strong); }
+    .btn-secondary:hover { 
+      border-color: var(--border-strong); 
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+    .btn-secondary:active {
+      transform: translateY(0);
+    }
 
     /* Decorative diamond */
     .hero-diamond {
@@ -321,6 +334,7 @@
       border: 2px solid var(--border);
       opacity: 0.4;
       z-index: 1;
+      animation: floatDiamond 8s ease-in-out infinite;
     }
 
     .hero-diamond-inner {
@@ -333,6 +347,7 @@
       border: 2px solid var(--accent);
       opacity: 0.15;
       z-index: 1;
+      animation: floatDiamond 8s ease-in-out infinite reverse;
     }
 
     .hero-diamond-dot {
@@ -344,6 +359,18 @@
       height: 8px;
       background: var(--accent);
       z-index: 1;
+      animation: pulseDot 2s ease-in-out infinite;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+    }
+
+    @keyframes floatDiamond {
+      0%, 100% { transform: translateY(-50%) rotate(45deg); }
+      50% { transform: translateY(calc(-50% - 12px)) rotate(45deg); }
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: translateY(-50%) scale(1); box-shadow: 0 0 12px rgba(59, 130, 246, 0.5); }
+      50% { transform: translateY(-50%) scale(1.2); box-shadow: 0 0 20px rgba(59, 130, 246, 0.7); }
     }
 
     /* ═══ SECTIONS ═══ */
@@ -399,6 +426,11 @@
       padding: 48px 32px;
       border-right: 2px solid var(--border-strong);
       position: relative;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .problem-card:hover {
+      background: rgba(239, 68, 68, 0.03);
     }
 
     .problem-card:last-child { border-right: none; }
@@ -448,6 +480,17 @@
       padding: 48px 32px;
       border-right: 2px solid var(--border-strong);
       position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .step:hover {
+      background: rgba(59, 130, 246, 0.03);
+    }
+
+    .step:hover .step-icon {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+      transition: all 0.3s ease;
     }
 
     .step:last-child { border-right: none; }

@@ -1,0 +1,21 @@
+{
+  "name": "proofi",
+  "version": "1.0.0",
+  "description": "Proofi - Decentralized proof and storage platform",
+  "main": "proofi-sdk.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node scripts/patch-pino.js || true"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cere-ddc-sdk/blockchain": "^2.16.1",
+    "@cere-ddc-sdk/ddc-client": "^2.16.1",
+    "@polkadot/wasm-crypto": "^7.5.4",
+    "@upstash/redis": "^1.36.2",
+    "@vercel/kv": "^3.0.0",
+    "formidable": "^3.5.4"
+  }
+}

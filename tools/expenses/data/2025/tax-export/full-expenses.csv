@@ -1,0 +1,9 @@
+date,amount,amount_excl_btw,btw_rate,btw_amount,category,category_name,vendor,description,receipt,payment_method,notes
+2025-06-01,49.00,40.49,21%,8.51,SW,Software/Subscriptions,JetBrains,WebStorm maandelijks,receipts/2025-06/jetbrains-001.pdf,bank,
+2025-06-05,29.00,23.96,21%,5.04,SW,Software/Subscriptions,TransIP,VPS hosting juni,receipts/2025-06/transip-001.pdf,bank,maandelijks
+2025-06-10,12.50,11.47,9%,1.03,ML,Meals/Entertainment,Brownies Downies,Zakelijke lunch met klant,,pin,met Jan de Vries
+2025-06-12,89.00,73.55,21%,15.45,PS,Professional Services,Moneybird,Boekhoudsoftware Q2,receipts/2025-06/moneybird-001.pdf,bank,
+2025-06-15,24.99,20.65,21%,4.34,CM,Communication,KPN,Telefoonabonnement juni,receipts/2025-06/kpn-001.pdf,bank,zakelijk 60%
+2025-06-18,156.00,156.00,0%,0.00,ED,Education,Udemy,Advanced Python course,receipts/2025-06/udemy-001.pdf,creditcard,
+2025-06-20,8.50,7.02,21%,1.48,TR,Travel,NS,Trein Amsterdam-Utrecht,,pin,klantbezoek
+2025-06-22,35.00,28.93,21%,6.07,OF,Office Supplies,HEMA,Kantoorbenodigdheden,,pin,

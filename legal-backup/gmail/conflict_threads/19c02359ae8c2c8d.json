@@ -1,0 +1,538 @@
+{
+  "downloaded": null,
+  "thread": {
+    "historyId": "7717060",
+    "id": "19c02359ae8c2c8d",
+    "messages": [
+      {
+        "historyId": "7716163",
+        "id": "19c02359ae8c2c8d",
+        "internalDate": "1769563576000",
+        "labelIds": [
+          "UNREAD",
+          "CATEGORY_FORUMS",
+          "SPAM"
+        ],
+        "payload": {
+          "body": {},
+          "headers": [
+            {
+              "name": "Delivered-To",
+              "value": "martijn@cere.network"
+            },
+            {
+              "name": "Received",
+              "value": "by 2002:a17:504:d9d8:b0:1e0e:1af7:ade1 with SMTP id dn24csp2451623njc;        Tue, 27 Jan 2026 17:26:34 -0800 (PST)"
+            },
+            {
+              "name": "X-Forwarded-Encrypted",
+              "value": "i=5; AJvYcCUPVUnZ3fujpSgO1LZN3VRPlPr6pDJryWyChDqxx02wuvZczQDerBi8+OIF5p0fa8ttjnse+dzy@cere.network"
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a05:600c:3e18:b0:480:1c1c:47d6 with SMTP id 5b1f17b1804b1-48069e33b67mr37838365e9.6.1769563593568;        Tue, 27 Jan 2026 17:26:33 -0800 (PST)"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=4; a=rsa-sha256; t=1769563593; cv=pass;        d=google.com; s=arc-20240605;        b=Zq8x56phMBBurNEI0EMy9rCbyAjTAd8DZUhnlEeeN9OuqrDykLmQAXPKOYua2fpal5         7g7LKsxygvXHjk3ME9URXIfHbLtygmsxVHayw4CsDTgEtN+IVHgs8u0bWtxzyvN5wKJX         7qhGQkCgybTgDsVtlCKjMsvxTgd3F4iCRa2p3EF3hUQ9Z1wJmn2aublZGZ/uhsz1rA7F         M4J+2VY2pIef0nsvjzak/6elcavI/zvGJo8OoBvUObarn6Zj/WXWC+7JB2oofwIkD/Qt         RwHSgfkxfwrUu7tCTAMjLpLBp5TDAAA1yUzGRyRlSU4jrDtTdhoQEpqEsvUr4yuqomMr         84fg=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=4; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;        h=list-unsubscribe:list-archive:list-help:list-post:list-id         :mailing-list:precedence:reply-to:to:subject:message-id:date:from         :mime-version:dkim-signature;        bh=danzZ27HPnsWjMZ1DvZQ+fjR1F+C1YvOcMeJAz60BNI=;        fh=lshmiR5FEfsuWSHNCkHmGeYG9eeU6/3bYuDQjtsT3dg=;        b=lXt5HEAGxyeH2cCY2pmfH0S4CJSPqz9JxOkJYqMNtL1tNmKa5vSJBLrtA4b9BGyG4x         kaMvJfBoDzmvh9GWJA9gRWTgIJ5H+Kh9vsu8J/lA2BF0mZHTW0tjukzfdmNLVrH7Fagz         Lv1T0pef4gENziy5M9PfHfz0h7th8TX6Uto676T3OQCuZA8z7k65tgh3zoOdL38liJjB         qHnQjVdhoKc/51rrD3twnVgyRyakG4Ocxgqcfugj7NV5s2VpmwQn59bFbMvrGCTXgaeu         yyyYN5wEkx/etdn07hGCvBEAE0xN1rgGj7KPwjVkWk0n423h4FQ9Q4Wjfq5+Q3PhGij/         1Ssw==;        dara=google.com"
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=4; mx.google.com;       dkim=pass header.i=@cere.network header.s=google header.b=vksBwBxR;       arc=pass (i=3 spf=pass spfdomain=law360.com dkim=pass dkdomain=law360.com dmarc=pass fromdomain=law360.com);       spf=pass (google.com: domain of team+bncbcklvdep4afbbr6l4xfqmgqepcknzti@cere.network designates 209.85.220.69 as permitted sender) smtp.mailfrom=team+bncBCKLVDEP4AFBBR6L4XFQMGQEPCKNZTI@cere.network;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=cere.network;       dara=neutral header.i=@cere.network"
+            },
+            {
+              "name": "Return-Path",
+              "value": "\u003cteam+bncBCKLVDEP4AFBBR6L4XFQMGQEPCKNZTI@cere.network\u003e"
+            },
+            {
+              "name": "Received",
+              "value": "from mail-sor-f69.google.com (mail-sor-f69.google.com. [209.85.220.69])        by mx.google.com with SMTPS id 5b1f17b1804b1-4806cde8229sor1566265e9.1.2026.01.27.17.26.33        for \u003cmartijn@cere.network\u003e        (Google Transport Security);        Tue, 27 Jan 2026 17:26:33 -0800 (PST)"
+            },
+            {
+              "name": "Received-SPF",
+              "value": "pass (google.com: domain of team+bncbcklvdep4afbbr6l4xfqmgqepcknzti@cere.network designates 209.85.220.69 as permitted sender) client-ip=209.85.220.69;"
+            },
+            {
+              "name": "Authentication-Results",
+              "value": "mx.google.com;       dkim=pass header.i=@cere.network header.s=google header.b=vksBwBxR;       arc=pass (i=3 spf=pass spfdomain=law360.com dkim=pass dkdomain=law360.com dmarc=pass fromdomain=law360.com);       spf=pass (google.com: domain of team+bncbcklvdep4afbbr6l4xfqmgqepcknzti@cere.network designates 209.85.220.69 as permitted sender) smtp.mailfrom=team+bncBCKLVDEP4AFBBR6L4XFQMGQEPCKNZTI@cere.network;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=cere.network;       dara=neutral header.i=@cere.network"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=3; a=rsa-sha256; t=1769563593; cv=pass;        d=google.com; s=arc-20240605;        b=VutPgjaHJKiO94rvMLqmf1uCckMLBg1tL/1wnOzMFgczqBY28aQ2jo6e6HjVoE/A/X         h0svdohgbAz3kZ1635L7nKji1ctiHl/DvseXIwHcCB2U/cDc/IbI84Za5PghX87uCeyu         gb7rw/psTWHNTbpT87up/rbZ+UUCuH4/XdB6NGxcZkqbjTpuYL80fHR4nOaSTI1h+ZNk         +LZ4sSpNwvEFJBtEyqXZGGiqtxruivNHOHxFWnHMmlaHToS46tLDXFILMGw+BVAcqOHH         EN43gjF/hX2jaBB2SY5M/vZBQZOOR/ROrz16fzW+ZrTnDmBwqk1Nk0df0hVtLjtTcdCs         Ax8w=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;        h=list-unsubscribe:list-archive:list-help:list-post:list-id         :mailing-list:precedence:reply-to:to:subject:message-id:date:from         :mime-version:dkim-signature;        bh=danzZ27HPnsWjMZ1DvZQ+fjR1F+C1YvOcMeJAz60BNI=;        fh=lshmiR5FEfsuWSHNCkHmGeYG9eeU6/3bYuDQjtsT3dg=;        b=U1y8TbfBBuELNKRFsxweHp/S4UnjyeF+T24JJ6yTNfhZtpd5LuY21Icklpj6sqyJ9a         zYElWAYLuI5aTm6OdKgqC4fic8brAvbNarpgKBLuVd9smPNKSP/uXfjxc1KHFtc64PAt         G8T3b9xnI8yJYQG7eaEM7TboGU+ZgS65AP4EZTz9BqVPzYJEaohg2CRce52hc92PiFuI         7SXe1h5tugwx/LK72OsLoIBjpg7CoVwpZLCZIbHtIh3/Ja3ysTX0McnNpkjnH7FcnaPz         7nJ1GOiMqPG6PKifzrTHy5G7p79PGfh4qiMORIxv3LIfq32vnGNWdhsG6VdQf8Ta/1Qd         hf/g==;        darn=cere.network"
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=3; mx.google.com;       dkim=pass header.i=@law360.com header.s=google header.b=MkDYidiU;       arc=pass (i=1);       spf=pass (google.com: domain of gina.kim@law360.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=gina.kim@law360.com;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=law360.com;       dara=neutral header.i=@cere.network"
+            },
+            {
+              "name": "DKIM-Signature",
+              "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=cere.network; s=google; t=1769563593; x=1770168393; darn=cere.network;        h=list-unsubscribe:list-archive:list-help:list-post:list-id         :mailing-list:precedence:reply-to:x-original-authentication-results         :x-original-sender:to:subject:message-id:date:from:mime-version:from         :to:cc:subject:date:message-id:reply-to;        bh=danzZ27HPnsWjMZ1DvZQ+fjR1F+C1YvOcMeJAz60BNI=;        b=vksBwBxRQ5T0rFYNXtw3UxsuVl0a1piRuyA0qP1zD9HnjedgbcRkEE0+XtHr+8JmEH         KVzKdtZZRW+Dtou80ZvR4elfmbhAum+qUoKkN0bD9Pwt3QW2sa+NhLDDDDHNYDhnrHbg         6+MXLJrA1oOPHuG0UVt7vUWR2VO9Vkt0wu1Fg2jVOn+g+gbT3MdDi3xHWbitOTFPp+EA         3PMXHRRy8vSFKcT/XmLgnf+ri03ykuD/cVxb4zV9L9TgIAcEffmoyBLZiJ26qj5SCs2h         9fCkx8bgCC2C82nyCWHTGAXb+a9aaEDs0SzTtZsRWNCQTSt1QEvk0UNQZvSwhvcMAr5u         yXWg=="
+            },
+            {
+              "name": "X-Google-DKIM-Signature",
+              "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=1e100.net; s=20230601; t=1769563593; x=1770168393;        h=list-unsubscribe:list-archive:list-help:list-post         :x-spam-checked-in-group:list-id:mailing-list:precedence:reply-to         :x-original-authentication-results:x-original-sender:to:subject         :message-id:date:from:mime-version:x-gm-gg:x-beenthere         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;        bh=danzZ27HPnsWjMZ1DvZQ+fjR1F+C1YvOcMeJAz60BNI=;        b=FvFgfs3QWBg5PfgAQPMBTyeYPEjKt5WEZCXxq+XcyzfCx34lnrS79weGWtZFQj/SaJ         sDwo4m54MQ8s1toH1P9eAMAfwNDxQ6l13LkjwnY0rITIUmch2BLAvFIqQE1kbG4NggC3         6qskhgup+977ANIJlQQTRicCtJ0Z67q8UpfJe4KlRCAHUVCrVoqYxMEL9H0Dgwgxb8NK         Vpsguw1MojZjesaK1e9Ze+eUT30yx1x+wYiqcJ9/lqwZD78nAHWN7PbRg0Q3aKSFsRAv         yriTag9RKMIx/RdGHIXx59ccChpBK4duXAC1Dgj9NpL8mNegQVq4XgDIk/dOFqRWg47e         B0cQ=="
+            },
+            {
+              "name": "X-Forwarded-Encrypted",
+              "value": "i=3; AJvYcCV3hNDwM5Rt9pin+hjyvYtZn2F0wCjqvlfmlZuekhzsHFCnli8CB1DO/n/lR3kr2iNzjIXV6iBL@cere.network"
+            },
+            {
+              "name": "X-Gm-Message-State",
+              "value": "AOJu0YzXDUiV8sqYYpVBa61CaNMDCREFs6yRW88fSIXZzyREEIia+RrK bGTQhDmUsichhEqcbMp5ebObxTsJ/FLfVz11d5kmGM8a2K93j2dBeDzg4d1OGa0xnZM/7A=="
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a05:600c:8218:b0:477:a203:66dd with SMTP id 5b1f17b1804b1-480700705c3mr642985e9.2.1769563592015;        Tue, 27 Jan 2026 17:26:32 -0800 (PST)"
+            },
+            {
+              "name": "X-BeenThere",
+              "value": "team@cere.network; h=\"AV1CL+FsamGE5+WC7KZ9GU9pIX4GoOBcN5QJ7sAvgKPM6IDC3g==\""
+            },
+            {
+              "name": "Received",
+              "value": "by 2002:a05:600c:6289:b0:477:9e7d:40a2 with SMTP id 5b1f17b1804b1-4806d1cb68bls1222105e9.0.-pod-prod-00-eu; Tue, 27 Jan 2026 17:26:30 -0800 (PST)"
+            },
+            {
+              "name": "X-Forwarded-Encrypted",
+              "value": "i=3; AJvYcCWrWDGrJe1AJIkeLGYiB/JeYOAnpXBLEc2DHSLwrM6bDrq0b7Teh9HrYpRnYRyklxLxcUQA@cere.network"
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a05:600c:3e18:b0:480:1c1c:47d6 with SMTP id 5b1f17b1804b1-48069e33b67mr37837415e9.6.1769563589309;        Tue, 27 Jan 2026 17:26:29 -0800 (PST)"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=2; a=rsa-sha256; t=1769563589; cv=pass;        d=google.com; s=arc-20240605;        b=hwv0KKhibBqqbDi3Dg/rKqK57X5suqIyfXCscXhH489RfgXG7kAbz3BHvn6OUZoEVo         40y7lvPbcZWXheLp9R1q/uea/QB64V8Wh49GVucufW1VboIAu5cPKpF0hh4WUcNx4Qq7         bDEr7s8aiLcIIYCPA9EqKLZIVNnwkpslmnmOQ9o4ySpQxVVglUaJZs9aOyuJWc05u1jM         ciPbYC7DkAMcOUF5D39h9nzdHDvMSh7I9Qw8GnOQGsmKRVLNpRDRpQ01k7gzBczamHsB         AZHRO6+QG6VZG4hn3HJTE1PNAiWC+vPWGwfOkeaxaQrvZDAyMghdNtWXJj8EDMbRNVPe         rgRA=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;        h=to:subject:message-id:date:from:mime-version:dkim-signature;        bh=JtsCLhzKmEb9XvETy/3M0Yt+R0dxtQ4NQx4cmFRRqRA=;        fh=ZIdVKdHpFaAVS4d3/rWsNE1b1SUZYAXIDwtNdizckIQ=;        b=WhgfLscncst+ifB3oqR17/VTLCbs2Y2rb+8IfntnfZy8A3M9jMdiWXyoDBecAnZ98M         5V6FYgwUjk2tbrDHwaeLIiY9INNdVCWVo6xbsekixT7sb5AloPUjwsJk3+xm4PO+pfFO         G2XQcsUg3FQBtjsF6TYvUnfl0u2CVdwGj3aGDzExc0mcp39RYuNKGfuNQD3/++sufG5+         jLecs6OWJWDKbAEME9S2Dl3hK+tYLwEqpHZCkgrFEpjDhc94UCaeQPZCzydjELXUhX1t         xMN2MNhbXz5zrvMEG+/geHOva7D8CJCX/m78sMlgr5CSOy8+Ehtp2LPwIkWkAwoUmXbj         lG9g==;        dara=google.com"
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=2; mx.google.com;       dkim=pass header.i=@law360.com header.s=google header.b=MkDYidiU;       arc=pass (i=1);       spf=pass (google.com: domain of gina.kim@law360.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=gina.kim@law360.com;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=law360.com;       dara=neutral header.i=@cere.network"
+            },
+            {
+              "name": "Received",
+              "value": "from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])        by mx.google.com with SMTPS id 5b1f17b1804b1-4806dffa15esor910185e9.1.2026.01.27.17.26.29        for \u003cteam@cere.network\u003e        (Google Transport Security);        Tue, 27 Jan 2026 17:26:29 -0800 (PST)"
+            },
+            {
+              "name": "Received-SPF",
+              "value": "pass (google.com: domain of gina.kim@law360.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=1; a=rsa-sha256; t=1769563589; cv=none;        d=google.com; s=arc-20240605;        b=N/+n9SgE1gb7KbccbS5l/PPKn/zwE5riw4cY01ij7mckEflXXR0o2X/nf1eeBP/w0a         XGQqVbyl1NmarT2ocFRZ9GIwzmtzmjlZXH/DTTtQ+CkIft0Ps/J1buJHQqS5cyacSE3u         gfzxtat0wEdwhuU3BwgPRVH9xG+CK9mHFMdHTccfFkUIJWfP5sqxXyufgiwmzklWtFfT         Z+h2YeWhSFxyKWJaPnjCRpgmvoTC8lGxe1w6vyR87RAQYo/zwfh2oxdp/jYBXE7Zklve         RnLlFlqwZcUQLK4tdB6SFPpF5JkM+yxVMKYlbO9T+7ZCZbeMbQ79uwkGebncavawQqZh         s1vA=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;        h=to:subject:message-id:date:from:mime-version:dkim-signature;        bh=JtsCLhzKmEb9XvETy/3M0Yt+R0dxtQ4NQx4cmFRRqRA=;        fh=ZIdVKdHpFaAVS4d3/rWsNE1b1SUZYAXIDwtNdizckIQ=;        b=KriJVo/84f83OZ/PdwJ5MqBcj8JFsXkpCQ5IJj+jWFxxToEm9ESSJdL1YCj9ohvx0L         vkPRZ7ovzugwSHNHIqqBk5COOS95KG4R11WU6CF1EOYKkgDrQQodzs4G/Gb7KAH3Q4hU         ouR6Ek7bltaMmCXQEPzvg5HtHNA65NDXvjdcdpBIhXMm7vLRqIYA5fTsPgJVmp48s2ca         U+OOJiPyFcY9zEvjLQk8OVVti5urP/hv9DdvW496H1qtNXHd/Co5Vsu26wrgyxxbpXYM         an80DUYNrSgixSKKBDK1D9wP1F9avqw3o/lWLBC50UdY34VTv8lRb6WcCFjvkgedo6qQ         GNAg==;        darn=cere.network"
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=1; mx.google.com; arc=none"
+            },
+            {
+              "name": "X-Forwarded-Encrypted",
+              "value": "i=1; AJvYcCVUESCtAl2re29JEym1q+ZWNM8tiaVhMOPUnSCAI4qzPpLma6ttbPy1p63i78S9Kcgdd15f@cere.network"
+            },
+            {
+              "name": "X-Gm-Gg",
+              "value": "AZuq6aKtmJVj5RVfGexcAf8vysWpGB8D+OwG/Ry2fvRMQWKasKEQl+uMZndvmD6OpR6 rNAh8earUn/M1OdJXJs+Gpn0ANY+Y+53y0oumS+xQm2QQkQjw8zGx6x1HzpRnNM5y9SPrzrOjke 7kYsLRzaj5evZNEPaPKLjyYHQJ0R4WHjr8K0WVkCczwRNVqBGw+n+NIgvqwqPwGXT36Ei2gyFNy JEUzfNqwc4dCIPUIn72dyHRKRo0eeSq/+g/IJs92unHmSL0X4xzpZ+lulnUymOtv8/H2PCCxHv/ zitiXKCFYfG8DZ6Vyg3MOTgaarWEW1JbnbhPodheWXcs+3YqCzuZ1ZzBzuOmYH9VuKSbN3Q="
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a05:600c:3b1c:b0:47d:87ac:73ef with SMTP id 5b1f17b1804b1-48069e792a9mr40101925e9.13.1769563588284; Tue, 27 Jan 2026 17:26:28 -0800 (PST)"
+            },
+            {
+              "name": "MIME-Version",
+              "value": "1.0"
+            },
+            {
+              "name": "From",
+              "value": "\"'Gina Kim' via Team\" \u003cteam@cere.network\u003e"
+            },
+            {
+              "name": "Date",
+              "value": "Tue, 27 Jan 2026 17:26:16 -0800"
+            },
+            {
+              "name": "X-Gm-Features",
+              "value": "AZwV_QhWmyIVaRjMoZToydJ57Z3bFYjobsg2TnScjFV9qH5d_Xbl3ybi-AiZnKY"
+            },
+            {
+              "name": "Message-ID",
+              "value": "\u003cCAFO2Dh6hupJKqmXJN-6RQEz86gBFJGums+9p98_exGEfcS-SaA@mail.gmail.com\u003e"
+            },
+            {
+              "name": "Subject",
+              "value": "Law360 media inquiry Goopal v. Jin et al lawsuit"
+            },
+            {
+              "name": "To",
+              "value": "community@cere.io, team@cere.network"
+            },
+            {
+              "name": "Content-Type",
+              "value": "multipart/mixed; boundary=\"0000000000001702f0064968a1c6\""
+            },
+            {
+              "name": "X-Original-Sender",
+              "value": "gina.kim@law360.com"
+            },
+            {
+              "name": "X-Original-Authentication-Results",
+              "value": "mx.google.com;       dkim=pass header.i=@law360.com header.s=google header.b=MkDYidiU;       arc=pass (i=1);       spf=pass (google.com: domain of gina.kim@law360.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=gina.kim@law360.com;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=law360.com;       dara=neutral header.i=@cere.network"
+            },
+            {
+              "name": "X-Original-From",
+              "value": "Gina Kim \u003cgina.kim@law360.com\u003e"
+            },
+            {
+              "name": "Reply-To",
+              "value": "Gina Kim \u003cgina.kim@law360.com\u003e"
+            },
+            {
+              "name": "Precedence",
+              "value": "list"
+            },
+            {
+              "name": "Mailing-list",
+              "value": "list team@cere.network; contact team+owners@cere.network"
+            },
+            {
+              "name": "List-ID",
+              "value": "\u003cteam.cere.network\u003e"
+            },
+            {
+              "name": "X-Spam-Checked-In-Group",
+              "value": "team@cere.network"
+            },
+            {
+              "name": "X-Google-Group-Id",
+              "value": "1002441098853"
+            },
+            {
+              "name": "List-Post",
+              "value": "\u003chttps://groups.google.com/a/cere.network/group/team/post\u003e, \u003cmailto:team@cere.network\u003e"
+            },
+            {
+              "name": "List-Help",
+              "value": "\u003chttps://support.google.com/a/cere.network/bin/topic.py?topic=25838\u003e, \u003cmailto:team+help@cere.network\u003e"
+            },
+            {
+              "name": "List-Archive",
+              "value": "\u003chttps://groups.google.com/a/cere.network/group/team/\u003e"
+            },
+            {
+              "name": "List-Unsubscribe",
+              "value": "\u003cmailto:googlegroups-manage+1002441098853+unsubscribe@googlegroups.com\u003e, \u003chttps://groups.google.com/a/cere.network/group/team/subscribe\u003e"
+            }
+          ],
+          "mimeType": "multipart/mixed",
+          "parts": [
+            {
+              "body": {},
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "multipart/alternative; boundary=\"0000000000001702ef064968a1c4\""
+                }
+              ],
+              "mimeType": "multipart/alternative",
+              "partId": "0",
+              "parts": [
+                {
+                  "body": {
+                    "data": "SGVsbG8gYW5kIEdvb2QgRXZlbmluZw0KDQpNeSBuYW1lIGlzIEdpbmEgS2ltIGFuZCBJJ20gYSBzdGFmZiB3cml0ZXIgZm9yIExhdzM2MC4gSSdtIHdyaXRpbmcgYWJvdXQgYQ0KbGF3c3VpdCB0aGF0IHdhcyBmaWxlZCB0b2RheSBpbiB0aGUgTm9ydGhlcm4gRGlzdHJpY3Qgb2YgQ2FsaWZvcm5pYSBvbg0KYmVoYWxmIG9mIFZpdmlhbiBMaXUgYW5kIGhlciBpbnZlc3RtZW50IGNvbXBhbnkgR29vcGFsIERpZ2l0YWwgTHRkLg0KYWxsZWdpbmcgdGhlIGRlZmVuZGFudHMgbWFkZSBmYWxzZSByZXByZXNlbnRhdGlvbnMgc28gdGhhdCB0aGUgcGxhaW50aWZmDQpjb3VsZCB3b3JrIGZvciB0aGUgQ2VyZSBOZXR3b3JrLCBwcm92aWRlIGludmVzdG1lbnQgZnVuZHMgYW5kIGNvbm5lY3QgdGhlDQpDRU8gRnJlZCBKaW4gdG8gb3RoZXIgaW52ZXN0b3JzLiBUaGUgcGxhaW50aWZmIHNlZWtzIGRhbWFnZXMgb3ZlciBjbGFpbXMNCnNoZSBhbmQgaGVyIGludmVzdG1lbnQgY29tcGFueSBjYW5ub3Qgc2VsbCB0aGVpciBDZXJlIFRva2Vucy4NCg0KSSB3YW50ZWQgdG8gc2VlIGlmIG15IGlucXVpcnkgc2Vla2luZyBjb21tZW50IGZyb20gdGhlIGRlZmVuZGFudHMgbmFtZWQgaW4NCnRoZSBjYXNlIHdvdWxkIGJlIGZvcndhcmRlZCB0byB0aGUgYXBwcm9wcmlhdGUgcGVyc29ucyBvZiBjb250YWN0IHdobyBhcmUNCmF1dGhvcml6ZWQgdG8gbWFrZSBhIHN0YXRlbWVudCBvbiB0aGUgZGVmZW5kYW50cycgYmVoYWxmIG9yIGEgcmVzcG9uc2UgdG8NCnRoZSBjbGFpbXMgbWFkZSBieSB0aGUgcGxhaW50aWZmLg0KDQpJIGNhbiBiZSByZWFjaGVkIGF0IHRoaXMgZW1haWwgb3IgYXQgNTYyIDIxNyA5NDM4LiBXZSBob3BlIHRvIHB1Ymxpc2ggdGhlDQpzdG9yeSBiZWZvcmUgODozMHAgUFNUIFR1ZXNkYXksIEphbi4gMjcsIGJ1dCBjYW4gYWx3YXlzIHVwZGF0ZSBvdXIgc3RvcnkNCmFuZCBpbmNsdWRlIGEgc3RhdGVtZW50IGlmIHRoZSBwYXJ0aWVzIHJlYWNoIHVzIHdpdGggb25lIHBvc3QtcHVibGljYXRpb24uDQoNClRoYW5rIHlvdSBzbyBtdWNoIGZvciB5b3VyIHRpbWUgYW5kIGNvbnNpZGVyYXRpb24uIEkgaG9wZSB5b3UncmUgaGF2aW5nIGENCnBsZWFzYW50IFR1ZXNkYXkuDQoNClNpbmNlcmVseQ0KDQpHaW5hIEtpbQ0KDQo=",
+                    "size": 1142
+                  },
+                  "headers": [
+                    {
+                      "name": "Content-Type",
+                      "value": "text/plain; charset=\"UTF-8\""
+                    }
+                  ],
+                  "mimeType": "text/plain",
+                  "partId": "0.0"
+                },
+                {
+                  "body": {
+                    "data": "PGRpdiBkaXI9Imx0ciI-SGVsbG8gYW5kIEdvb2QgRXZlbmluZzxkaXY-PGJyPjwvZGl2PjxkaXY-TXkgbmFtZSBpcyBHaW5hIEtpbSBhbmQgSSYjMzk7bSBhIHN0YWZmIHdyaXRlciBmb3IgTGF3MzYwLiBJJiMzOTttIHdyaXRpbmcgYWJvdXQgYSBsYXdzdWl0IHRoYXQgd2FzIGZpbGVkIHRvZGF5IGluIHRoZSBOb3J0aGVybiBEaXN0cmljdCBvZiBDYWxpZm9ybmlhIG9uIGJlaGFsZiBvZiBWaXZpYW4gTGl1IGFuZCBoZXIgaW52ZXN0bWVudCBjb21wYW55IEdvb3BhbCBEaWdpdGFsIEx0ZC4gYWxsZWdpbmcgdGhlIGRlZmVuZGFudHMgbWFkZSBmYWxzZSByZXByZXNlbnRhdGlvbnMgc28gdGhhdCB0aGUgcGxhaW50aWZmIGNvdWxkIHdvcmsgZm9yIHRoZSBDZXJlIE5ldHdvcmssIHByb3ZpZGUgaW52ZXN0bWVudCBmdW5kcyBhbmQgY29ubmVjdCB0aGUgQ0VPIEZyZWQgSmluIHRvIG90aGVyIGludmVzdG9ycy4gVGhlIHBsYWludGlmZiBzZWVrcyBkYW1hZ2VzIG92ZXIgY2xhaW1zIHNoZSBhbmQgaGVyIGludmVzdG1lbnQgY29tcGFueSBjYW5ub3Qgc2VsbCB0aGVpciBDZXJlIFRva2Vucy48L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2Pkkgd2FudGVkIHRvIHNlZSBpZiBteSBpbnF1aXJ5IHNlZWtpbmcgY29tbWVudCBmcm9tIHRoZSBkZWZlbmRhbnRzIG5hbWVkIGluIHRoZSBjYXNlIHdvdWxkIGJlIGZvcndhcmRlZCB0byB0aGUgYXBwcm9wcmlhdGUgcGVyc29ucyBvZiBjb250YWN0IHdobyBhcmUgYXV0aG9yaXplZCB0byBtYWtlIGEgc3RhdGVtZW50IG9uIHRoZSBkZWZlbmRhbnRzJiMzOTsgYmVoYWxmIG9yIGEgcmVzcG9uc2UgdG8gdGhlIGNsYWltcyBtYWRlIGJ5IHRoZSBwbGFpbnRpZmYuwqA8L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2PkkgY2FuIGJlIHJlYWNoZWQgYXQgdGhpcyBlbWFpbCBvciBhdCA1NjIgMjE3IDk0MzguIFdlIGhvcGUgdG8gcHVibGlzaCB0aGUgc3RvcnkgYmVmb3JlIDg6MzBwIFBTVCBUdWVzZGF5LCBKYW4uIDI3LCBidXQgY2FuIGFsd2F5cyB1cGRhdGUgb3VyIHN0b3J5IGFuZCBpbmNsdWRlIGEgc3RhdGVtZW50IGlmIHRoZSBwYXJ0aWVzIHJlYWNoIHVzIHdpdGggb25lIHBvc3QtcHVibGljYXRpb24uPC9kaXY-PGRpdj48YnI-PC9kaXY-PGRpdj5UaGFuayB5b3Ugc28gbXVjaCBmb3IgeW91ciB0aW1lwqBhbmQgY29uc2lkZXJhdGlvbi4gSSBob3BlIHlvdSYjMzk7cmUgaGF2aW5nIGEgcGxlYXNhbnQgVHVlc2RheS48L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2PlNpbmNlcmVseTwvZGl2PjxkaXY-PGJyPjwvZGl2PjxkaXY-R2luYSBLaW3CoDwvZGl2PjwvZGl2Pg0KDQo=",
+                    "size": 1304
+                  },
+                  "headers": [
+                    {
+                      "name": "Content-Type",
+                      "value": "text/html; charset=\"UTF-8\""
+                    },
+                    {
+                      "name": "Content-Transfer-Encoding",
+                      "value": "quoted-printable"
+                    }
+                  ],
+                  "mimeType": "text/html",
+                  "partId": "0.1"
+                }
+              ]
+            },
+            {
+              "body": {
+                "attachmentId": "ANGjdJ_8TSFBnXKkSh2K_O0OjR3zzSbzE6_FrQ_jZeIyWL3JQLjHtQJ0yUpuWMpzafzBNiML-770zdXwvs4ZQzVpSh548qK_rN_x04_IJSQlbcWuw0ftAg56Nw_h-2D1pwMGoSFbB2UA104CrGE6DcUHF20jyVtHc59QR89HbhZbxgVhKPvzd2e3JDIWUnYZd0t22tE9Q0f8wFbFj4yqh7d0_uqHSHMea7uZrUUTM3bi2bvC78oltopd3SwT8kHTzGuW_Y_SbPThaPs1P9hqpCNcAX2wyZ4jTPX2dEfa1mGiJifcF34nEMKmWjLg9f8EDNrXs7lHJU7RxvV8TTPvC6SwaWByNeDnRfapwlWRx6RymHAk--stHgfL-B2RDNDoK7e3XSxyokp0tqqFDgQ9",
+                "size": 1114389
+              },
+              "filename": "Goopal v. Jin et al.pdf",
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/pdf; name=\"Goopal v. Jin et al.pdf\""
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"Goopal v. Jin et al.pdf\""
+                },
+                {
+                  "name": "Content-Transfer-Encoding",
+                  "value": "base64"
+                },
+                {
+                  "name": "Content-ID",
+                  "value": "\u003cf_mkxbxrav0\u003e"
+                },
+                {
+                  "name": "X-Attachment-Id",
+                  "value": "f_mkxbxrav0"
+                }
+              ],
+              "mimeType": "application/pdf",
+              "partId": "1"
+            }
+          ]
+        },
+        "sizeEstimate": 1541778,
+        "snippet": "Hello and Good Evening My name is Gina Kim and I\u0026#39;m a staff writer for Law360. I\u0026#39;m writing about a lawsuit that was filed today in the Northern District of California on behalf of Vivian Liu and",
+        "threadId": "19c02359ae8c2c8d"
+      },
+      {
+        "historyId": "7717060",
+        "id": "19c023a41124eba2",
+        "internalDate": "1769563883000",
+        "labelIds": [
+          "CATEGORY_PERSONAL",
+          "INBOX"
+        ],
+        "payload": {
+          "body": {},
+          "headers": [
+            {
+              "name": "Delivered-To",
+              "value": "martijn@cere.network"
+            },
+            {
+              "name": "Received",
+              "value": "by 2002:a17:504:d9d8:b0:1e0e:1af7:ade1 with SMTP id dn24csp2453605njc;        Tue, 27 Jan 2026 17:31:38 -0800 (PST)"
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a05:600c:1c13:b0:477:7925:f7fb with SMTP id 5b1f17b1804b1-48069c26ad2mr55749465e9.10.1769563898207;        Tue, 27 Jan 2026 17:31:38 -0800 (PST)"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=2; a=rsa-sha256; t=1769563898; cv=pass;        d=google.com; s=arc-20240605;        b=S7Z6hYu7vry8f2zlhTtsYWk43n1mXHHEuJOajBaHct2oVsOcd6kpKmlew64l/qB+qV         aCfD1Vv7ljmXVnK8ey4Vxe4BvPM80RR5ynfz5SPafo9lu6tLW68tKPfPqKMMY+7JCpO2         aSIbJQLNkdeVi9rNZf9fNnNTlnmcPmlj5b1s9vJf9+Sysy7z/L3OSCU47l3xRH3kJ8ss         QoDdHy/67X1UOGLko5KDltQ1dT9oPX7AFuzCK/2wxomu8GowtLGJbQY/8pu3jp+CxvCH         sN+G+rKddf0IoNsAKUGbU6+3OoatYZki5RYVf2PaQM0gicq2u2i3iuRgaPIlfdtxu9FF         hZtg=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;        h=to:subject:message-id:date:from:in-reply-to:references:mime-version         :dkim-signature;        bh=3k/jU4+e0kgLgfGwvmCXzVIKDiPb+D7vc8TdUnMrKPU=;        fh=M/epWcjNbiXTYOuP+oAUm2Zsyz044XKOFLMOupJcM7I=;        b=HjYhgyHbaLmzljYBsA7VmUTz7Wygx9k8R0B7gPlQvyQ8yZH3mgLqp8zlv954G0/hcm         Mey+ryP34UHzFtCR268acJ+dmGDrS12+timUYqknafQTbCRDVkaHCIAYfz5hOGBx4tVm         Q/KC4hhTNrzZkb9bJyYDcpHugLvbzFhG+aZyD/tQ5NHbEC91QYyGQK74VOMNaiMdWsgM         qixkYyf4/Zsrluyg+t3TsQuasVjz5TYNfqO8b0OzEAg6Sra67gUpqzwxPxP3gN3L1nVf         depQ1FuIYhuzs7Ul99hxga1OIz3zXJwkKUGE2UsqWchMUXv+0TcwrfQW1OtpBIIEUgKP         DauA==;        dara=google.com"
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=2; mx.google.com;       dkim=pass header.i=@law360.com header.s=google header.b=Lp7BnC8u;       arc=pass (i=1);       spf=pass (google.com: domain of gina.kim@law360.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=gina.kim@law360.com;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=law360.com;       dara=neutral header.i=@cere.network"
+            },
+            {
+              "name": "Return-Path",
+              "value": "\u003cgina.kim@law360.com\u003e"
+            },
+            {
+              "name": "Received",
+              "value": "from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])        by mx.google.com with SMTPS id ffacd0b85a97d-435e1357242sor132565f8f.23.2026.01.27.17.31.37        for \u003cmartijn@cere.network\u003e        (Google Transport Security);        Tue, 27 Jan 2026 17:31:38 -0800 (PST)"
+            },
+            {
+              "name": "Received-SPF",
+              "value": "pass (google.com: domain of gina.kim@law360.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;"
+            },
+            {
+              "name": "Authentication-Results",
+              "value": "mx.google.com;       dkim=pass header.i=@law360.com header.s=google header.b=Lp7BnC8u;       arc=pass (i=1);       spf=pass (google.com: domain of gina.kim@law360.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=gina.kim@law360.com;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=law360.com;       dara=neutral header.i=@cere.network"
+            },
+            {
+              "name": "ARC-Seal",
+              "value": "i=1; a=rsa-sha256; t=1769563897; cv=none;        d=google.com; s=arc-20240605;        b=N4mjJzhdN8AxLc5cXGfewA8LPNj5Q57B43Z99zA8s6rfsS3VQD4/1D9tmUVb70GKwB         WdZbIJthSky1RWbVDZ6iq+rS09o0m47FUT3wPvS38/EDaHmw4Vg8yuBv53Wq+cttWraE         6ylDGxobduY+Z23q5/Rp9Q9iOReJItmgNRxSfPHEt+yc703fv6Tjmq1cGzSzXr6V+3bR         hmMXjtEPcMbk0i/PYoj6rh5l+J30ygsizVk8STWaFt3CN3zA1QqNHHrUMgJevhTtNqvH         OQRd/r4qUYxW70z6lGpw+swHQHhrySNFWh7iiu83gDmzwoNYvtX6c55zIFZBDVL9A/U0         3j6A=="
+            },
+            {
+              "name": "ARC-Message-Signature",
+              "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;        h=to:subject:message-id:date:from:in-reply-to:references:mime-version         :dkim-signature;        bh=3k/jU4+e0kgLgfGwvmCXzVIKDiPb+D7vc8TdUnMrKPU=;        fh=M/epWcjNbiXTYOuP+oAUm2Zsyz044XKOFLMOupJcM7I=;        b=BDBnVMM9giKnE1SF9J2zzrD/zpx6zo5aJbY+dz/DNB12fWOKjjXf9ueJz3s2OR7B3W         +u+EgjJRhMbVQND/nLDEWl8QpFW9ZBToBtIh1udPNGAAIGg6GhQBb0ogxL4CKLi/DR4i         2BFBZfWQHCYyBrOyWD9BfJwI3c3+xPJlfILTTRlwcFmSrR+HsN6ltl9z5RUMvFWKeAQL         kZmi0Hf5G445AGznugQ6geEnq+dqrrthxByymUf2NjEvw3LBTxbjT8Q9wD8PoD6hzkoI         LsQF5fUeosWoO64Yx1mOtRFDlGlrMLco9/t7vjrjnWyuC8nxEKAtwwWdaGJWtlPAhX1g         oKYQ==;        darn=cere.network"
+            },
+            {
+              "name": "ARC-Authentication-Results",
+              "value": "i=1; mx.google.com; arc=none"
+            },
+            {
+              "name": "DKIM-Signature",
+              "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=law360.com; s=google; t=1769563897; x=1770168697; darn=cere.network;        h=to:subject:message-id:date:from:in-reply-to:references:mime-version         :from:to:cc:subject:date:message-id:reply-to;        bh=3k/jU4+e0kgLgfGwvmCXzVIKDiPb+D7vc8TdUnMrKPU=;        b=Lp7BnC8utvR+xKXf67FnTjYfmbqnPzc9f4zLxNoRV7JlT8O2tHH6VsX6pYD1hl0nuI         J3uDet9QoN+bC9Lxfr5aoR3cEFZgaqP4RclZdDndNkIBYAfQBO7zkrZCakClE1XSfrDL         j6HI4bU4jSd8LME2aIIBXpF/WD61smJe3rUjs="
+            },
+            {
+              "name": "X-Google-DKIM-Signature",
+              "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=1e100.net; s=20230601; t=1769563897; x=1770168697;        h=to:subject:message-id:date:from:in-reply-to:references:mime-version         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id         :reply-to;        bh=3k/jU4+e0kgLgfGwvmCXzVIKDiPb+D7vc8TdUnMrKPU=;        b=XY8yjdmn3v6W/o/YDefeFbZzAIUC0wCbcEDnjuKMZyTnXX0nFNQ9FpO3lZl1lnQ9Tx         ClIBsqTVp44aCfhMDO7dCVNqriIJw8hJjzlisQUnaHDV7jNdNEtxmebFUYq81jFTKgTM         jYMItUWRRAXgjzvTNlmHNdHfpA2QA7C7Nx6PL46Aa9ZHmk/ocGUKRExVeD4xfq82zPaJ         t0uFQtu+hzEglP83qSM0My+Fp3ZLExd8lGdpDqMywRRRCMVMWVvqBZt3ixr11UQ/gLV9         KzVfPb3e8ivsd7sBpNDNKaH+XxGDGncjeZnRLEXCTFba91T5rRHKOlivuBTfhg8Jm8PE         /iDg=="
+            },
+            {
+              "name": "X-Gm-Message-State",
+              "value": "AOJu0YwidrbGvYhgPgXF2rSEqjGaPBqWl21KJ3+RZV3XIRM7QfvAvPC7 d10Hc9z/mPnK2OOQPz5didFjYc36CbOOsYpFmpeG51K3m6DA5+1ZkKSfQ1Dds7pgA0s+igbxZc6 Xeo9tmbcdXhAsjAWO/08LbwRJgYtXSI+PLAZkpF+suI1NAdMKrIBiQc8="
+            },
+            {
+              "name": "X-Gm-Gg",
+              "value": "AZuq6aJG6ZOov9ZlrOzNm0O1i9ZcFDeX2MWqXeKB7KBJWBuJA6LWEaPU/tQCK0zqJdI qqBEVXpfP0gF8GGQmSnI4K1lJCry4d0nnhsnpoKO1RRtTzrxG+AxhDXsCwzWFquZY7xbjcC+Ve5 INOO1j9PEhY3RSmklN5GQmfMSzxfaDs6ZS8zQs3jDxw7awm3EenKWcBy+5ZWdsyl7zb1xeNz4Hc UXUlr8oGGAabz6BASswsmuP8/H2C0IJCpPSHG8A5Kt1r1ksxnnxXw1UPpL9W7Zy7nZFJ7esKPiL mBpmGZr0Rsp8t4AT1rUK5wMQM8GwqaJnDxujfUrrkHFqa6Kn9Lwlk4mjJ3Hh"
+            },
+            {
+              "name": "X-Received",
+              "value": "by 2002:a05:6000:1acc:b0:430:8583:d182 with SMTP id ffacd0b85a97d-435dd0b9089mr5464514f8f.29.1769563896966; Tue, 27 Jan 2026 17:31:36 -0800 (PST)"
+            },
+            {
+              "name": "MIME-Version",
+              "value": "1.0"
+            },
+            {
+              "name": "References",
+              "value": "\u003cCAFO2Dh6hupJKqmXJN-6RQEz86gBFJGums+9p98_exGEfcS-SaA@mail.gmail.com\u003e"
+            },
+            {
+              "name": "In-Reply-To",
+              "value": "\u003cCAFO2Dh6hupJKqmXJN-6RQEz86gBFJGums+9p98_exGEfcS-SaA@mail.gmail.com\u003e"
+            },
+            {
+              "name": "From",
+              "value": "Gina Kim \u003cgina.kim@law360.com\u003e"
+            },
+            {
+              "name": "Date",
+              "value": "Tue, 27 Jan 2026 17:31:23 -0800"
+            },
+            {
+              "name": "X-Gm-Features",
+              "value": "AZwV_QiqT21lhxYzrjt-Dhfg65jkPvcrXQCFCwsva2koZaLpi4U3jkK4JypuXnw"
+            },
+            {
+              "name": "Message-ID",
+              "value": "\u003cCAFO2Dh5PiXrT4Mq8DUVHWauxtuZRefL1o=eh5y_8J0etE=_Z0g@mail.gmail.com\u003e"
+            },
+            {
+              "name": "Subject",
+              "value": "Fwd: Law360 media inquiry Goopal v. Jin et al lawsuit"
+            },
+            {
+              "name": "To",
+              "value": "martijn@cere.network, fred@cere.network"
+            },
+            {
+              "name": "Content-Type",
+              "value": "multipart/mixed; boundary=\"0000000000007cacce064968b31b\""
+            }
+          ],
+          "mimeType": "multipart/mixed",
+          "parts": [
+            {
+              "body": {},
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "multipart/alternative; boundary=\"0000000000007caccd064968b319\""
+                }
+              ],
+              "mimeType": "multipart/alternative",
+              "partId": "0",
+              "parts": [
+                {
+                  "body": {
+                    "data": "LS0tLS0tLS0tLSBGb3J3YXJkZWQgbWVzc2FnZSAtLS0tLS0tLS0NCkZyb206IEdpbmEgS2ltIDxnaW5hLmtpbUBsYXczNjAuY29tPg0KRGF0ZTogVHVlLCBKYW4gMjcsIDIwMjYgYXQgNToyNuKAr1BNDQpTdWJqZWN0OiBMYXczNjAgbWVkaWEgaW5xdWlyeSBHb29wYWwgdi4gSmluIGV0IGFsIGxhd3N1aXQNClRvOiA8Y29tbXVuaXR5QGNlcmUuaW8-LCA8dGVhbUBjZXJlLm5ldHdvcms-DQoNCg0KSGVsbG8gYW5kIEdvb2QgRXZlbmluZw0KDQpNeSBuYW1lIGlzIEdpbmEgS2ltIGFuZCBJJ20gYSBzdGFmZiB3cml0ZXIgZm9yIExhdzM2MC4gSSdtIHdyaXRpbmcgYWJvdXQgYQ0KbGF3c3VpdCB0aGF0IHdhcyBmaWxlZCB0b2RheSBpbiB0aGUgTm9ydGhlcm4gRGlzdHJpY3Qgb2YgQ2FsaWZvcm5pYSBvbg0KYmVoYWxmIG9mIFZpdmlhbiBMaXUgYW5kIGhlciBpbnZlc3RtZW50IGNvbXBhbnkgR29vcGFsIERpZ2l0YWwgTHRkLg0KY2xhaW1pbmcgdGhlIGRlZmVuZGFudHMgbWFkZSBmYWxzZSByZXByZXNlbnRhdGlvbnMgc28gdGhhdCB0aGUgcGxhaW50aWZmDQpjb3VsZCB3b3JrIGZvciB0aGUgQ2VyZSBOZXR3b3JrLCBwcm92aWRlIGludmVzdG1lbnQgZnVuZHMgYW5kIGNvbm5lY3QgdGhlDQpDRU8gRnJlZCBKaW4gdG8gb3RoZXIgaW52ZXN0b3JzLiBUaGUgcGxhaW50aWZmIHNlZWtzIGRhbWFnZXMgb3ZlciBjbGFpbXMNCnNoZSBhbmQgaGVyIGludmVzdG1lbnQgY29tcGFueSBjYW5ub3Qgc2VsbCB0aGVpciBDZXJlIFRva2Vucy4NCg0KSSB3YW50ZWQgdG8gc2VlIGlmIG15IGlucXVpcnkgc2Vla2luZyBjb21tZW50IGZyb20gdGhlIGRlZmVuZGFudHMgbmFtZWQgaW4NCnRoZSBjYXNlIHdvdWxkIGJlIGZvcndhcmRlZCB0byB0aGUgYXBwcm9wcmlhdGUgcGVyc29ucyBvZiBjb250YWN0IHdobyBhcmUNCmF1dGhvcml6ZWQgdG8gbWFrZSBhIHN0YXRlbWVudCBvbiB0aGUgZGVmZW5kYW50cycgYmVoYWxmIG9yIGEgcmVzcG9uc2UgdG8NCnRoZSBjbGFpbXMgbWFkZSBieSB0aGUgcGxhaW50aWZmLg0KDQpJIGNhbiBiZSByZWFjaGVkIGF0IHRoaXMgZW1haWwgb3IgYXQgNTYyIDIxNyA5NDM4LiBXZSBob3BlIHRvIHB1Ymxpc2ggdGhlDQpzdG9yeSBiZWZvcmUgODozMHAgUFNUIFR1ZXNkYXksIEphbi4gMjcsIGJ1dCBjYW4gYWx3YXlzIHVwZGF0ZSBvdXIgc3RvcnkNCmFuZCBpbmNsdWRlIGEgc3RhdGVtZW50IGlmIHRoZSBwYXJ0aWVzIHJlYWNoIHVzIHdpdGggb25lIHBvc3QtcHVibGljYXRpb24uDQoNClRoYW5rIHlvdSBzbyBtdWNoIGZvciB5b3VyIHRpbWUgYW5kIGNvbnNpZGVyYXRpb24uIEkgaG9wZSB5b3UncmUgaGF2aW5nIGENCnBsZWFzYW50IFR1ZXNkYXkuDQoNClNpbmNlcmVseQ0KDQpHaW5hIEtpbQ0K",
+                    "size": 1365
+                  },
+                  "headers": [
+                    {
+                      "name": "Content-Type",
+                      "value": "text/plain; charset=\"UTF-8\""
+                    },
+                    {
+                      "name": "Content-Transfer-Encoding",
+                      "value": "quoted-printable"
+                    }
+                  ],
+                  "mimeType": "text/plain",
+                  "partId": "0.0"
+                },
+                {
+                  "body": {
+                    "data": "PGRpdiBkaXI9Imx0ciI-PGJyPjxicj48ZGl2IGNsYXNzPSJnbWFpbF9xdW90ZSBnbWFpbF9xdW90ZV9jb250YWluZXIiPjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJnbWFpbF9hdHRyIj4tLS0tLS0tLS0tIEZvcndhcmRlZCBtZXNzYWdlIC0tLS0tLS0tLTxicj5Gcm9tOiA8c3Ryb25nIGNsYXNzPSJnbWFpbF9zZW5kZXJuYW1lIiBkaXI9ImF1dG8iPkdpbmEgS2ltPC9zdHJvbmc-IDxzcGFuIGRpcj0iYXV0byI-Jmx0OzxhIGhyZWY9Im1haWx0bzpnaW5hLmtpbUBsYXczNjAuY29tIj5naW5hLmtpbUBsYXczNjAuY29tPC9hPiZndDs8L3NwYW4-PGJyPkRhdGU6IFR1ZSwgSmFuIDI3LCAyMDI2IGF0IDU6MjbigK9QTTxicj5TdWJqZWN0OiBMYXczNjAgbWVkaWEgaW5xdWlyeSBHb29wYWwgdi4gSmluIGV0IGFsIGxhd3N1aXQ8YnI-VG86ICAmbHQ7PGEgaHJlZj0ibWFpbHRvOmNvbW11bml0eUBjZXJlLmlvIj5jb21tdW5pdHlAY2VyZS5pbzwvYT4mZ3Q7LCAgJmx0O3RlYW1AY2VyZS5uZXR3b3JrJmd0Ozxicj48L2Rpdj48YnI-PGJyPjxkaXYgZGlyPSJsdHIiPkhlbGxvIGFuZCBHb29kIEV2ZW5pbmc8ZGl2Pjxicj48L2Rpdj48ZGl2Pk15IG5hbWUgaXMgR2luYSBLaW0gYW5kIEkmIzM5O20gYSBzdGFmZiB3cml0ZXIgZm9yIExhdzM2MC4gSSYjMzk7bSB3cml0aW5nIGFib3V0IGEgbGF3c3VpdCB0aGF0IHdhcyBmaWxlZCB0b2RheSBpbiB0aGUgTm9ydGhlcm4gRGlzdHJpY3Qgb2YgQ2FsaWZvcm5pYSBvbiBiZWhhbGYgb2YgVml2aWFuIExpdSBhbmQgaGVyIGludmVzdG1lbnQgY29tcGFueSBHb29wYWwgRGlnaXRhbCBMdGQuIGNsYWltaW5nIHRoZSBkZWZlbmRhbnRzIG1hZGUgZmFsc2UgcmVwcmVzZW50YXRpb25zIHNvIHRoYXQgdGhlIHBsYWludGlmZiBjb3VsZCB3b3JrIGZvciB0aGUgQ2VyZSBOZXR3b3JrLCBwcm92aWRlIGludmVzdG1lbnQgZnVuZHMgYW5kIGNvbm5lY3QgdGhlIENFTyBGcmVkIEppbiB0byBvdGhlciBpbnZlc3RvcnMuIFRoZSBwbGFpbnRpZmYgc2Vla3MgZGFtYWdlcyBvdmVyIGNsYWltcyBzaGUgYW5kIGhlciBpbnZlc3RtZW50IGNvbXBhbnkgY2Fubm90IHNlbGwgdGhlaXIgQ2VyZSBUb2tlbnMuPC9kaXY-PGRpdj48YnI-PC9kaXY-PGRpdj5JIHdhbnRlZCB0byBzZWUgaWYgbXkgaW5xdWlyeSBzZWVraW5nIGNvbW1lbnQgZnJvbSB0aGUgZGVmZW5kYW50cyBuYW1lZCBpbiB0aGUgY2FzZSB3b3VsZCBiZSBmb3J3YXJkZWQgdG8gdGhlIGFwcHJvcHJpYXRlIHBlcnNvbnMgb2YgY29udGFjdCB3aG8gYXJlIGF1dGhvcml6ZWQgdG8gbWFrZSBhIHN0YXRlbWVudCBvbiB0aGUgZGVmZW5kYW50cyYjMzk7IGJlaGFsZiBvciBhIHJlc3BvbnNlIHRvIHRoZSBjbGFpbXMgbWFkZSBieSB0aGUgcGxhaW50aWZmLsKgPC9kaXY-PGRpdj48YnI-PC9kaXY-PGRpdj5JIGNhbiBiZSByZWFjaGVkIGF0IHRoaXMgZW1haWwgb3IgYXQgNTYyIDIxNyA5NDM4LiBXZSBob3BlIHRvIHB1Ymxpc2ggdGhlIHN0b3J5IGJlZm9yZSA4OjMwcCBQU1QgVHVlc2RheSwgSmFuLiAyNywgYnV0IGNhbiBhbHdheXMgdXBkYXRlIG91ciBzdG9yeSBhbmQgaW5jbHVkZSBhIHN0YXRlbWVudCBpZiB0aGUgcGFydGllcyByZWFjaCB1cyB3aXRoIG9uZSBwb3N0LXB1YmxpY2F0aW9uLjwvZGl2PjxkaXY-PGJyPjwvZGl2PjxkaXY-VGhhbmsgeW91IHNvIG11Y2ggZm9yIHlvdXIgdGltZcKgYW5kIGNvbnNpZGVyYXRpb24uIEkgaG9wZSB5b3UmIzM5O3JlIGhhdmluZyBhIHBsZWFzYW50IFR1ZXNkYXkuPC9kaXY-PGRpdj48YnI-PC9kaXY-PGRpdj5TaW5jZXJlbHk8L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2PkdpbmEgS2ltwqA8L2Rpdj48L2Rpdj4NCjwvZGl2PjwvZGl2Pg0K",
+                    "size": 1842
+                  },
+                  "headers": [
+                    {
+                      "name": "Content-Type",
+                      "value": "text/html; charset=\"UTF-8\""
+                    },
+                    {
+                      "name": "Content-Transfer-Encoding",
+                      "value": "quoted-printable"
+                    }
+                  ],
+                  "mimeType": "text/html",
+                  "partId": "0.1"
+                }
+              ]
+            },
+            {
+              "body": {
+                "attachmentId": "ANGjdJ_cgN7frMllsftVQsZ2Nmby1ntWx3fJuX10vdkbX6g6inzEZ1_qE1RPaXszypEcui9h-ws0dnMTGvNjjgvvJPp94YitgLnvY7QSSb6d-IBA4GRhF3o1J-AFTapb4O3JIfAsT72a0NI60gIzswIS3Qk6HdaxvJ6WDUl52ODLA_g9kCkSOwiXoz2-HhoEMTxarK_wxkmbZfis43T2f1Ozf50JE3p82kLwLi6JfP-bTUo4ROBppG1IUBDUlKgXIIZCAfQR4YPJWjvzX4yffDS4U6qlOhSEJTXfVAj28qClToaWIonLmZp1i2iPDPd59QXSvg25rlxd17ACfJJBvcwYE6K-foeSAw9Z6866JodqJombuL29eP-Ua4BpvnXq2gLzvYMgWdXZ0ZJQp2BS",
+                "size": 1114389
+              },
+              "filename": "Goopal v. Jin et al.pdf",
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/pdf; name=\"Goopal v. Jin et al.pdf\""
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"Goopal v. Jin et al.pdf\""
+                },
+                {
+                  "name": "Content-Transfer-Encoding",
+                  "value": "base64"
+                },
+                {
+                  "name": "Content-ID",
+                  "value": "\u003cf_mkxbxrav0\u003e"
+                },
+                {
+                  "name": "X-Attachment-Id",
+                  "value": "f_mkxbxrav0"
+                }
+              ],
+              "mimeType": "application/pdf",
+              "partId": "1"
+            }
+          ]
+        },
+        "sizeEstimate": 1535817,
+        "snippet": "---------- Forwarded message --------- From: Gina Kim \u0026lt;gina.kim@law360.com\u0026gt; Date: Tue, Jan 27, 2026 at 5:26 PM Subject: Law360 media inquiry Goopal v. Jin et al lawsuit To: \u0026lt;community@cere.io",
+        "threadId": "19c02359ae8c2c8d"
+      }
+    ]
+  }
+}

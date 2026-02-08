@@ -1,0 +1,325 @@
+{
+  "sessionId": "local_1770553389654_szf2yv",
+  "startedAt": "2026-02-08T12:23:09.654Z",
+  "completedAt": "2026-02-08T12:23:28.391Z",
+  "config": {
+    "bucketId": "demo",
+    "outputPath": "/Users/martijnbroersma/clawd/audit-logs/health-analyzer",
+    "useLocalAI": true,
+    "verbose": false
+  },
+  "model": {
+    "name": "llama3.2:3b",
+    "digest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+    "ollamaVersion": "0.15.5",
+    "parameters": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "llama",
+      "families": [
+        "llama"
+      ],
+      "parameter_size": "3.2B",
+      "quantization_level": "Q4_K_M"
+    }
+  },
+  "inputData": {
+    "steps": [
+      {
+        "date": "2026-01-26",
+        "count": 6055,
+        "distance": 6573
+      },
+      {
+        "date": "2026-01-27",
+        "count": 12338,
+        "distance": 7483
+      },
+      {
+        "date": "2026-01-28",
+        "count": 7676,
+        "distance": 4678
+      },
+      {
+        "date": "2026-01-29",
+        "count": 6606,
+        "distance": 7477
+      },
+      {
+        "date": "2026-01-30",
+        "count": 13844,
+        "distance": 5817
+      },
+      {
+        "date": "2026-01-31",
+        "count": 14072,
+        "distance": 8904
+      },
+      {
+        "date": "2026-02-01",
+        "count": 12049,
+        "distance": 7209
+      },
+      {
+        "date": "2026-02-02",
+        "count": 13690,
+        "distance": 5999
+      },
+      {
+        "date": "2026-02-03",
+        "count": 10841,
+        "distance": 4313
+      },
+      {
+        "date": "2026-02-04",
+        "count": 15192,
+        "distance": 6822
+      },
+      {
+        "date": "2026-02-05",
+        "count": 14268,
+        "distance": 4168
+      },
+      {
+        "date": "2026-02-06",
+        "count": 11547,
+        "distance": 7493
+      },
+      {
+        "date": "2026-02-07",
+        "count": 15667,
+        "distance": 6489
+      },
+      {
+        "date": "2026-02-08",
+        "count": 12372,
+        "distance": 5181
+      }
+    ],
+    "sleep": [
+      {
+        "date": "2026-01-26",
+        "duration": 7.985949911996789,
+        "quality": "good"
+      },
+      {
+        "date": "2026-01-27",
+        "duration": 6.894014400903278,
+        "quality": "good"
+      },
+      {
+        "date": "2026-01-28",
+        "duration": 6.550235250335981,
+        "quality": "good"
+      },
+      {
+        "date": "2026-01-29",
+        "duration": 6.429968005721285,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-01-30",
+        "duration": 5.811886935739084,
+        "quality": "good"
+      },
+      {
+        "date": "2026-01-31",
+        "duration": 5.763504722406811,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-01",
+        "duration": 6.652366092717961,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-02",
+        "duration": 7.919044659583778,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-02-03",
+        "duration": 6.263264106110684,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-02-04",
+        "duration": 6.349380025492191,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-02-05",
+        "duration": 8.241295289360004,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-06",
+        "duration": 7.180896112102761,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-07",
+        "duration": 6.791574115507693,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-08",
+        "duration": 6.211222241575328,
+        "quality": "good"
+      }
+    ],
+    "mood": [
+      {
+        "date": "2026-01-26",
+        "score": 9,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-01-27",
+        "score": 6
+      },
+      {
+        "date": "2026-01-28",
+        "score": 5
+      },
+      {
+        "date": "2026-01-29",
+        "score": 8,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-01-30",
+        "score": 6
+      },
+      {
+        "date": "2026-01-31",
+        "score": 5
+      },
+      {
+        "date": "2026-02-01",
+        "score": 8,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-02",
+        "score": 5
+      },
+      {
+        "date": "2026-02-03",
+        "score": 8
+      },
+      {
+        "date": "2026-02-04",
+        "score": 7,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-05",
+        "score": 5
+      },
+      {
+        "date": "2026-02-06",
+        "score": 6
+      },
+      {
+        "date": "2026-02-07",
+        "score": 6,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-08",
+        "score": 6
+      }
+    ]
+  },
+  "dataHash": "970c86f1d85707d47dc775a5876817244f1ec7ea15fbac2ec373652f4c99130d",
+  "resultHash": "cd4dc85b446f00b2320a8667ac151c88301bda5e2c4a9b54b805131e3e151b72",
+  "entries": [
+    {
+      "id": "audit_1770553389655_18hi5g7u_0",
+      "timestamp": "2026-02-08T12:23:09.808Z",
+      "action": "data_fetched",
+      "details": {
+        "bucketId": "demo",
+        "source": "ddc",
+        "note": "Fetching encrypted data from DDC"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553389655_18hi5g7u_1",
+      "timestamp": "2026-02-08T12:23:09.808Z",
+      "action": "data_decrypted",
+      "details": {
+        "note": "Decrypting data with capability token",
+        "tokenProvided": false,
+        "keyProvided": false
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553389655_18hi5g7u_2",
+      "timestamp": "2026-02-08T12:23:10.117Z",
+      "action": "inference_started",
+      "details": {
+        "model": "llama3.2:3b",
+        "modelDigest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+        "inputHash": "970c86f1d85707d47dc775a5876817244f1ec7ea15fbac2ec373652f4c99130d",
+        "note": "Starting health analysis"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553389655_18hi5g7u_3",
+      "timestamp": "2026-02-08T12:23:28.390Z",
+      "action": "inference_completed",
+      "details": {
+        "model": "llama3.2:3b",
+        "outputHash": "cd4dc85b446f00b2320a8667ac151c88301bda5e2c4a9b54b805131e3e151b72",
+        "trendsCount": 3,
+        "recommendationsCount": 2,
+        "note": "Analysis complete"
+      },
+      "hashes": {}
+    }
+  ],
+  "insights": {
+    "generatedAt": "2026-02-08T12:23:28.389Z",
+    "summary": "Overall, the health data shows a mix of improving and stable trends, with slight declines in certain categories. Steps are generally increasing over the two-week period, while sleep quality is mostly good but shows some variability. Mood scores are consistently high, but there is room for improvement in stress management.",
+    "trends": [
+      {
+        "category": "steps",
+        "direction": "increasing",
+        "description": "The step count increases steadily over the period."
+      },
+      {
+        "category": "sleep",
+        "direction": "stable",
+        "description": "Sleep quality is mostly good, with some variation in duration and quality."
+      },
+      {
+        "category": "mood",
+        "direction": "stable",
+        "description": "Mood scores are consistently high, but there is room for improvement in managing stress."
+      }
+    ],
+    "recommendations": [
+      {
+        "priority": "high",
+        "category": "exercise",
+        "title": "Increase physical activity",
+        "description": "Aim to take at least 30 minutes of moderate-intensity exercise per day to maintain and improve overall health.",
+        "actionable": true
+      },
+      {
+        "priority": "medium",
+        "category": "stress",
+        "title": "Prioritize stress management",
+        "description": "Make time for relaxation techniques, such as meditation or deep breathing exercises, to help manage stress and maintain good mood scores.",
+        "actionable": true
+      }
+    ],
+    "alerts": []
+  },
+  "signature": "4fa9ceb3fcb49035adb05298b1d796d7200f9dc02363061d11e72d98c802141a"
+}

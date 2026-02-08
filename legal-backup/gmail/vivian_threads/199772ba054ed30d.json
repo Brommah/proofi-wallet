@@ -1,0 +1,128 @@
+{
+  "downloaded": null,
+  "thread": {
+    "historyId": "7661899",
+    "id": "199772ba054ed30d",
+    "messages": [
+      {
+        "historyId": "7661899",
+        "id": "199772bfec27bdc8",
+        "internalDate": "1758640991000",
+        "labelIds": [
+          "SENT"
+        ],
+        "payload": {
+          "body": {},
+          "headers": [
+            {
+              "name": "MIME-Version",
+              "value": "1.0"
+            },
+            {
+              "name": "Date",
+              "value": "Tue, 23 Sep 2025 15:23:11 +0000"
+            },
+            {
+              "name": "Message-ID",
+              "value": "\u003cCAB6cNAhpWAtR_YNOoE7nc-Oy3r3+QHPz7XLgduixVRENAf3ahg@mail.gmail.com\u003e"
+            },
+            {
+              "name": "Subject",
+              "value": "Formal Report_ (Financial) Substantiation of Claims Against K.Wang-merged-compressed"
+            },
+            {
+              "name": "From",
+              "value": "Martijn Broersma \u003cmartijn@cere.network\u003e"
+            },
+            {
+              "name": "To",
+              "value": "hola@info-tecnica.com"
+            },
+            {
+              "name": "Content-Type",
+              "value": "multipart/mixed; boundary=\"000000000000cd9518063f7983ec\""
+            }
+          ],
+          "mimeType": "multipart/mixed",
+          "parts": [
+            {
+              "body": {},
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "multipart/alternative; boundary=\"000000000000cd9515063f7983ea\""
+                }
+              ],
+              "mimeType": "multipart/alternative",
+              "partId": "0",
+              "parts": [
+                {
+                  "body": {
+                    "data": "UHJpbnQgcGxlYXNlIDopDQo=",
+                    "size": 17
+                  },
+                  "headers": [
+                    {
+                      "name": "Content-Type",
+                      "value": "text/plain; charset=\"UTF-8\""
+                    }
+                  ],
+                  "mimeType": "text/plain",
+                  "partId": "0.0"
+                },
+                {
+                  "body": {
+                    "data": "UHJpbnQgcGxlYXNlIDopDQo=",
+                    "size": 17
+                  },
+                  "headers": [
+                    {
+                      "name": "Content-Type",
+                      "value": "text/html; charset=\"UTF-8\""
+                    }
+                  ],
+                  "mimeType": "text/html",
+                  "partId": "0.1"
+                }
+              ]
+            },
+            {
+              "body": {
+                "attachmentId": "ANGjdJ8OzB4AUhN9EAM6hsBNQy5N1_miHpOmvykLb5rwUcjNnFWl_PxYnHw76S6qq57fPaBAhtDUxm-r9qbnDX2LL8xXxlbMnvG2nYQHj2b1aFVff-lwc9CPEcP4Y7ofi7dvvd00cuFjBwoTr3w81sfya6UyPui11TabftlVrjq7I8TC5YLKgIbh_fxoJdL8GJnJZQwSTRde2Eojwn_9KYOUZh-SuRz-dh85lqbdFvlFPHrr_c9d91sEnLe2cujDwvRHLEyEAhCjHlEDkcCZEybuaC8_M7b2Z6WYViZzCVihexsmZlS1r_KPBSLhr1Q",
+                "size": 4518966
+              },
+              "filename": "Formal Report_ (Financial) Substantiation of Claims Against K.Wang-merged-compressed.pdf",
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/pdf; name=\"Formal Report_ (Financial) Substantiation of Claims Against K.Wang-merged-compressed.pdf\""
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"Formal Report_ (Financial) Substantiation of Claims Against K.Wang-merged-compressed.pdf\""
+                },
+                {
+                  "name": "Content-Transfer-Encoding",
+                  "value": "base64"
+                },
+                {
+                  "name": "X-Attachment-Id",
+                  "value": "5B410A1C-0489-4FA5-83C8-3068B2083526"
+                },
+                {
+                  "name": "Content-ID",
+                  "value": "\u003c5B410A1C-0489-4FA5-83C8-3068B2083526\u003e"
+                }
+              ],
+              "mimeType": "application/pdf",
+              "partId": "1"
+            }
+          ]
+        },
+        "sizeEstimate": 6185046,
+        "snippet": "Print please :)",
+        "threadId": "199772ba054ed30d"
+      }
+    ]
+  }
+}

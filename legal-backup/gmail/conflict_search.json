@@ -1,0 +1,2368 @@
+{
+  "nextPageToken": "08004305770605395501",
+  "threads": [
+    {
+      "id": "19c02359ae8c2c8d",
+      "date": "2026-01-28 02:31",
+      "from": "\"'Gina Kim' via Team\" <team@cere.network>",
+      "subject": "Law360 media inquiry Goopal v. Jin et al lawsuit",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_FORUMS",
+        "SPAM"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19be1b400319fd22",
+      "date": "2026-01-22 21:03",
+      "from": "Jenny Vatrenko <jenny@vatrenkoesq.com>",
+      "subject": "Fwd: Wang v. Cerebellum Network et al.",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 6
+    },
+    {
+      "id": "19bbdffa073a4cfa",
+      "date": "2026-01-14 20:31",
+      "from": "BitGo <hello@go.bitgo.com>",
+      "subject": "The Powell Inquiry while Markets in Limbo",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19bbdc4db328fdb5",
+      "date": "2026-01-14 19:28",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Cryptonite's predictions for 2026: Open AI down, cryptos and IPOs up, a Persian Empire comeback, DeepSeek as CCP t…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b98b37ffbf6337",
+      "date": "2026-01-07 14:44",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC Spotlight: 2026 Trends, quantum chips and deepfakes",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b909b1c3df21ca",
+      "date": "2026-01-06 01:00",
+      "from": "Murray - Open Future Forum and Friends <OpenFutureForum@calendar.luma-mail.com>",
+      "subject": "JP Morgan Healthcare Week Events and More",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b4c9652590f21e",
+      "date": "2025-12-23 20:01",
+      "from": "Demetrios from the MLOps Community <demetrios@news.mlops.community>",
+      "subject": "The 2025 Recap: Part 1 - \"Was that really this year?\"",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b430aa1f282eb6",
+      "date": "2025-12-21 23:32",
+      "from": "Murray - Open Future Forum and Friends <OpenFutureForum@calendar.luma-mail.com>",
+      "subject": "Select Luma Events For You",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b138517cf8ddbc",
+      "date": "2025-12-12 18:04",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Update to our Trading Terms 📣",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19b0e01db08d5c66",
+      "date": "2025-12-11 16:21",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "OpenAI's Google nightmare, here come the DeAI hobbits, #DeleteGoogle4ever, the Trump pump and dump, the dumbing of…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "199e485abac0d831",
+      "date": "2025-12-16 19:04",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Cere v. Wang Discovery - Notion project page & Gdrive",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 18
+    },
+    {
+      "id": "199b8ddf5ef8f2b4",
+      "date": "2025-12-09 10:30",
+      "from": "Tiffany Kwong <Tiffany.Kwong@milliard.law>",
+      "subject": "Re: Cere | Entity Spin Off",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 30
+    },
+    {
+      "id": "19ac1348721c6fca",
+      "date": "2025-11-26 18:27",
+      "from": "Orbis86 from Orbis86 Monthly Pulse <orbis86@substack.com>",
+      "subject": "🗞️ Orbis86 Monthly Pulse – November 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a74bba17b26d44",
+      "date": "2025-11-11 22:04",
+      "from": "Generative AI <newsletter@genai.works>",
+      "subject": "OpenAI Warns World of ‘Catastrophic Misuse’ of AI",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a5afa0258a5f55",
+      "date": "2025-11-06 22:02",
+      "from": "Generative AI <newsletter@genai.works>",
+      "subject": "New Siri: Apple Swallows Its Pride and Pays $1B for Google's Brain",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a55d4432a1485b",
+      "date": "2025-11-05 22:02",
+      "from": "Generative AI <newsletter@genai.works>",
+      "subject": "Amazon Banned AI From Shopping. Perplexity’s Not Having It.",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a501c6ecebf8e5",
+      "date": "2025-11-04 19:23",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "We’re now MiCA-licensed — here’s what it means for you 📣",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a07a5978a3b2aa",
+      "date": "2025-11-14 22:31",
+      "from": "Jenny Vatrenko <jenny@vatrenkoesq.com>",
+      "subject": "Re: Document shared with you: \"Supplemental Add-On RFP - Wang, Hu, Nailwail\"",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 13
+    },
+    {
+      "id": "19a3b6213ca51b51",
+      "date": "2025-10-31 18:47",
+      "from": "Cryptopolitan from Cryptopolitan <cryptopolitan@substack.com>",
+      "subject": "🚀 Coinbase Blew Past Wall Street’s Expectations",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a3610c0d872544",
+      "date": "2025-10-30 18:00",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Updates to our Paid Plan T&Cs and Fees page 📣",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a2fab79fae9682",
+      "date": "2025-10-29 12:12",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC Spotlight: Privacy, Ads Personalisation & Content Delivery",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a2b75dd64cc8f7",
+      "date": "2025-10-28 16:35",
+      "from": "Cryptopolitan from Cryptopolitan <cryptopolitan@substack.com>",
+      "subject": "📈 Is Ethereum Still in a Supercycle?",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19a09a97a8527151",
+      "date": "2025-10-22 11:52",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "Kenzi's access to social media accounts",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19a09a7941da9d42",
+      "date": "2025-10-22 04:02",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "Kenzi's prior criminal history and litigation report",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "199f355b91a0a961",
+      "date": "2025-10-17 20:01",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Changes to your personal fees and terms 📣",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "199c8fcf616cb387",
+      "date": "2025-10-20 16:10",
+      "from": "Jenny Vatrenko <jenny@vatrenkoesq.com>",
+      "subject": "Re: Cere v. Wang - Need to Get Things Moving",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 23
+    },
+    {
+      "id": "199e30aa8ea85707",
+      "date": "2025-10-14 16:05",
+      "from": "Niko From Collateral <collateral-partners@mail.beehiiv.com>",
+      "subject": "Three White Papers from Washington",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "199de32809eb36ec",
+      "date": "2025-10-13 22:18",
+      "from": "Jenny Vatrenko <jenny@vatrenkoesq.com>",
+      "subject": "Re: [EXTERNAL] Cere v. Wang - Discovery",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "199b98e1a2368678",
+      "date": "2025-10-10 21:06",
+      "from": "Jenny Vatrenko <jenny@vatrenkoesq.com>",
+      "subject": "Cere v. Wang - Initial Disclosures and Document Requests to Defendants - PLEASE REVIEW",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 5
+    },
+    {
+      "id": "199836ef928d8c0d",
+      "date": "2025-10-03 18:02",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Collective review formal report w/ merged & annotated masterfile",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 7
+    },
+    {
+      "id": "199a3b126797a1a8",
+      "date": "2025-10-02 08:51",
+      "from": "Cryptopolitan from Cryptopolitan Publication <cryptopolitan@substack.com>",
+      "subject": "💡SEC wants stocks to trade 24x7 (On-chain)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "199772ba054ed30d",
+      "date": "2025-09-23 17:23",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Formal Report_ (Financial) Substantiation of Claims Against K.Wang-merged-compressed",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "199706a076b7c6ac",
+      "date": "2025-09-24 14:53",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "FW: CERE - Kenzi report",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 11
+    },
+    {
+      "id": "19960b33ea047a98",
+      "date": "2025-09-20 11:00",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "CERE: status call",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 8
+    },
+    {
+      "id": "1995d5f1724c0598",
+      "date": "2025-09-18 17:08",
+      "from": "Proof of Talk <events@proofoftalk.io>",
+      "subject": "Stablecoins Get Serious — and Doge Gets an ETF | PoT Bulletin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1995ba1a412b271f",
+      "date": "2025-09-18 09:00",
+      "from": "The Org <newsletter@theorg.com>",
+      "subject": "Opendoor Stock Soars 36% as Former Shopify Exec Takes CEO Helm",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1993282c2df31638",
+      "date": "2025-09-10 09:24",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "Formal Report: (F... - We should review this specific part o...",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19909d77b8c3dc71",
+      "date": "2025-09-02 11:52",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "[CASE STATUS]: Cere - Dubai Case Status Summary",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "198f61564f30afbb",
+      "date": "2025-09-02 07:22",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Fwd: CEF.ai incorporation Engagement Letter",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 5
+    },
+    {
+      "id": "198f56fb6f671a2f",
+      "date": "2025-09-10 23:50",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "FW: status call",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 5
+    },
+    {
+      "id": "198e9d5c766db6cb",
+      "date": "2025-08-27 06:42",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "PRIVILEGED Cere v. Wang - reply briefs",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "198d26c11c18a81d",
+      "date": "2025-08-22 17:34",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Dark Elon and optimist Bill G. , the top 250 Web3 companies to watch, and more inside intelligence…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "198c3c7a0c51cb40",
+      "date": "2025-08-19 21:20",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Feeling Bullish in a bubble market, the top 250 Web3 companies to watch; AI Goliaths scooped 40% of the VC$, and m…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "198ae8a3d3ae5d06",
+      "date": "2025-08-27 05:57",
+      "from": "Fred Jin <fred@cere.network>",
+      "subject": "Fwd: FW: Cere v. Wang - reply briefs",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 5
+    },
+    {
+      "id": "198a900097158e5a",
+      "date": "2025-08-14 16:33",
+      "from": "Generative AI San Francisco and Bay Area <genai-sf@calendar.luma-mail.com>",
+      "subject": "⭐️ [Aug 14th] Upcoming Bay Area Generative AI events",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1989a321a276e881",
+      "date": "2025-08-11 19:33",
+      "from": "Unhashed <unhashed@ambcrypto.com>",
+      "subject": "Ethereum surge crowns Buterin a billionaire",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1988027ee7f4e313",
+      "date": "2025-08-06 18:07",
+      "from": "Substack <on+product@substack.com>",
+      "subject": "New on Substack: A/B testing for headlines, profile customization tools, and livestream updates",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1985c3be53985210",
+      "date": "2025-07-30 18:48",
+      "from": "Cryptopolitan <cryptopolitan@mail.beehiiv.com>",
+      "subject": "You don’t need cash to buy Bitcoin ETFs anymore",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1985b6b58b7432cb",
+      "date": "2025-07-30 15:00",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Correction to travel insurance changes 📣",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1985983475b951f3",
+      "date": "2025-07-30 11:18",
+      "from": "project_operation <project_operation@kucoin.com>",
+      "subject": "Important Update : KuCoin Project Management Rules(V4) Released",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19856cfb140e95b6",
+      "date": "2025-07-29 17:31",
+      "from": "Cryptopolitan <cryptopolitan@mail.beehiiv.com>",
+      "subject": "This rally is different and retail isn't leading It",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19851fe6a8bc8c0a",
+      "date": "2025-07-28 19:04",
+      "from": "Dev Chandra <startupintros@mail.beehiiv.com>",
+      "subject": "When $40B isn't enough: OpenAI's infinite money glitch & Tesla's robot fail",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19851e3c6fe904d2",
+      "date": "2025-07-28 18:35",
+      "from": "Cryptopolitan <cryptopolitan@mail.beehiiv.com>",
+      "subject": "Crypto Lending Is Back. No Collateral. No Banks.",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19841ed7e8e5bfda",
+      "date": "2025-07-25 16:12",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "FW: Cere v. Wang et al. - IMPORTANT AND TIME SENSITIVE",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1956af82e9af2747",
+      "date": "2025-07-22 20:41",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Final Warning – Restore @cereofficial Account Within 24 Hours or Face Legal Action  ",
+      "labels": [
+        "DRAFT"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1982dcebc4b0f1ef",
+      "date": "2025-07-21 18:26",
+      "from": "\"🌖 Marc from 51 Insights \" <dematerialzd+essays@substack.com>",
+      "subject": "America's crypto power move",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1982ae65eb1607b0",
+      "date": "2025-07-21 04:53",
+      "from": "Mariane Bekker <foundersbay@mail.beehiiv.com>",
+      "subject": "Upcoming Founder & VC Events Happening This Week (July 21st - August 2) + Relational Success for Founders",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "198177a8cca09a5e",
+      "date": "2025-07-17 10:22",
+      "from": "\"Laura from Sapia.ai\" <laura@sapia.ai>",
+      "subject": "The Trust Gap in hiring and how to bridge it",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1980e1ff52659fb8",
+      "date": "2025-07-15 14:47",
+      "from": "Dev Chandra <startupintros@mail.beehiiv.com>",
+      "subject": "Google pays $2.4B for Windsurf's brains to then quietly be bought out by Cognition",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197f4c3147b18f9c",
+      "date": "2025-07-10 16:35",
+      "from": "Generative AI San Francisco and Bay Area <genai-sf@calendar.luma-mail.com>",
+      "subject": "⭐️ [July 10th] Upcoming Bay Area Generative AI events",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197ea74997005683",
+      "date": "2025-07-08 16:31",
+      "from": "The VC Corner <thevccorner@substack.com>",
+      "subject": "OpenAI’s Product Lead Reveals the New Playbook for Product-Market Fit in AI Startups",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197e9ed9b8658692",
+      "date": "2025-07-08 14:05",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Updates to our RevPoints terms and conditions 📣",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197e5cd7ddd64bef",
+      "date": "2025-07-07 18:52",
+      "from": "Dev Chandra <startupintros@mail.beehiiv.com>",
+      "subject": "AI boom pushes Nvidia valuation to $3.9 trillion, a new historical record",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197d5c38f6579686",
+      "date": "2025-07-04 16:07",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "We’re updating our T&Cs 📣",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197d12b325a7da9b",
+      "date": "2025-07-03 18:42",
+      "from": "Dev Chandra <startupintros@mail.beehiiv.com>",
+      "subject": "Everyone's suddenly charging $200/month for bougie AI plans (here's why)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197ad4b347e81c09",
+      "date": "2025-06-26 19:30",
+      "from": "\"🌖 Marc from 51 Insights \" <dematerialzd+essays@substack.com>",
+      "subject": "JP Morgan's Stablecoin",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1977ecf46d2af7b9",
+      "date": "2025-07-22 23:25",
+      "from": "Valerie Kova <valerie@cef.ai>",
+      "subject": "CEF & Practus: Pausing Collaboration + Retainer & Work Recap Request",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 10
+    },
+    {
+      "id": "1978392591c671e6",
+      "date": "2025-06-18 17:01",
+      "from": "The VC Corner <thevccorner@substack.com>",
+      "subject": "How to Evaluate a Startup’s Exit Potential: Signs, Metrics, and Red Flags",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19772e105d678070",
+      "date": "2025-06-15 11:17",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Your Instant Access Savings documents are ready 📑",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19764e85a8805572",
+      "date": "2025-06-12 18:10",
+      "from": "Intent Fit <intentfit@mail.beehiiv.com>",
+      "subject": "Why Comfort Is Killing Your Dreams",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19764cec0c8b9728",
+      "date": "2025-06-12 17:42",
+      "from": "<arnd@cere.network>",
+      "subject": "RE: ACTION REQUIRED - Please Complete Your KYC in Sumsub in the next 24h",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1975c0700a8e48ba",
+      "date": "2025-06-12 04:32",
+      "from": "Fred Jin <fred@cere.io>",
+      "subject": "Complaint against Kenzi",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 4
+    },
+    {
+      "id": "197564e5350c542f",
+      "date": "2025-06-09 22:12",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Quick Call on Potential Recovery from Kenzi Wang Dispute",
+      "labels": [
+        "SENT",
+        "INBOX",
+        "7: actioned"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197557c92083700c",
+      "date": "2026-01-28 06:45",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Final Follow-Up — Quick Call on Potential Recovery from Kenzi Wang Dispute",
+      "labels": [
+        "SENT",
+        "INBOX",
+        "7: actioned"
+      ],
+      "messageCount": 34
+    },
+    {
+      "id": "1973ee5587be74f0",
+      "date": "2025-06-05 09:00",
+      "from": "The Org <newsletter@theorg.com>",
+      "subject": "Longtime Indeed CEO Passes the Torch",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "197368eed529a078",
+      "date": "2025-06-03 18:10",
+      "from": "Intent Fit <intentfit@mail.beehiiv.com>",
+      "subject": "Your Posture Sucks & It’s Not Even Your Fault",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19730130818c64d7",
+      "date": "2025-06-02 11:57",
+      "from": "<arnd@cere.network>",
+      "subject": "AI Study",
+      "labels": [
+        "1: to respond",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "1971cd2ec42ae731",
+      "date": "2025-10-22 20:29",
+      "from": "<abahgat@bahgatexpert.com>",
+      "subject": "Last supportive report",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 28
+    },
+    {
+      "id": "196f8c337ed5b1ac",
+      "date": "2025-05-22 18:11",
+      "from": "Intent Fit <intentfit@mail.beehiiv.com>",
+      "subject": "This Is Why Your Wi-Fi Making You Anxious",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "196e5e65e2513e64",
+      "date": "2025-05-19 02:16",
+      "from": "Mariane Bekker <foundersbay@mail.beehiiv.com>",
+      "subject": "Upcoming Founder & VC Events Happening This Week + Who Funds the VCs?",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "196d3b8713f60b95",
+      "date": "2025-05-16 08:37",
+      "from": "Ahmed ElSayed <ahmed.elsayed@blkpartners.com>",
+      "subject": "Online translation",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "196ceaaa021c15ac",
+      "date": "2025-05-14 14:00",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "We're updating our downgrade T&Cs 📝",
+      "labels": [
+        "UNREAD",
+        "4: notification",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "196ac423d55b8a70",
+      "date": "2025-05-29 10:52",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "Dubai - Information Gathering",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 42
+    },
+    {
+      "id": "196cda3cbb9e21fa",
+      "date": "2025-05-14 09:13",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC2025 Spotlight: Unlock the future of immersive tech at IBC2025 - registration now open!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "196c8d355fc4ae0d",
+      "date": "2025-05-16 12:11",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Coordinating Evidence re: Potential Misconduct by Kenzi Wang / AU21 – Your (Project’s) Experience",
+      "labels": [
+        "6: awaiting reply",
+        "SENT",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "196c8c9035a28f9b",
+      "date": "2025-05-19 10:30",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Coordinating Evidence re: Potential Misconduct by Kenzi Wang / AU21 – Your (Project’s) Experience",
+      "labels": [
+        "6: awaiting reply",
+        "SENT",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "196c3fd469e31513",
+      "date": "2025-05-12 21:24",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "Kenzi Dubai Case: Draft outreach email / messages  to Web...",
+      "labels": [
+        "3: comment",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "196c3c279be22469",
+      "date": "2025-05-12 12:59",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Email / Telegram Outreach messages to possibly affected web3 projects by Kenzi",
+      "labels": [
+        "SENT",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 6
+    },
+    {
+      "id": "196ba9ab6c8c4980",
+      "date": "2025-05-20 21:18",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Requested non-google drive files",
+      "labels": [
+        "SENT",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 16
+    },
+    {
+      "id": "196ac360663e46b4",
+      "date": "2025-05-12 21:48",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "FW: Cerebellum/Interdata v Wang - BLK - Consultant Report - Required Documents and Information",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 9
+    },
+    {
+      "id": "1969fd812008c7ee",
+      "date": "2025-05-09 13:04",
+      "from": "<abahgat@bahgatexpert.com>",
+      "subject": "RE: Legatech Supportive report to Cerebellum & IntrData Networks - Follow-Up on Legal Action Documentation",
+      "labels": [
+        "IMPORTANT",
+        "1: to respond",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 16
+    },
+    {
+      "id": "196a7b193c472b16",
+      "date": "2025-05-07 11:04",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "re: Baghat Expert",
+      "labels": [
+        "1: to respond",
+        "SENT",
+        "INBOX"
+      ],
+      "messageCount": 4
+    },
+    {
+      "id": "196a0fdb625bd781",
+      "date": "2025-05-05 17:08",
+      "from": "The GenAI Collective Community Newsletter <aicollective@substack.com>",
+      "subject": "🧠 Microsoft vs OpenAI: The Breakup That Will Reshape AI 🧠",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19696841536317c3",
+      "date": "2025-05-04 11:45",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "Re: Legatech Supportive report to Cerebellum & IntrData Networks - IT Expert Fees",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 11
+    },
+    {
+      "id": "196902a8bb80f2c6",
+      "date": "2025-05-02 10:44",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Private investigator reports QRI (Interdata <> Wang)",
+      "labels": [
+        "SENT",
+        "INBOX",
+        "7: actioned"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1968fbe4d9c0da3c",
+      "date": "2025-05-02 08:45",
+      "from": "Fred Jin <fred@cere.network>",
+      "subject": "Fwd: FW: [EXTERNAL] Activity in Case 3:25-cv-03798 Interdata Network, Inc. et al v. Wang et al Complaint",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19682dd0164ee77e",
+      "date": "2025-04-29 20:41",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "The top blockchain & crypto private companies for 2025— the New Oligarchs, Open letter to AI & Crypto Czar David S…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19681ebb3f0442ac",
+      "date": "2025-04-29 16:20",
+      "from": "from AJ Green <ajsai@substack.com>",
+      "subject": "The AI That Always Says You’re Right (Even When You’re Not)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19615e99ccd8235e",
+      "date": "2025-06-14 01:08",
+      "from": "Valerie Kova <valerie@cef.ai>",
+      "subject": "CEF. AI Matter",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 39
+    },
+    {
+      "id": "1967e7e8dfd3be63",
+      "date": "2025-04-29 00:22",
+      "from": "\"Jenny Vatrenko (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "2025-04-25 Compla... - Replace: “46” with “54” ",
+      "labels": [
+        "UNREAD",
+        "3: comment",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1967d2a4166499d5",
+      "date": "2025-04-29 07:42",
+      "from": "\"Jenny Vatrenko (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "o3 feedback - wang complaint",
+      "labels": [
+        "UNREAD",
+        "3: comment",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "1967cec198d37bfb",
+      "date": "2025-04-28 17:03",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "FW: Document shared with you: \"2025-04-25 Complaint.docx\"",
+      "labels": [
+        "1: to respond",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "1967b5e32f15cc3e",
+      "date": "2025-04-28 09:48",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "o3 feedback - wan... - I think the total number of investors...",
+      "labels": [
+        "3: comment",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19677cfc5a84094a",
+      "date": "2025-04-27 17:13",
+      "from": "Fred Jin <fred@cere.network>",
+      "subject": "Fwd: Cere - Complaint questions [time sensitive]",
+      "labels": [
+        "UNREAD",
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19673f2152d13c11",
+      "date": "2025-04-29 00:28",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "2025-04-25 Compla... - I think as a lot of his misdeeds happ...",
+      "labels": [
+        "UNREAD",
+        "3: comment",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19673ed7b0e80c37",
+      "date": "2025-04-26 23:07",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "2025-04-25 Compla... - Add: “another project, [insert name] ...",
+      "labels": [
+        "UNREAD",
+        "3: comment",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19673d36b181ee54",
+      "date": "2025-04-26 22:39",
+      "from": "\"Fred Jin (via Google Docs)\" <drive-shares-dm-noreply@google.com>",
+      "subject": "Document shared with you: \"2025-04-25 Complaint.docx\"",
+      "labels": [
+        "UNREAD",
+        "4: notification",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1966d78eb285db5a",
+      "date": "2025-04-25 17:02",
+      "from": "\"Namya @Supafast\" <namya@mail.beehiiv.com>",
+      "subject": "How We Helped Ceartas Redesign Their Site for Series A After Raising €5M",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1966840fe1adb586",
+      "date": "2025-04-24 16:43",
+      "from": "Generative AI San Francisco and Bay Area <genai-sf@calendar.luma-mail.com>",
+      "subject": "⭐️ [Apr 24th] Upcoming Bay Area Generative AI events",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19658d07a2365362",
+      "date": "2025-04-21 16:45",
+      "from": "from AJ Green <ajsai@substack.com>",
+      "subject": "Inside the Antitrust Wars Against Google & Meta — And What Happens Next",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "196419f929a7b002",
+      "date": "2025-04-17 04:41",
+      "from": "Generative AI San Francisco and Bay Area <genai-sf@calendar.luma-mail.com>",
+      "subject": "⭐️ [Apr 17th] Upcoming Bay Area Generative AI events",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1963e7b6cb3190a4",
+      "date": "2025-04-16 14:03",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Updates to our Trading Terms 📝",
+      "labels": [
+        "UNREAD",
+        "4: notification",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "196204dc9b55bf3b",
+      "date": "2025-04-11 19:26",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "PRIVILEGED Evidence Materials re: Cerebellum v. Kenzi Wang",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "2: FYI",
+        "INBOX"
+      ],
+      "messageCount": 4
+    },
+    {
+      "id": "1962026cfe5b552b",
+      "date": "2025-04-10 16:42",
+      "from": "Generative AI San Francisco and Bay Area <genai-sf@calendar.luma-mail.com>",
+      "subject": "⭐️ [Apr 10th] Upcoming Bay Area Generative AI events",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1961b21342210b10",
+      "date": "2025-04-09 17:18",
+      "from": "KAMI Think Tank <info=kamithinktank.com@hubspotfree.hs-send.com>",
+      "subject": "KAMI Think Tank - April Newsletter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1960ebdf91b65af1",
+      "date": "2025-04-07 07:33",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Crash or correction?, Teddy Roosevelt the disrupter, Getting out of DOGE, and other great ideas...",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "8: marketing"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19601413a661bc49",
+      "date": "2025-04-04 16:42",
+      "from": "from AJ Green <ajsai@substack.com>",
+      "subject": "The 2027 AI Prediction That’s Too Bold to Ignore",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "195f28915cef6fc0",
+      "date": "2025-04-01 20:03",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Top 25 Robot VC investors, the F-147 and killer drones, the X/xAI global content juggernaut, the electric BMW M3 f…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "8: marketing"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "195e942d7f1c3f9e",
+      "date": "2025-03-31 00:53",
+      "from": "\"NotCryptoBro's Memo\" <notcryptobro@substack.com>",
+      "subject": "AI and Crypto: The Symbiotic Dance",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "8: marketing"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "195df56ebe0fa0ca",
+      "date": "2025-03-29 01:39",
+      "from": "\"🌖 Marc from 51 Insights\" <dematerialzd+web3-field-notes@substack.com>",
+      "subject": "xAI acquires X",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "195c9e103416f5c5",
+      "date": "2025-03-24 21:38",
+      "from": "Founders Creative <fcnews@mail.beehiiv.com>",
+      "subject": "Unlocking Career Potential: The Power Trio of Advocacy, Mentorship, and Sponsorship",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "195b98bb5fa5e086",
+      "date": "2025-04-29 13:57",
+      "from": "Cobus Pietersen <Cobus@hashdirectors.com>",
+      "subject": "Important Updates from Hash Directors - Cere Foundation",
+      "labels": [
+        "1: to respond",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 4
+    },
+    {
+      "id": "195adddc8c9cb531",
+      "date": "2025-03-19 11:05",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC2025 Spotlight: How is AI transforming post-production? Discover the latest innovations",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1958ff141cab78b4",
+      "date": "2025-03-13 15:38",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Our T&Cs are changing 📝",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19572240ab297217",
+      "date": "2025-03-24 18:25",
+      "from": "\"M. Brad Hill\" <brad.hill@practus.com>",
+      "subject": "Cere Employment Offer Letter Template",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 6
+    },
+    {
+      "id": "195676cc44ab6d51",
+      "date": "2025-03-05 18:47",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "The top Robot, Autonomous Vehicle & Drone private companies for 2025—Google dethroned, Elon at face value, and mor…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19525d8345a15dfc",
+      "date": "2025-02-21 01:09",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "The top AI private companies for 2025—Elon gets hostile with Sam, Masa holds the cards, Hello DOGE, goodbye middle…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1951d39064043c0c",
+      "date": "2025-02-19 09:00",
+      "from": "The Org <newsletter@theorg.com>",
+      "subject": "Google Cloud Poaches Longtime Microsoft Exec",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "194f415457a71f15",
+      "date": "2025-02-11 09:15",
+      "from": "The Org <newsletter@theorg.com>",
+      "subject": "Match Group Breaks Up With CEO Citing Lackluster Guidance",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "194f1a24c39a8b42",
+      "date": "2025-02-25 15:24",
+      "from": "Fred Jin <fred@cere.network>",
+      "subject": "recovery of @cereofficial account linked email",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "194f0d1115d5c095",
+      "date": "2025-02-10 18:02",
+      "from": "The GenAI Collective Community Newsletter <aicollective@substack.com>",
+      "subject": "The GenAI Collective Community Newsletter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "194e1b6313dd38b4",
+      "date": "2025-02-07 19:39",
+      "from": "Bradley Mindrup <Bradley.Mindrup@milliard.law>",
+      "subject": "CERE - Follow-Up on Complaint and DHTY Forensic Report",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "194ce15693c69ffe",
+      "date": "2025-02-04 00:09",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Overvalued AI companies part 2, SoftBank to double OpenAI's value?😳, The Trump Doctrine abroad and more mischief.…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "194c21ca22aaaf76",
+      "date": "2025-02-01 16:16",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "If DeepSeek wiped out $1 trillion of public tech company value—Just watch what happens to private AI company valua…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1948342c2ec487d5",
+      "date": "2025-01-20 11:21",
+      "from": "Vicky <vicktoria@w3.fund>",
+      "subject": "I talked to the CEO of Fireblocks,",
+      "labels": [
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1946e2e5c1ad3771",
+      "date": "2025-01-16 09:15",
+      "from": "\"Laura from Sapia.ai\" <laura@sapia.ai>",
+      "subject": "AI in HR: Breaking Down the Basics",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19464bbe27a99335",
+      "date": "2025-01-14 13:13",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Updates to our investment services terms 📝",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19449b42d4a823fe",
+      "date": "2025-01-09 18:40",
+      "from": "Bradley Mindrup <Bradley.Mindrup@milliard.law>",
+      "subject": "Follow-up on Outstanding Documents - Next Steps",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "19440d4ef0c0e17b",
+      "date": "2025-01-07 13:56",
+      "from": "Bradley Mindrup <Bradley.Mindrup@milliard.law>",
+      "subject": "CERE - Follow-up on Board and IIC Signature Pages",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "1943a69a5cb98191",
+      "date": "2025-01-06 07:59",
+      "from": "Rocky Lee <Rocky.Lee@milliard.law>",
+      "subject": "PRIVILEGED: Follow-Up Request: Your Response Needed",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "194370a418713994",
+      "date": "2025-01-06 04:59",
+      "from": "Bradley Mindrup <Bradley.Mindrup@milliard.law>",
+      "subject": "Follow-Up Request: Your Response Needed",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 6
+    },
+    {
+      "id": "194329861d103fcb",
+      "date": "2025-01-04 19:33",
+      "from": "Fred Jin <fred@cere.network>",
+      "subject": "Re: Request for Signatures and Additional Information for Board Governance Documentation",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "194320d878292024",
+      "date": "2025-01-04 17:00",
+      "from": "web3 letter from a16zcrypto <a16zcrypto@substack.com>",
+      "subject": "7 Big Ideas for 2025 (and more trends to watch)",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1940f4492a94a93e",
+      "date": "2024-12-28 22:53",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Cryptonite's 2024 top predictions—How did we do? Pretty darn good. Feliz Navidad!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "193bec4619668b4c",
+      "date": "2024-12-13 07:45",
+      "from": "\"🌖 Marc from FiftyOne Insights\" <dematerialzd+web3-field-notes@substack.com>",
+      "subject": "📝#105: PENGU",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "193a751ab055352b",
+      "date": "2024-12-08 18:27",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Silicon Valley's Mount Rushmore, Zuck meets the Bogeyman, xAI vs. OpenAI; Marc Andreessen tells Joe Rogan how Elon…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1939794bb4f6a0b4",
+      "date": "2024-12-05 17:08",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "Our fee structure is changing — ETF investment plans are here 📝",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "193926648ef751eb",
+      "date": "2024-12-04 16:59",
+      "from": "A16Z GAMES <a16zgames@substack.com>",
+      "subject": "14 Big Ideas for Games in 2025",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19365cf3fe7ea351",
+      "date": "2024-11-26 01:10",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "We may be mentally ill, but we are not racist; Web3 + DOGE equals the decentralization of power revolution!",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1934fce1957a2001",
+      "date": "2024-11-21 18:37",
+      "from": "A16Z GAMES <a16zgames@substack.com>",
+      "subject": "The Rise of the AI Companion",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19344ac542470130",
+      "date": "2024-11-19 14:45",
+      "from": "LinkedIn <groups-noreply@linkedin.com>",
+      "subject": "Don’t miss conversations in Information Security Community",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_SOCIAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19294e03457d186c",
+      "date": "2024-10-16 12:29",
+      "from": "IBC Team <msg@ibc.org>",
+      "subject": "IBC2024 Spotlight: Retaining Top Talent and Embracing DEI Initiatives",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19252970403ca973",
+      "date": "2024-10-03 15:34",
+      "from": "Crystal Intelligence <team@crystalintelligence.com>",
+      "subject": "Crystal Weekly: Essential updates for crypto investigators and compliance professionals",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "192204debbfa7edc",
+      "date": "2024-09-23 21:13",
+      "from": "Josh from Hoppy Copy <joshua@hoppycopy.co>",
+      "subject": "killer subject lines... like you've NEVER seen",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "191f5057891ccba3",
+      "date": "2024-09-15 11:31",
+      "from": "Braden from FinChat <info@mail.finchat.io>",
+      "subject": "🗞 7 Industry Leaders at 52-week Lows",
+      "labels": [
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "191b8cf4e3962cea",
+      "date": "2024-09-03 23:35",
+      "from": "\"Be[in]Crypto Team\" <editorinchief@beincrypto.com>",
+      "subject": "Crypto's September Challenges 📉",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "191b6e25d0eaaabb",
+      "date": "2024-09-03 09:56",
+      "from": "\"🌖 Marc from 51 Insights \" <dematerialzd+crypto-and-macro@substack.com>",
+      "subject": "📝#89: Sky High💨",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19170cfa4edbeda7",
+      "date": "2024-08-20 19:22",
+      "from": "\"Be[in]Crypto Team\" <editorinchief@beincrypto.com>",
+      "subject": "Solana's Death Cross Approaches 📉 - Traders Brace for Impact",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1916583c2fbe1f96",
+      "date": "2024-08-18 15:41",
+      "from": "Fred Jin <fred@cere.network>",
+      "subject": "Fwd: [PL-4209652] Phishing attack(s) hosted on: cdn.dragon.cere.network",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19122f6b73213168",
+      "date": "2024-08-05 16:34",
+      "from": "Messari Team <unqualified.opinions@mail.messari.io>",
+      "subject": "Rolling Up with Mantle: How V2 Tectonic Changes The Game",
+      "labels": [
+        "UNREAD",
+        "IMPORTANT",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1910a1f41ba67f27",
+      "date": "2024-07-31 20:48",
+      "from": "\"Be[in]Crypto Team\" <editorinchief@beincrypto.com>",
+      "subject": "3 Altcoins Set to Outperform BTC 🚀 - August Predictions",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "190b98c755954c43",
+      "date": "2024-07-16 05:17",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Dodging bullets, Ms. Kamala for President, nuclear footballs, Billionaire Summer Camp, how Web3 will take down the…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19093b7d7de61ee3",
+      "date": "2024-07-08 20:55",
+      "from": "Substack <on@substack.com>",
+      "subject": "Traditional media and Substack can grow together",
+      "labels": [
+        "Unroll.me/Unsubscribed",
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "1905c1dbbe7b4c2c",
+      "date": "2024-06-28 01:51",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Viva las Americas! Elon vs. Sam, the Pope on AI, saving the Democrats, running into the sun, and more fun...",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "190276c02ff1fcd8",
+      "date": "2024-06-17 20:18",
+      "from": "\"Be[in]Crypto Team\" <editorinchief@beincrypto.com>",
+      "subject": "Solana Price Falls to its Lowest & Top Crypto News",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "19011b8d6c7516a6",
+      "date": "2024-06-13 15:10",
+      "from": "Elliptic <marketing@elliptic.co>",
+      "subject": "Crypto Regulatory Affairs: Hong Kong regulator names 11 crypto firms progressing through licensing process",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18fee4f65265bc83",
+      "date": "2024-06-06 18:08",
+      "from": "Masters of Work <mastersofwork@mail.beehiiv.com>",
+      "subject": "🥷AI Transparency Exposed🔍",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18fee353013ae4e8",
+      "date": "2024-06-06 17:40",
+      "from": "Elliptic <marketing@elliptic.co>",
+      "subject": "AI-enabled crime in the cryptoasset ecosystem: Download our report",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18fd379821fa978c",
+      "date": "2024-06-01 13:05",
+      "from": "Michael Houck <houck@houck.news>",
+      "subject": "💡 Are We Going Post-Software?",
+      "labels": [
+        "Unroll.me/Unsubscribed",
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18fa64f533a84d63",
+      "date": "2024-05-23 18:33",
+      "from": "\"Be[in]Crypto Team\" <editorinchief@beincrypto.com>",
+      "subject": "US House Gives Green Light to Crypto Bill FIT21, Moves to Senate",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18f5e1a7131c6583",
+      "date": "2024-05-09 18:05",
+      "from": "Masters of Work <mastersofwork@mail.beehiiv.com>",
+      "subject": "🥷 Print Your Tableware Using AI 🤯",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18f4a96347293d56",
+      "date": "2024-05-05 23:07",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Killing Fields circa 2024, Eric Schmidt's AI bet, Perplexity.AI on a roll, Seinfeld's comedic concerns, designer s…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18f3e2f9142e6bf8",
+      "date": "2024-05-22 11:42",
+      "from": "<arnd@cere.network>",
+      "subject": "FW: Anton Winnicki - Software Engineer position",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 3
+    },
+    {
+      "id": "18f3ab60e26bbd2f",
+      "date": "2024-05-02 21:08",
+      "from": "Cloudflare Team <cfmarketing@cloudflare.com>",
+      "subject": "Invitation to \"Remaining resilient in the supply chainpocalyse\" — May 9 at 8:30am",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18f2f972b85b4348",
+      "date": "2024-04-30 17:18",
+      "from": "\"Be[in]Crypto Team\" <editorinchief@beincrypto.com>",
+      "subject": "Is Bitcoin Price Set to Hit $95,000 Due to Persisting Greed?",
+      "labels": [
+        "Unroll.me/Unsubscribed",
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18f2eade31c240a5",
+      "date": "2024-04-30 13:04",
+      "from": "Michael Houck <houck@houck.news>",
+      "subject": "💡 How to Decide Fast",
+      "labels": [
+        "Unroll.me/Unsubscribed",
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18f207c1ae13909d",
+      "date": "2024-04-27 18:54",
+      "from": "web3 letter from a16zcrypto <a16zcrypto@substack.com>",
+      "subject": "the token launch playbook: special edition 🚀",
+      "labels": [
+        "Unroll.me/Unsubscribed",
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18ef6e32a5b5965d",
+      "date": "2024-04-19 17:03",
+      "from": "\"Be[in]Crypto Team\" <editorinchief@beincrypto.com>",
+      "subject": "Bitcoin halving of 2024 is barely a few hours away!",
+      "labels": [
+        "Unroll.me/Unsubscribed",
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18ee6dff8abd71e9",
+      "date": "2024-04-19 17:55",
+      "from": "\"Andrea J. Shaw\" <andrea.shaw@practus.com>",
+      "subject": "Internal Investigation - Attorney/ Client Privilege - Information Request 04.16.2024",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 11
+    },
+    {
+      "id": "18ee8422af30b04d",
+      "date": "2024-04-16 20:53",
+      "from": "Domenic Venuto <dvenuto@progresspartners.com>",
+      "subject": "Progress Partners Quarterly Newsletter",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18ee0697f7066c61",
+      "date": "2024-04-15 08:19",
+      "from": "Noa Voltzok <nvoltzok@fireblocks.com>",
+      "subject": "Product Spotlight: Protection from NFT Spam and Phishing",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18ecd91ed924024b",
+      "date": "2024-04-11 16:31",
+      "from": "Ryan Selkis <unqualified.opinions@mail.messari.io>",
+      "subject": "Explore Network Fundamentals",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18ec1e29516b2f6f",
+      "date": "2024-04-09 10:03",
+      "from": "Elliptic <marketing@elliptic.co>",
+      "subject": "Crypto Regulatory Affairs: The US Treasury’s intense week of crypto-related sanctions actions",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18ebb9a94de2cbf9",
+      "date": "2024-04-08 04:46",
+      "from": "The Cryptonite Weekly Rap <cryptoniteventures@substack.com>",
+      "subject": "Can the US get back its swag? Reddit goes public at a loss, AI and Robots on the march, Hollywood in disarray, the…",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "UNREAD",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18eae44f8ae45669",
+      "date": "2024-04-05 14:38",
+      "from": "\"Fred Jin (Google Docs)\" <comments-noreply@docs.google.com>",
+      "subject": "Practus <> Kenzi requested documents - today",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18e5ad55c22c1433",
+      "date": "2024-04-03 03:22",
+      "from": "Martijn Broersma <martijn@cere.network>",
+      "subject": "Access Cere Google Drive",
+      "labels": [
+        "SENT"
+      ],
+      "messageCount": 15
+    },
+    {
+      "id": "18e7004b37a15e94",
+      "date": "2024-03-24 11:32",
+      "from": "Braden from FinChat <finchat@mail.beehiiv.com>",
+      "subject": "The #1 Performing Stock on the NYSE Over the Last 5 Years",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18e44c036a59f3bb",
+      "date": "2024-03-16 01:55",
+      "from": "\"Lee, Rocky (Dacheng)\" <rocky.lee@cn.kwm.com>",
+      "subject": "CERE Investigation",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 2
+    },
+    {
+      "id": "18e3fea093f6f910",
+      "date": "2024-03-20 06:05",
+      "from": "\"Lee, Rocky (Dacheng)\" <rocky.lee@cn.kwm.com>",
+      "subject": "FW: CERE Investigation",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 4
+    },
+    {
+      "id": "18d5bd425573fdb2",
+      "date": "2024-01-30 20:24",
+      "from": "AI Networking Summit <events@onug.net>",
+      "subject": "⚡ Discover the Power of AI in Enterprise Networking",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18c87ee996469f4f",
+      "date": "2023-12-20 16:53",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "You now have a Dutch IBAN! 🇳🇱",
+      "labels": [
+        "Unroll.me/Unsubscribed",
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18c16d9c45020c52",
+      "date": "2023-11-28 17:53",
+      "from": "Revolut <no-reply@revolut.com>",
+      "subject": "We’re updating our terms and policies 📄",
+      "labels": [
+        "Unroll.me/Unsubscribed",
+        "CATEGORY_UPDATES"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18bcd4370158039f",
+      "date": "2024-03-11 19:18",
+      "from": "\"Kwong, Tiffany (HK)\" <Tiffany.Kwong@hk.kwm.com>",
+      "subject": "[ASCENT to reply] CERE Report",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 25
+    },
+    {
+      "id": "18b39ed3c4ebf7f2",
+      "date": "2023-10-16 21:18",
+      "from": "ONUG Newsletter <nick.lippis@onug.net>",
+      "subject": "The 4 Foundational Pillars of Enterprise Cloud",
+      "labels": [
+        "CATEGORY_PROMOTIONS",
+        "Unroll.me/Unsubscribed"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18b258861ab91d3c",
+      "date": "2023-10-12 22:16",
+      "from": "Domenic Venuto <dvenuto@progresspartners.com>",
+      "subject": "Progress Partners Quarterly Newsletter",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18b054e18ac1166a",
+      "date": "2023-10-06 16:03",
+      "from": "\"Michael, Charles\" <cmichael@steptoe.com>",
+      "subject": "FW: [EXTERNAL] Re:  Re: Re: Re: Re: Re: Re: Re: Re: Proposal for investigation",
+      "labels": [
+        "IMPORTANT",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18a770877f7839f7",
+      "date": "2023-09-09 01:02",
+      "from": "Purobeach <noreply@mypuro.com>",
+      "subject": "Survey Purobeach Illetas",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18a71ac79cecb053",
+      "date": "2023-09-08 00:03",
+      "from": "Purobeach <noreply@mypuro.com>",
+      "subject": "Booking in Purobeach Illetas: CONFIRMED",
+      "labels": [
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18a51c0114ca082b",
+      "date": "2023-09-01 19:17",
+      "from": "ONUG Fall 2023 <events@onug.net>",
+      "subject": "Working Group Session Friday - Multi-Cloud Cybersecurity Space Jam Read Out ",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_UPDATES",
+        "INBOX"
+      ],
+      "messageCount": 1
+    },
+    {
+      "id": "18a0906bffdef517",
+      "date": "2023-08-18 16:22",
+      "from": "ONUG Fall 2023 <events@onug.net>",
+      "subject": "Working Group Session Friday - Cloud Native Security @ ONUG Fall ",
+      "labels": [
+        "UNREAD",
+        "CATEGORY_PERSONAL",
+        "INBOX"
+      ],
+      "messageCount": 1
+    }
+  ]
+}

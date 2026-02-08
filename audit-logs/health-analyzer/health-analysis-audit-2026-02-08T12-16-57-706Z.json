@@ -1,0 +1,325 @@
+{
+  "sessionId": "local_1770553003303_5ecm5g",
+  "startedAt": "2026-02-08T12:16:43.303Z",
+  "completedAt": "2026-02-08T12:16:57.706Z",
+  "config": {
+    "bucketId": "demo",
+    "outputPath": "/Users/martijnbroersma/clawd/audit-logs/health-analyzer",
+    "useLocalAI": true,
+    "verbose": false
+  },
+  "model": {
+    "name": "llama3.2:3b",
+    "digest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+    "ollamaVersion": "0.15.5",
+    "parameters": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "llama",
+      "families": [
+        "llama"
+      ],
+      "parameter_size": "3.2B",
+      "quantization_level": "Q4_K_M"
+    }
+  },
+  "inputData": {
+    "steps": [
+      {
+        "date": "2026-01-26",
+        "count": 10795,
+        "distance": 8506
+      },
+      {
+        "date": "2026-01-27",
+        "count": 9906,
+        "distance": 4737
+      },
+      {
+        "date": "2026-01-28",
+        "count": 9416,
+        "distance": 7478
+      },
+      {
+        "date": "2026-01-29",
+        "count": 9065,
+        "distance": 4029
+      },
+      {
+        "date": "2026-01-30",
+        "count": 11785,
+        "distance": 5314
+      },
+      {
+        "date": "2026-01-31",
+        "count": 11441,
+        "distance": 8054
+      },
+      {
+        "date": "2026-02-01",
+        "count": 11804,
+        "distance": 8638
+      },
+      {
+        "date": "2026-02-02",
+        "count": 13838,
+        "distance": 6266
+      },
+      {
+        "date": "2026-02-03",
+        "count": 12443,
+        "distance": 8590
+      },
+      {
+        "date": "2026-02-04",
+        "count": 10473,
+        "distance": 7039
+      },
+      {
+        "date": "2026-02-05",
+        "count": 12590,
+        "distance": 8221
+      },
+      {
+        "date": "2026-02-06",
+        "count": 10548,
+        "distance": 4135
+      },
+      {
+        "date": "2026-02-07",
+        "count": 9416,
+        "distance": 6451
+      },
+      {
+        "date": "2026-02-08",
+        "count": 9377,
+        "distance": 8051
+      }
+    ],
+    "sleep": [
+      {
+        "date": "2026-01-26",
+        "duration": 5.973344596035508,
+        "quality": "good"
+      },
+      {
+        "date": "2026-01-27",
+        "duration": 6.036080858795073,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-01-28",
+        "duration": 6.4818782960394525,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-01-29",
+        "duration": 7.190846783427612,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-01-30",
+        "duration": 7.628437855517243,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-01-31",
+        "duration": 5.994237258012199,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-01",
+        "duration": 7.63054394434077,
+        "quality": "excellent"
+      },
+      {
+        "date": "2026-02-02",
+        "duration": 6.739540056115278,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-03",
+        "duration": 6.902977366982636,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-04",
+        "duration": 7.331128996831517,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-05",
+        "duration": 7.38342450033254,
+        "quality": "good"
+      },
+      {
+        "date": "2026-02-06",
+        "duration": 6.425207901676756,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-07",
+        "duration": 8.177535655153061,
+        "quality": "fair"
+      },
+      {
+        "date": "2026-02-08",
+        "duration": 7.331035518020329,
+        "quality": "fair"
+      }
+    ],
+    "mood": [
+      {
+        "date": "2026-01-26",
+        "score": 9,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-01-27",
+        "score": 8
+      },
+      {
+        "date": "2026-01-28",
+        "score": 5
+      },
+      {
+        "date": "2026-01-29",
+        "score": 6,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-01-30",
+        "score": 6
+      },
+      {
+        "date": "2026-01-31",
+        "score": 6
+      },
+      {
+        "date": "2026-02-01",
+        "score": 9,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-02",
+        "score": 6
+      },
+      {
+        "date": "2026-02-03",
+        "score": 7
+      },
+      {
+        "date": "2026-02-04",
+        "score": 8,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-05",
+        "score": 6
+      },
+      {
+        "date": "2026-02-06",
+        "score": 5
+      },
+      {
+        "date": "2026-02-07",
+        "score": 9,
+        "notes": "Feeling good today"
+      },
+      {
+        "date": "2026-02-08",
+        "score": 6
+      }
+    ]
+  },
+  "dataHash": "066024bfd23cad6db18d51dfbb00b763ea8eddcb3dbb85c7e72da2fb28513b14",
+  "resultHash": "c7e079f462d9017a1962ae4d53e2ef4dc89ae761e73fcd3cbc4c3a86bb61b1f0",
+  "entries": [
+    {
+      "id": "audit_1770553003304_ryy1wme2_0",
+      "timestamp": "2026-02-08T12:16:43.447Z",
+      "action": "data_fetched",
+      "details": {
+        "bucketId": "demo",
+        "source": "ddc",
+        "note": "Fetching encrypted data from DDC"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553003304_ryy1wme2_1",
+      "timestamp": "2026-02-08T12:16:43.447Z",
+      "action": "data_decrypted",
+      "details": {
+        "note": "Decrypting data with capability token",
+        "tokenProvided": false,
+        "keyProvided": false
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553003304_ryy1wme2_2",
+      "timestamp": "2026-02-08T12:16:43.754Z",
+      "action": "inference_started",
+      "details": {
+        "model": "llama3.2:3b",
+        "modelDigest": "sha256:dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+        "inputHash": "066024bfd23cad6db18d51dfbb00b763ea8eddcb3dbb85c7e72da2fb28513b14",
+        "note": "Starting health analysis"
+      },
+      "hashes": {}
+    },
+    {
+      "id": "audit_1770553003304_ryy1wme2_3",
+      "timestamp": "2026-02-08T12:16:57.705Z",
+      "action": "inference_completed",
+      "details": {
+        "model": "llama3.2:3b",
+        "outputHash": "c7e079f462d9017a1962ae4d53e2ef4dc89ae761e73fcd3cbc4c3a86bb61b1f0",
+        "trendsCount": 3,
+        "recommendationsCount": 2,
+        "note": "Analysis complete"
+      },
+      "hashes": {}
+    }
+  ],
+  "insights": {
+    "generatedAt": "2026-02-08T12:16:57.705Z",
+    "summary": "Overall health data shows improvement in steps and mood, but slight decline in sleep quality. February has been a busy month with increasing activity levels.",
+    "trends": [
+      {
+        "category": "steps|sleep|mood",
+        "direction": "improving",
+        "description": "Increasing daily step count and improved mood scores indicate overall health trend towards better habits."
+      },
+      {
+        "category": "steps|sleep|mood",
+        "direction": "declining",
+        "description": "Decreasing sleep quality during the first week of February may be a concern that needs attention."
+      },
+      {
+        "category": "steps|sleep|mood",
+        "direction": "stable",
+        "description": "Mood scores have shown stability, with only slight improvements and occasional decline."
+      }
+    ],
+    "recommendations": [
+      {
+        "priority": "high",
+        "category": "exercise",
+        "title": "Increase Daily Step Count",
+        "description": "Aim to take at least 10,000 steps per day to maintain a healthy lifestyle.",
+        "actionable": true
+      },
+      {
+        "priority": "medium",
+        "category": "sleep",
+        "title": "Establish a Bedtime Routine",
+        "description": "Develop a calming pre-sleep routine to improve sleep quality and duration.",
+        "actionable": true
+      }
+    ],
+    "alerts": []
+  },
+  "signature": "f9604483f4702e45d845d2716fe8dc05cfab591cae5212d6dcdaa8d329000b2c"
+}

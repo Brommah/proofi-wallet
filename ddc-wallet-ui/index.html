@@ -1,0 +1,3488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CereProof — Verifiable Credentials</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='24' text-anchor='middle' font-size='24' font-weight='bold' fill='%233B82F6'%3E◇%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@cere/embed-wallet/dist/bundle.umd.js"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-off: #fafafa;
+      --surface: #ffffff;
+      --surface2: #f5f5f5;
+      --border: #e0e0e0;
+      --border-strong: #000000;
+      --text: #1a1a1a;
+      --text-dim: #6b6b6b;
+      --text-muted: #999999;
+      --accent: #3B82F6;
+      --accent-light: #60A5FA;
+      --accent-bg: #3B82F610;
+      --danger: #EF4444;
+      --danger-bg: #EF444410;
+      --warning: #F59E0B;
+      --warning-bg: #F59E0B10;
+      --purple: #7C3AED;
+      --purple-bg: #7C3AED10;
+      --blue: #3B82F6;
+      --success: #10B981;
+      --success-bg: #10B98110;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', 'Space Grotesk', sans-serif;
+      background: var(--bg-off);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 2px solid var(--border-strong);
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      color: #000;
+    }
+
+    .header h1 span { color: var(--accent); }
+
+    .header-sub {
+      font-size: 13px;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ===== CONNECTION STATUS ===== */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 14px 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      margin-bottom: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .status-dot.connected {
+      background: var(--success);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .status-dot.error { background: var(--danger); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .status-info {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .status-item { color: var(--text-dim); }
+    .status-item strong { color: var(--text); font-weight: 600; }
+
+    /* ===== ROLE NAV (TOP TIER) ===== */
+    .role-nav {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0;
+      border-bottom: 3px solid var(--border);
+      background: transparent;
+      padding: 0;
+    }
+
+    .role-nav-btn {
+      padding: 16px 28px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      color: var(--text-dim);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .role-nav-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: var(--bg-off);
+    }
+
+    .role-nav-btn:hover:not(.active) {
+      color: var(--text);
+      background: var(--bg-off);
+    }
+
+    .role-nav-btn .role-icon { font-size: 18px; }
+
+    /* ===== SUB NAV (SECOND TIER) ===== */
+    .sub-nav-container {
+      margin-bottom: 40px;
+    }
+
+    .sub-nav {
+      display: none;
+      gap: 0;
+      border-bottom: 2px solid var(--border);
+      background: transparent;
+      padding: 0;
+      overflow-x: auto;
+    }
+
+    .sub-nav.active {
+      display: flex;
+    }
+
+    .main-nav-btn {
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      color: var(--text-dim);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .main-nav-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .main-nav-btn:hover:not(.active) {
+      color: var(--text);
+    }
+
+    .main-nav-btn .nav-icon { font-size: 16px; }
+
+    .main-nav-btn.dimmed { opacity: 0.4; }
+    .main-nav-btn.dimmed:hover { opacity: 0.7; }
+
+    /* ===== API REFERENCE STYLES ===== */
+    .api-endpoint {
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      background: var(--bg);
+    }
+
+    .api-endpoint .api-method {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      margin-right: 12px;
+      border: 2px solid;
+      text-transform: uppercase;
+    }
+
+    .api-method.get { color: #22c55e; border-color: #22c55e; }
+    .api-method.post { color: var(--accent); border-color: var(--accent); }
+
+    .api-endpoint .api-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .api-endpoint .api-desc {
+      margin-top: 8px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    /* ===== SECTION PANELS ===== */
+    .section-panel { display: none; }
+    .section-panel.active { display: block; }
+
+    /* ===== GRID ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+      .role-nav-btn { font-size: 12px; padding: 12px 16px; letter-spacing: 0.5px; }
+      .role-nav-btn .role-label { display: none; }
+      .main-nav-btn { font-size: 11px; padding: 10px 12px; }
+      .main-nav-btn .nav-label { display: none; }
+      .sub-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .header h1 { font-size: 28px; }
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 32px;
+      transition: border-color 0.15s;
+    }
+
+    .card:hover { border-color: #000; }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-full { grid-column: 1 / -1; }
+
+    /* ===== FORMS ===== */
+    .write-section { grid-column: 1 / -1; }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+      padding: 0;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      color: var(--text-dim);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab:hover:not(.active) { color: var(--text); }
+
+    textarea, input[type="text"], input[type="file"], select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      resize: vertical;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b6b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    select option {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    textarea { min-height: 140px; }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-group label {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tag-row input { flex: 1; }
+
+    .btn-remove-tag {
+      background: var(--danger);
+      color: white;
+      border: none;
+      width: 36px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-add-tag {
+      background: transparent;
+      border: 1px dashed var(--border);
+      padding: 8px;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .btn-add-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: 2px solid transparent;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: #2563EB;
+      border-color: #2563EB;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover { border-color: var(--border-strong); }
+
+    .btn-purple {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-purple:hover {
+      background: #2563EB;
+      border-color: #2563EB;
+    }
+
+    .btn-purple:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-blue {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-blue:hover {
+      background: #2563EB;
+      border-color: #2563EB;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    /* ===== FEED ===== */
+    .feed {
+      max-height: 400px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .feed-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      animation: slideIn 0.2s ease-out;
+    }
+
+    .feed-item:last-child { border-bottom: none; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feed-item .meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .feed-item .type-badge {
+      padding: 2px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 1px solid;
+    }
+
+    .type-store { border-color: var(--accent); color: var(--accent); background: transparent; }
+    .type-read { border-color: var(--purple); color: var(--purple); background: transparent; }
+    .type-error { border-color: var(--danger); color: var(--danger); background: transparent; }
+    .type-credential { border-color: var(--accent); color: var(--accent); background: transparent; }
+    .type-verified { border-color: var(--success); color: var(--success); background: transparent; }
+    .type-invalid { border-color: var(--danger); color: var(--danger); background: transparent; }
+
+    .cid-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .cid-link:hover { text-decoration: underline; }
+
+    .feed-content {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 100px;
+      overflow: hidden;
+    }
+
+    /* ===== SPINNER ===== */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--accent);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+    }
+
+    .spinner-light {
+      border-color: var(--text-dim);
+      border-top-color: transparent;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== EMPTY STATE ===== */
+    .empty {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-dim);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    /* ===== QUICK ACTIONS ===== */
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .quick-btn {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .quick-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ===== READ ===== */
+    .read-input {
+      display: flex;
+      gap: 8px;
+    }
+
+    .read-input input { flex: 1; }
+
+    .read-result {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--bg-off);
+      border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+    }
+
+    /* ===== VERIFY RESULT ===== */
+    .verify-result {
+      margin-top: 24px;
+      display: none;
+    }
+
+    .verify-result.show { display: block; }
+
+    .verify-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      border: 2px solid;
+    }
+
+    .verify-badge.valid {
+      border-color: var(--success);
+      color: var(--success);
+      background: transparent;
+    }
+
+    .verify-badge.invalid {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: transparent;
+    }
+
+    .verify-details {
+      background: var(--bg-off);
+      border: 1px solid var(--border);
+      padding: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .verify-details .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .verify-details .detail-row:last-child { border-bottom: none; }
+
+    .detail-label {
+      color: var(--text-dim);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+    }
+
+    .detail-value {
+      color: var(--text);
+      text-align: right;
+      word-break: break-all;
+      max-width: 60%;
+    }
+
+    /* ===== CREDENTIALS LIST ===== */
+    .cred-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .cred-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      padding: 16px 20px;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+
+    .cred-card:last-child { border-bottom: 1px solid var(--border); }
+
+    .cred-card:hover {
+      background: var(--bg-off);
+    }
+
+    .cred-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .cred-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: transparent;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cred-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .cred-subject {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .cred-cid {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      word-break: break-all;
+    }
+
+    /* ===== COUNT BADGE ===== */
+    .count-badge {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 7px;
+      margin-left: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes successPop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-anim {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      animation: successPop 0.4s ease-out forwards;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      15% { transform: translateX(-8px); }
+      30% { transform: translateX(8px); }
+      45% { transform: translateX(-6px); }
+      60% { transform: translateX(6px); }
+      75% { transform: translateX(-3px); }
+      90% { transform: translateX(3px); }
+    }
+
+    .shake { animation: shake 0.4s ease-out; }
+
+    @keyframes smoothFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .smooth-fade-in { animation: smoothFadeIn 0.3s ease-out forwards; }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ===== RECENT VERIFICATIONS ===== */
+    .recent-verifications {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 2px solid var(--border);
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      margin-bottom: -1px;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 13px;
+    }
+
+    .recent-item:hover { background: var(--bg-off); }
+    .recent-item .status-icon { font-size: 16px; }
+    .recent-item .recent-cid {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .recent-item .recent-type {
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    /* ===== CLAIM STATUS BADGES ===== */
+    .claim-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .claim-status-badge.pending {
+      border-color: var(--warning);
+      color: var(--warning);
+      background: transparent;
+    }
+
+    .claim-status-badge.approved {
+      border-color: var(--success);
+      color: var(--success);
+      background: transparent;
+    }
+
+    .claim-status-badge.rejected {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: transparent;
+    }
+
+    /* ===== DYNAMIC FIELDS ===== */
+    .dynamic-fields { transition: all 0.2s ease; }
+
+    .dynamic-fields .form-group {
+      animation: fieldFadeIn 0.25s ease-out forwards;
+    }
+
+    @keyframes fieldFadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== CLAIM CARDS ===== */
+    .claim-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      transition: background 0.15s;
+      cursor: pointer;
+      margin-bottom: -1px;
+    }
+
+    .claim-card:hover { background: var(--bg-off); }
+
+    .claim-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .claim-card-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .claim-subject {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .claim-doc-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .claim-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* ===== CLAIM DETAIL OVERLAY ===== */
+    .claim-detail-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .claim-detail-panel {
+      background: var(--bg);
+      border: 2px solid var(--border-strong);
+      padding: 32px;
+      max-width: 640px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideUp 0.2s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .claim-detail-panel .close-btn {
+      float: right;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .claim-detail-panel .close-btn:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .claim-document-text {
+      background: var(--bg-off);
+      border: 1px solid var(--border);
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--text);
+      margin: 12px 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .claim-action-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-approve {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+      flex: 1;
+    }
+
+    .btn-approve:hover {
+      background: #059669;
+      border-color: #059669;
+    }
+
+    .btn-reject {
+      background: var(--danger);
+      color: white;
+      border-color: var(--danger);
+      flex: 1;
+    }
+
+    .btn-reject:hover {
+      background: #DC2626;
+      border-color: #DC2626;
+    }
+
+    .btn-approve:disabled, .btn-reject:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ===== ORG TABS ===== */
+    .org-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+      padding: 0;
+    }
+
+    .org-tab {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      color: var(--text-dim);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .org-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .org-tab:hover:not(.active) { color: var(--text); }
+
+    /* ===== CLAIM SUCCESS ===== */
+    .claim-success {
+      text-align: center;
+      padding: 32px;
+      animation: smoothFadeIn 0.3s ease-out forwards;
+    }
+
+    .claim-success .success-icon { font-size: 48px; margin-bottom: 16px; }
+
+    .claim-success .claim-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 8px 16px;
+      display: inline-block;
+      margin: 12px 0;
+    }
+
+    /* ===== SERVICE UNAVAILABLE ===== */
+    .service-unavailable {
+      text-align: center;
+      padding: 32px;
+      background: var(--bg-off);
+      border: 1px dashed var(--border);
+      color: var(--text-dim);
+    }
+
+    .service-unavailable .icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    /* ===== SELF LABEL ===== */
+    .self-label {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-left: 8px;
+      vertical-align: middle;
+      background: transparent;
+    }
+
+    /* ===== SECTION DESCRIPTIONS ===== */
+    .section-desc {
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ===== ISSUE RESULT ===== */
+    .issue-result-box {
+      background: var(--bg-off);
+      border: 2px solid var(--success);
+      padding: 24px;
+    }
+
+    .issue-result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .issue-result-header span:first-child { font-size: 24px; }
+
+    .issue-result-header span:last-child {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    /* Approved / rejected inline boxes in claim detail */
+    .claim-approved-box {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid var(--success);
+      background: transparent;
+    }
+
+    .claim-rejected-box {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid var(--danger);
+      background: transparent;
+    }
+
+    /* ===== LOGIN SCREEN ===== */
+    #login-screen {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .login-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 64px;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .login-left::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 2px;
+      height: 100%;
+      background: var(--border-strong);
+    }
+
+    .login-logo-mark {
+      width: 56px;
+      height: 56px;
+      border: 2px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--accent);
+      margin-bottom: 48px;
+    }
+
+    .login-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 64px;
+      font-weight: 700;
+      letter-spacing: -3px;
+      color: #000;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .login-title span { color: var(--accent); }
+
+    .login-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text-dim);
+      line-height: 1.5;
+      margin-bottom: 48px;
+      max-width: 400px;
+    }
+
+    .login-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+
+    .login-feature {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+    }
+
+    .login-feature-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .login-feature span { color: var(--text); }
+
+    .login-footer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .login-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 64px;
+      background: var(--bg-off);
+      position: relative;
+    }
+
+    .login-right-inner {
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .login-right-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #000;
+      margin-bottom: 8px;
+    }
+
+    .login-right-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 48px;
+    }
+
+    .login-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px 48px;
+      background: var(--accent);
+      color: #fff;
+      border: 2px solid var(--accent);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.15s;
+      width: 100%;
+    }
+
+    .login-btn:hover {
+      background: #2563EB;
+      border-color: #2563EB;
+    }
+
+    .login-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 32px 0;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .login-divider::before, .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .login-trust-badges {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 8px;
+    }
+
+    .login-trust-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .login-trust-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+    }
+
+    .login-status {
+      margin-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      min-height: 20px;
+    }
+
+    .login-grid-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      #login-screen {
+        grid-template-columns: 1fr;
+      }
+      .login-left {
+        padding: 48px 24px 32px;
+        min-height: auto;
+      }
+      .login-left::after { display: none; }
+      .login-title { font-size: 42px; letter-spacing: -2px; }
+      .login-subtitle { font-size: 16px; }
+      .login-features { margin-bottom: 32px; }
+      .login-footer { display: none; }
+      .login-right { padding: 32px 24px 48px; }
+    }
+
+    /* ===== ROLE PICKER ===== */
+    #role-picker {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-off);
+      padding: 24px;
+    }
+
+    .role-picker-box {
+      max-width: 720px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .role-picker-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #000;
+      margin-bottom: 8px;
+    }
+
+    .role-picker-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 40px;
+    }
+
+    .role-picker-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 640px) {
+      .role-picker-grid { grid-template-columns: 1fr; }
+    }
+
+    .role-pick-card {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      padding: 32px 24px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: center;
+    }
+
+    .role-pick-card:hover {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+    }
+
+    .role-pick-card .role-pick-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .role-pick-card .role-pick-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .role-pick-card .role-pick-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ===== LOGOUT BUTTON ===== */
+    .logout-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Screen (shown first) -->
+  <div id="login-screen">
+    <div class="login-left">
+      <div class="login-logo-mark">◇</div>
+      <div class="login-title">Cere<span>Proof</span></div>
+      <div class="login-subtitle">Verifiable credentials stored on decentralized infrastructure. No middleman. No trust required.</div>
+      <div class="login-features">
+        <div class="login-feature">
+          <div class="login-feature-icon">🔐</div>
+          <span>Cryptographically signed with your wallet</span>
+        </div>
+        <div class="login-feature">
+          <div class="login-feature-icon">🌐</div>
+          <span>Stored on Cere DDC — permanent & tamper-proof</span>
+        </div>
+        <div class="login-feature">
+          <div class="login-feature-icon">✅</div>
+          <span>Anyone can verify — no account needed</span>
+        </div>
+        <div class="login-feature">
+          <div class="login-feature-icon">🤖</div>
+          <span>Agent-ready — machines verify credentials too</span>
+        </div>
+      </div>
+      <div class="login-footer">Powered by Cere Network — Decentralized Data Cloud</div>
+    </div>
+    <div class="login-right">
+      <div class="login-grid-bg"></div>
+      <div class="login-right-inner">
+        <div class="login-right-heading">Get Started</div>
+        <div class="login-right-sub">Connect your Cere wallet</div>
+        <button class="login-btn" id="loginBtn" onclick="handleLogin()">
+          🔗 Connect Wallet
+        </button>
+        <div class="login-status" id="loginStatus"></div>
+        <div class="login-divider">or verify without login</div>
+        <div class="login-trust-badges">
+          <div class="login-trust-badge"><div class="dot"></div> W3C Standard</div>
+          <div class="login-trust-badge"><div class="dot"></div> DDC Mainnet</div>
+          <div class="login-trust-badge"><div class="dot"></div> sr25519 / ed25519</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Role Picker (shown after login) -->
+  <div id="role-picker" style="display:none">
+    <div class="role-picker-box">
+      <div class="role-picker-title">How will you use CereProof?</div>
+      <div class="role-picker-sub">Select your primary role</div>
+      <div class="role-picker-grid">
+        <div class="role-pick-card" onclick="selectInitialRole('user')">
+          <span class="role-pick-icon">👤</span>
+          <div class="role-pick-name">Individual</div>
+          <div class="role-pick-desc">Submit claims, manage your credentials, verify documents</div>
+        </div>
+        <div class="role-pick-card" onclick="selectInitialRole('org')">
+          <span class="role-pick-icon">🏢</span>
+          <div class="role-pick-name">Organization</div>
+          <div class="role-pick-desc">Issue & verify credentials, review incoming claims</div>
+        </div>
+        <div class="role-pick-card" onclick="selectInitialRole('dev')">
+          <span class="role-pick-icon">🛠</span>
+          <div class="role-pick-name">Developer</div>
+          <div class="role-pick-desc">API access, raw DDC read/write, integration tools</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App (shown after role selected) -->
+  <div class="container" id="main-app" style="display:none">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">◇</div>
+      <div>
+        <h1>Cere<span>Proof</span></h1>
+        <div class="header-sub">Issue, verify &amp; share verifiable credentials</div>
+      </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="status-bar" id="statusBar">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="status-info">
+        <span class="status-item">Status: <strong id="statusText">Disconnected</strong></span>
+        <span class="status-item" id="userInfoItem" style="display:none">User: <strong id="userEmail">—</strong></span>
+        <span class="status-item">Wallet: <strong id="walletAddr">—</strong></span>
+        <span class="status-item">Bucket: <strong id="bucketId">—</strong></span>
+        <span class="status-item">Credentials: <strong id="credCount">0</strong></span>
+      </div>
+      <button class="logout-btn" onclick="handleLogout()">⏏ Logout</button>
+    </div>
+
+    <!-- Role Navigation (Top Tier) -->
+    <div class="role-nav">
+      <button class="role-nav-btn active" onclick="switchRole('user')" data-role="user">
+        <span class="role-icon">👤</span>
+        <span class="role-label">User</span>
+      </button>
+      <button class="role-nav-btn" onclick="switchRole('org')" data-role="org">
+        <span class="role-icon">🏢</span>
+        <span class="role-label">Organization</span>
+      </button>
+      <button class="role-nav-btn" onclick="switchRole('dev')" data-role="dev">
+        <span class="role-icon">🛠</span>
+        <span class="role-label">Developer</span>
+      </button>
+    </div>
+
+    <!-- Sub Navigation (Second Tier) -->
+    <div class="sub-nav-container">
+      <!-- User sub-tabs -->
+      <div class="sub-nav active" data-role-nav="user">
+        <button class="main-nav-btn active" onclick="switchSection('submitclaim')" data-section="submitclaim">
+          <span class="nav-icon">📄</span>
+          <span class="nav-label">Submit Claim</span>
+        </button>
+        <button class="main-nav-btn" onclick="switchSection('credentials')" data-section="credentials">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">My Credentials</span>
+          <span class="count-badge" id="navCredCount" style="display:none">0</span>
+        </button>
+        <button class="main-nav-btn" onclick="switchSection('verify')" data-section="verify">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Verify</span>
+        </button>
+        <button class="main-nav-btn" onclick="window.open('/profile/' + WALLET, '_blank')" data-section="profile">
+          <span class="nav-icon">👤</span>
+          <span class="nav-label">My Profile</span>
+        </button>
+      </div>
+
+      <!-- Organization sub-tabs -->
+      <div class="sub-nav" data-role-nav="org">
+        <button class="main-nav-btn" onclick="switchSection('orgportal')" data-section="orgportal">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Org Portal</span>
+          <span class="count-badge" id="navPendingCount" style="display:none">0</span>
+        </button>
+        <button class="main-nav-btn" onclick="switchSection('issue')" data-section="issue">
+          <span class="nav-icon">🎓</span>
+          <span class="nav-label">Issue Credential</span>
+        </button>
+        <button class="main-nav-btn" onclick="switchSection('issuedoverview')" data-section="issuedoverview">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">Issued Overview</span>
+          <span class="count-badge" id="navCredCountOrg" style="display:none">0</span>
+        </button>
+      </div>
+
+      <!-- Developer sub-tabs -->
+      <div class="sub-nav" data-role-nav="dev">
+        <button class="main-nav-btn dimmed" onclick="switchSection('write')" data-section="write">
+          <span class="nav-icon">✍️</span>
+          <span class="nav-label">Raw Write</span>
+        </button>
+        <button class="main-nav-btn" onclick="switchSection('verify')" data-section="verify">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Verify</span>
+        </button>
+        <button class="main-nav-btn" onclick="switchSection('apiref')" data-section="apiref">
+          <span class="nav-icon">📡</span>
+          <span class="nav-label">API Reference</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: Issue Credential ===== -->
+    <div class="section-panel" id="section-issue">
+      <div class="grid">
+        <div class="card card-full">
+          <div class="card-title">🎓 Issue Verifiable Credential</div>
+          <p class="section-desc">
+            Create a cryptographically signed credential, stored permanently on Cere DDC. 
+            Your Cere wallet signs the credential directly — the issuer is your logged-in wallet address. Anyone can verify it with just the CID.
+          </p>
+
+          <div class="form-group">
+            <label>Credential Type</label>
+            <select id="issueCredType">
+              <option value="DiplomaCredential">🎓 Diploma / Degree</option>
+              <option value="EmploymentCredential">💼 Employment Verification</option>
+              <option value="CertificationCredential">📜 Certification</option>
+              <option value="SkillCredential">⚡ Skill Attestation</option>
+              <option value="MembershipCredential">🏛️ Membership</option>
+              <option value="AwardCredential">🏆 Award / Achievement</option>
+              <option value="CustomCredential">🔧 Custom</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Subject Wallet Address</label>
+              <div style="position: relative;">
+                <input type="text" id="issueSubject" placeholder="5DSxCB...">
+                <span class="self-label" id="selfLabel" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);display:none;">self</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Subject Name (optional)</label>
+              <input type="text" id="issueSubjectName" placeholder="e.g. Martijn Broersma">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Claim Data</label>
+            <textarea id="issueClaimData" style="min-height: 100px;" placeholder="Describe the credential claim, e.g.:&#10;BSc Computer Science, Universiteit Twente, graduated cum laude 2020&#10;&#10;Or use JSON for structured data"></textarea>
+          </div>
+
+          <div class="quick-actions" style="margin-top: 4px;">
+            <button class="quick-btn" onclick="fillIssueTemplate('diploma')">🎓 Example: Diploma</button>
+            <button class="quick-btn" onclick="fillIssueTemplate('employment')">💼 Example: Employment</button>
+            <button class="quick-btn" onclick="fillIssueTemplate('cert')">📜 Example: Certification</button>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-purple" id="issueBtn" onclick="issueCredential()">
+              🔏 Sign & Issue Credential
+            </button>
+          </div>
+
+          <!-- Issue result -->
+          <div id="issueResult" style="display: none; margin-top: 24px;">
+            <div class="smooth-fade-in issue-result-box">
+              <div class="issue-result-header">
+                <span>✅</span>
+                <span>Credential Issued!</span>
+              </div>
+              <div class="verify-details">
+                <div class="detail-row">
+                  <span class="detail-label">CID</span>
+                  <span class="detail-value"><a class="cid-link" id="issuedCid" href="#" target="_blank"></a></span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">CDN URL</span>
+                  <span class="detail-value"><a class="cid-link" id="issuedCdnUrl" href="#" target="_blank"></a></span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Verify</span>
+                  <span class="detail-value">
+                    <button class="quick-btn" id="issuedVerifyBtn" onclick="" style="color: var(--accent); border-color: var(--accent);">🔍 Verify this credential</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: Submit Claim ===== -->
+    <div class="section-panel active" id="section-submitclaim">
+      <div class="grid">
+        <div class="card card-full">
+          <div class="card-title">📄 Submit Claim for Verification</div>
+          <p class="section-desc">
+            Submit a document or claim to an organization for verification. Once approved, a verifiable credential will be issued to your wallet.
+          </p>
+
+          <div id="claimFormContainer">
+            <div class="form-group">
+              <label>Claim Type</label>
+              <select id="claimType" onchange="updateClaimMetaFields()">
+                <option value="DiplomaCredential">🎓 Diploma / Degree</option>
+                <option value="EmploymentCredential">💼 Employment Verification</option>
+                <option value="CertificationCredential">📜 Certification</option>
+                <option value="SkillCredential">⚡ Skill Attestation</option>
+              </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label>Your Wallet Address</label>
+                <input type="text" id="claimWallet" readonly style="opacity: 0.7; cursor: not-allowed;">
+              </div>
+              <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="claimName" placeholder="e.g. Martijn Broersma">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Document Name</label>
+              <input type="text" id="claimDocName" placeholder="e.g. diploma_ut_2023.pdf, employment_contract.pdf">
+            </div>
+
+            <div class="form-group">
+              <label>Document Text</label>
+              <textarea id="claimDocText" style="min-height: 160px;" placeholder="Paste the full text content of your document here...&#10;&#10;For example: the text from a diploma, employment contract, certification letter, etc."></textarea>
+            </div>
+
+            <!-- Dynamic metadata fields -->
+            <div class="dynamic-fields" id="claimMetaFields"></div>
+
+            <div class="btn-row">
+              <button class="btn btn-purple" id="submitClaimBtn" onclick="submitClaim()">
+                📄 Submit Claim
+              </button>
+            </div>
+          </div>
+
+          <!-- Success state -->
+          <div id="claimSuccessState" style="display: none;">
+            <div class="claim-success">
+              <div class="success-icon">📄</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--accent);margin-bottom:8px;">Claim Submitted!</div>
+              <p style="color:var(--text-dim);margin-bottom:16px;">Your claim has been submitted for verification.</p>
+              <div class="claim-id" id="submittedClaimId"></div>
+              <div style="margin-top: 16px;">
+                <span class="claim-status-badge pending">⏳ Pending verification</span>
+              </div>
+              <div class="btn-row" style="justify-content: center; margin-top: 24px;">
+                <button class="btn btn-secondary" onclick="resetClaimForm()">📄 Submit Another</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: Org Portal ===== -->
+    <div class="section-panel" id="section-orgportal">
+      <div class="grid">
+        <div class="card card-full">
+          <div class="card-title">🏢 Organization Portal — Claim Management</div>
+          <p class="section-desc">
+            Review, approve, or reject incoming claims. Approved claims are automatically issued as verifiable credentials.
+          </p>
+
+          <div class="org-tabs">
+            <button class="org-tab active" data-orgtab="pending" onclick="switchOrgTab('pending')">⏳ Pending</button>
+            <button class="org-tab" data-orgtab="processed" onclick="switchOrgTab('processed')">✅ Processed</button>
+          </div>
+
+          <div id="orgPendingTab">
+            <div id="pendingClaimsList">
+              <div class="empty">
+                <div class="empty-icon">📬</div>
+                <p>No pending claims.<br>Claims submitted by users will appear here.</p>
+              </div>
+            </div>
+            <div class="btn-row" style="margin-top: 16px;">
+              <button class="btn btn-secondary" onclick="loadPendingClaims()">🔄 Refresh</button>
+            </div>
+          </div>
+
+          <div id="orgProcessedTab" style="display: none;">
+            <div id="processedClaimsList">
+              <div class="empty">
+                <div class="empty-icon">📋</div>
+                <p>No processed claims yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Claim Detail Overlay -->
+    <div id="claimDetailOverlay" class="claim-detail-overlay" style="display: none;" onclick="if(event.target===this)closeClaimDetail()">
+      <div class="claim-detail-panel" id="claimDetailPanel"></div>
+    </div>
+
+    <!-- ===== SECTION: Verify ===== -->
+    <div class="section-panel" id="section-verify">
+      <div class="grid">
+        <div class="card card-full">
+          <div class="card-title">🔍 Verify Credential</div>
+          <p class="section-desc">
+            Enter a credential CID to verify its authenticity. The system reads the credential from DDC
+            and cryptographically verifies the issuer's sr25519 signature. No wallet needed — anyone can verify.
+          </p>
+
+          <div class="form-group">
+            <label>Credential CID</label>
+            <div class="read-input">
+              <input type="text" id="verifyCid" placeholder="baebb4i... (paste the credential CID)">
+              <button class="btn btn-blue" id="verifyBtn" onclick="verifyCredential()">🔍 Verify</button>
+            </div>
+          </div>
+
+          <div class="quick-actions" id="exampleCids" style="margin-top: 8px;"></div>
+
+          <div id="verifyAnim" style="display:none; text-align:center; padding: 32px;"></div>
+
+          <div class="verify-result" id="verifyResult"></div>
+
+          <div class="recent-verifications" id="recentVerifications" style="display:none;">
+            <div class="card-title">🕐 Recent Verifications</div>
+            <div id="recentList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: Issued Credentials ===== -->
+    <div class="section-panel" id="section-credentials">
+      <div class="grid">
+        <div class="card card-full">
+          <div class="card-title">📋 Issued Credentials</div>
+          <p class="section-desc">
+            All credentials issued by this wallet, stored on DDC with cryptographic proofs.
+          </p>
+
+          <div id="credentialsList" class="cred-list">
+            <div class="empty">
+              <div class="empty-icon">🎓</div>
+              <p>No credentials issued yet.<br>Go to "Issue Credential" to create one.</p>
+            </div>
+          </div>
+
+          <div class="btn-row" style="margin-top: 24px;">
+            <button class="btn btn-secondary" onclick="loadIssuedCredentials()">🔄 Refresh</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: Raw Write & Read ===== -->
+    <div class="section-panel" id="section-write">
+      <div class="grid">
+        <!-- Write Section -->
+        <div class="card write-section">
+          <div class="card-title">✍️ Raw Write to DDC <span style="opacity:0.4;font-size:10px;margin-left:8px;letter-spacing:1px;">DEV TOOL</span></div>
+
+          <div class="tabs">
+            <button class="tab active" data-tab="text" onclick="switchTab('text')">Text / JSON</button>
+            <button class="tab" data-tab="file" onclick="switchTab('file')">File</button>
+          </div>
+
+          <!-- Text tab -->
+          <div id="tab-text">
+            <div class="quick-actions">
+              <button class="quick-btn" onclick="setTemplate('memo')">📝 Memo</button>
+              <button class="quick-btn" onclick="setTemplate('json')">📋 JSON</button>
+              <button class="quick-btn" onclick="setTemplate('agent-memory')">🧠 Agent Memory</button>
+            </div>
+            <div class="form-group">
+              <label>Content</label>
+              <textarea id="writeContent" placeholder="Enter text, JSON, or any data to store on DDC..."></textarea>
+            </div>
+          </div>
+
+          <!-- File tab -->
+          <div id="tab-file" style="display:none">
+            <div class="form-group">
+              <label>Upload File</label>
+              <input type="file" id="fileInput">
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <div class="form-group">
+            <label>Tags (metadata)</label>
+            <div id="tagsContainer">
+              <div class="tag-row">
+                <input type="text" placeholder="key" class="tag-key" value="type">
+                <input type="text" placeholder="value" class="tag-val" value="memo">
+                <button class="btn-remove-tag" onclick="this.parentElement.remove()">×</button>
+              </div>
+            </div>
+            <button class="btn-add-tag" onclick="addTag()">+ Add tag</button>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="storeBtn" onclick="storeData()">
+              ◇ Store on DDC
+            </button>
+          </div>
+        </div>
+
+        <!-- Read Section -->
+        <div class="card">
+          <div class="card-title">📖 Read from DDC</div>
+          <div class="form-group">
+            <label>CID</label>
+            <div class="read-input">
+              <input type="text" id="readCid" placeholder="baebb4i...">
+              <button class="btn btn-secondary" onclick="readData()">Read</button>
+            </div>
+          </div>
+          <div class="read-result" id="readResult"></div>
+          <div style="margin-top: 16px">
+            <div class="card-title" style="margin-bottom: 8px">Quick Links</div>
+            <div class="quick-actions">
+              <button class="quick-btn" onclick="readCid('baebb4ig4ze5l2hunoocrpx6nkoxxw45vuirs35doiylyxyvipixo4vz5nu')">🌍 Hello World</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="card">
+          <div class="card-title">📡 Activity Feed</div>
+          <div class="feed" id="feed">
+            <div class="empty">
+              <div class="empty-icon">◇</div>
+              <p>No activity yet.<br>Store something to get started.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: API Reference ===== -->
+    <div class="section-panel" id="section-apiref">
+      <div class="card card-full">
+        <div class="card-title">📡 API Reference</div>
+        <p class="section-desc">
+          Available CereProof API endpoints. Base URL: <code style="font-family: 'JetBrains Mono', monospace; background: var(--bg-off); padding: 2px 8px; border: 1px solid var(--border);">/api</code>
+        </p>
+
+        <div style="margin-top: 24px;">
+          <div class="api-endpoint">
+            <span class="api-method get">GET</span>
+            <span class="api-path">/api/status</span>
+            <div class="api-desc">Check API and DDC connection status, wallet info, and bucket configuration.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method post">POST</span>
+            <span class="api-path">/api/store</span>
+            <div class="api-desc">Store raw data (text, JSON, or file) to Cere DDC. Returns a CID for permanent retrieval.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method post">POST</span>
+            <span class="api-path">/api/credential/store</span>
+            <div class="api-desc">Store a client-signed verifiable credential on DDC. Accepts { credential, signature, issuer }.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method post">POST</span>
+            <span class="api-path">/api/credential/issue</span>
+            <div class="api-desc"><span style="color:var(--warning);font-weight:700;">DEPRECATED</span> — Issue a server-signed credential. Use /credential/store with client-side signing instead.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method post">POST</span>
+            <span class="api-path">/api/credential/verify</span>
+            <div class="api-desc">Verify a credential by CID. Checks signature validity, issuer identity, and on-chain storage.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method post">POST</span>
+            <span class="api-path">/api/claim/submit</span>
+            <div class="api-desc">Submit a claim with supporting documents. Creates a pending request for an organization to review.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method get">GET</span>
+            <span class="api-path">/api/claims/pending</span>
+            <div class="api-desc">List all pending claims awaiting organization review and approval.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method get">GET</span>
+            <span class="api-path">/api/credentials/issued</span>
+            <div class="api-desc">List all credentials issued by the current wallet, with metadata and verification status.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method get">GET</span>
+            <span class="api-path">/api/read/:cid</span>
+            <div class="api-desc">Read raw data from DDC by CID. Returns the stored content with metadata.</div>
+          </div>
+
+          <div class="api-endpoint">
+            <span class="api-method get">GET</span>
+            <span class="api-path">/api/profile/:wallet</span>
+            <div class="api-desc">Get public profile and credential history for a wallet address.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // State
+    let connected = false;
+    let issuedCredentialCids = [];
+    const BUCKET_ID = 1229;
+    let WALLET = '';
+    const CDN = 'https://cdn.ddc-dragon.com';
+    const API_BASE = 'http://localhost:3847';
+
+    // Wallet instance
+    let cereWallet = null;
+    let currentUserInfo = null;
+
+    // ===== WALLET INITIALIZATION =====
+    async function initWallet() {
+      const statusEl = document.getElementById('loginStatus');
+      try {
+        statusEl.textContent = 'Initializing wallet...';
+        cereWallet = new CereEmbedWallet.EmbedWallet({ env: 'prod' });
+        await cereWallet.init({
+          appId: 'cereproof',
+          context: {
+            app: {
+              name: 'CereProof',
+              logoUrl: '',
+            },
+            whiteLabel: {
+              mainColor: '#3B82F6',
+              skipLoginIntro: true,
+            },
+          },
+          connectOptions: {
+            permissions: {
+              ed25519_signRaw: {
+                title: 'Credential signing',
+                description: 'Sign verifiable credentials with your wallet key. This proves you issued or own the credential.',
+              },
+            },
+          },
+        });
+        await cereWallet.isReady;
+        statusEl.textContent = 'Ready to connect';
+
+        // Check if already connected (session persistence)
+        if (cereWallet.status === 'connected') {
+          statusEl.textContent = 'Restoring session...';
+          await onWalletConnected();
+        }
+      } catch (e) {
+        console.error('Wallet init error:', e);
+        statusEl.textContent = 'Wallet SDK loaded — click to connect';
+      }
+    }
+
+    async function handleLogin() {
+      const btn = document.getElementById('loginBtn');
+      const statusEl = document.getElementById('loginStatus');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-color:white;border-top-color:transparent;"></span> Connecting...';
+      statusEl.textContent = 'Opening wallet...';
+
+      try {
+        if (!cereWallet) {
+          await initWallet();
+        }
+        await cereWallet.connect();
+        await onWalletConnected();
+      } catch (e) {
+        console.error('Login error:', e);
+        statusEl.textContent = 'Connection cancelled or failed — try again';
+        btn.disabled = false;
+        btn.innerHTML = '🔗 Connect Wallet';
+      }
+    }
+
+    async function onWalletConnected() {
+      try {
+        const accounts = await cereWallet.getAccounts();
+        WALLET = accounts[0]?.address || '';
+        
+        try {
+          currentUserInfo = await cereWallet.getUserInfo();
+        } catch (e) {
+          currentUserInfo = null;
+        }
+
+        // Update user info in status bar
+        if (currentUserInfo) {
+          const emailEl = document.getElementById('userEmail');
+          const infoItem = document.getElementById('userInfoItem');
+          emailEl.textContent = currentUserInfo.email || currentUserInfo.name || 'Connected';
+          infoItem.style.display = '';
+        }
+
+        // Check if role already chosen
+        const savedRole = localStorage.getItem('cereproof_role_' + WALLET);
+        if (savedRole) {
+          showMainApp(savedRole);
+        } else {
+          showRolePicker();
+        }
+      } catch (e) {
+        console.error('Post-connect error:', e);
+        document.getElementById('loginStatus').textContent = 'Error getting account info';
+        document.getElementById('loginBtn').disabled = false;
+        document.getElementById('loginBtn').innerHTML = '🔗 Connect Wallet';
+      }
+    }
+
+    function showRolePicker() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('role-picker').style.display = '';
+      document.getElementById('main-app').style.display = 'none';
+    }
+
+    function selectInitialRole(role) {
+      localStorage.setItem('cereproof_role_' + WALLET, role);
+      showMainApp(role);
+    }
+
+    function showMainApp(role) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('role-picker').style.display = 'none';
+      document.getElementById('main-app').style.display = '';
+      init();
+      switchRole(role || 'user');
+    }
+
+    async function handleLogout() {
+      try {
+        if (cereWallet) {
+          await cereWallet.disconnect();
+        }
+      } catch (e) {
+        console.error('Disconnect error:', e);
+      }
+      WALLET = '';
+      currentUserInfo = null;
+      connected = false;
+      document.getElementById('login-screen').style.display = '';
+      document.getElementById('role-picker').style.display = 'none';
+      document.getElementById('main-app').style.display = 'none';
+      // Reset login button
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = false;
+      btn.innerHTML = '🔗 Connect Wallet';
+      document.getElementById('loginStatus').textContent = 'Ready to connect';
+      document.getElementById('userInfoItem').style.display = 'none';
+    }
+
+    // ===== INITIALIZATION =====
+    function init() {
+      checkConnection();
+      loadIssuedCredentials();
+      autoFillSubjectWallet();
+      loadRecentVerifications();
+      initClaimForm();
+    }
+
+    function autoFillSubjectWallet() {
+      const subjectInput = document.getElementById('issueSubject');
+      subjectInput.value = WALLET;
+      const selfLabel = document.getElementById('selfLabel');
+      selfLabel.style.display = 'inline-block';
+      
+      subjectInput.addEventListener('input', () => {
+        selfLabel.style.display = subjectInput.value === WALLET ? 'inline-block' : 'none';
+      });
+    }
+
+    async function checkConnection() {
+      try {
+        const resp = await fetch(`${API_BASE}/status`);
+        if (resp.ok) {
+          const data = await resp.json();
+          setConnected(true, data);
+        } else {
+          setConnected(false);
+        }
+      } catch (e) {
+        setConnected(false);
+      }
+    }
+
+    function setConnected(state, data) {
+      connected = state;
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      const wallet = document.getElementById('walletAddr');
+      const bucket = document.getElementById('bucketId');
+      const credCount = document.getElementById('credCount');
+
+      if (state) {
+        dot.className = 'status-dot connected';
+        text.textContent = 'Connected';
+        wallet.textContent = WALLET.slice(0, 8) + '...' + WALLET.slice(-6);
+        bucket.textContent = BUCKET_ID.toString();
+        if (data?.credentialsIssued !== undefined) {
+          credCount.textContent = data.credentialsIssued;
+        }
+      } else {
+        dot.className = 'status-dot';
+        text.textContent = 'Offline';
+        wallet.textContent = WALLET.slice(0, 8) + '...' + WALLET.slice(-6);
+        bucket.textContent = BUCKET_ID.toString();
+      }
+    }
+
+    // ===== ROLE NAVIGATION =====
+    let currentRole = 'user';
+
+    function switchRole(role) {
+      currentRole = role;
+      // Update role tabs
+      document.querySelectorAll('.role-nav-btn').forEach(b => b.classList.remove('active'));
+      const roleBtn = document.querySelector(`[data-role="${role}"]`);
+      if (roleBtn) roleBtn.classList.add('active');
+
+      // Show correct sub-nav
+      document.querySelectorAll('.sub-nav').forEach(n => n.classList.remove('active'));
+      const subNav = document.querySelector(`[data-role-nav="${role}"]`);
+      if (subNav) subNav.classList.add('active');
+
+      // Auto-click first sub-tab of the new role
+      const firstBtn = subNav.querySelector('.main-nav-btn');
+      if (firstBtn) firstBtn.click();
+    }
+
+    // ===== SECTION NAVIGATION =====
+    function switchSection(section) {
+      // Handle issuedoverview as alias for credentials
+      const actualSection = section === 'issuedoverview' ? 'credentials' : section;
+
+      // Clear active state on ALL sub-nav buttons, then set the clicked one
+      const activeSubNav = document.querySelector('.sub-nav.active');
+      if (activeSubNav) {
+        activeSubNav.querySelectorAll('.main-nav-btn').forEach(b => b.classList.remove('active'));
+        const btn = activeSubNav.querySelector(`[data-section="${section}"]`);
+        if (btn) btn.classList.add('active');
+      }
+
+      // Switch section panel
+      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById(`section-${actualSection}`);
+      if (panel) panel.classList.add('active');
+
+      if (actualSection === 'credentials') loadIssuedCredentials();
+      if (actualSection === 'verify') loadRecentVerifications();
+    }
+
+    // ===== WRITE TAB SWITCHING =====
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+      document.getElementById('tab-text').style.display = tab === 'text' ? '' : 'none';
+      document.getElementById('tab-file').style.display = tab === 'file' ? '' : 'none';
+    }
+
+    // ===== TEMPLATES =====
+    function setTemplate(type) {
+      const ta = document.getElementById('writeContent');
+      const templates = {
+        memo: `This is a memo stored on DDC.\n\nDate: ${new Date().toISOString()}\nFrom: Mart`,
+        json: JSON.stringify({
+          type: "data-record",
+          timestamp: new Date().toISOString(),
+          payload: {}
+        }, null, 2),
+        'agent-memory': JSON.stringify({
+          type: "agent-memory",
+          agent: "claudemart",
+          owner: "mart",
+          timestamp: new Date().toISOString(),
+          content: "Memory entry from agent session",
+          metadata: { session: "main", purpose: "memory-sync" }
+        }, null, 2)
+      };
+      ta.value = templates[type] || '';
+      setTagsForTemplate(type);
+    }
+
+    function setTagsForTemplate(type) {
+      const container = document.getElementById('tagsContainer');
+      container.innerHTML = '';
+      const tagSets = {
+        memo: [['type', 'memo'], ['author', 'mart']],
+        json: [['type', 'data-record']],
+        'agent-memory': [['type', 'agent-memory'], ['agent', 'claudemart'], ['owner', 'mart']]
+      };
+      (tagSets[type] || [['type', 'custom']]).forEach(([k, v]) => addTag(k, v));
+    }
+
+    // ===== ISSUE CREDENTIAL TEMPLATES =====
+    function fillIssueTemplate(type) {
+      if (type === 'diploma') {
+        document.getElementById('issueCredType').value = 'DiplomaCredential';
+        document.getElementById('issueSubject').value = WALLET;
+        document.getElementById('selfLabel').style.display = 'inline-block';
+        document.getElementById('issueSubjectName').value = 'Martijn Broersma';
+        document.getElementById('issueClaimData').value = 'BSc Computer Science, Universiteit Twente, graduated cum laude 2020';
+      } else if (type === 'employment') {
+        document.getElementById('issueCredType').value = 'EmploymentCredential';
+        document.getElementById('issueSubject').value = WALLET;
+        document.getElementById('selfLabel').style.display = 'inline-block';
+        document.getElementById('issueSubjectName').value = 'Martijn Broersma';
+        document.getElementById('issueClaimData').value = 'Senior Software Engineer at Cere Network, employed since 2022';
+      } else if (type === 'cert') {
+        document.getElementById('issueCredType').value = 'CertificationCredential';
+        document.getElementById('issueSubject').value = WALLET;
+        document.getElementById('selfLabel').style.display = 'inline-block';
+        document.getElementById('issueSubjectName').value = 'Martijn Broersma';
+        document.getElementById('issueClaimData').value = 'Certified Blockchain Developer — Web3 Foundation, issued 2024';
+      }
+    }
+
+    // ===== TAGS =====
+    function addTag(key, val) {
+      const container = document.getElementById('tagsContainer');
+      const row = document.createElement('div');
+      row.className = 'tag-row';
+      row.innerHTML = `
+        <input type="text" placeholder="key" class="tag-key" value="${key || ''}">
+        <input type="text" placeholder="value" class="tag-val" value="${val || ''}">
+        <button class="btn-remove-tag" onclick="this.parentElement.remove()">×</button>
+      `;
+      container.appendChild(row);
+    }
+
+    function getTags() {
+      const tags = [];
+      document.querySelectorAll('.tag-row').forEach(row => {
+        const key = row.querySelector('.tag-key').value.trim();
+        const val = row.querySelector('.tag-val').value.trim();
+        if (key && val) tags.push({ key, value: val });
+      });
+      return tags;
+    }
+
+    // ===== STORE DATA =====
+    async function storeData() {
+      const btn = document.getElementById('storeBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Storing...';
+
+      const activeTab = document.querySelector('.tab.active').dataset.tab;
+      let content;
+
+      if (activeTab === 'text') {
+        content = document.getElementById('writeContent').value;
+      } else if (activeTab === 'file') {
+        const file = document.getElementById('fileInput').files[0];
+        if (file) content = await file.text();
+      }
+
+      if (!content) {
+        addFeedItem('error', 'No content to store');
+        btn.classList.add('shake');
+        setTimeout(() => btn.classList.remove('shake'), 400);
+        resetStoreBtn();
+        return;
+      }
+
+      const tags = getTags();
+
+      try {
+        const resp = await fetch(`${API_BASE}/store`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, tags })
+        });
+        const data = await resp.json();
+
+        if (data.ok) {
+          addFeedItem('store', content.slice(0, 200), data.cid);
+          document.getElementById('writeContent').value = '';
+        } else {
+          addFeedItem('error', data.error || 'Store failed');
+        }
+      } catch (e) {
+        addFeedItem('error', `API error: ${e.message}`);
+      }
+
+      resetStoreBtn();
+    }
+
+    function resetStoreBtn() {
+      const btn = document.getElementById('storeBtn');
+      btn.disabled = false;
+      btn.innerHTML = '◇ Store on DDC';
+    }
+
+    // ===== READ DATA =====
+    async function readData() {
+      const cid = document.getElementById('readCid').value.trim();
+      if (!cid) return;
+      readCid(cid);
+    }
+
+    async function readCid(cid) {
+      document.getElementById('readCid').value = cid;
+      const result = document.getElementById('readResult');
+      result.style.display = 'block';
+      result.textContent = 'Reading...';
+
+      try {
+        const resp = await fetch(`${CDN}/${BUCKET_ID}/${cid}`);
+        if (resp.ok) {
+          const text = await resp.text();
+          result.textContent = text;
+          addFeedItem('read', text.slice(0, 200), cid);
+        } else {
+          const apiResp = await fetch(`${API_BASE}/read/${cid}`);
+          const data = await apiResp.json();
+          result.textContent = data.content || JSON.stringify(data);
+          addFeedItem('read', (data.content || '').slice(0, 200), cid);
+        }
+      } catch (e) {
+        result.textContent = `Error: ${e.message}`;
+        addFeedItem('error', e.message);
+      }
+    }
+
+    // ===== CONFETTI =====
+    function fireConfetti() {
+      const canvas = document.createElement('canvas');
+      canvas.id = 'confettiCanvas';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#3B82F6', '#7C3AED', '#10B981', '#F59E0B', '#60A5FA'];
+      
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 12,
+          vy: -Math.random() * 14 - 4,
+          size: Math.random() * 6 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+        });
+      }
+
+      let frame = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.vy += 0.3;
+          p.y += p.vy;
+          p.alpha -= 0.012;
+          p.rotation += p.rotSpeed;
+          p.vx *= 0.99;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation * Math.PI / 180);
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            ctx.restore();
+          }
+        });
+
+        frame++;
+        if (alive && frame < 120) {
+          requestAnimationFrame(animate);
+        } else {
+          canvas.remove();
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // ===== ISSUE CREDENTIAL (CLIENT-SIDE SIGNING) =====
+    async function issueCredential() {
+      const btn = document.getElementById('issueBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-color:white;border-top-color:transparent;"></span> Signing with your wallet...';
+
+      const subject = document.getElementById('issueSubject').value.trim();
+      const subjectName = document.getElementById('issueSubjectName').value.trim();
+      const claimType = document.getElementById('issueCredType').value;
+      const claimData = document.getElementById('issueClaimData').value.trim();
+
+      if (!subject || !claimData) {
+        btn.classList.add('shake');
+        setTimeout(() => btn.classList.remove('shake'), 400);
+        alert('Please fill in Subject Wallet Address and Claim Data');
+        resetIssueBtn();
+        return;
+      }
+
+      if (!cereWallet || cereWallet.status !== 'connected') {
+        alert('Wallet not connected. Please reconnect.');
+        resetIssueBtn();
+        return;
+      }
+
+      try {
+        // Step 1: Build the W3C VC JSON client-side
+        const credential = {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          type: ["VerifiableCredential", claimType],
+          issuer: {
+            id: `did:cere:${WALLET}`,
+            address: WALLET
+          },
+          credentialSubject: {
+            id: `did:cere:${subject}`,
+            address: subject,
+            name: subjectName || '',
+            claim: claimData
+          },
+          issuanceDate: new Date().toISOString()
+        };
+
+        // Step 2: Sign the credential payload with the user's wallet
+        btn.innerHTML = '<span class="spinner" style="border-color:white;border-top-color:transparent;"></span> Signing with your wallet...';
+
+        const payloadToSign = JSON.stringify({
+          "@context": credential["@context"],
+          type: credential.type,
+          issuer: credential.issuer,
+          credentialSubject: credential.credentialSubject,
+          issuanceDate: credential.issuanceDate
+        });
+
+        const signer = cereWallet.getSigner({ type: 'ed25519' });
+        const signResult = await signer.signMessage(payloadToSign);
+        
+        // Convert signature to hex string — handle both hex string and byte array returns
+        let signature;
+        if (typeof signResult === 'string') {
+          // SDK returned a hex string already
+          signature = signResult.startsWith('0x') ? signResult : '0x' + signResult;
+        } else if (signResult && typeof signResult === 'object' && signResult.signature) {
+          // SDK returned an object like { signature: '0x...' }
+          const sig = signResult.signature;
+          signature = typeof sig === 'string'
+            ? (sig.startsWith('0x') ? sig : '0x' + sig)
+            : '0x' + Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+        } else if (signResult instanceof ArrayBuffer || signResult instanceof Uint8Array || (signResult && signResult.buffer instanceof ArrayBuffer)) {
+          // SDK returned raw bytes
+          signature = '0x' + Array.from(new Uint8Array(signResult)).map(b => b.toString(16).padStart(2, '0')).join('');
+        } else {
+          // Last resort: try to use it as-is, log for debugging
+          console.warn('Unexpected signMessage return type:', typeof signResult, signResult);
+          throw new Error('Wallet returned unexpected signature format: ' + typeof signResult + '. Check console for details.');
+        }
+        
+        console.log('Signature type:', typeof signResult, '| Hex:', signature.slice(0, 20) + '...');
+
+        // Step 3: Send the signed credential to the server for DDC storage
+        btn.innerHTML = '<span class="spinner" style="border-color:white;border-top-color:transparent;"></span> Storing on DDC...';
+
+        const resp = await fetch(`${API_BASE}/credential/store`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credential, signature, issuer: WALLET })
+        });
+        const data = await resp.json();
+
+        if (data.ok) {
+          fireConfetti();
+
+          const resultDiv = document.getElementById('issueResult');
+          resultDiv.style.display = 'block';
+          
+          const cidEl = document.getElementById('issuedCid');
+          cidEl.textContent = data.cid;
+          cidEl.href = data.cdnUrl;
+
+          const cdnEl = document.getElementById('issuedCdnUrl');
+          cdnEl.textContent = data.cdnUrl;
+          cdnEl.href = data.cdnUrl;
+
+          const verifyBtn = document.getElementById('issuedVerifyBtn');
+          verifyBtn.onclick = () => {
+            switchSection('verify');
+            document.getElementById('verifyCid').value = data.cid;
+            verifyCredential();
+          };
+
+          issuedCredentialCids.push({ cid: data.cid, type: claimType });
+          updateExampleCids();
+
+          addFeedItem('credential', `Issued ${claimType} for ${subject.slice(0,8)}... (signed by ${WALLET.slice(0,8)}...)`, data.cid);
+          checkConnection();
+        } else {
+          addFeedItem('error', data.error || 'Issue failed');
+          const resultDiv = document.getElementById('issueResult');
+          resultDiv.classList.add('shake');
+          setTimeout(() => resultDiv.classList.remove('shake'), 400);
+          alert('Failed: ' + (data.error || 'Unknown error'));
+        }
+      } catch (e) {
+        addFeedItem('error', `Signing/API error: ${e.message}`);
+        alert('Error: ' + e.message);
+      }
+
+      resetIssueBtn();
+    }
+
+    function resetIssueBtn() {
+      const btn = document.getElementById('issueBtn');
+      btn.disabled = false;
+      btn.innerHTML = '🔏 Sign & Issue Credential';
+    }
+
+    // ===== VERIFY CREDENTIAL =====
+    async function verifyCredential() {
+      const cid = document.getElementById('verifyCid').value.trim();
+      if (!cid) return;
+
+      const btn = document.getElementById('verifyBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-color:white;border-top-color:transparent;"></span>';
+
+      const animDiv = document.getElementById('verifyAnim');
+      const resultDiv = document.getElementById('verifyResult');
+      
+      resultDiv.className = 'verify-result';
+      resultDiv.innerHTML = '';
+      animDiv.style.display = 'block';
+      animDiv.innerHTML = '<span class="spinner spinner-light" style="width:32px;height:32px;border-width:3px;"></span><div style="margin-top:12px;color:var(--text-dim);font-size:14px;">Reading & verifying from DDC...</div>';
+
+      try {
+        const resp = await fetch(`${API_BASE}/credential/verify/${cid}`);
+        const data = await resp.json();
+
+        if (data.ok) {
+          const isValid = data.verified;
+          const cred = data.credential || {};
+          const issuer = data.issuer || cred.issuer || {};
+          const subject = data.subject || cred.credentialSubject || {};
+          const claimType = data.claimType || (cred.type || [])[1] || 'Unknown';
+          const issuedDate = data.issuanceDate || cred.issuanceDate || 'Unknown';
+
+          if (isValid) {
+            animDiv.innerHTML = '<div class="success-anim">✅</div>';
+          } else {
+            animDiv.innerHTML = '<div class="success-anim" style="color:var(--danger);">❌</div>';
+          }
+
+          setTimeout(() => {
+            animDiv.style.display = 'none';
+            resultDiv.className = 'verify-result show smooth-fade-in';
+            resultDiv.innerHTML = `
+              <div class="verify-badge ${isValid ? 'valid' : 'invalid'}">
+                ${isValid ? '✅ Credential Verified' : '❌ Invalid Credential'}
+              </div>
+              <div class="verify-details">
+                <div class="detail-row">
+                  <span class="detail-label">Status</span>
+                  <span class="detail-value" style="color: ${isValid ? 'var(--success)' : 'var(--danger)'}">${isValid ? 'Signature Valid — Authentic' : 'Signature Invalid — Potentially Tampered'}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Credential Type</span>
+                  <span class="detail-value">${escapeHtml(claimType)}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Issuer Address</span>
+                  <span class="detail-value">${escapeHtml(issuer.address || issuer.id || 'Unknown')}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Subject</span>
+                  <span class="detail-value">${escapeHtml(subject.name || subject.address || subject.id || 'Unknown')}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Subject Address</span>
+                  <span class="detail-value">${escapeHtml(subject.address || subject.id || 'Unknown')}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Claim</span>
+                  <span class="detail-value">${escapeHtml(typeof subject.claim === 'string' ? subject.claim : JSON.stringify(subject.claim || ''))}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Issued Date</span>
+                  <span class="detail-value">${escapeHtml(issuedDate)}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">CID</span>
+                  <span class="detail-value"><a class="cid-link" href="${CDN}/${BUCKET_ID}/${cid}" target="_blank">${cid}</a></span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Signature</span>
+                  <span class="detail-value" style="font-size:10px;">${escapeHtml((cred.proof?.signatureValue || 'N/A').slice(0, 40))}...</span>
+                </div>
+              </div>
+            `;
+
+            addFeedItem(isValid ? 'verified' : 'invalid', `${isValid ? 'Verified' : 'Invalid'}: ${claimType}`, cid);
+            saveRecentVerification(cid, isValid, claimType);
+          }, 800);
+
+        } else {
+          animDiv.style.display = 'none';
+          const cidInput = document.getElementById('verifyCid');
+          cidInput.style.borderColor = 'var(--danger)';
+          cidInput.classList.add('shake');
+          setTimeout(() => { cidInput.classList.remove('shake'); }, 400);
+          setTimeout(() => { cidInput.style.borderColor = ''; }, 2000);
+
+          resultDiv.className = 'verify-result show';
+          resultDiv.style.opacity = '0';
+          resultDiv.style.transform = 'translateY(8px)';
+          const errMsg = data.error || 'Could not verify this credential';
+          const isNotFound = errMsg.toLowerCase().includes('not found') || errMsg.toLowerCase().includes('not valid');
+          resultDiv.innerHTML = `
+            <div class="verify-badge invalid">
+              ❌ ${isNotFound ? 'Credential Not Found' : 'Invalid CID'}
+            </div>
+            <p style="color: var(--text-dim); margin-top: 12px;">${escapeHtml(errMsg)}</p>
+            <p style="color: var(--text-muted); margin-top: 8px; font-size: 13px;">💡 Double-check the CID and try again.</p>
+          `;
+          requestAnimationFrame(() => {
+            resultDiv.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+            resultDiv.style.opacity = '1';
+            resultDiv.style.transform = 'translateY(0)';
+          });
+        }
+      } catch (e) {
+        animDiv.style.display = 'none';
+        const cidInput = document.getElementById('verifyCid');
+        cidInput.style.borderColor = 'var(--danger)';
+        cidInput.classList.add('shake');
+        setTimeout(() => { cidInput.classList.remove('shake'); }, 400);
+        setTimeout(() => { cidInput.style.borderColor = ''; }, 2000);
+
+        resultDiv.className = 'verify-result show';
+        resultDiv.style.opacity = '0';
+        resultDiv.style.transform = 'translateY(8px)';
+        resultDiv.innerHTML = `
+          <div class="verify-badge invalid">
+            ❌ Credential Not Found
+          </div>
+          <p style="color: var(--text-dim); margin-top: 12px;">The CID <code style="background:var(--surface2);padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:12px;">${escapeHtml(document.getElementById('verifyCid').value.trim().slice(0, 24))}${document.getElementById('verifyCid').value.trim().length > 24 ? '...' : ''}</code> could not be found on DDC, or is not a valid credential.</p>
+          <p style="color: var(--text-muted); margin-top: 8px; font-size: 13px;">💡 Make sure you're using a CID from a credential issued through CereProof.</p>
+        `;
+        requestAnimationFrame(() => {
+          resultDiv.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+          resultDiv.style.opacity = '1';
+          resultDiv.style.transform = 'translateY(0)';
+        });
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '🔍 Verify';
+    }
+
+    // ===== RECENT VERIFICATIONS (localStorage) =====
+    function saveRecentVerification(cid, valid, type) {
+      try {
+        const recents = JSON.parse(localStorage.getItem('cereproof_recent_verifications') || '[]');
+        const filtered = recents.filter(r => r.cid !== cid);
+        filtered.unshift({ cid, valid, type, time: Date.now() });
+        localStorage.setItem('cereproof_recent_verifications', JSON.stringify(filtered.slice(0, 10)));
+        loadRecentVerifications();
+      } catch (e) {}
+    }
+
+    function loadRecentVerifications() {
+      try {
+        const recents = JSON.parse(localStorage.getItem('cereproof_recent_verifications') || '[]');
+        const container = document.getElementById('recentVerifications');
+        const list = document.getElementById('recentList');
+
+        if (recents.length === 0) {
+          container.style.display = 'none';
+          return;
+        }
+
+        container.style.display = 'block';
+        list.innerHTML = recents.map(r => `
+          <div class="recent-item" onclick="document.getElementById('verifyCid').value='${r.cid}'; verifyCredential();">
+            <span class="status-icon">${r.valid ? '✅' : '❌'}</span>
+            <span class="recent-cid">${r.cid}</span>
+            <span class="recent-type">${escapeHtml(r.type || 'Unknown')}</span>
+          </div>
+        `).join('');
+      } catch (e) {}
+    }
+
+    // ===== EXAMPLE CIDs =====
+    function updateExampleCids() {
+      const container = document.getElementById('exampleCids');
+      if (issuedCredentialCids.length === 0) return;
+
+      const typeIcons = {
+        DiplomaCredential: '🎓',
+        EmploymentCredential: '💼',
+        CertificationCredential: '📜',
+        SkillCredential: '⚡',
+        MembershipCredential: '🏛️',
+        AwardCredential: '🏆',
+        CustomCredential: '🔧'
+      };
+
+      container.innerHTML = '<span style="font-size:11px;color:var(--text-muted);margin-right:4px;">Quick verify:</span>' +
+        issuedCredentialCids.slice(-5).map(c => {
+          const icon = typeIcons[c.type] || '📄';
+          return `<button class="quick-btn" onclick="document.getElementById('verifyCid').value='${c.cid}'; verifyCredential();">${icon} ${c.cid.slice(0, 12)}...</button>`;
+        }).join('');
+    }
+
+    // ===== LOAD ISSUED CREDENTIALS =====
+    async function loadIssuedCredentials() {
+      const listEl = document.getElementById('credentialsList');
+      
+      try {
+        const resp = await fetch(`${API_BASE}/credentials/issued?wallet=${encodeURIComponent(WALLET)}`);
+        const data = await resp.json();
+
+        if (data.ok && data.credentials.length > 0) {
+          const navBadge = document.getElementById('navCredCount');
+          navBadge.style.display = 'inline';
+          navBadge.textContent = data.count;
+
+          issuedCredentialCids = data.credentials.map(c => ({ cid: c.cid, type: c.claimType }));
+          updateExampleCids();
+
+          listEl.innerHTML = data.credentials
+            .slice()
+            .reverse()
+            .map(cred => {
+              const typeIcons = {
+                DiplomaCredential: '🎓',
+                EmploymentCredential: '💼',
+                CertificationCredential: '📜',
+                SkillCredential: '⚡',
+                MembershipCredential: '🏛️',
+                AwardCredential: '🏆',
+                CustomCredential: '🔧'
+              };
+              const icon = typeIcons[cred.claimType] || '📄';
+              const date = new Date(cred.issuanceDate).toLocaleDateString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+              });
+
+              return `
+                <div class="cred-card" onclick="switchSection('verify'); document.getElementById('verifyCid').value='${cred.cid}'; verifyCredential();">
+                  <div class="cred-card-header">
+                    <span class="cred-type-badge">${icon} ${cred.claimType.replace('Credential', '')}</span>
+                    <span class="cred-date">${date}</span>
+                  </div>
+                  <div class="cred-subject">${escapeHtml(cred.subjectName || cred.subject.slice(0, 12) + '...')}</div>
+                  ${cred.claimData ? `<div style="font-size:13px;color:var(--text-dim);margin:6px 0 8px;line-height:1.4;">${escapeHtml(typeof cred.claimData === 'string' ? cred.claimData : JSON.stringify(cred.claimData))}</div>` : ''}
+                  <div class="cred-cid">CID: ${cred.cid}</div>
+                </div>
+              `;
+            }).join('');
+        } else if (data.ok && data.credentials.length === 0) {
+          listEl.innerHTML = `
+            <div class="empty">
+              <div class="empty-icon">🎓</div>
+              <p>No credentials issued yet.<br>Go to "Issue Credential" to create one.</p>
+            </div>
+          `;
+        }
+      } catch (e) {
+        listEl.innerHTML = `<div class="empty"><p style="color:var(--danger)">Could not load credentials: ${escapeHtml(e.message)}</p></div>`;
+      }
+    }
+
+    // ===== FEED =====
+    function addFeedItem(type, content, cid) {
+      const feed = document.getElementById('feed');
+      if (feed.querySelector('.empty')) feed.innerHTML = '';
+
+      const item = document.createElement('div');
+      item.className = 'feed-item';
+
+      const typeLabels = {
+        store: 'STORED', read: 'READ', error: 'ERROR',
+        credential: 'ISSUED', verified: 'VERIFIED', invalid: 'INVALID'
+      };
+      const typeLabel = typeLabels[type] || type.toUpperCase();
+      const cdnLink = cid ? `${CDN}/${BUCKET_ID}/${cid}` : '';
+
+      item.innerHTML = `
+        <div class="meta">
+          <span class="type-badge type-${type}">${typeLabel}</span>
+          <span>${new Date().toLocaleTimeString()}</span>
+        </div>
+        ${cid ? `<a class="cid-link" href="${cdnLink}" target="_blank">CID: ${cid}</a>` : ''}
+        <div class="feed-content">${escapeHtml(content)}</div>
+      `;
+
+      feed.insertBefore(item, feed.firstChild);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // ===== CLAIM PIPELINE =====
+    function initClaimForm() {
+      const walletInput = document.getElementById('claimWallet');
+      if (walletInput) walletInput.value = WALLET;
+      updateClaimMetaFields();
+    }
+
+    function updateClaimMetaFields() {
+      const type = document.getElementById('claimType').value;
+      const container = document.getElementById('claimMetaFields');
+
+      const fieldSets = {
+        DiplomaCredential: [
+          { id: 'meta_institution', label: 'Institution', placeholder: 'e.g. Universiteit Twente' },
+          { id: 'meta_degree', label: 'Degree', placeholder: 'e.g. BSc Computer Science' },
+          { id: 'meta_graduationDate', label: 'Graduation Date', placeholder: 'e.g. 2023-07-15' },
+          { id: 'meta_honors', label: 'Honors (optional)', placeholder: 'e.g. Cum Laude' },
+        ],
+        EmploymentCredential: [
+          { id: 'meta_company', label: 'Company', placeholder: 'e.g. Cere Network' },
+          { id: 'meta_position', label: 'Position', placeholder: 'e.g. Senior Software Engineer' },
+          { id: 'meta_startDate', label: 'Start Date', placeholder: 'e.g. 2022-01-15' },
+          { id: 'meta_endDate', label: 'End Date (optional)', placeholder: 'e.g. 2024-12-31 or "Present"' },
+        ],
+        CertificationCredential: [
+          { id: 'meta_organization', label: 'Organization', placeholder: 'e.g. Web3 Foundation' },
+          { id: 'meta_certName', label: 'Certification Name', placeholder: 'e.g. Certified Blockchain Developer' },
+          { id: 'meta_issueDate', label: 'Issue Date', placeholder: 'e.g. 2024-03-01' },
+          { id: 'meta_expiryDate', label: 'Expiry Date (optional)', placeholder: 'e.g. 2026-03-01' },
+        ],
+        SkillCredential: [
+          { id: 'meta_skillCategory', label: 'Skill Category', placeholder: 'e.g. Programming, Design, Management' },
+          { id: 'meta_proficiency', label: 'Proficiency Level', placeholder: 'e.g. Expert, Advanced, Intermediate' },
+          { id: 'meta_yearsExperience', label: 'Years Experience', placeholder: 'e.g. 5' },
+        ],
+      };
+
+      const fields = fieldSets[type] || [];
+
+      container.innerHTML = fields.length > 0 ? `
+        <div style="margin-bottom: 8px;">
+          <label style="display:block;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--text-dim);margin-bottom:12px;text-transform:uppercase;letter-spacing:1.5px;">
+            ${type.replace('Credential', '')} Details
+          </label>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          ${fields.map(f => `
+            <div class="form-group">
+              <label>${f.label}</label>
+              <input type="text" id="${f.id}" placeholder="${f.placeholder}">
+            </div>
+          `).join('')}
+        </div>
+      ` : '';
+    }
+
+    function collectClaimMetadata() {
+      const type = document.getElementById('claimType').value;
+      const metadata = {};
+
+      const fieldMaps = {
+        DiplomaCredential: ['meta_institution', 'meta_degree', 'meta_graduationDate', 'meta_honors'],
+        EmploymentCredential: ['meta_company', 'meta_position', 'meta_startDate', 'meta_endDate'],
+        CertificationCredential: ['meta_organization', 'meta_certName', 'meta_issueDate', 'meta_expiryDate'],
+        SkillCredential: ['meta_skillCategory', 'meta_proficiency', 'meta_yearsExperience'],
+      };
+
+      const fields = fieldMaps[type] || [];
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim()) {
+          const key = id.replace('meta_', '');
+          metadata[key] = el.value.trim();
+        }
+      });
+
+      return metadata;
+    }
+
+    async function submitClaim() {
+      const btn = document.getElementById('submitClaimBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-color:white;border-top-color:transparent;"></span> Submitting...';
+
+      const claimType = document.getElementById('claimType').value;
+      const wallet = document.getElementById('claimWallet').value.trim();
+      const name = document.getElementById('claimName').value.trim();
+      const documentName = document.getElementById('claimDocName').value.trim();
+      const documentText = document.getElementById('claimDocText').value.trim();
+      const metadata = collectClaimMetadata();
+
+      if (!name || !documentText) {
+        btn.classList.add('shake');
+        setTimeout(() => btn.classList.remove('shake'), 400);
+        alert('Please fill in your name and document text.');
+        resetSubmitClaimBtn();
+        return;
+      }
+
+      try {
+        const resp = await fetch(`${API_BASE}/claim/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            claimType,
+            wallet,
+            name,
+            documentName,
+            documentText,
+            metadata
+          })
+        });
+
+        const data = await resp.json();
+
+        if (data.ok || data.claimId) {
+          document.getElementById('claimFormContainer').style.display = 'none';
+          document.getElementById('claimSuccessState').style.display = 'block';
+          document.getElementById('submittedClaimId').textContent = 'Claim ID: ' + (data.claimId || 'submitted');
+        } else {
+          alert('Failed: ' + (data.error || 'Unknown error'));
+        }
+      } catch (e) {
+        if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+          alert('⚠️ Claim service unavailable. The backend may not be running yet.');
+        } else {
+          alert('Error: ' + e.message);
+        }
+      }
+
+      resetSubmitClaimBtn();
+    }
+
+    function resetSubmitClaimBtn() {
+      const btn = document.getElementById('submitClaimBtn');
+      btn.disabled = false;
+      btn.innerHTML = '📄 Submit Claim';
+    }
+
+    function resetClaimForm() {
+      document.getElementById('claimFormContainer').style.display = 'block';
+      document.getElementById('claimSuccessState').style.display = 'none';
+      document.getElementById('claimName').value = '';
+      document.getElementById('claimDocName').value = '';
+      document.getElementById('claimDocText').value = '';
+      updateClaimMetaFields();
+    }
+
+    // ===== ORG PORTAL =====
+    let allClaims = [];
+
+    function switchOrgTab(tab) {
+      document.querySelectorAll('.org-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-orgtab="${tab}"]`).classList.add('active');
+      document.getElementById('orgPendingTab').style.display = tab === 'pending' ? '' : 'none';
+      document.getElementById('orgProcessedTab').style.display = tab === 'processed' ? '' : 'none';
+
+      if (tab === 'pending') loadPendingClaims();
+      if (tab === 'processed') renderProcessedClaims();
+    }
+
+    async function loadPendingClaims() {
+      const listEl = document.getElementById('pendingClaimsList');
+      listEl.innerHTML = '<div style="text-align:center;padding:24px;"><span class="spinner spinner-light"></span></div>';
+
+      try {
+        const resp = await fetch(`${API_BASE}/claims/pending`);
+        const data = await resp.json();
+
+        if (data.ok && data.claims && data.claims.length > 0) {
+          allClaims = [...(allClaims.filter(c => c.status !== 'pending')), ...data.claims];
+
+          const navBadge = document.getElementById('navPendingCount');
+          navBadge.style.display = 'inline';
+          navBadge.textContent = data.claims.length;
+
+          listEl.innerHTML = data.claims.map(claim => renderClaimCard(claim)).join('');
+        } else if (data.ok) {
+          const navBadge = document.getElementById('navPendingCount');
+          navBadge.style.display = 'none';
+          listEl.innerHTML = `
+            <div class="empty">
+              <div class="empty-icon">📬</div>
+              <p>No pending claims.<br>Claims submitted by users will appear here.</p>
+            </div>
+          `;
+        } else {
+          listEl.innerHTML = `<div class="service-unavailable"><div class="icon">⚠️</div><p>Could not load claims: ${escapeHtml(data.error || 'Unknown error')}</p></div>`;
+        }
+      } catch (e) {
+        listEl.innerHTML = `
+          <div class="service-unavailable">
+            <div class="icon">🔌</div>
+            <p style="font-size: 14px;">Claim service unavailable</p>
+            <p style="font-size: 12px; margin-top: 8px; color: var(--text-muted);">The claims pipeline backend may not be running yet.</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderProcessedClaims() {
+      const listEl = document.getElementById('processedClaimsList');
+      const processed = allClaims.filter(c => c.status === 'approved' || c.status === 'rejected');
+
+      if (processed.length === 0) {
+        listEl.innerHTML = `
+          <div class="empty">
+            <div class="empty-icon">📋</div>
+            <p>No processed claims yet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = processed.map(claim => renderClaimCard(claim)).join('');
+    }
+
+    function renderClaimCard(claim) {
+      const typeIcons = {
+        DiplomaCredential: '🎓',
+        EmploymentCredential: '💼',
+        CertificationCredential: '📜',
+        SkillCredential: '⚡',
+      };
+      const icon = typeIcons[claim.claimType] || '📄';
+      const typeName = (claim.claimType || 'Claim').replace('Credential', '');
+      const date = claim.submittedAt ? new Date(claim.submittedAt).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric'
+      }) : 'Unknown';
+
+      const statusBadge = claim.status === 'approved'
+        ? '<span class="claim-status-badge approved">✅ Approved</span>'
+        : claim.status === 'rejected'
+        ? '<span class="claim-status-badge rejected">❌ Rejected</span>'
+        : '<span class="claim-status-badge pending">⏳ Pending</span>';
+
+      return `
+        <div class="claim-card" onclick="openClaimDetail('${claim.claimId || claim.id || ''}')">
+          <div class="claim-card-header">
+            <span class="cred-type-badge">${icon} ${escapeHtml(typeName)}</span>
+            ${statusBadge}
+          </div>
+          <div class="claim-card-body">
+            <div>
+              <div class="claim-subject">${escapeHtml(claim.name || 'Anonymous')}</div>
+              <div class="claim-doc-name">${escapeHtml(claim.documentName || 'No document name')}</div>
+            </div>
+            <div class="claim-date">${date}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function openClaimDetail(claimId) {
+      if (!claimId) return;
+
+      const overlay = document.getElementById('claimDetailOverlay');
+      const panel = document.getElementById('claimDetailPanel');
+      overlay.style.display = 'flex';
+
+      panel.innerHTML = '<div style="text-align:center;padding:48px;"><span class="spinner spinner-light" style="width:32px;height:32px;border-width:3px;"></span><div style="margin-top:12px;color:var(--text-dim);">Loading claim details...</div></div>';
+
+      try {
+        const resp = await fetch(`${API_BASE}/claim/${claimId}`);
+        const data = await resp.json();
+        const claim = data.claim || data;
+
+        const typeIcons = {
+          DiplomaCredential: '🎓',
+          EmploymentCredential: '💼',
+          CertificationCredential: '📜',
+          SkillCredential: '⚡',
+        };
+        const icon = typeIcons[claim.claimType] || '📄';
+        const typeName = (claim.claimType || 'Claim').replace('Credential', '');
+
+        const statusBadge = claim.status === 'approved'
+          ? '<span class="claim-status-badge approved">✅ Approved</span>'
+          : claim.status === 'rejected'
+          ? '<span class="claim-status-badge rejected">❌ Rejected</span>'
+          : '<span class="claim-status-badge pending">⏳ Pending</span>';
+
+        const metaHtml = claim.metadata ? Object.entries(claim.metadata).map(([k, v]) => `
+          <div class="detail-row">
+            <span class="detail-label">${escapeHtml(k)}</span>
+            <span class="detail-value">${escapeHtml(String(v))}</span>
+          </div>
+        `).join('') : '';
+
+        const isPending = !claim.status || claim.status === 'pending';
+
+        panel.innerHTML = `
+          <button class="close-btn" onclick="closeClaimDetail()">×</button>
+          <div style="margin-bottom: 20px;">
+            <span class="cred-type-badge" style="font-size: 14px;">${icon} ${escapeHtml(typeName)}</span>
+            <span style="margin-left: 12px;">${statusBadge}</span>
+          </div>
+
+          <div class="verify-details">
+            <div class="detail-row">
+              <span class="detail-label">Claim ID</span>
+              <span class="detail-value">${escapeHtml(claimId)}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Subject</span>
+              <span class="detail-value">${escapeHtml(claim.name || 'Unknown')}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Wallet</span>
+              <span class="detail-value" style="font-size: 11px;">${escapeHtml(claim.wallet || '')}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Document</span>
+              <span class="detail-value">${escapeHtml(claim.documentName || 'N/A')}</span>
+            </div>
+            ${metaHtml}
+          </div>
+
+          ${claim.documentText ? `
+            <div style="margin-top: 16px;">
+              <label style="display:block;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:1.5px;">Document Content</label>
+              <div class="claim-document-text">${escapeHtml(claim.documentText)}</div>
+            </div>
+          ` : ''}
+
+          ${claim.status === 'approved' && claim.credentialCid ? `
+            <div class="claim-approved-box">
+              <div style="font-size: 14px; font-weight: 700; color: var(--success); margin-bottom: 8px;">✅ Credential Issued</div>
+              <a class="cid-link" href="${CDN}/${BUCKET_ID}/${claim.credentialCid}" target="_blank">${escapeHtml(claim.credentialCid)}</a>
+            </div>
+          ` : ''}
+
+          ${claim.status === 'rejected' && claim.rejectReason ? `
+            <div class="claim-rejected-box">
+              <div style="font-size: 14px; font-weight: 700; color: var(--danger); margin-bottom: 8px;">❌ Rejection Reason</div>
+              <div style="color: var(--text-dim); font-size: 13px;">${escapeHtml(claim.rejectReason)}</div>
+            </div>
+          ` : ''}
+
+          ${isPending ? `
+            <div class="claim-action-row" id="claimActions_${claimId}">
+              <button class="btn btn-approve" onclick="approveClaim('${claimId}')">✅ Approve & Issue Credential</button>
+              <button class="btn btn-reject" onclick="rejectClaim('${claimId}')">❌ Reject</button>
+            </div>
+          ` : ''}
+        `;
+      } catch (e) {
+        panel.innerHTML = `
+          <button class="close-btn" onclick="closeClaimDetail()">×</button>
+          <div class="service-unavailable" style="margin-top: 20px;">
+            <div class="icon">⚠️</div>
+            <p>Could not load claim details.</p>
+            <p style="font-size: 12px; margin-top: 8px; color: var(--text-muted);">${escapeHtml(e.message)}</p>
+          </div>
+        `;
+      }
+    }
+
+    function closeClaimDetail() {
+      document.getElementById('claimDetailOverlay').style.display = 'none';
+    }
+
+    async function approveClaim(claimId) {
+      const actionsDiv = document.getElementById(`claimActions_${claimId}`);
+      if (!actionsDiv) return;
+
+      actionsDiv.innerHTML = '<div style="text-align:center;"><span class="spinner spinner-light"></span> Approving & issuing credential...</div>';
+
+      try {
+        const resp = await fetch(`${API_BASE}/claim/${claimId}/approve`, { method: 'POST' });
+        const data = await resp.json();
+
+        if (data.ok) {
+          fireConfetti();
+          actionsDiv.innerHTML = `
+            <div class="smooth-fade-in" style="text-align:center;width:100%;">
+              <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size: 16px; font-weight: 700; color: var(--success); margin-bottom: 8px;">Claim Approved!</div>
+              ${data.credentialCid ? `<div style="margin-top:8px;"><span style="font-size:12px;color:var(--text-dim);">Credential CID:</span><br><a class="cid-link" href="${CDN}/${BUCKET_ID}/${data.credentialCid}" target="_blank">${data.credentialCid}</a></div>` : ''}
+            </div>
+          `;
+          setTimeout(() => loadPendingClaims(), 1500);
+        } else {
+          actionsDiv.innerHTML = `<div style="color:var(--danger);">Failed: ${escapeHtml(data.error || 'Unknown error')}</div>`;
+        }
+      } catch (e) {
+        actionsDiv.innerHTML = `<div style="color:var(--danger);">Error: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    async function rejectClaim(claimId) {
+      const reason = prompt('Rejection reason:');
+      if (reason === null) return;
+
+      const actionsDiv = document.getElementById(`claimActions_${claimId}`);
+      if (!actionsDiv) return;
+
+      actionsDiv.innerHTML = '<div style="text-align:center;"><span class="spinner spinner-light"></span> Rejecting...</div>';
+
+      try {
+        const resp = await fetch(`${API_BASE}/claim/${claimId}/reject`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason })
+        });
+        const data = await resp.json();
+
+        if (data.ok) {
+          actionsDiv.innerHTML = `
+            <div class="smooth-fade-in" style="text-align:center;width:100%;">
+              <div style="font-size: 24px; margin-bottom: 8px;">❌</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size: 16px; font-weight: 600; color: var(--danger);">Claim Rejected</div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">Reason: ${escapeHtml(reason)}</div>
+            </div>
+          `;
+          setTimeout(() => loadPendingClaims(), 1500);
+        } else {
+          actionsDiv.innerHTML = `<div style="color:var(--danger);">Failed: ${escapeHtml(data.error || 'Unknown error')}</div>`;
+        }
+      } catch (e) {
+        actionsDiv.innerHTML = `<div style="color:var(--danger);">Error: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    // ===== OVERRIDE SECTION NAVIGATION =====
+    const origSwitchSection = switchSection;
+    switchSection = function(section) {
+      // Handle issuedoverview as alias for credentials
+      const actualSection = section === 'issuedoverview' ? 'credentials' : section;
+
+      // Clear active state on current sub-nav, then set clicked one
+      const activeSubNav = document.querySelector('.sub-nav.active');
+      if (activeSubNav) {
+        activeSubNav.querySelectorAll('.main-nav-btn').forEach(b => b.classList.remove('active'));
+        const btn = activeSubNav.querySelector(`[data-section="${section}"]`);
+        if (btn) btn.classList.add('active');
+      }
+
+      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById(`section-${actualSection}`);
+      if (panel) panel.classList.add('active');
+
+      if (actualSection === 'credentials') loadIssuedCredentials();
+      if (actualSection === 'verify') loadRecentVerifications();
+      if (actualSection === 'orgportal') loadPendingClaims();
+      if (actualSection === 'submitclaim') initClaimForm();
+    };
+
+    // Start wallet initialization (don't call init() yet — wait for login)
+    initWallet();
+  </script>
+</body>
+</html>

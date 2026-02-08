@@ -1,0 +1,22 @@
+{
+  "name": "proofi-cli",
+  "version": "1.0.0",
+  "description": "Privacy-preserving health data analysis with local AI",
+  "type": "module",
+  "bin": {
+    "proofi": "./src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/cli.js"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1",
+    "inquirer": "^9.2.12",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
+    "fast-xml-parser": "^4.3.4",
+    "node-fetch": "^3.3.2"
+  }
+}

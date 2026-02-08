@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi Photos — Own Your Memories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Deep Space Canvas */
+      --canvas-deepest: #0a0908;
+      --canvas-deep: #121110;
+      --canvas-base: #1a1918;
+      --canvas-elevated: #242322;
+      --canvas-surface: #2e2d2c;
+      
+      /* Amber Glow - Ownership */
+      --amber-50: #fffbeb;
+      --amber-100: #fef3c7;
+      --amber-200: #fde68a;
+      --amber-300: #fcd34d;
+      --amber-400: #fbbf24;
+      --amber-500: #f59e0b;
+      --amber-600: #d97706;
+      --amber-glow: rgba(251, 191, 36, 0.15);
+      --amber-glow-strong: rgba(251, 191, 36, 0.3);
+      
+      /* Crystal Accent - Blockchain */
+      --crystal-blue: #38bdf8;
+      --crystal-teal: #2dd4bf;
+      --crystal-gradient: linear-gradient(135deg, #38bdf8 0%, #2dd4bf 100%);
+      
+      /* Text - WCAG AA compliant */
+      --text-primary: #fafaf9;
+      --text-secondary: #d6d3d1; /* was #a8a29e - now 7.5:1 on dark */
+      --text-tertiary: #a8a29e; /* was #78716c - now 4.6:1 on dark */
+      
+      /* Semantic */
+      --verified: #22c55e;
+      --syncing: #f59e0b;
+      
+      /* Transitions */
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--canvas-deepest);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Background */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: var(--canvas-deepest);
+      overflow: hidden;
+    }
+
+    .ambient-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      mix-blend-mode: overlay;
+    }
+
+    .ambient-bg::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(ellipse at 20% 30%, var(--amber-glow) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(56, 189, 248, 0.05) 0%, transparent 40%);
+      animation: ambient-drift 30s ease-in-out infinite;
+    }
+
+    @keyframes ambient-drift {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(-5%, 5%); }
+      66% { transform: translate(5%, -5%); }
+    }
+
+    /* Layout */
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--canvas-deep);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--crystal-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--amber-300) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-section {
+      margin-bottom: 24px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0 16px;
+      margin-bottom: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: var(--amber-glow);
+      color: var(--amber-400);
+    }
+
+    .nav-item-icon {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .nav-item-label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Storage Indicator */
+    .storage-card {
+      margin-top: auto;
+      padding: 16px;
+      background: var(--canvas-elevated);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .storage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .storage-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .storage-amount {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--crystal-blue);
+    }
+
+    .storage-bar {
+      height: 6px;
+      background: var(--canvas-surface);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .storage-fill {
+      height: 100%;
+      width: 34%;
+      background: var(--crystal-gradient);
+      border-radius: 3px;
+      transition: width 0.6s var(--ease-out-expo);
+    }
+
+    .storage-label {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      margin-left: 260px;
+      padding: 32px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--amber-400) 0%, var(--amber-500) 100%);
+      color: var(--canvas-deepest);
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
+    }
+
+    .btn-secondary {
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(20px);
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Memories Section */
+    .memories-section {
+      margin-bottom: 48px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--text-tertiary);
+    }
+
+    .memories-carousel {
+      position: relative;
+      height: 320px;
+      perspective: 1200px;
+      display: flex;
+      gap: 24px;
+      padding: 20px 0;
+    }
+
+    .memory-card {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      flex-shrink: 0;
+      border-radius: 24px;
+      overflow: hidden;
+      background: rgba(30, 29, 28, 0.8);
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 10px 20px rgba(0, 0, 0, 0.3);
+      transform-style: preserve-3d;
+      transition: all 0.6s var(--ease-out-expo);
+      cursor: pointer;
+    }
+
+    .memory-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--amber-400);
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px var(--amber-400),
+        0 0 80px var(--amber-glow);
+    }
+
+    .memory-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .memory-info {
+      padding: 16px;
+      position: relative;
+    }
+
+    .memory-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .memory-meta {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .memory-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* Proof Crystal */
+    .proof-crystal {
+      width: 16px;
+      height: 16px;
+      position: relative;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      background: var(--crystal-gradient);
+      animation: crystal-pulse 3s ease-in-out infinite;
+    }
+
+    .proof-crystal.verified {
+      background: linear-gradient(135deg, var(--amber-400) 0%, var(--amber-500) 100%);
+      animation: verified-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes crystal-pulse {
+      0%, 100% { 
+        opacity: 0.8;
+        filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.3));
+      }
+      50% { 
+        opacity: 1;
+        filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6));
+      }
+    }
+
+    @keyframes verified-pulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.4));
+      }
+      50% {
+        filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.8));
+      }
+    }
+
+    /* Photo Grid */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .photo-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s var(--ease-out-expo);
+      background: var(--canvas-elevated);
+    }
+
+    .photo-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    .photo-item:hover {
+      transform: translateY(-8px) scale(1.03);
+      z-index: 10;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 60px var(--amber-glow);
+    }
+
+    .photo-item:hover::before {
+      opacity: 1;
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--ease-out-expo);
+    }
+
+    .photo-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .photo-item.featured {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .photo-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      z-index: 2;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .photo-item:hover .photo-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .photo-date {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .photo-proof {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+    }
+
+    /* Timeline Section */
+    .timeline-section {
+      margin-top: 48px;
+    }
+
+    .timeline-group {
+      position: relative;
+      padding-left: 80px;
+      margin-bottom: 48px;
+    }
+
+    .timeline-date {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 60px;
+      text-align: right;
+      padding-right: 20px;
+    }
+
+    .timeline-day {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .timeline-month {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .timeline-line {
+      position: absolute;
+      left: 64px;
+      top: 0;
+      bottom: -48px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--amber-400) 0%, var(--canvas-surface) 100%);
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 60px;
+      top: 8px;
+      width: 10px;
+      height: 10px;
+      background: var(--amber-400);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--amber-glow-strong);
+    }
+
+    /* Ownership Badge */
+    .ownership-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px 4px 6px;
+      background: linear-gradient(
+        135deg,
+        rgba(56, 189, 248, 0.15) 0%,
+        rgba(45, 212, 191, 0.15) 100%
+      );
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 20px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--crystal-blue);
+    }
+
+    /* AI Tools Panel */
+    .ai-panel {
+      position: fixed;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 60px;
+      background: rgba(30, 29, 28, 0.9);
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 50;
+    }
+
+    .ai-tool {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 16px;
+      border: none;
+    }
+
+    .ai-tool:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+
+    .ai-tool.active {
+      background: var(--amber-glow);
+      color: var(--amber-400);
+    }
+
+    /* Selection Animation */
+    .photo-item.selected::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(56, 189, 248, 0.15) 0%,
+        rgba(45, 212, 191, 0.15) 100%
+      );
+      border: 2px solid var(--crystal-blue);
+      border-radius: inherit;
+      animation: lock-in 0.3s var(--ease-out-back);
+      pointer-events: none;
+    }
+
+    @keyframes lock-in {
+      0% { transform: scale(1.1); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .photo-item.selected .select-check {
+      display: flex;
+    }
+
+    .select-check {
+      display: none;
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      width: 24px;
+      height: 24px;
+      background: var(--crystal-blue);
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      animation: check-pop 0.3s var(--ease-out-back);
+    }
+
+    @keyframes check-pop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    /* Upload animation */
+    @keyframes crystallize {
+      0% {
+        opacity: 0;
+        transform: scale(0.8) rotate(-5deg);
+        filter: blur(10px);
+      }
+      50% {
+        filter: blur(5px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: blur(0);
+      }
+    }
+
+    .photo-item.uploading {
+      animation: crystallize 0.6s var(--ease-out-expo) forwards;
+    }
+
+    /* Hamburger Menu */
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      width: 48px;
+      height: 48px;
+      background: var(--canvas-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      font-size: 22px;
+      color: var(--text-primary);
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      z-index: 200;
+      backdrop-filter: blur(20px);
+    }
+    
+    .hamburger:hover {
+      background: var(--canvas-surface);
+      border-color: var(--amber-400);
+    }
+    
+    .mobile-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 9, 8, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 99;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .mobile-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .sidebar .close-menu {
+      display: none;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: var(--text-secondary);
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    
+    .sidebar .close-menu:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+    
+    body.menu-open {
+      overflow: hidden;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 80px;
+        padding: 16px 8px;
+      }
+      .logo-text, .nav-item-label, .storage-card, .nav-label {
+        display: none;
+      }
+      .logo {
+        justify-content: center;
+        padding: 8px;
+      }
+      .nav-item {
+        justify-content: center;
+        padding: 12px;
+      }
+      .main {
+        margin-left: 80px;
+      }
+      .ai-panel {
+        right: 16px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+      
+      .sidebar {
+        width: 280px;
+        padding: 24px 16px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+      }
+      
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      
+      .sidebar .close-menu {
+        display: flex;
+      }
+      
+      .logo-text, .nav-item-label, .storage-card, .nav-label {
+        display: block;
+      }
+      
+      .logo {
+        justify-content: flex-start;
+        padding: 8px 16px;
+        margin-right: 40px;
+      }
+      
+      .nav-item {
+        justify-content: flex-start;
+        padding: 12px 16px;
+      }
+      
+      .main {
+        margin-left: 0;
+        padding: 80px 16px 32px;
+      }
+      
+      .ai-panel {
+        display: none;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      
+      .memories-carousel {
+        overflow-x: auto;
+        padding-bottom: 16px;
+      }
+      
+      .memory-card {
+        width: 240px;
+        height: 240px;
+      }
+      
+      .memory-card img {
+        height: 160px;
+      }
+      
+      .photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      
+      .photo-item.featured {
+        grid-column: span 2;
+        grid-row: span 1;
+      }
+      
+      .timeline-group {
+        padding-left: 0;
+      }
+      
+      .timeline-date, .timeline-line, .timeline-dot {
+        display: none;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--canvas-surface);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--canvas-elevated);
+    }
+
+    /* Pills */
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .pill:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    .pill.active {
+      background: var(--amber-glow);
+      color: var(--amber-400);
+      border-color: rgba(251, 191, 36, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-bg"></div>
+  
+  <!-- Hamburger Button -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+  
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <button class="close-menu" onclick="toggleSidebar()">✕</button>
+      <div class="logo">
+        <div class="logo-icon">💎</div>
+        <span class="logo-text">Proofi</span>
+      </div>
+      
+      <nav class="nav-section">
+        <div class="nav-label">Library</div>
+        <a href="#" class="nav-item active">
+          <span class="nav-item-icon">📸</span>
+          <span class="nav-item-label">Photos</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-item-icon">✨</span>
+          <span class="nav-item-label">Memories</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-item-icon">📁</span>
+          <span class="nav-item-label">Albums</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-item-icon">👤</span>
+          <span class="nav-item-label">People</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-item-icon">📍</span>
+          <span class="nav-item-label">Places</span>
+        </a>
+      </nav>
+      
+      <nav class="nav-section">
+        <div class="nav-label">Ownership</div>
+        <a href="#" class="nav-item">
+          <span class="nav-item-icon">🔷</span>
+          <span class="nav-item-label">Verified</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-item-icon">⏳</span>
+          <span class="nav-item-label">Syncing</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-item-icon">🔗</span>
+          <span class="nav-item-label">Shared</span>
+        </a>
+      </nav>
+      
+      <div class="storage-card">
+        <div class="storage-header">
+          <span class="storage-title">DDC Storage</span>
+          <span class="storage-amount">3.4 GB / 10 GB</span>
+        </div>
+        <div class="storage-bar">
+          <div class="storage-fill"></div>
+        </div>
+        <div class="storage-label">Decentralized • Encrypted • Yours</div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Header -->
+      <header class="header">
+        <h1 class="page-title">Photos</h1>
+        <div class="header-actions">
+          <button class="btn-secondary">Select</button>
+          <button class="btn-primary">
+            <span>⬆️</span>
+            Upload
+          </button>
+        </div>
+      </header>
+      
+      <!-- Memories Section -->
+      <section class="memories-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span>✨</span> Memories
+            </h2>
+            <p class="section-subtitle">AI-curated highlights from your collection</p>
+          </div>
+          <button class="btn-secondary">See all</button>
+        </div>
+        
+        <div class="memories-carousel">
+          <div class="memory-card">
+            <div class="memory-badge">
+              <div class="proof-crystal verified"></div>
+              <span>Verified</span>
+            </div>
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop" alt="Mountain landscape">
+            <div class="memory-info">
+              <div class="memory-title">Summer Adventures 2024</div>
+              <div class="memory-meta">
+                <span>24 photos</span>
+                <span>•</span>
+                <span>Aug 15</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="memory-card">
+            <div class="memory-badge">
+              <div class="proof-crystal verified"></div>
+              <span>Verified</span>
+            </div>
+            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop" alt="Friends gathering">
+            <div class="memory-info">
+              <div class="memory-title">Weekend with Friends</div>
+              <div class="memory-meta">
+                <span>18 photos</span>
+                <span>•</span>
+                <span>Aug 10</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="memory-card">
+            <div class="memory-badge">
+              <div class="proof-crystal"></div>
+              <span>Syncing</span>
+            </div>
+            <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=300&fit=crop" alt="Concert">
+            <div class="memory-info">
+              <div class="memory-title">Concert Night</div>
+              <div class="memory-meta">
+                <span>32 photos</span>
+                <span>•</span>
+                <span>Aug 5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Filter Pills -->
+      <div class="filter-pills">
+        <span class="pill active">All</span>
+        <span class="pill">Favorites</span>
+        <span class="pill">Screenshots</span>
+        <span class="pill">Selfies</span>
+        <span class="pill">Videos</span>
+      </div>
+      
+      <!-- Photo Grid -->
+      <section class="timeline-section">
+        <div class="timeline-group">
+          <div class="timeline-date">
+            <div class="timeline-day">21</div>
+            <div class="timeline-month">Aug</div>
+          </div>
+          <div class="timeline-line"></div>
+          <div class="timeline-dot"></div>
+          
+          <div class="photo-grid">
+            <div class="photo-item featured" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=600&h=600&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="ownership-badge">
+                  <div class="proof-crystal verified"></div>
+                  <span>0x7f3...8a2</span>
+                </div>
+              </div>
+              <div class="photo-overlay">
+                <div class="photo-date">Today at 2:34 PM</div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+            
+            <div class="photo-item" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1682695796954-bad0d0f59ff1?w=300&h=300&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="proof-crystal verified"></div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+            
+            <div class="photo-item" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?w=300&h=300&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="proof-crystal verified"></div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+            
+            <div class="photo-item" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300&h=300&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="proof-crystal"></div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+            
+            <div class="photo-item" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=300&h=300&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="proof-crystal verified"></div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="timeline-group">
+          <div class="timeline-date">
+            <div class="timeline-day">19</div>
+            <div class="timeline-month">Aug</div>
+          </div>
+          <div class="timeline-line"></div>
+          <div class="timeline-dot"></div>
+          
+          <div class="photo-grid">
+            <div class="photo-item" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=300&h=300&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="proof-crystal verified"></div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+            
+            <div class="photo-item" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=300&h=300&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="proof-crystal verified"></div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+            
+            <div class="photo-item featured" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&h=600&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="ownership-badge">
+                  <div class="proof-crystal verified"></div>
+                  <span>0x9c1...3b7</span>
+                </div>
+              </div>
+              <div class="photo-overlay">
+                <div class="photo-date">Aug 19 at 11:22 AM</div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+            
+            <div class="photo-item" onclick="toggleSelect(this)">
+              <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=300&h=300&fit=crop" alt="Photo">
+              <div class="photo-proof">
+                <div class="proof-crystal verified"></div>
+              </div>
+              <div class="select-check">✓</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <!-- AI Tools Panel -->
+    <aside class="ai-panel">
+      <button class="ai-tool active" title="Smart Search">🔍</button>
+      <button class="ai-tool" title="Auto Enhance">✨</button>
+      <button class="ai-tool" title="Face Recognition">👤</button>
+      <button class="ai-tool" title="Object Detection">🏷️</button>
+      <button class="ai-tool" title="Create Album">📁</button>
+      <button class="ai-tool" title="Share">🔗</button>
+    </aside>
+  </div>
+  
+  <script>
+    // Toggle photo selection
+    function toggleSelect(el) {
+      el.classList.toggle('selected');
+    }
+    
+    // Filter pills
+    document.querySelectorAll('.pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      });
+    });
+    
+    // AI tool panel
+    document.querySelectorAll('.ai-tool').forEach(tool => {
+      tool.addEventListener('click', () => {
+        document.querySelectorAll('.ai-tool').forEach(t => t.classList.remove('active'));
+        tool.classList.add('active');
+      });
+    });
+    
+    // Simulate upload animation
+    function simulateUpload() {
+      const grid = document.querySelector('.photo-grid');
+      const newPhoto = document.createElement('div');
+      newPhoto.className = 'photo-item uploading';
+      newPhoto.innerHTML = `
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300&h=300&fit=crop" alt="New photo">
+        <div class="photo-proof">
+          <div class="proof-crystal"></div>
+        </div>
+        <div class="select-check">✓</div>
+      `;
+      newPhoto.onclick = () => toggleSelect(newPhoto);
+      grid.insertBefore(newPhoto, grid.firstChild);
+      
+      // Simulate verification
+      setTimeout(() => {
+        const crystal = newPhoto.querySelector('.proof-crystal');
+        crystal.classList.add('verified');
+      }, 2000);
+    }
+    
+    // Nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+    
+    // Parallax effect on scroll
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.pageYOffset;
+          document.querySelectorAll('.memory-card').forEach((card, i) => {
+            const speed = 0.03 * (i + 1);
+            card.style.transform = `translateY(${scrolled * speed}px)`;
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    
+    // Sidebar toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('mobileOverlay');
+      const body = document.body;
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+      body.classList.toggle('menu-open');
+    }
+    
+    // Close sidebar when clicking nav items on mobile
+    document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          toggleSidebar();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Tracking 2025+ - HR Pipeline</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header .subtitle {
+            color: #8892b0;
+            font-size: 1.1em;
+        }
+        .filter-badge {
+            display: inline-block;
+            background: rgba(79, 172, 254, 0.2);
+            border: 1px solid #4facfe;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-card .number {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #4facfe;
+        }
+        .stat-card .label {
+            color: #8892b0;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chart-card h2 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+        .chart-container {
+            position: relative;
+            height: 280px;
+        }
+        .table-card {
+            grid-column: span 2;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        th {
+            background: rgba(79, 172, 254, 0.2);
+            color: #4facfe;
+            font-size: 0.85em;
+        }
+        tr:hover { background: rgba(255, 255, 255, 0.05); }
+        .bar {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            height: 20px;
+            border-radius: 4px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .badge-green { background: #10b981; color: white; }
+        .badge-yellow { background: #f59e0b; color: black; }
+        .badge-red { background: #ef4444; color: white; }
+        .insight-box {
+            background: rgba(79, 172, 254, 0.1);
+            border-left: 4px solid #4facfe;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        .insight-box h3 { color: #4facfe; margin-bottom: 8px; font-size: 1em; }
+        @media (max-width: 900px) {
+            .table-card { grid-column: span 1; }
+            .dashboard { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Source Tracking Dashboard</h1>
+        <div class="subtitle">HR Pipeline Analytics</div>
+        <div class="filter-badge">🔍 Filter: 2025+ with Source tagged only (1,500 candidates)</div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="number">1,500</div>
+            <div class="label">Total Candidates</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">847</div>
+            <div class="label">Wellfound (56%)</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">388</div>
+            <div class="label">LinkedIn In (26%)</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">82</div>
+            <div class="label">LinkedIn Out (5%)</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">7.0</div>
+            <div class="label">Avg AI Score</div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- Source Distribution Pie -->
+        <div class="chart-card">
+            <h2>📈 Source Distribution</h2>
+            <div class="chart-container">
+                <canvas id="sourceDistChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Source by Role -->
+        <div class="chart-card">
+            <h2>👥 Sources by Role</h2>
+            <div class="chart-container">
+                <canvas id="roleSourceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Quality by Source -->
+        <div class="chart-card">
+            <h2>⭐ Quality by Source (Avg AI Score)</h2>
+            <div class="chart-container">
+                <canvas id="qualityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- High Quality Rate -->
+        <div class="chart-card">
+            <h2>🎯 High Quality Rate (≥7 Score)</h2>
+            <div class="chart-container">
+                <canvas id="hqRateChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Detailed Table -->
+        <div class="chart-card table-card">
+            <h2>📋 Source Performance Details (2025+)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Volume</th>
+                        <th>Distribution</th>
+                        <th>AI Scored</th>
+                        <th>Avg Score</th>
+                        <th>High Quality (≥7)</th>
+                        <th>HQ Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Inbound: Wellfound</strong></td>
+                        <td>847</td>
+                        <td><div class="bar" style="width: 100%"></div></td>
+                        <td>32</td>
+                        <td><span class="badge badge-green">7.25</span></td>
+                        <td>25</td>
+                        <td>78%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inbound: LinkedIn</strong></td>
+                        <td>388</td>
+                        <td><div class="bar" style="width: 46%"></div></td>
+                        <td>79</td>
+                        <td><span class="badge badge-yellow">6.69</span></td>
+                        <td>44</td>
+                        <td>56%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inbound: Company Website</strong></td>
+                        <td>177</td>
+                        <td><div class="bar" style="width: 21%"></div></td>
+                        <td>9</td>
+                        <td><span class="badge badge-green">7.11</span></td>
+                        <td>8</td>
+                        <td>89%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Outbound: LinkedIn</strong></td>
+                        <td>82</td>
+                        <td><div class="bar" style="width: 10%"></div></td>
+                        <td>24</td>
+                        <td><span class="badge badge-green">7.81</span></td>
+                        <td>23</td>
+                        <td><strong>96%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Inbound: Recooty</td>
+                        <td>2</td>
+                        <td><div class="bar" style="width: 0.2%"></div></td>
+                        <td>0</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>Inbound: Remocate</td>
+                        <td>2</td>
+                        <td><div class="bar" style="width: 0.2%"></div></td>
+                        <td>0</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Role Breakdown Table -->
+        <div class="chart-card table-card">
+            <h2>🎭 Role Distribution by Source</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>AI Innovator</th>
+                        <th>Principal Fullstack</th>
+                        <th>No Role Tagged</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Wellfound</strong></td>
+                        <td>328 (39%)</td>
+                        <td>335 (40%)</td>
+                        <td>184 (22%)</td>
+                        <td>847</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LinkedIn Inbound</strong></td>
+                        <td>135 (35%)</td>
+                        <td>58 (15%)</td>
+                        <td>195 (50%)</td>
+                        <td>388</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Company Website</strong></td>
+                        <td>139 (79%)</td>
+                        <td>30 (17%)</td>
+                        <td>8 (5%)</td>
+                        <td>177</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LinkedIn Outbound</strong></td>
+                        <td>68 (83%)</td>
+                        <td>5 (6%)</td>
+                        <td>9 (11%)</td>
+                        <td>82</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Insights -->
+        <div class="chart-card table-card">
+            <h2>💡 Key Insights</h2>
+            <div class="insight-box">
+                <h3>🏆 Best ROI: Outbound LinkedIn</h3>
+                <p><strong>96% high-quality rate</strong> (23/24 scored ≥7) with avg 7.81. Smallest volume but highest precision. Primarily AI Innovator (83%).</p>
+            </div>
+            <div class="insight-box">
+                <h3>📊 Volume King: Wellfound</h3>
+                <p><strong>847 candidates (56%)</strong> of all sourced applicants. Balanced role mix (39% AI, 40% Fullstack). 78% high-quality rate.</p>
+            </div>
+            <div class="insight-box">
+                <h3>⚠️ LinkedIn Inbound Needs Attention</h3>
+                <p>Lowest quality score (6.69 avg, 56% HQ rate). Also <strong>50% missing role tags</strong> — data hygiene issue.</p>
+            </div>
+            <div class="insight-box">
+                <h3>🎯 Recommendations</h3>
+                <ul style="margin-left: 20px; margin-top: 8px; line-height: 1.6;">
+                    <li><strong>Scale Outbound LinkedIn</strong> — highest quality per candidate</li>
+                    <li><strong>Maintain Wellfound</strong> — volume + quality balance</li>
+                    <li><strong>Fix LinkedIn Inbound tagging</strong> — 50% missing roles</li>
+                    <li><strong>Identify Company Website sources</strong> — "unknown" needs UTM tracking</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Source Distribution Donut
+        new Chart(document.getElementById('sourceDistChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Wellfound', 'LinkedIn (In)', 'Company Website', 'LinkedIn (Out)', 'Other'],
+                datasets: [{
+                    data: [847, 388, 177, 82, 6],
+                    backgroundColor: ['#4facfe', '#00f2fe', '#43e97b', '#fa709a', '#374151'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { color: '#e0e0e0' } }
+                }
+            }
+        });
+
+        // Sources by Role (Stacked Bar)
+        new Chart(document.getElementById('roleSourceChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Wellfound', 'LinkedIn (In)', 'Company Web', 'LinkedIn (Out)'],
+                datasets: [
+                    { label: 'AI Innovator', data: [328, 135, 139, 68], backgroundColor: '#4facfe' },
+                    { label: 'Principal Fullstack', data: [335, 58, 30, 5], backgroundColor: '#43e97b' },
+                    { label: 'No Role', data: [184, 195, 8, 9], backgroundColor: '#374151' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { stacked: true, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                },
+                plugins: { legend: { labels: { color: '#e0e0e0' } } }
+            }
+        });
+
+        // Quality by Source (Horizontal Bar)
+        new Chart(document.getElementById('qualityChart'), {
+            type: 'bar',
+            data: {
+                labels: ['LinkedIn (Out)', 'Wellfound', 'Company Website', 'LinkedIn (In)'],
+                datasets: [{
+                    label: 'Avg AI Score',
+                    data: [7.81, 7.25, 7.11, 6.69],
+                    backgroundColor: ['#fa709a', '#4facfe', '#43e97b', '#00f2fe'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { min: 5, max: 9, ticks: { color: '#8892b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#8892b0' }, grid: { display: false } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // High Quality Rate
+        new Chart(document.getElementById('hqRateChart'), {
+            type: 'bar',
+            data: {
+                labels: ['LinkedIn (Out)', 'Company Website', 'Wellfound', 'LinkedIn (In)'],
+                datasets: [{
+                    label: 'HQ Rate %',
+                    data: [96, 89, 78, 56],
+                    backgroundColor: ['#fa709a', '#43e97b', '#4facfe', '#00f2fe'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { min: 0, max: 100, ticks: { color: '#8892b0', callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#8892b0' }, grid: { display: false } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proofi Ecosystem - Redesign Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&family=Orbitron:wght@500;700&family=Cinzel:wght@500;600;700&family=Merriweather:wght@400;700&family=Caveat:wght@500;700&family=Press+Start+2P&family=Poppins:wght@400;600;700&family=Roboto+Slab:wght@400;600&family=Bebas+Neue&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0A0A12;
+            --bg-surface: #12121C;
+            --bg-card: #1A1A2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --proofi-cyan: #00D4FF;
+            --proofi-purple: #8B5CF6;
+            --accent-mint: #00E5A0;
+            --accent-amber: #FBBF24;
+            --accent-coral: #FF6B6B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 18, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--proofi-cyan), var(--proofi-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-badge {
+            background: linear-gradient(135deg, var(--proofi-cyan), var(--accent-mint));
+            color: var(--bg-dark);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            min-height: 480px;
+            display: flex;
+            align-items: center;
+            padding: 3rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 255, 65, 0.15) 0%, 
+                transparent 50%,
+                rgba(139, 92, 246, 0.1) 100%
+            );
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-amber);
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 span {
+            color: #00FF41;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00FF41, #00CC33);
+            color: var(--bg-dark);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 255, 65, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .hero-visual {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+
+        .hero-app-preview {
+            width: 400px;
+            height: 300px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 255, 65, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .hero-app-preview .preview-icon {
+            font-size: 4rem;
+        }
+
+        .hero-app-preview h3 {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00FF41;
+        }
+
+        .hero-dots {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .hero-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .hero-dot.active {
+            background: var(--proofi-cyan);
+            width: 30px;
+            border-radius: 5px;
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            padding: 2rem 3rem;
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.05) 0%,
+                rgba(139, 92, 246, 0.05) 100%
+            );
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--proofi-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== START HERE SECTION ===== */
+        .start-here {
+            padding: 4rem 3rem;
+            background: var(--bg-surface);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--proofi-cyan), var(--proofi-purple));
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .step-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .step-connector {
+            display: flex;
+            align-items: center;
+            color: var(--proofi-cyan);
+            font-size: 1.5rem;
+        }
+
+        .beginner-picks {
+            margin-top: 2rem;
+        }
+
+        .beginner-picks h3 {
+            text-align: center;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .beginner-picks h3 span {
+            color: var(--accent-mint);
+        }
+
+        /* ===== CATEGORY SECTIONS ===== */
+        .category-section {
+            padding: 3rem;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .category-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .view-all {
+            color: var(--proofi-cyan);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap 0.2s;
+        }
+
+        .view-all:hover {
+            gap: 0.75rem;
+        }
+
+        .cards-scroll {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .cards-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .cards-scroll::-webkit-scrollbar-track {
+            background: var(--bg-surface);
+            border-radius: 3px;
+        }
+
+        .cards-scroll::-webkit-scrollbar-thumb {
+            background: var(--proofi-cyan);
+            border-radius: 3px;
+        }
+
+        /* ===== BASE APP CARD ===== */
+        .app-card {
+            flex: 0 0 280px;
+            border-radius: 20px;
+            overflow: hidden;
+            scroll-snap-align: start;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .app-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .card-header {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            z-index: 2;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 3;
+        }
+
+        .card-badge.new {
+            background: var(--accent-amber);
+            color: var(--bg-dark);
+        }
+
+        .card-badge.trending {
+            background: var(--accent-coral);
+            color: white;
+        }
+
+        .card-badge.popular {
+            background: var(--proofi-cyan);
+            color: var(--bg-dark);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-body h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-body .tagline {
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .card-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: gap 0.2s;
+        }
+
+        .card-cta:hover {
+            gap: 0.75rem;
+        }
+
+        /* ========================== */
+        /* === UNIQUE CARD STYLES === */
+        /* ========================== */
+
+        /* ===== SPEEDTYPE - Terminal Hacker Vibe ===== */
+        .app-card.speedtype {
+            background: #0D1117;
+            border: 1px solid #00FF41;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .app-card.speedtype .card-header {
+            background: linear-gradient(180deg, #0D1117 0%, #001A0D 100%);
+            border-bottom: 1px solid #00FF41;
+        }
+
+        .app-card.speedtype .card-header::before {
+            content: '> _';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #00FF41;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .app-card.speedtype .card-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 65, 0.03) 2px,
+                rgba(0, 255, 65, 0.03) 4px
+            );
+        }
+
+        .app-card.speedtype .card-icon {
+            filter: drop-shadow(0 0 20px #00FF41);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 20px #00FF41); }
+            50% { filter: drop-shadow(0 0 30px #00FF41) drop-shadow(0 0 60px #00FF41); }
+        }
+
+        .app-card.speedtype .card-body h3 {
+            color: #00FF41;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .app-card.speedtype .tagline {
+            color: #4ADE80;
+        }
+
+        .app-card.speedtype .card-tag {
+            background: rgba(0, 255, 65, 0.1);
+            color: #00FF41;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .app-card.speedtype .card-cta {
+            color: #00FF41;
+        }
+
+        .app-card.speedtype:hover {
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.3), inset 0 0 30px rgba(0, 255, 65, 0.05);
+            border-color: #FF3131;
+        }
+
+        /* ===== NEURAL REFLEX - Cyberpunk Futuristic ===== */
+        .app-card.neural {
+            background: linear-gradient(145deg, #0A0A1A 0%, #1A0A20 100%);
+            border: 1px solid #00D4FF;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .app-card.neural .card-header {
+            background: linear-gradient(135deg, #00D4FF 0%, #FF0080 100%);
+            position: relative;
+        }
+
+        .app-card.neural .card-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 50 L30 30 L50 50 L70 20 L90 40' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.3'/%3E%3C/svg%3E") center/cover;
+            opacity: 0.3;
+        }
+
+        .app-card.neural .card-icon {
+            filter: drop-shadow(0 0 25px #FF0080);
+        }
+
+        .app-card.neural .card-body h3 {
+            color: #00D4FF;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .app-card.neural .tagline {
+            color: #FF0080;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-card.neural .card-tag {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255, 0, 128, 0.2));
+            color: #00D4FF;
+            border: 1px solid rgba(0, 212, 255, 0.4);
+        }
+
+        .app-card.neural .card-cta {
+            color: #FF0080;
+        }
+
+        .app-card.neural:hover {
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.4), 0 0 100px rgba(255, 0, 128, 0.2);
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        /* ===== CRYPTOQUEST - Medieval Fantasy ===== */
+        .app-card.cryptoquest {
+            background: linear-gradient(145deg, #1A0A2E 0%, #4A0E4E 100%);
+            border: 2px solid #D4AF37;
+            font-family: 'Cinzel', serif;
+            border-radius: 12px;
+        }
+
+        .app-card.cryptoquest .card-header {
+            background: linear-gradient(180deg, #4A0E4E 0%, #2D0A30 50%, #D4AF37 200%);
+            border-bottom: 3px solid #D4AF37;
+        }
+
+        .app-card.cryptoquest .card-header::before {
+            content: '⚜';
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            font-size: 1rem;
+            color: #D4AF37;
+        }
+
+        .app-card.cryptoquest .card-header::after {
+            content: '⚜';
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 1rem;
+            color: #D4AF37;
+        }
+
+        .app-card.cryptoquest .card-icon {
+            filter: drop-shadow(0 0 15px #D4AF37);
+        }
+
+        .app-card.cryptoquest .card-body h3 {
+            color: #D4AF37;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+        }
+
+        .app-card.cryptoquest .tagline {
+            color: #C9A96E;
+            font-family: 'Merriweather', serif;
+            font-style: italic;
+        }
+
+        .app-card.cryptoquest .card-tag {
+            background: rgba(212, 175, 55, 0.15);
+            color: #D4AF37;
+            border: 1px solid #D4AF37;
+            font-family: 'Cinzel', serif;
+        }
+
+        .app-card.cryptoquest .card-cta {
+            color: #D4AF37;
+            font-family: 'Cinzel', serif;
+        }
+
+        .app-card.cryptoquest:hover {
+            box-shadow: 0 10px 50px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+
+        /* ===== COLORDASH - Playful Rainbow ===== */
+        .app-card.colordash {
+            background: linear-gradient(145deg, #FF6B6B 0%, #4ECDC4 50%, #FFE66D 100%);
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 24px;
+        }
+
+        .app-card.colordash .card-header {
+            background: linear-gradient(45deg, 
+                #FF6B6B 0%, 
+                #FF8E53 16%, 
+                #FFE66D 33%, 
+                #4ECDC4 50%, 
+                #45B7D1 66%, 
+                #A855F7 83%, 
+                #FF6B6B 100%
+            );
+            background-size: 300% 300%;
+            animation: rainbowShift 3s ease infinite;
+        }
+
+        @keyframes rainbowShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .app-card.colordash .card-icon {
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .app-card.colordash .card-body {
+            background: white;
+            color: #333;
+        }
+
+        .app-card.colordash .card-body h3 {
+            color: #FF6B6B;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+
+        .app-card.colordash .tagline {
+            color: #666;
+        }
+
+        .app-card.colordash .card-tag {
+            background: linear-gradient(135deg, #FF6B6B, #FFE66D);
+            color: white;
+            font-weight: 600;
+        }
+
+        .app-card.colordash .card-cta {
+            color: #A855F7;
+        }
+
+        .app-card.colordash:hover {
+            box-shadow: 0 20px 60px rgba(255, 107, 107, 0.4);
+            transform: translateY(-8px) rotate(1deg);
+        }
+
+        /* ===== ARTMINT - Pixel Retro ===== */
+        .app-card.artmint {
+            background: #1A1A2E;
+            border: 4px solid #00E5A0;
+            font-family: 'Press Start 2P', cursive;
+            border-radius: 0;
+            image-rendering: pixelated;
+        }
+
+        .app-card.artmint .card-header {
+            background: linear-gradient(180deg, #00E5A0 0%, #8B5CF6 100%);
+            border-bottom: 4px solid #00E5A0;
+        }
+
+        .app-card.artmint .card-header::before {
+            content: '♦ ♦ ♦';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            color: white;
+            letter-spacing: 4px;
+        }
+
+        .app-card.artmint .card-icon {
+            animation: pixelPulse 0.5s steps(2) infinite;
+        }
+
+        @keyframes pixelPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .app-card.artmint .card-body h3 {
+            color: #00E5A0;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .app-card.artmint .tagline {
+            color: #8B5CF6;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+        }
+
+        .app-card.artmint .card-tag {
+            background: #8B5CF6;
+            color: white;
+            border-radius: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-card.artmint .card-cta {
+            color: #00E5A0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-card.artmint:hover {
+            box-shadow: 8px 8px 0 #8B5CF6, 16px 16px 0 #00E5A0;
+            transform: translate(-8px, -8px);
+        }
+
+        /* ===== TRUSTRATE - Professional Corporate ===== */
+        .app-card.trustrate {
+            background: linear-gradient(180deg, #1A2B4A 0%, #0F1A2E 100%);
+            border: 1px solid #E8A838;
+            font-family: 'Roboto Slab', serif;
+            border-radius: 8px;
+        }
+
+        .app-card.trustrate .card-header {
+            background: linear-gradient(135deg, #1A2B4A 0%, #2A3F5F 100%);
+            border-bottom: 2px solid #E8A838;
+        }
+
+        .app-card.trustrate .card-header::before {
+            content: '★★★★★';
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #E8A838;
+            letter-spacing: 2px;
+        }
+
+        .app-card.trustrate .card-icon {
+            color: #E8A838;
+        }
+
+        .app-card.trustrate .card-body h3 {
+            color: #E8A838;
+            font-family: 'Roboto Slab', serif;
+        }
+
+        .app-card.trustrate .tagline {
+            color: #8BA3C7;
+        }
+
+        .app-card.trustrate .card-tag {
+            background: rgba(232, 168, 56, 0.1);
+            color: #E8A838;
+            border: 1px solid rgba(232, 168, 56, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-card.trustrate .card-cta {
+            color: #E8A838;
+        }
+
+        .app-card.trustrate:hover {
+            box-shadow: 0 10px 40px rgba(232, 168, 56, 0.2);
+            border-color: #F5C563;
+        }
+
+        /* ===== DROPVAULT - Secure Dark Vault ===== */
+        .app-card.dropvault {
+            background: linear-gradient(180deg, #0D0F12 0%, #1A1D24 100%);
+            border: 2px solid #10B981;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .app-card.dropvault .card-header {
+            background: #0D0F12;
+            border-bottom: 1px solid #10B981;
+            position: relative;
+        }
+
+        .app-card.dropvault .card-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+        }
+
+        .app-card.dropvault .card-header::after {
+            content: '🔒';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.8rem;
+        }
+
+        .app-card.dropvault .card-icon {
+            filter: drop-shadow(0 0 20px #10B981);
+        }
+
+        .app-card.dropvault .card-body h3 {
+            color: #10B981;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .app-card.dropvault .tagline {
+            color: #6B7280;
+        }
+
+        .app-card.dropvault .card-tag {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .app-card.dropvault .card-cta {
+            color: #10B981;
+        }
+
+        .app-card.dropvault:hover {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3), inset 0 0 60px rgba(16, 185, 129, 0.05);
+        }
+
+        /* ===== SKILLBADGE - Friendly Gradient ===== */
+        .app-card.skillbadge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .app-card.skillbadge .card-header {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+        }
+
+        .app-card.skillbadge .card-icon {
+            filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+        }
+
+        .app-card.skillbadge .card-body {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+        }
+
+        .app-card.skillbadge .card-body h3 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .app-card.skillbadge .tagline {
+            color: #666;
+        }
+
+        .app-card.skillbadge .card-tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .app-card.skillbadge .card-cta {
+            color: #764ba2;
+        }
+
+        .app-card.skillbadge:hover {
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.5);
+            transform: translateY(-10px);
+        }
+
+        /* ===== CHAINPOLL - Institutional Civic ===== */
+        .app-card.chainpoll {
+            background: #1B2A4E;
+            border: 2px solid #C41E3A;
+            font-family: 'Merriweather', serif;
+            border-radius: 4px;
+        }
+
+        .app-card.chainpoll .card-header {
+            background: linear-gradient(180deg, #1B2A4E 0%, #0F1A2E 100%);
+            border-bottom: 3px solid #C41E3A;
+        }
+
+        .app-card.chainpoll .card-header::before {
+            content: '★';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            color: #C41E3A;
+            font-size: 1.2rem;
+        }
+
+        .app-card.chainpoll .card-icon {
+            filter: drop-shadow(0 0 10px rgba(196, 30, 58, 0.5));
+        }
+
+        .app-card.chainpoll .card-body h3 {
+            color: white;
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+        }
+
+        .app-card.chainpoll .tagline {
+            color: #8BA3C7;
+            font-style: italic;
+        }
+
+        .app-card.chainpoll .card-tag {
+            background: #C41E3A;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+        }
+
+        .app-card.chainpoll .card-cta {
+            color: #C41E3A;
+        }
+
+        .app-card.chainpoll:hover {
+            box-shadow: 0 10px 40px rgba(196, 30, 58, 0.3);
+        }
+
+        /* ===== MEMORYCHAIN - Warm Nostalgic ===== */
+        .app-card.memorychain {
+            background: #FDF8F3;
+            border: 2px solid #D4A5A5;
+            font-family: 'Caveat', cursive;
+            border-radius: 12px;
+        }
+
+        .app-card.memorychain .card-header {
+            background: linear-gradient(180deg, #FDF8F3 0%, #F5E6D8 100%);
+            border-bottom: 1px dashed #D4A5A5;
+        }
+
+        .app-card.memorychain .card-header::before {
+            content: '✿';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            color: #D4A5A5;
+            font-size: 1rem;
+        }
+
+        .app-card.memorychain .card-header::after {
+            content: '✿';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #D4A5A5;
+            font-size: 1rem;
+        }
+
+        .app-card.memorychain .card-body {
+            background: #FDF8F3;
+            color: #5D4E4E;
+        }
+
+        .app-card.memorychain .card-body h3 {
+            color: #8B6B6B;
+            font-family: 'Caveat', cursive;
+            font-size: 1.6rem;
+        }
+
+        .app-card.memorychain .tagline {
+            color: #9B8585;
+            font-family: 'Merriweather', serif;
+            font-style: italic;
+        }
+
+        .app-card.memorychain .card-tag {
+            background: rgba(212, 165, 165, 0.2);
+            color: #8B6B6B;
+            border: 1px solid #D4A5A5;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-card.memorychain .card-cta {
+            color: #D4A5A5;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-card.memorychain:hover {
+            box-shadow: 0 10px 40px rgba(212, 165, 165, 0.3);
+            transform: translateY(-5px) rotate(-1deg);
+        }
+
+        /* ===== TOKENGATE - Elegant Luxury ===== */
+        .app-card.tokengate {
+            background: linear-gradient(180deg, #0A0A0B 0%, #1A1A1B 100%);
+            border: 1px solid #D4AF37;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .app-card.tokengate .card-header {
+            background: linear-gradient(180deg, #0A0A0B 0%, #151515 100%);
+            border-bottom: 1px solid #D4AF37;
+        }
+
+        .app-card.tokengate .card-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at top, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+        }
+
+        .app-card.tokengate .card-icon {
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
+        }
+
+        .app-card.tokengate .card-body h3 {
+            color: #D4AF37;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .app-card.tokengate .tagline {
+            color: #888;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-card.tokengate .card-tag {
+            background: transparent;
+            color: #D4AF37;
+            border: 1px solid #D4AF37;
+        }
+
+        .app-card.tokengate .card-cta {
+            color: #D4AF37;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        .app-card.tokengate:hover {
+            box-shadow: 0 10px 60px rgba(212, 175, 55, 0.2);
+            border-color: #F5D77A;
+        }
+
+        /* ===== NFTICKET - Festival Electric ===== */
+        .app-card.nfticket {
+            background: linear-gradient(135deg, #1A0A2E 0%, #2D1B4E 100%);
+            border: 2px solid #8B5CF6;
+            font-family: 'Bebas Neue', sans-serif;
+            border-radius: 16px;
+            overflow: visible;
+        }
+
+        .app-card.nfticket .card-header {
+            background: linear-gradient(135deg, #8B5CF6 0%, #F97316 100%);
+            position: relative;
+        }
+
+        .app-card.nfticket .card-header::before {
+            content: '🎉';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 1rem;
+            animation: party 0.5s ease infinite alternate;
+        }
+
+        .app-card.nfticket .card-header::after {
+            content: '🎊';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 1rem;
+            animation: party 0.5s ease infinite alternate-reverse;
+        }
+
+        @keyframes party {
+            0% { transform: rotate(-10deg); }
+            100% { transform: rotate(10deg); }
+        }
+
+        .app-card.nfticket .card-icon {
+            filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.8));
+        }
+
+        .app-card.nfticket .card-body h3 {
+            color: #F97316;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .app-card.nfticket .tagline {
+            color: #A78BFA;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .app-card.nfticket .card-tag {
+            background: linear-gradient(135deg, #8B5CF6, #F97316);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .app-card.nfticket .card-cta {
+            color: #F97316;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .app-card.nfticket:hover {
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.5), 0 0 80px rgba(249, 115, 22, 0.3);
+            transform: translateY(-8px) rotate(1deg);
+        }
+
+        /* ===== CHAINCHAT - Friendly Bubble ===== */
+        .app-card.chainchat {
+            background: linear-gradient(180deg, #0D1B2A 0%, #1B3A4B 100%);
+            border: 2px solid #00D9FF;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 24px 24px 24px 4px;
+        }
+
+        .app-card.chainchat .card-header {
+            background: linear-gradient(135deg, #00D9FF 0%, #FF6B6B 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .app-card.chainchat .card-header::before {
+            content: '💬';
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            animation: chatBubble 2s ease infinite;
+        }
+
+        @keyframes chatBubble {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .app-card.chainchat .card-body h3 {
+            color: #00D9FF;
+        }
+
+        .app-card.chainchat .tagline {
+            color: #FF6B6B;
+        }
+
+        .app-card.chainchat .card-tag {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(255, 107, 107, 0.2));
+            color: #00D9FF;
+            border: 1px solid rgba(0, 217, 255, 0.4);
+        }
+
+        .app-card.chainchat .card-cta {
+            color: #FF6B6B;
+        }
+
+        .app-card.chainchat:hover {
+            box-shadow: 0 15px 50px rgba(0, 217, 255, 0.4);
+        }
+
+        /* ===== PHOTOS - Premium Dark ===== */
+        .app-card.photos {
+            background: linear-gradient(180deg, #0F0F0F 0%, #1A1A1A 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-card.photos .card-header {
+            background: linear-gradient(135deg, #1A1A1A 0%, #0A0A0A 100%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .app-card.photos .card-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 229, 255, 0.1) 0%, transparent 50%);
+        }
+
+        .app-card.photos .card-icon {
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+        }
+
+        .app-card.photos .card-body h3 {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+
+        .app-card.photos .tagline {
+            color: #00E5FF;
+        }
+
+        .app-card.photos .card-tag {
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .app-card.photos .card-cta {
+            color: #00E5FF;
+        }
+
+        .app-card.photos:hover {
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.2), 0 0 80px rgba(0, 229, 255, 0.1);
+        }
+
+        /* ===== PROOFIDROP - Brutalist Bold ===== */
+        .app-card.proofidrop {
+            background: #0A0A0A;
+            border: 4px solid #00E5CC;
+            font-family: 'Space Grotesk', sans-serif;
+            border-radius: 0;
+        }
+
+        .app-card.proofidrop .card-header {
+            background: linear-gradient(135deg, #00E5CC 0%, #8B5CF6 100%);
+        }
+
+        .app-card.proofidrop .card-header::before {
+            content: '▼';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: #00E5CC;
+        }
+
+        .app-card.proofidrop .card-icon {
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+        }
+
+        .app-card.proofidrop .card-body h3 {
+            color: #00E5CC;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .app-card.proofidrop .tagline {
+            color: #8B5CF6;
+        }
+
+        .app-card.proofidrop .card-tag {
+            background: #8B5CF6;
+            color: white;
+            border-radius: 0;
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+        }
+
+        .app-card.proofidrop .card-cta {
+            color: #00E5CC;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .app-card.proofidrop:hover {
+            box-shadow: 8px 8px 0 #8B5CF6;
+            transform: translate(-4px, -4px);
+        }
+
+        /* ===== NEW & TRENDING ===== */
+        .new-trending {
+            padding: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .trending-section {
+            background: var(--bg-surface);
+            padding: 2rem;
+            border-radius: 20px;
+        }
+
+        .trending-section h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mini-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .mini-card:hover {
+            transform: translateX(5px);
+        }
+
+        .mini-card-icon {
+            font-size: 2rem;
+        }
+
+        .mini-card-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .mini-card-info p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        .testimonials {
+            padding: 4rem 3rem;
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.1) 0%,
+                rgba(0, 212, 255, 0.1) 100%
+            );
+            text-align: center;
+        }
+
+        .testimonial-card {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .testimonial-quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .testimonial-quote::before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--proofi-cyan);
+            opacity: 0.3;
+            position: absolute;
+            top: -20px;
+            left: -30px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--proofi-cyan), var(--proofi-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .author-info {
+            text-align: left;
+        }
+
+        .author-info .name {
+            font-weight: 600;
+        }
+
+        .author-info .app {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== DEVELOPER CTA ===== */
+        .developer-cta {
+            padding: 4rem 3rem;
+            background: var(--bg-surface);
+        }
+
+        .dev-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .dev-code {
+            background: var(--bg-dark);
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+
+        .dev-code .comment {
+            color: #6B7280;
+        }
+
+        .dev-code .keyword {
+            color: var(--proofi-purple);
+        }
+
+        .dev-code .string {
+            color: var(--accent-mint);
+        }
+
+        .dev-code .method {
+            color: var(--proofi-cyan);
+        }
+
+        .dev-content h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dev-benefits {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .dev-benefits li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .dev-benefits li::before {
+            content: '✓';
+            color: var(--accent-mint);
+            font-weight: 700;
+        }
+
+        .dev-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .dev-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .dev-btn.primary {
+            background: var(--proofi-cyan);
+            color: var(--bg-dark);
+        }
+
+        .dev-btn.secondary {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-primary);
+        }
+
+        .dev-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            padding: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        footer .logo {
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem;
+            }
+
+            .hero-content {
+                max-width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-visual {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin-top: 2rem;
+            }
+
+            .hero-app-preview {
+                width: 100%;
+                max-width: 350px;
+                height: 200px;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .new-trending {
+                grid-template-columns: 1fr;
+            }
+
+            .dev-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .steps-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .step-connector {
+                transform: rotate(90deg);
+            }
+
+            .app-card {
+                flex: 0 0 260px;
+            }
+
+            .category-section,
+            .developer-cta,
+            .testimonials {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .hero-visual {
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .nav-badge {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .stat-value {
+            animation: countUp 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">⬡ Proofi</div>
+        <span class="nav-badge">Live on Cere Mainnet</span>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                ⭐ App of the Week
+            </div>
+            <h1>Test Your Speed with <span>SpeedType</span></h1>
+            <p>Race against the clock, prove your WPM on-chain, and compete on global leaderboards. Your typing skills, permanently verified.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary">Try SpeedType →</button>
+                <button class="btn-secondary">Learn More</button>
+            </div>
+            <div class="hero-dots">
+                <span class="hero-dot active"></span>
+                <span class="hero-dot"></span>
+                <span class="hero-dot"></span>
+                <span class="hero-dot"></span>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-app-preview">
+                <span class="preview-icon">⌨️</span>
+                <h3>SpeedType</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem;">142 WPM • 99% Accuracy</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-icon">📱</div>
+            <div class="stat-value">15</div>
+            <div class="stat-label">Apps</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">10K+</div>
+            <div class="stat-label">Users</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon">🔐</div>
+            <div class="stat-value">50K+</div>
+            <div class="stat-label">Credentials</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon">⛓️</div>
+            <div class="stat-value">100%</div>
+            <div class="stat-label">On-Chain</div>
+        </div>
+    </section>
+
+    <!-- START HERE -->
+    <section class="start-here">
+        <div class="section-header">
+            <h2>🚀 New to Proofi?</h2>
+            <p>Get started in 3 simple steps</p>
+        </div>
+        <div class="steps-container">
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <div class="step-icon">🔗</div>
+                <h3>Connect</h3>
+                <p>Link your wallet in one click</p>
+            </div>
+            <span class="step-connector">→</span>
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <div class="step-icon">🎮</div>
+                <h3>Play</h3>
+                <p>Try any app, earn credentials</p>
+            </div>
+            <span class="step-connector">→</span>
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <div class="step-icon">🏆</div>
+                <h3>Own</h3>
+                <p>Your data, stored on-chain</p>
+            </div>
+        </div>
+        <div class="beginner-picks">
+            <h3>👋 <span>Beginner-Friendly</span> picks to get you started:</h3>
+        </div>
+    </section>
+
+    <!-- GAMES CATEGORY -->
+    <section class="category-section">
+        <div class="category-header">
+            <h2 class="category-title">🎮 Games & Challenges</h2>
+            <a href="#" class="view-all">View All →</a>
+        </div>
+        <div class="cards-scroll">
+            <!-- SpeedType - Terminal Hacker -->
+            <div class="app-card speedtype">
+                <div class="card-header">
+                    <span class="card-icon">⌨️</span>
+                    <span class="card-badge popular">Popular</span>
+                </div>
+                <div class="card-body">
+                    <h3>SpeedType</h3>
+                    <p class="tagline">Race the clock, prove your WPM</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Typing</span>
+                        <span class="card-tag">Competition</span>
+                    </div>
+                    <a href="#" class="card-cta">./start →</a>
+                </div>
+            </div>
+
+            <!-- ColorDash - Playful Rainbow -->
+            <div class="app-card colordash">
+                <div class="card-header">
+                    <span class="card-icon">🎨</span>
+                    <span class="card-badge new">New</span>
+                </div>
+                <div class="card-body">
+                    <h3>ColorDash</h3>
+                    <p class="tagline">Stroop effect brain training</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Brain</span>
+                        <span class="card-tag">Reflex</span>
+                    </div>
+                    <a href="#" class="card-cta">Let's Play! →</a>
+                </div>
+            </div>
+
+            <!-- Neural Reflex - Cyberpunk -->
+            <div class="app-card neural">
+                <div class="card-header">
+                    <span class="card-icon">🧠</span>
+                    <span class="card-badge trending">Trending</span>
+                </div>
+                <div class="card-body">
+                    <h3>Neural Reflex</h3>
+                    <p class="tagline">Reaction speed tests</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Reflex</span>
+                        <span class="card-tag">Score</span>
+                    </div>
+                    <a href="#" class="card-cta">INITIATE →</a>
+                </div>
+            </div>
+
+            <!-- CryptoQuest - Medieval -->
+            <div class="app-card cryptoquest">
+                <div class="card-header">
+                    <span class="card-icon">⚔️</span>
+                </div>
+                <div class="card-body">
+                    <h3>CryptoQuest</h3>
+                    <p class="tagline">Embark on a blockchain adventure</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Trivia</span>
+                        <span class="card-tag">Web3</span>
+                    </div>
+                    <a href="#" class="card-cta">Begin Quest →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CREATIVE CATEGORY -->
+    <section class="category-section" style="background: var(--bg-surface);">
+        <div class="category-header">
+            <h2 class="category-title">🎨 Creative & Art</h2>
+            <a href="#" class="view-all">View All →</a>
+        </div>
+        <div class="cards-scroll">
+            <!-- ArtMint - Pixel Retro -->
+            <div class="app-card artmint">
+                <div class="card-header">
+                    <span class="card-icon">🖼️</span>
+                    <span class="card-badge popular">Popular</span>
+                </div>
+                <div class="card-body">
+                    <h3>ArtMint</h3>
+                    <p class="tagline">Pixel art with provenance proof</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Art</span>
+                        <span class="card-tag">NFT</span>
+                    </div>
+                    <a href="#" class="card-cta">CREATE →</a>
+                </div>
+            </div>
+
+            <!-- MemoryChain - Nostalgic -->
+            <div class="app-card memorychain">
+                <div class="card-header">
+                    <span class="card-icon">💎</span>
+                </div>
+                <div class="card-body">
+                    <h3>MemoryChain</h3>
+                    <p class="tagline">Preserve your precious moments</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Memories</span>
+                        <span class="card-tag">Storage</span>
+                    </div>
+                    <a href="#" class="card-cta">Start Writing →</a>
+                </div>
+            </div>
+
+            <!-- Photos - Premium -->
+            <div class="app-card photos">
+                <div class="card-header">
+                    <span class="card-icon">📸</span>
+                </div>
+                <div class="card-body">
+                    <h3>Photos</h3>
+                    <p class="tagline">Premium photo storage on-chain</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Photos</span>
+                        <span class="card-tag">Premium</span>
+                    </div>
+                    <a href="#" class="card-cta">Upload →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST CATEGORY -->
+    <section class="category-section">
+        <div class="category-header">
+            <h2 class="category-title">🛡️ Trust & Identity</h2>
+            <a href="#" class="view-all">View All →</a>
+        </div>
+        <div class="cards-scroll">
+            <!-- ChainPoll - Institutional -->
+            <div class="app-card chainpoll">
+                <div class="card-header">
+                    <span class="card-icon">🗳️</span>
+                </div>
+                <div class="card-body">
+                    <h3>ChainPoll</h3>
+                    <p class="tagline">Verified democratic voting</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Voting</span>
+                        <span class="card-tag">DAO</span>
+                    </div>
+                    <a href="#" class="card-cta">Cast Vote →</a>
+                </div>
+            </div>
+
+            <!-- TrustRate - Professional -->
+            <div class="app-card trustrate">
+                <div class="card-header">
+                    <span class="card-icon">⭐</span>
+                    <span class="card-badge trending">Trending</span>
+                </div>
+                <div class="card-body">
+                    <h3>TrustRate</h3>
+                    <p class="tagline">Verifiable reputation scores</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Reputation</span>
+                        <span class="card-tag">Reviews</span>
+                    </div>
+                    <a href="#" class="card-cta">View Profile →</a>
+                </div>
+            </div>
+
+            <!-- TokenGate - Elegant -->
+            <div class="app-card tokengate">
+                <div class="card-header">
+                    <span class="card-icon">🔐</span>
+                </div>
+                <div class="card-body">
+                    <h3>TokenGate</h3>
+                    <p class="tagline">Exclusive access with credentials</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Access</span>
+                        <span class="card-tag">Security</span>
+                    </div>
+                    <a href="#" class="card-cta">ENTER →</a>
+                </div>
+            </div>
+
+            <!-- DropVault - Secure -->
+            <div class="app-card dropvault">
+                <div class="card-header">
+                    <span class="card-icon">🏦</span>
+                </div>
+                <div class="card-body">
+                    <h3>DropVault</h3>
+                    <p class="tagline">Secure credential storage</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Vault</span>
+                        <span class="card-tag">Security</span>
+                    </div>
+                    <a href="#" class="card-cta">Open Vault →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOCIAL & EVENTS -->
+    <section class="category-section" style="background: var(--bg-surface);">
+        <div class="category-header">
+            <h2 class="category-title">🎉 Social & Events</h2>
+            <a href="#" class="view-all">View All →</a>
+        </div>
+        <div class="cards-scroll">
+            <!-- NFTicket - Festival -->
+            <div class="app-card nfticket">
+                <div class="card-header">
+                    <span class="card-icon">🎫</span>
+                    <span class="card-badge new">New</span>
+                </div>
+                <div class="card-body">
+                    <h3>NFTicket</h3>
+                    <p class="tagline">Verifiable event access</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Events</span>
+                        <span class="card-tag">Tickets</span>
+                    </div>
+                    <a href="#" class="card-cta">Get Tickets →</a>
+                </div>
+            </div>
+
+            <!-- ChainChat - Friendly -->
+            <div class="app-card chainchat">
+                <div class="card-header">
+                    <span class="card-icon">💬</span>
+                </div>
+                <div class="card-body">
+                    <h3>ChainChat</h3>
+                    <p class="tagline">Verified messaging on-chain</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Chat</span>
+                        <span class="card-tag">Social</span>
+                    </div>
+                    <a href="#" class="card-cta">Start Chatting →</a>
+                </div>
+            </div>
+
+            <!-- SkillBadge - Friendly Gradient -->
+            <div class="app-card skillbadge">
+                <div class="card-header">
+                    <span class="card-icon">🏅</span>
+                </div>
+                <div class="card-body">
+                    <h3>SkillBadge</h3>
+                    <p class="tagline">Earn and show your skills</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Skills</span>
+                        <span class="card-tag">Badges</span>
+                    </div>
+                    <a href="#" class="card-cta">Earn Badges →</a>
+                </div>
+            </div>
+
+            <!-- ProofiDrop - Brutalist -->
+            <div class="app-card proofidrop">
+                <div class="card-header">
+                    <span class="card-icon">🪂</span>
+                </div>
+                <div class="card-body">
+                    <h3>ProofiDrop</h3>
+                    <p class="tagline">Verified airdrops & claims</p>
+                    <div class="card-tags">
+                        <span class="card-tag">Airdrops</span>
+                        <span class="card-tag">Claims</span>
+                    </div>
+                    <a href="#" class="card-cta">CLAIM →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW & TRENDING -->
+    <section class="new-trending">
+        <div class="trending-section">
+            <h3>🆕 Recently Added</h3>
+            <div class="mini-card">
+                <span class="mini-card-icon">🎨</span>
+                <div class="mini-card-info">
+                    <h4>ColorDash</h4>
+                    <p>Added 3 days ago</p>
+                </div>
+            </div>
+            <div class="mini-card">
+                <span class="mini-card-icon">🪂</span>
+                <div class="mini-card-info">
+                    <h4>ProofiDrop</h4>
+                    <p>Added 1 week ago</p>
+                </div>
+            </div>
+            <div class="mini-card">
+                <span class="mini-card-icon">🎫</span>
+                <div class="mini-card-info">
+                    <h4>NFTicket</h4>
+                    <p>Added 2 weeks ago</p>
+                </div>
+            </div>
+        </div>
+        <div class="trending-section">
+            <h3>🔥 Trending This Week</h3>
+            <div class="mini-card">
+                <span class="mini-card-icon">🧠</span>
+                <div class="mini-card-info">
+                    <h4>Neural Reflex</h4>
+                    <p>+340% plays this week</p>
+                </div>
+            </div>
+            <div class="mini-card">
+                <span class="mini-card-icon">⭐</span>
+                <div class="mini-card-info">
+                    <h4>TrustRate</h4>
+                    <p>+120% new users</p>
+                </div>
+            </div>
+            <div class="mini-card">
+                <span class="mini-card-icon">⚔️</span>
+                <div class="mini-card-info">
+                    <h4>CryptoQuest</h4>
+                    <p>+85% quests completed</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials">
+        <div class="section-header">
+            <h2>What Users Are Saying</h2>
+        </div>
+        <div class="testimonial-card">
+            <p class="testimonial-quote">Finally, a typing test where my scores actually mean something. Love that my 142 WPM is permanently on-chain!</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">MK</div>
+                <div class="author-info">
+                    <div class="name">@martijnk</div>
+                    <div class="app">SpeedType user • 23 credentials earned</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEVELOPER CTA -->
+    <section class="developer-cta">
+        <div class="dev-container">
+            <div class="dev-code">
+                <div><span class="comment">// Add Proofi to your app</span></div>
+                <div><span class="keyword">const</span> proofi = <span class="keyword">new</span> <span class="method">ProofiSDK</span>({</div>
+                <div>&nbsp;&nbsp;appName: <span class="string">'My App'</span></div>
+                <div>});</div>
+                <br>
+                <div><span class="comment">// Connect wallet</span></div>
+                <div><span class="keyword">const</span> address = <span class="keyword">await</span> proofi.<span class="method">connect</span>();</div>
+                <br>
+                <div><span class="comment">// Store credential on-chain</span></div>
+                <div><span class="keyword">await</span> proofi.<span class="method">storeCredential</span>({</div>
+                <div>&nbsp;&nbsp;type: <span class="string">'achievement'</span>,</div>
+                <div>&nbsp;&nbsp;score: <span class="string">100</span></div>
+                <div>});</div>
+            </div>
+            <div class="dev-content">
+                <h2>🔧 Build on Proofi</h2>
+                <ul class="dev-benefits">
+                    <li>Wallet authentication in minutes</li>
+                    <li>Decentralized storage on Cere Network</li>
+                    <li>Verifiable on-chain credentials</li>
+                    <li>Join 15+ apps in the ecosystem</li>
+                </ul>
+                <div class="dev-buttons">
+                    <a href="#" class="dev-btn primary">Read the Docs</a>
+                    <a href="#" class="dev-btn secondary">View SDK</a>
+                    <a href="#" class="dev-btn secondary">Join Discord</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="logo">⬡ Proofi</div>
+        <p>Your data. Your proof. On-chain forever.</p>
+    </footer>
+
+    <script>
+        // Simple hero rotation simulation
+        const dots = document.querySelectorAll('.hero-dot');
+        let currentDot = 0;
+
+        setInterval(() => {
+            dots[currentDot].classList.remove('active');
+            currentDot = (currentDot + 1) % dots.length;
+            dots[currentDot].classList.add('active');
+        }, 8000);
+
+        // Animate stats on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'countUp 0.5s ease-out';
+                }
+            });
+        });
+
+        document.querySelectorAll('.stat-value').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>

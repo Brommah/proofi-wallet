@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChainPoll - Decentralized Voting</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --navy: #1B2A4E;
+      --white: #FFFFFF;
+      --civic-red: #C41E3A;
+      --slate: #64748B;
+      --light-gray: #F1F5F9;
+      --success: #059669;
+      --gold: #D4AF37;
+      --chain-blue: #3B82F6;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--light-gray);
+      color: var(--navy);
+      line-height: 1.6;
+    }
+    
+    /* Navigation */
+    nav {
+      background: var(--navy);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--white);
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--civic-red);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover { color: var(--white); }
+    
+    .wallet-btn {
+      background: var(--civic-red);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .wallet-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(196, 30, 58, 0.3);
+    }
+    
+    /* Main Content */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    
+    h1 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: var(--slate);
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+    
+    /* Poll Card */
+    .poll-card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(27, 42, 78, 0.08);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .poll-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+    
+    .poll-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.5rem;
+    }
+    
+    .poll-badge {
+      background: var(--success);
+      color: var(--white);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .poll-meta {
+      display: flex;
+      gap: 1.5rem;
+      color: var(--slate);
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Ballot Options */
+    .ballot-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .ballot-option {
+      border: 2px solid var(--light-gray);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    
+    .ballot-option:hover {
+      border-color: var(--navy);
+      background: rgba(27, 42, 78, 0.02);
+    }
+    
+    .ballot-option.selected {
+      border-color: var(--navy);
+      background: rgba(27, 42, 78, 0.05);
+    }
+    
+    .ballot-checkbox {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--slate);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .ballot-option.selected .ballot-checkbox {
+      background: var(--navy);
+      border-color: var(--navy);
+    }
+    
+    .ballot-option.selected .ballot-checkbox::after {
+      content: '✓';
+      color: var(--white);
+      font-size: 14px;
+    }
+    
+    .vote-btn {
+      background: var(--civic-red);
+      color: var(--white);
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .vote-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(196, 30, 58, 0.3);
+    }
+    
+    /* Results Section */
+    .results-card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(27, 42, 78, 0.08);
+      padding: 2rem;
+    }
+    
+    .results-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .result-bar {
+      margin-bottom: 1rem;
+    }
+    
+    .result-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-track {
+      height: 12px;
+      background: var(--light-gray);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    
+    .result-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+    }
+    
+    .result-fill.option-a { background: var(--navy); }
+    .result-fill.option-b { background: var(--chain-blue); }
+    .result-fill.option-c { background: var(--slate); }
+    
+    /* Verification Badge */
+    .verification {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+    }
+    
+    .verification-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .tx-hash {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      color: #475569; /* was var(--slate) #64748B - darker for WCAG AA on light bg */
+    }
+    
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+    
+    /* Hamburger Menu */
+    .hamburger {
+      display: none;
+      width: 48px;
+      height: 48px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: var(--white);
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    
+    .hamburger:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 320px;
+      height: 100%;
+      background: var(--navy);
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    .mobile-nav.open {
+      transform: translateX(0);
+    }
+    
+    .mobile-nav-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    
+    .close-menu {
+      width: 48px;
+      height: 48px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 28px;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    
+    .close-menu:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .mobile-nav-links {
+      list-style: none;
+      flex: 1;
+    }
+    
+    .mobile-nav-links li {
+      margin-bottom: 8px;
+    }
+    
+    .mobile-nav-links a {
+      display: block;
+      padding: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+    }
+    
+    .mobile-nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+    }
+    
+    .mobile-nav .wallet-btn {
+      margin-top: auto;
+      width: 100%;
+    }
+    
+    .mobile-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .mobile-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    body.menu-open {
+      overflow: hidden;
+    }
+    
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      nav > .wallet-btn { display: none; }
+      .hamburger { display: flex; }
+      
+      h1 { font-size: 1.75rem; }
+      main { padding: 2rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">
+      <div class="logo-icon">🗳️</div>
+      ChainPoll
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">Active Polls</a></li>
+      <li><a href="#">Results</a></li>
+      <li><a href="#">Create Poll</a></li>
+      <li><a href="#">History</a></li>
+    </ul>
+    <button class="wallet-btn">Connect Wallet</button>
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+  </nav>
+  
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
+  
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-header">
+      <div class="logo">
+        <div class="logo-icon">🗳️</div>
+        ChainPoll
+      </div>
+      <button class="close-menu" onclick="toggleMenu()">✕</button>
+    </div>
+    <ul class="mobile-nav-links">
+      <li><a href="#" onclick="toggleMenu()">Active Polls</a></li>
+      <li><a href="#" onclick="toggleMenu()">Results</a></li>
+      <li><a href="#" onclick="toggleMenu()">Create Poll</a></li>
+      <li><a href="#" onclick="toggleMenu()">History</a></li>
+    </ul>
+    <button class="wallet-btn" onclick="toggleMenu()">Connect Wallet</button>
+  </div>
+  
+  <script>
+    function toggleMenu() {
+      const nav = document.getElementById('mobileNav');
+      const overlay = document.getElementById('mobileOverlay');
+      const body = document.body;
+      nav.classList.toggle('open');
+      overlay.classList.toggle('open');
+      body.classList.toggle('menu-open');
+    }
+  </script>
+  
+  <main>
+    <h1>Community Governance</h1>
+    <p class="subtitle">Your vote shapes the future. Every voice matters.</p>
+    
+    <div class="grid">
+      <div>
+        <div class="poll-card">
+          <div class="poll-header">
+            <h2 class="poll-title">Treasury Allocation Q1 2025</h2>
+            <span class="poll-badge">● Active</span>
+          </div>
+          
+          <div class="poll-meta">
+            <span>👥 1,247 votes</span>
+            <span>⏱️ 2 days remaining</span>
+            <span>🔒 Verified voters only</span>
+          </div>
+          
+          <div class="ballot-options">
+            <div class="ballot-option selected">
+              <div class="ballot-checkbox"></div>
+              <div>
+                <strong>Option A: Development Fund</strong>
+                <p style="color: var(--slate); font-size: 0.875rem;">Allocate 60% to protocol development</p>
+              </div>
+            </div>
+            <div class="ballot-option">
+              <div class="ballot-checkbox"></div>
+              <div>
+                <strong>Option B: Community Grants</strong>
+                <p style="color: var(--slate); font-size: 0.875rem;">Distribute through community grants program</p>
+              </div>
+            </div>
+            <div class="ballot-option">
+              <div class="ballot-checkbox"></div>
+              <div>
+                <strong>Option C: Reserve</strong>
+                <p style="color: var(--slate); font-size: 0.875rem;">Hold in reserve for future decisions</p>
+              </div>
+            </div>
+          </div>
+          
+          <button class="vote-btn">🗳️ Cast Your Vote</button>
+        </div>
+      </div>
+      
+      <div>
+        <div class="results-card">
+          <h3 class="results-title">📊 Current Results</h3>
+          
+          <div class="result-bar">
+            <div class="result-label">
+              <span>Development Fund</span>
+              <strong>62%</strong>
+            </div>
+            <div class="result-track">
+              <div class="result-fill option-a" style="width: 62%"></div>
+            </div>
+          </div>
+          
+          <div class="result-bar">
+            <div class="result-label">
+              <span>Community Grants</span>
+              <strong>28%</strong>
+            </div>
+            <div class="result-track">
+              <div class="result-fill option-b" style="width: 28%"></div>
+            </div>
+          </div>
+          
+          <div class="result-bar">
+            <div class="result-label">
+              <span>Reserve</span>
+              <strong>10%</strong>
+            </div>
+            <div class="result-track">
+              <div class="result-fill option-c" style="width: 10%"></div>
+            </div>
+          </div>
+          
+          <div class="verification">
+            <div class="verification-header">
+              ✓ VERIFIED ON CHAIN
+            </div>
+            <p class="tx-hash">Tx: 0x7a3f8b2c...4e9d1f</p>
+            <p class="tx-hash">Block: #18,234,567</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
