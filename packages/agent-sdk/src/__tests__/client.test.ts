@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Keyring } from '@polkadot/keyring';
-import { OpenClawClient } from '../index.js';
+import { ProofiAgentClient } from '../index.js';
 import type { CredentialSigner, AgentResponse } from '../types.js';
 import nacl from 'tweetnacl';
 
 const TEST_MNEMONIC =
   'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
 
-describe('OpenClawClient', () => {
+describe('ProofiAgentClient', () => {
   let pair: ReturnType<InstanceType<typeof Keyring>['addFromUri']>;
   let signer: CredentialSigner;
 
@@ -24,7 +24,7 @@ describe('OpenClawClient', () => {
 
   describe('constructor', () => {
     it('creates a client with config', () => {
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });
@@ -36,7 +36,7 @@ describe('OpenClawClient', () => {
 
   describe('init', () => {
     it('initialises crypto without error', async () => {
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });
@@ -45,7 +45,7 @@ describe('OpenClawClient', () => {
     });
 
     it('is idempotent', async () => {
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });
@@ -57,7 +57,7 @@ describe('OpenClawClient', () => {
 
   describe('buildRequest', () => {
     it('throws if not initialised', () => {
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });
@@ -68,7 +68,7 @@ describe('OpenClawClient', () => {
     });
 
     it('builds a signed request', async () => {
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });
@@ -85,21 +85,21 @@ describe('OpenClawClient', () => {
   });
 
   describe('encryptMemory', () => {
-    it('throws if TEE public key is not configured', async () => {
-      const client = new OpenClawClient({
+    it('throws if DDC public key is not configured', async () => {
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });
       await client.init();
 
       expect(() => client.encryptMemory({ key: 'value' })).toThrow(
-        'TEE public key not configured',
+        'DDC public key not configured',
       );
     });
 
-    it('encrypts object data for TEE', async () => {
+    it('encrypts object data for DDC', async () => {
       const teeKeyPair = nacl.box.keyPair();
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
         teePublicKey: teeKeyPair.publicKey,
@@ -115,7 +115,7 @@ describe('OpenClawClient', () => {
 
     it('encrypts raw Uint8Array data', async () => {
       const teeKeyPair = nacl.box.keyPair();
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
         teePublicKey: teeKeyPair.publicKey,
@@ -130,7 +130,7 @@ describe('OpenClawClient', () => {
 
     it('throws if not initialised', () => {
       const teeKeyPair = nacl.box.keyPair();
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
         teePublicKey: teeKeyPair.publicKey,
@@ -144,7 +144,7 @@ describe('OpenClawClient', () => {
 
   describe('send', () => {
     it('throws if not initialised', async () => {
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });
@@ -169,7 +169,7 @@ describe('OpenClawClient', () => {
       });
       globalThis.fetch = mockFetch as unknown as typeof fetch;
 
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });
@@ -196,7 +196,7 @@ describe('OpenClawClient', () => {
       });
       globalThis.fetch = mockFetch as unknown as typeof fetch;
 
-      const client = new OpenClawClient({
+      const client = new ProofiAgentClient({
         agentUrl: 'https://openclaw.near.ai/agent/test',
         agentId: 'test.near',
       });

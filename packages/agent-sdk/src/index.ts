@@ -1,7 +1,7 @@
 /**
- * @proofi/openclaw — Proofi ↔ OpenClaw integration SDK
+ * @proofi/openclaw — Proofi ↔ ProofiAgent integration SDK
  *
- * Lets OpenClaw agents (NEAR AI TEE) authenticate and store
+ * Lets ProofiAgent agents (NEAR AI DDC) authenticate and store
  * memory using Proofi credentials and sr25519 signing.
  */
 export const VERSION = '0.1.0';
@@ -9,19 +9,19 @@ export const VERSION = '0.1.0';
 export {
   signAgentRequest,
   verifyAgentResponse,
-  encryptForTEE,
-  decryptFromTEE,
+  encryptForDDC,
+  decryptFromDDC,
   ensureCryptoReady,
   canonicalise,
   generateNonce,
 } from './auth.js';
 
 export type {
-  OpenClawConfig,
+  ProofiAgentConfig,
   AgentRequest,
   AgentResponse,
   VerificationResult,
-  TEEEncryptedEnvelope,
+  DDCEncryptedEnvelope,
   CredentialSigner,
   AgentMemory,
   AgentKeyType,
@@ -32,24 +32,24 @@ import {
   ensureCryptoReady,
   signAgentRequest,
   verifyAgentResponse,
-  encryptForTEE,
+  encryptForDDC,
   canonicalise,
 } from './auth.js';
 import type {
-  OpenClawConfig,
+  ProofiAgentConfig,
   AgentRequest,
   AgentResponse,
   CredentialSigner,
   VerificationResult,
-  TEEEncryptedEnvelope,
+  DDCEncryptedEnvelope,
 } from './types.js';
 
 /**
- * Client for communicating with OpenClaw agents via Proofi credentials.
+ * Client for communicating with ProofiAgent agents via Proofi credentials.
  *
  * @example
  * ```ts
- * const client = new OpenClawClient({
+ * const client = new ProofiAgentClient({
  *   agentUrl: 'https://openclaw.near.ai/agent/my-agent',
  *   agentId: 'my-agent.near',
  * });
@@ -59,11 +59,11 @@ import type {
  * const response = await client.send(signer, { action: 'query', data: '...' });
  * ```
  */
-export class OpenClawClient {
-  private config: OpenClawConfig;
+export class ProofiAgentClient {
+  private config: ProofiAgentConfig;
   private ready = false;
 
-  constructor(config: OpenClawConfig) {
+  constructor(config: ProofiAgentConfig) {
     this.config = {
       timeoutMs: 30_000,
       ...config,
@@ -79,7 +79,7 @@ export class OpenClawClient {
 
   private ensureReady(): void {
     if (!this.ready) {
-      throw new Error('OpenClawClient not initialised — call init() first');
+      throw new Error('ProofiAgentClient not initialised — call init() first');
     }
   }
 
@@ -94,11 +94,11 @@ export class OpenClawClient {
   }
 
   /**
-   * Sign and send a request to the OpenClaw agent.
+   * Sign and send a request to the ProofiAgent agent.
    *
    * @param signer - Proofi credential signer
    * @param payload - Request data
-   * @returns The agent's response (verified if TEE public key is set)
+   * @returns The agent's response (verified if DDC public key is set)
    */
   async send(
     signer: CredentialSigner,
@@ -149,17 +149,17 @@ export class OpenClawClient {
   }
 
   /**
-   * Encrypt data for TEE-secured agent memory storage.
+   * Encrypt data for DDC-secured agent memory storage.
    *
    * @param data - Data to encrypt (will be JSON-serialised if object)
-   * @returns TEEEncryptedEnvelope ready for agent storage
-   * @throws Error if TEE public key is not configured
+   * @returns DDCEncryptedEnvelope ready for agent storage
+   * @throws Error if DDC public key is not configured
    */
-  encryptMemory(data: Record<string, unknown> | Uint8Array): TEEEncryptedEnvelope {
+  encryptMemory(data: Record<string, unknown> | Uint8Array): DDCEncryptedEnvelope {
     this.ensureReady();
 
     if (!this.config.teePublicKey) {
-      throw new Error('TEE public key not configured — set teePublicKey in config');
+      throw new Error('DDC public key not configured — set teePublicKey in config');
     }
 
     const dataBytes =
@@ -167,7 +167,7 @@ export class OpenClawClient {
         ? data
         : new TextEncoder().encode(canonicalise(data));
 
-    return encryptForTEE(dataBytes, this.config.teePublicKey);
+    return encryptForDDC(dataBytes, this.config.teePublicKey);
   }
 
   /**

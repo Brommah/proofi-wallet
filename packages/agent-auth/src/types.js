@@ -1,6 +1,6 @@
 /**
  * @module types
- * Shared types for OpenClaw agent authentication.
+ * Shared types for ProofiAgent agent authentication.
  */
 
 /** Permission levels for credential access */

@@ -1,34 +1,34 @@
 /**
- * TEE Verification E2E Tests — Proofi ↔ OpenClaw
+ * DDC Verification E2E Tests — Proofi ↔ ProofiAgent
  *
- * Covers TEE attestation verification and encrypted memory storage.
+ * Covers DDC attestation verification and encrypted memory storage.
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  MockOpenClawAgent,
-  MockTeeVerifier,
-  type TeeAttestation,
+  MockProofiAgentAgent,
+  MockDdcVerifier,
+  type DdcVerification,
 } from './test-setup';
 
-describe('TEE Verification', () => {
-  let agent: MockOpenClawAgent;
-  let verifier: MockTeeVerifier;
+describe('DDC Verification', () => {
+  let agent: MockProofiAgentAgent;
+  let verifier: MockDdcVerifier;
 
   beforeEach(() => {
-    agent = new MockOpenClawAgent();
-    verifier = new MockTeeVerifier();
+    agent = new MockProofiAgentAgent();
+    verifier = new MockDdcVerifier();
   });
 
   // ──────────────────────────────────────────────────────
-  // 1. TEE attestation verification
+  // 1. DDC attestation verification
   // ──────────────────────────────────────────────────────
-  describe('TEE attestation verification', () => {
+  describe('DDC attestation verification', () => {
     it('should generate a valid attestation', () => {
       const attestation = agent.generateAttestation();
 
-      expect(attestation.enclaveId).toBe(agent.agentId);
-      expect(attestation.measurement).toBe(agent.enclaveMeasurement);
+      expect(attestation.bucketId).toBe(agent.agentId);
+      expect(attestation.measurement).toBe(agent.bucketMeasurement);
       expect(attestation.valid).toBe(true);
       expect(attestation.signature).toBeTruthy();
       expect(attestation.platform).toBe('nitro');
@@ -69,7 +69,7 @@ describe('TEE Verification', () => {
       const result = verifier.verify(attestation);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Missing enclave measurement');
+      expect(result.errors).toContain('Missing bucket measurement');
     });
 
     it('should reject stale attestation (>5 min old)', () => {
@@ -91,7 +91,7 @@ describe('TEE Verification', () => {
       expect(result.valid).toBe(true);
     });
 
-    it('should support different TEE platforms', () => {
+    it('should support different DDC platforms', () => {
       const sgx = agent.generateAttestation('sgx');
       const sev = agent.generateAttestation('sev');
       const nitro = agent.generateAttestation('nitro');
@@ -110,18 +110,18 @@ describe('TEE Verification', () => {
       verifier.trustMeasurement('trusted-measurement-hash');
 
       const attestation = agent.generateAttestation();
-      // agent.enclaveMeasurement is random, not in trust list
+      // agent.bucketMeasurement is random, not in trust list
 
       const result = verifier.verify(attestation);
 
       expect(result.valid).toBe(false);
       expect(result.errors).toContain(
-        'Enclave measurement not in trusted set',
+        'Bucket measurement not in trusted set',
       );
     });
 
     it('should accept trusted measurement', () => {
-      verifier.trustMeasurement(agent.enclaveMeasurement);
+      verifier.trustMeasurement(agent.bucketMeasurement);
 
       const attestation = agent.generateAttestation();
       const result = verifier.verify(attestation);
@@ -130,8 +130,8 @@ describe('TEE Verification', () => {
     });
 
     it('should collect multiple errors', () => {
-      const attestation: TeeAttestation = {
-        enclaveId: '',
+      const attestation: DdcVerification = {
+        bucketId: '',
         measurement: '',
         timestamp: Date.now() - 10 * 60 * 1000,
         signature: '',

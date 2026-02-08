@@ -1,7 +1,7 @@
 /**
- * Full Integration E2E Test — Proofi ↔ OpenClaw
+ * Full Integration E2E Test — Proofi ↔ ProofiAgent
  *
- * End-to-end flow: wallet connect → TEE attestation →
+ * End-to-end flow: wallet connect → DDC attestation →
  * agent authorization → credential access → action execution.
  * 
  * Uses REAL Proofi wallet with actual cryptographic operations.
@@ -10,8 +10,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   RealProofiWallet,
-  MockOpenClawAgent,
-  MockTeeVerifier,
+  MockProofiAgentAgent,
+  MockDdcVerifier,
   createRealWallet,
   createTestCredential,
   createHealthCredential,
@@ -21,19 +21,19 @@ import {
 
 describe('Integration: Full E2E Flow', () => {
   let wallet: RealProofiWallet;
-  let agent: MockOpenClawAgent;
-  let verifier: MockTeeVerifier;
+  let agent: MockProofiAgentAgent;
+  let verifier: MockDdcVerifier;
 
   beforeEach(async () => {
     wallet = await createRealWallet();
-    agent = new MockOpenClawAgent();
-    verifier = new MockTeeVerifier();
+    agent = new MockProofiAgentAgent();
+    verifier = new MockDdcVerifier();
   });
 
   it('should complete full flow: connect → attest → authorize → access → act', () => {
-    // ── Step 1: Wallet connects and TEE is verified ──
+    // ── Step 1: Wallet connects and DDC is verified ──
     const attestation = agent.generateAttestation();
-    verifier.trustMeasurement(agent.enclaveMeasurement);
+    verifier.trustMeasurement(agent.bucketMeasurement);
     const attestResult = verifier.verify(attestation);
     expect(attestResult.valid).toBe(true);
 
@@ -65,7 +65,7 @@ describe('Integration: Full E2E Flow', () => {
 
   it('should complete flow with selective disclosure (age gate)', () => {
     // Attest
-    verifier.trustMeasurement(agent.enclaveMeasurement);
+    verifier.trustMeasurement(agent.bucketMeasurement);
     expect(verifier.verify(agent.generateAttestation()).valid).toBe(true);
 
     // Authorize
@@ -87,7 +87,7 @@ describe('Integration: Full E2E Flow', () => {
     expect(proof!.predicateResults![0].satisfied).toBe(true);
     expect(proof!.disclosedFields).toEqual({});
 
-    // Agent stores proof in encrypted TEE memory
+    // Agent stores proof in encrypted DDC memory
     const stored = agent.storeEncrypted(
       'age-proof',
       JSON.stringify(proof),
@@ -96,9 +96,9 @@ describe('Integration: Full E2E Flow', () => {
     expect(stored.ciphertext).not.toContain('1990-01-15');
   });
 
-  it('should handle multi-credential presentation with TEE storage', () => {
+  it('should handle multi-credential presentation with DDC storage', () => {
     // Attest + authorize
-    verifier.trustMeasurement(agent.enclaveMeasurement);
+    verifier.trustMeasurement(agent.bucketMeasurement);
     agent.requestAuthorization(wallet, ['credential', 'health']);
 
     // Add credentials
@@ -130,7 +130,7 @@ describe('Integration: Full E2E Flow', () => {
     expect(agent.verifyMemoryIntegrity('presentation')).toBe(true);
   });
 
-  it('should reject flow when TEE attestation fails', () => {
+  it('should reject flow when DDC attestation fails', () => {
     // Trust a different measurement
     verifier.trustMeasurement('some-other-measurement');
 
@@ -142,7 +142,7 @@ describe('Integration: Full E2E Flow', () => {
     // The wallet owner should NOT authorize an untrusted agent
     // (In production this would be enforced; here we verify the signal)
     expect(result.errors).toContain(
-      'Enclave measurement not in trusted set',
+      'Bucket measurement not in trusted set',
     );
   });
 
@@ -206,8 +206,8 @@ describe('Integration: Full E2E Flow', () => {
   });
 
   it('should isolate encrypted memory between agents', () => {
-    const agent1 = new MockOpenClawAgent('agent-alpha');
-    const agent2 = new MockOpenClawAgent('agent-beta');
+    const agent1 = new MockProofiAgentAgent('agent-alpha');
+    const agent2 = new MockProofiAgentAgent('agent-beta');
 
     agent1.storeEncrypted('shared-key', 'agent1-secret');
     agent2.storeEncrypted('shared-key', 'agent2-secret');
@@ -248,8 +248,8 @@ describe('Integration: Full E2E Flow', () => {
   });
 
   it('should handle complete lifecycle: create → use → revoke → cleanup', () => {
-    // 1. TEE verification
-    verifier.trustMeasurement(agent.enclaveMeasurement);
+    // 1. DDC verification
+    verifier.trustMeasurement(agent.bucketMeasurement);
     expect(verifier.verify(agent.generateAttestation()).valid).toBe(true);
 
     // 2. Authorization

@@ -1,5 +1,5 @@
 {
-  "name": "@proofi/openclaw",
+  "name": "@proofi/agent-sdk",
   "version": "0.1.0",
   "description": "Proofi ↔ OpenClaw integration SDK — agent authentication and TEE-encrypted memory",
   "type": "module",

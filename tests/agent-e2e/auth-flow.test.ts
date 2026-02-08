@@ -1,5 +1,5 @@
 /**
- * Auth Flow E2E Tests — Proofi ↔ OpenClaw
+ * Auth Flow E2E Tests — Proofi ↔ ProofiAgent
  *
  * Covers the authorization lifecycle: wallet authorizes agent,
  * agent requests credential access, wallet signs requests,
@@ -11,18 +11,18 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   RealProofiWallet,
-  MockOpenClawAgent,
+  MockProofiAgentAgent,
   createRealWallet,
   createTestCredential,
 } from './test-setup';
 
 describe('Auth Flow', () => {
   let wallet: RealProofiWallet;
-  let agent: MockOpenClawAgent;
+  let agent: MockProofiAgentAgent;
 
   beforeEach(async () => {
     wallet = await createRealWallet();
-    agent = new MockOpenClawAgent();
+    agent = new MockProofiAgentAgent();
   });
 
   // ──────────────────────────────────────────────────────
@@ -105,7 +105,7 @@ describe('Auth Flow', () => {
     });
 
     it('should fail without an active session', () => {
-      const orphanAgent = new MockOpenClawAgent();
+      const orphanAgent = new MockProofiAgentAgent();
 
       const result = orphanAgent.requestCredentialAccess(
         wallet,

@@ -1,6 +1,6 @@
 /**
  * @module auth
- * Sr25519 signing and verification for Proofi ↔ OpenClaw agent communication.
+ * Sr25519 signing and verification for Proofi ↔ ProofiAgent agent communication.
  */
 import { u8aToHex, hexToU8a } from '@polkadot/util';
 import {
@@ -15,7 +15,7 @@ import type {
   AgentResponse,
   CredentialSigner,
   VerificationResult,
-  TEEEncryptedEnvelope,
+  DDCEncryptedEnvelope,
 } from './types.js';
 
 let _ready = false;
@@ -145,16 +145,16 @@ export function verifyAgentResponse(
 }
 
 /**
- * Encrypt data for TEE storage using x25519 (NaCl box).
+ * Encrypt data for DDC storage using x25519 (NaCl box).
  *
  * @param data - Raw data to encrypt
- * @param teePublicKey - TEE's x25519 public key (32 bytes)
- * @returns TEEEncryptedEnvelope with ciphertext, ephemeral key, and nonce
+ * @param teePublicKey - DDC's x25519 public key (32 bytes)
+ * @returns DDCEncryptedEnvelope with ciphertext, ephemeral key, and nonce
  */
-export function encryptForTEE(
+export function encryptForDDC(
   data: Uint8Array,
   teePublicKey: Uint8Array,
-): TEEEncryptedEnvelope {
+): DDCEncryptedEnvelope {
   const ephemeralKeyPair = nacl.box.keyPair();
   const nonce = nacl.randomBytes(nacl.box.nonceLength);
 
@@ -171,15 +171,15 @@ export function encryptForTEE(
 }
 
 /**
- * Decrypt data from a TEE envelope (used by the TEE side).
+ * Decrypt data from a DDC envelope (used by the DDC side).
  *
  * @param envelope - The encrypted envelope
- * @param teeSecretKey - TEE's x25519 secret key (32 bytes)
+ * @param teeSecretKey - DDC's x25519 secret key (32 bytes)
  * @returns Decrypted data bytes
  * @throws Error if decryption fails
  */
-export function decryptFromTEE(
-  envelope: TEEEncryptedEnvelope,
+export function decryptFromDDC(
+  envelope: DDCEncryptedEnvelope,
   teeSecretKey: Uint8Array,
 ): Uint8Array {
   const plaintext = nacl.box.open(

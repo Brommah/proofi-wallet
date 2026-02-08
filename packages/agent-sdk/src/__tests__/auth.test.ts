@@ -4,8 +4,8 @@ import { Keyring } from '@polkadot/keyring';
 import {
   signAgentRequest,
   verifyAgentResponse,
-  encryptForTEE,
-  decryptFromTEE,
+  encryptForDDC,
+  decryptFromDDC,
   canonicalise,
   generateNonce,
   ensureCryptoReady,
@@ -159,12 +159,12 @@ describe('auth', () => {
     });
   });
 
-  describe('encryptForTEE / decryptFromTEE', () => {
+  describe('encryptForDDC / decryptFromDDC', () => {
     it('encrypts and decrypts data round-trip', () => {
       const teeKeyPair = nacl.box.keyPair();
       const plaintext = new TextEncoder().encode('secret agent memory');
 
-      const envelope = encryptForTEE(plaintext, teeKeyPair.publicKey);
+      const envelope = encryptForDDC(plaintext, teeKeyPair.publicKey);
 
       expect(envelope.ciphertext).toBeInstanceOf(Uint8Array);
       expect(envelope.ephemeralPublicKey).toBeInstanceOf(Uint8Array);
@@ -172,7 +172,7 @@ describe('auth', () => {
       expect(envelope.nonce).toBeInstanceOf(Uint8Array);
       expect(envelope.nonce.length).toBe(nacl.box.nonceLength);
 
-      const decrypted = decryptFromTEE(envelope, teeKeyPair.secretKey);
+      const decrypted = decryptFromDDC(envelope, teeKeyPair.secretKey);
       expect(new TextDecoder().decode(decrypted)).toBe('secret agent memory');
     });
 
@@ -180,8 +180,8 @@ describe('auth', () => {
       const teeKeyPair = nacl.box.keyPair();
       const plaintext = new TextEncoder().encode('same data');
 
-      const e1 = encryptForTEE(plaintext, teeKeyPair.publicKey);
-      const e2 = encryptForTEE(plaintext, teeKeyPair.publicKey);
+      const e1 = encryptForDDC(plaintext, teeKeyPair.publicKey);
+      const e2 = encryptForDDC(plaintext, teeKeyPair.publicKey);
 
       // Ephemeral keys differ
       expect(e1.ephemeralPublicKey).not.toEqual(e2.ephemeralPublicKey);
@@ -192,9 +192,9 @@ describe('auth', () => {
       const wrongKeyPair = nacl.box.keyPair();
       const plaintext = new TextEncoder().encode('secret');
 
-      const envelope = encryptForTEE(plaintext, teeKeyPair.publicKey);
+      const envelope = encryptForDDC(plaintext, teeKeyPair.publicKey);
 
-      expect(() => decryptFromTEE(envelope, wrongKeyPair.secretKey)).toThrow(
+      expect(() => decryptFromDDC(envelope, wrongKeyPair.secretKey)).toThrow(
         'Decryption failed',
       );
     });
@@ -203,8 +203,8 @@ describe('auth', () => {
       const teeKeyPair = nacl.box.keyPair();
       const plaintext = new Uint8Array(0);
 
-      const envelope = encryptForTEE(plaintext, teeKeyPair.publicKey);
-      const decrypted = decryptFromTEE(envelope, teeKeyPair.secretKey);
+      const envelope = encryptForDDC(plaintext, teeKeyPair.publicKey);
+      const decrypted = decryptFromDDC(envelope, teeKeyPair.secretKey);
 
       expect(decrypted.length).toBe(0);
     });

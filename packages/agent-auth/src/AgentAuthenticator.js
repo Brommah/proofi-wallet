@@ -1,6 +1,6 @@
 /**
  * @module AgentAuthenticator
- * Manages agent session tokens for OpenClaw agents.
+ * Manages agent session tokens for ProofiAgent agents.
  *
  * Sessions bind an agent to a wallet owner's address using sr25519 signatures.
  * Each session has a unique ID, expiry, and can be revoked.
@@ -14,7 +14,7 @@ import { SessionStatus } from './types.js';
 const DEFAULT_SESSION_TTL_MS = 60 * 60 * 1000;
 
 /**
- * AgentAuthenticator manages session lifecycle for OpenClaw agents.
+ * AgentAuthenticator manages session lifecycle for ProofiAgent agents.
  *
  * @example
  * ```js

@@ -1,8 +1,8 @@
 /**
- * Test Setup — Proofi ↔ OpenClaw E2E
+ * Test Setup — Proofi ↔ ProofiAgent E2E
  *
  * Real Proofi wallet integration using @proofi/core KeyringManager
- * and CredentialBuilder. OpenClaw agent remains mocked (external TEE).
+ * and CredentialBuilder. ProofiAgent agent remains mocked (external DDC).
  */
 
 import { vi } from 'vitest';
@@ -44,8 +44,8 @@ export interface AgentSession {
   active: boolean;
 }
 
-export interface TeeAttestation {
-  enclaveId: string;
+export interface DdcVerification {
+  bucketId: string;
   measurement: string;
   timestamp: number;
   signature: string;
@@ -511,29 +511,29 @@ export class MockProofiWallet {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// Mock OpenClaw Agent (TEE)
+// Mock ProofiAgent Agent (DDC)
 // ═══════════════════════════════════════════════════════════════════
 
-export class MockOpenClawAgent {
+export class MockProofiAgentAgent {
   agentId: string;
-  enclaveMeasurement: string;
+  bucketMeasurement: string;
   private encryptedMemory: Map<string, EncryptedMemoryEntry> = new Map();
   private encryptionKey: string;
   private currentSession: AgentSession | null = null;
 
   constructor(agentId?: string) {
     this.agentId = agentId ?? `agent-${randomHex(8)}`;
-    this.enclaveMeasurement = randomHex(64);
+    this.bucketMeasurement = randomHex(64);
     this.encryptionKey = randomHex(32);
   }
 
-  /** Produce a TEE attestation report */
-  generateAttestation(platform: TeeAttestation['platform'] = 'nitro'): TeeAttestation {
+  /** Produce a DDC attestation report */
+  generateAttestation(platform: DdcVerification['platform'] = 'nitro'): DdcVerification {
     return {
-      enclaveId: this.agentId,
-      measurement: this.enclaveMeasurement,
+      bucketId: this.agentId,
+      measurement: this.bucketMeasurement,
       timestamp: Date.now(),
-      signature: `att:${simpleHash(this.enclaveMeasurement + Date.now())}`,
+      signature: `att:${simpleHash(this.bucketMeasurement + Date.now())}`,
       platform,
       valid: true,
     };
@@ -574,7 +574,7 @@ export class MockOpenClawAgent {
     signedResult: { signature: string; signedPayload: string },
     action: string,
   ): { success: boolean; action: string; result: string } {
-    // In a real system this would verify the signature and execute in TEE
+    // In a real system this would verify the signature and execute in DDC
     return {
       success: true,
       action,
@@ -582,7 +582,7 @@ export class MockOpenClawAgent {
     };
   }
 
-  /** Store data in encrypted TEE memory */
+  /** Store data in encrypted DDC memory */
   storeEncrypted(key: string, plaintext: string): EncryptedMemoryEntry {
     const iv = randomHex(24);
     const ciphertext = simpleHash(plaintext + this.encryptionKey + iv);
@@ -599,7 +599,7 @@ export class MockOpenClawAgent {
     return entry;
   }
 
-  /** Retrieve + "decrypt" from TEE memory */
+  /** Retrieve + "decrypt" from DDC memory */
   retrieveEncrypted(key: string): EncryptedMemoryEntry | null {
     return this.encryptedMemory.get(key) ?? null;
   }
@@ -619,10 +619,10 @@ export class MockOpenClawAgent {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// TEE Attestation Verifier (mock)
+// DDC Attestation Verifier (mock)
 // ═══════════════════════════════════════════════════════════════════
 
-export class MockTeeVerifier {
+export class MockDdcVerifier {
   private trustedMeasurements: Set<string> = new Set();
 
   /** Register a measurement as trusted */
@@ -630,8 +630,8 @@ export class MockTeeVerifier {
     this.trustedMeasurements.add(measurement);
   }
 
-  /** Verify a TEE attestation */
-  verify(attestation: TeeAttestation): {
+  /** Verify a DDC attestation */
+  verify(attestation: DdcVerification): {
     valid: boolean;
     errors: string[];
   } {
@@ -646,14 +646,14 @@ export class MockTeeVerifier {
     }
 
     if (!attestation.measurement) {
-      errors.push('Missing enclave measurement');
+      errors.push('Missing bucket measurement');
     }
 
     if (
       this.trustedMeasurements.size > 0 &&
       !this.trustedMeasurements.has(attestation.measurement)
     ) {
-      errors.push('Enclave measurement not in trusted set');
+      errors.push('Bucket measurement not in trusted set');
     }
 
     // Check attestation freshness (5 min window)

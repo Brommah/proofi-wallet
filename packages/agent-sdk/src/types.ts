@@ -1,24 +1,24 @@
 /**
  * @module types
- * Type definitions for the Proofi ↔ OpenClaw integration SDK.
+ * Type definitions for the Proofi ↔ ProofiAgent integration SDK.
  */
 
 /** Supported key types for agent signing */
 export type AgentKeyType = 'sr25519' | 'ed25519';
 
-/** Configuration for connecting to an OpenClaw agent */
-export interface OpenClawConfig {
-  /** OpenClaw agent endpoint URL */
+/** Configuration for connecting to an ProofiAgent agent */
+export interface ProofiAgentConfig {
+  /** ProofiAgent agent endpoint URL */
   agentUrl: string;
   /** Agent identifier (NEAR account or DID) */
   agentId: string;
-  /** TEE public key for encrypted communication */
+  /** DDC public key for encrypted communication */
   teePublicKey?: Uint8Array;
   /** Request timeout in milliseconds (default: 30000) */
   timeoutMs?: number;
 }
 
-/** A signed request payload sent to an OpenClaw agent */
+/** A signed request payload sent to an ProofiAgent agent */
 export interface AgentRequest {
   /** The payload data */
   payload: Record<string, unknown>;
@@ -32,7 +32,7 @@ export interface AgentRequest {
   nonce: string;
 }
 
-/** A signed response from an OpenClaw agent */
+/** A signed response from an ProofiAgent agent */
 export interface AgentResponse {
   /** Response payload */
   payload: Record<string, unknown>;
@@ -54,8 +54,8 @@ export interface VerificationResult {
   errors: string[];
 }
 
-/** TEE-encrypted data envelope */
-export interface TEEEncryptedEnvelope {
+/** DDC-encrypted data envelope */
+export interface DDCEncryptedEnvelope {
   /** Encrypted data bytes */
   ciphertext: Uint8Array;
   /** Ephemeral public key for decryption */
@@ -72,12 +72,12 @@ export interface CredentialSigner {
   address: string;
 }
 
-/** Agent memory entry for TEE storage */
+/** Agent memory entry for DDC storage */
 export interface AgentMemory {
   /** Memory entry key */
   key: string;
   /** Encrypted value */
-  value: TEEEncryptedEnvelope;
+  value: DDCEncryptedEnvelope;
   /** ISO 8601 timestamp of creation */
   createdAt: string;
   /** ISO 8601 timestamp of last update */

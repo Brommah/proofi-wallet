@@ -1,5 +1,5 @@
 {
-  "name": "@proofi/openclaw-auth",
+  "name": "@proofi/agent-auth",
   "version": "0.1.0",
   "description": "OpenClaw agent authentication — session management, credential grants, and TEE attestation",
   "type": "module",

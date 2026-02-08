@@ -1,35 +1,35 @@
 /**
- * @module TEEAttestation
- * Verifies Trusted Execution Environment (TEE) attestation reports.
+ * @module DDCVerification
+ * Verifies Trusted Execution Environment (DDC) attestation reports.
  *
- * Ensures OpenClaw agents are running inside a valid TEE enclave
+ * Ensures ProofiAgent agents are running inside a valid DDC bucket
  * before granting access to sensitive credentials.
  */
 import { cryptoWaitReady, signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { hexToU8a, stringToU8a } from '@polkadot/util';
 
-/** Supported TEE platforms */
-export const TEEPlatform = {
+/** Supported DDC platforms */
+export const DDCPlatform = {
   SGX: 'sgx',
   SEV: 'sev',
   TDX: 'tdx',
   NITRO: 'nitro',
 };
 
-const SUPPORTED_PLATFORMS = new Set(Object.values(TEEPlatform));
+const SUPPORTED_PLATFORMS = new Set(Object.values(DDCPlatform));
 
 /**
- * TEEAttestationVerifier validates that an agent runs inside a legitimate TEE.
+ * DDCVerificationVerifier validates that an agent runs inside a legitimate DDC.
  *
  * @example
  * ```js
- * const verifier = new TEEAttestationVerifier();
+ * const verifier = new DDCVerificationVerifier();
  * await verifier.init();
- * const result = verifier.verifyTEEAttestation(attestation);
+ * const result = verifier.verifyDDCVerification(attestation);
  * if (result.valid) { // agent is trusted }
  * ```
  */
-export class TEEAttestationVerifier {
+export class DDCVerificationVerifier {
   trustedMeasurements = new Map();
   ready = false;
 
@@ -45,14 +45,14 @@ export class TEEAttestationVerifier {
 
   ensureReady() {
     if (!this.ready) {
-      throw new Error('TEEAttestationVerifier not initialised — call init() first');
+      throw new Error('DDCVerificationVerifier not initialised — call init() first');
     }
   }
 
   /**
-   * Register a trusted enclave measurement (MRENCLAVE / launch digest).
+   * Register a trusted bucket measurement (MRENCLAVE / launch digest).
    *
-   * @param {string} platform - TEE platform ('sgx', 'sev', 'tdx', 'nitro')
+   * @param {string} platform - DDC platform ('sgx', 'sev', 'tdx', 'nitro')
    * @param {string} measurement - Hex-encoded measurement hash
    * @param {string} [label] - Human-readable label
    */
@@ -61,7 +61,7 @@ export class TEEAttestationVerifier {
 
     if (!SUPPORTED_PLATFORMS.has(platform)) {
       throw new Error(
-        `Unsupported TEE platform: ${platform}. Supported: ${[...SUPPORTED_PLATFORMS].join(', ')}`,
+        `Unsupported DDC platform: ${platform}. Supported: ${[...SUPPORTED_PLATFORMS].join(', ')}`,
       );
     }
 
@@ -73,20 +73,20 @@ export class TEEAttestationVerifier {
   }
 
   /**
-   * Verify a TEE attestation report.
+   * Verify a DDC attestation report.
    *
    * Checks:
    * 1. Attestation structure is valid
    * 2. Platform is supported
    * 3. Measurement matches a trusted value (if any registered)
    * 4. Attestation timestamp is recent (not replayed)
-   * 5. Enclave signature is valid (if signer address provided)
+   * 5. Bucket signature is valid (if signer address provided)
    *
    * @param {object} attestation - The attestation report
-   * @param {string} attestation.platform - TEE platform
-   * @param {string} attestation.measurement - Enclave measurement hash
+   * @param {string} attestation.platform - DDC platform
+   * @param {string} attestation.measurement - Bucket measurement hash
    * @param {string} attestation.timestamp - ISO 8601 timestamp
-   * @param {string} [attestation.enclaveAddress] - Signer address (sr25519)
+   * @param {string} [attestation.bucketAddress] - Signer address (sr25519)
    * @param {string} [attestation.signature] - Hex-encoded signature over payload
    * @param {object} [attestation.report] - Platform-specific report data
    * @param {object} [options] - Verification options
@@ -94,7 +94,7 @@ export class TEEAttestationVerifier {
    * @param {boolean} [options.requireMeasurement] - Require measurement in trusted list (default: true if list non-empty)
    * @returns {{ valid: boolean, errors: string[], platform?: string, measurement?: string }}
    */
-  verifyTEEAttestation(attestation, options = {}) {
+  verifyDDCVerification(attestation, options = {}) {
     this.ensureReady();
 
     const errors = [];
@@ -156,8 +156,8 @@ export class TEEAttestationVerifier {
       }
     }
 
-    // ── Enclave signature verification ────────────────────────────────────
-    if (attestation.enclaveAddress && attestation.signature) {
+    // ── Bucket signature verification ────────────────────────────────────
+    if (attestation.bucketAddress && attestation.signature) {
       try {
         const payload = JSON.stringify({
           platform: attestation.platform,
@@ -166,10 +166,10 @@ export class TEEAttestationVerifier {
         });
         const payloadBytes = stringToU8a(payload);
         const signatureBytes = hexToU8a(attestation.signature);
-        const publicKey = decodeAddress(attestation.enclaveAddress);
+        const publicKey = decodeAddress(attestation.bucketAddress);
         const result = signatureVerify(payloadBytes, signatureBytes, publicKey);
         if (!result.isValid) {
-          errors.push('Enclave signature verification failed');
+          errors.push('Bucket signature verification failed');
         }
       } catch (err) {
         errors.push(`Signature verification error: ${err.message}`);

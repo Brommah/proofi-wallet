@@ -1,5 +1,5 @@
 /**
- * Credential Access E2E Tests — Proofi ↔ OpenClaw
+ * Credential Access E2E Tests — Proofi ↔ ProofiAgent
  *
  * Covers selective disclosure, credential revocation,
  * and multi-credential presentation.
@@ -10,7 +10,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   RealProofiWallet,
-  MockOpenClawAgent,
+  MockProofiAgentAgent,
   createRealWallet,
   createTestCredential,
   createHealthCredential,
@@ -20,11 +20,11 @@ import {
 
 describe('Credential Access', () => {
   let wallet: RealProofiWallet;
-  let agent: MockOpenClawAgent;
+  let agent: MockProofiAgentAgent;
 
   beforeEach(async () => {
     wallet = await createRealWallet();
-    agent = new MockOpenClawAgent();
+    agent = new MockProofiAgentAgent();
     agent.requestAuthorization(wallet, ['credential']);
   });
 

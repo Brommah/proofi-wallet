@@ -2,22 +2,22 @@ import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Keyring } from '@polkadot/keyring';
 import { u8aToHex, stringToU8a } from '@polkadot/util';
-import { TEEAttestationVerifier, TEEPlatform } from '../TEEAttestation.js';
+import { DDCVerificationVerifier, DDCPlatform } from '../DDCVerification.js';
 
 const TEST_MNEMONIC = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
 
-describe('TEEAttestationVerifier', () => {
+describe('DDCVerificationVerifier', () => {
   let verifier;
-  let enclavePair;
+  let bucketPair;
 
   beforeAll(async () => {
     await cryptoWaitReady();
     const keyring = new Keyring({ type: 'sr25519', ss58Format: 42 });
-    enclavePair = keyring.addFromUri(TEST_MNEMONIC);
+    bucketPair = keyring.addFromUri(TEST_MNEMONIC);
   });
 
   beforeEach(async () => {
-    verifier = new TEEAttestationVerifier();
+    verifier = new DDCVerificationVerifier();
     await verifier.init();
   });
 
@@ -34,7 +34,7 @@ describe('TEEAttestationVerifier', () => {
   /** Helper to build a signed attestation */
   function makeSignedAttestation(overrides = {}) {
     const att = makeAttestation({
-      enclaveAddress: enclavePair.address,
+      bucketAddress: bucketPair.address,
       ...overrides,
     });
     const payload = JSON.stringify({
@@ -42,7 +42,7 @@ describe('TEEAttestationVerifier', () => {
       measurement: att.measurement,
       timestamp: att.timestamp,
     });
-    const signature = enclavePair.sign(stringToU8a(payload));
+    const signature = bucketPair.sign(stringToU8a(payload));
     att.signature = u8aToHex(signature);
     return att;
   }
@@ -50,21 +50,21 @@ describe('TEEAttestationVerifier', () => {
   // ── Initialisation ──────────────────────────────────────────────────────
   describe('init', () => {
     it('throws if not initialised', () => {
-      const uninit = new TEEAttestationVerifier();
-      expect(() => uninit.verifyTEEAttestation(makeAttestation())).toThrow('not initialised');
+      const uninit = new DDCVerificationVerifier();
+      expect(() => uninit.verifyDDCVerification(makeAttestation())).toThrow('not initialised');
     });
   });
 
   // ── Trusted measurements ────────────────────────────────────────────────
   describe('registerTrustedMeasurement', () => {
     it('registers a measurement', () => {
-      verifier.registerTrustedMeasurement('sgx', '0xaabb', 'test-enclave');
+      verifier.registerTrustedMeasurement('sgx', '0xaabb', 'test-bucket');
       expect(verifier.size).toBe(1);
     });
 
     it('throws on unsupported platform', () => {
       expect(() => verifier.registerTrustedMeasurement('arm', '0xaabb')).toThrow(
-        'Unsupported TEE platform',
+        'Unsupported DDC platform',
       );
     });
 
@@ -76,48 +76,48 @@ describe('TEEAttestationVerifier', () => {
   });
 
   // ── Structure validation ────────────────────────────────────────────────
-  describe('verifyTEEAttestation — structure', () => {
+  describe('verifyDDCVerification — structure', () => {
     it('rejects null attestation', () => {
-      const result = verifier.verifyTEEAttestation(null);
+      const result = verifier.verifyDDCVerification(null);
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Attestation must be an object');
     });
 
     it('rejects missing platform', () => {
-      const result = verifier.verifyTEEAttestation(makeAttestation({ platform: '' }));
+      const result = verifier.verifyDDCVerification(makeAttestation({ platform: '' }));
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Missing or invalid platform');
     });
 
     it('rejects unsupported platform', () => {
-      const result = verifier.verifyTEEAttestation(makeAttestation({ platform: 'arm' }));
+      const result = verifier.verifyDDCVerification(makeAttestation({ platform: 'arm' }));
       expect(result.valid).toBe(false);
       expect(result.errors[0]).toContain('Unsupported platform');
     });
 
     it('rejects missing measurement', () => {
-      const result = verifier.verifyTEEAttestation(makeAttestation({ measurement: '' }));
+      const result = verifier.verifyDDCVerification(makeAttestation({ measurement: '' }));
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Missing or invalid measurement');
     });
 
     it('rejects missing timestamp', () => {
-      const result = verifier.verifyTEEAttestation(makeAttestation({ timestamp: '' }));
+      const result = verifier.verifyDDCVerification(makeAttestation({ timestamp: '' }));
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Missing or invalid timestamp');
     });
 
     it('rejects invalid timestamp format', () => {
-      const result = verifier.verifyTEEAttestation(makeAttestation({ timestamp: 'not-a-date' }));
+      const result = verifier.verifyDDCVerification(makeAttestation({ timestamp: 'not-a-date' }));
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Invalid timestamp format');
     });
   });
 
   // ── Timestamp freshness ─────────────────────────────────────────────────
-  describe('verifyTEEAttestation — freshness', () => {
+  describe('verifyDDCVerification — freshness', () => {
     it('accepts a fresh attestation', () => {
-      const result = verifier.verifyTEEAttestation(makeAttestation(), {
+      const result = verifier.verifyDDCVerification(makeAttestation(), {
         requireMeasurement: false,
       });
       expect(result.valid).toBe(true);
@@ -125,7 +125,7 @@ describe('TEEAttestationVerifier', () => {
 
     it('rejects an old attestation', () => {
       const old = new Date(Date.now() - 10 * 60 * 1000).toISOString(); // 10 min ago
-      const result = verifier.verifyTEEAttestation(makeAttestation({ timestamp: old }), {
+      const result = verifier.verifyDDCVerification(makeAttestation({ timestamp: old }), {
         requireMeasurement: false,
       });
       expect(result.valid).toBe(false);
@@ -134,7 +134,7 @@ describe('TEEAttestationVerifier', () => {
 
     it('respects custom maxAgeMs', () => {
       const old = new Date(Date.now() - 2000).toISOString(); // 2s ago
-      const result = verifier.verifyTEEAttestation(makeAttestation({ timestamp: old }), {
+      const result = verifier.verifyDDCVerification(makeAttestation({ timestamp: old }), {
         maxAgeMs: 1000,
         requireMeasurement: false,
       });
@@ -143,7 +143,7 @@ describe('TEEAttestationVerifier', () => {
 
     it('rejects future timestamp', () => {
       const future = new Date(Date.now() + 60000).toISOString();
-      const result = verifier.verifyTEEAttestation(makeAttestation({ timestamp: future }), {
+      const result = verifier.verifyDDCVerification(makeAttestation({ timestamp: future }), {
         requireMeasurement: false,
       });
       expect(result.valid).toBe(false);
@@ -152,35 +152,35 @@ describe('TEEAttestationVerifier', () => {
   });
 
   // ── Measurement trust ───────────────────────────────────────────────────
-  describe('verifyTEEAttestation — measurement trust', () => {
+  describe('verifyDDCVerification — measurement trust', () => {
     it('accepts attestation with trusted measurement', () => {
       verifier.registerTrustedMeasurement('sgx', '0xaabbccdd');
-      const result = verifier.verifyTEEAttestation(makeAttestation());
+      const result = verifier.verifyDDCVerification(makeAttestation());
       expect(result.valid).toBe(true);
     });
 
     it('rejects attestation with untrusted measurement', () => {
       verifier.registerTrustedMeasurement('sgx', '0x11223344');
-      const result = verifier.verifyTEEAttestation(makeAttestation({ measurement: '0xdeadbeef' }));
+      const result = verifier.verifyDDCVerification(makeAttestation({ measurement: '0xdeadbeef' }));
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Measurement not in trusted list');
     });
 
     it('rejects measurement registered for different platform', () => {
       verifier.registerTrustedMeasurement('sev', '0xaabbccdd');
-      const result = verifier.verifyTEEAttestation(makeAttestation({ platform: 'sgx' }));
+      const result = verifier.verifyDDCVerification(makeAttestation({ platform: 'sgx' }));
       expect(result.valid).toBe(false);
       expect(result.errors[0]).toContain('registered for sev, not sgx');
     });
 
     it('skips measurement check when no measurements registered', () => {
-      const result = verifier.verifyTEEAttestation(makeAttestation());
+      const result = verifier.verifyDDCVerification(makeAttestation());
       expect(result.valid).toBe(true);
     });
 
     it('skips measurement check when requireMeasurement is false', () => {
       verifier.registerTrustedMeasurement('sgx', '0x11223344');
-      const result = verifier.verifyTEEAttestation(makeAttestation({ measurement: '0xdeadbeef' }), {
+      const result = verifier.verifyDDCVerification(makeAttestation({ measurement: '0xdeadbeef' }), {
         requireMeasurement: false,
       });
       expect(result.valid).toBe(true);
@@ -188,32 +188,32 @@ describe('TEEAttestationVerifier', () => {
   });
 
   // ── Signature verification ──────────────────────────────────────────────
-  describe('verifyTEEAttestation — signature', () => {
+  describe('verifyDDCVerification — signature', () => {
     it('accepts valid signed attestation', () => {
       const att = makeSignedAttestation();
-      const result = verifier.verifyTEEAttestation(att, { requireMeasurement: false });
+      const result = verifier.verifyDDCVerification(att, { requireMeasurement: false });
       expect(result.valid).toBe(true);
     });
 
     it('rejects tampered signed attestation', () => {
       const att = makeSignedAttestation();
       att.measurement = '0xTAMPERED';
-      const result = verifier.verifyTEEAttestation(att, { requireMeasurement: false });
+      const result = verifier.verifyDDCVerification(att, { requireMeasurement: false });
       expect(result.valid).toBe(false);
       expect(result.errors[0]).toContain('signature verification');
     });
 
     it('skips signature check when no address/signature', () => {
       const att = makeAttestation();
-      const result = verifier.verifyTEEAttestation(att, { requireMeasurement: false });
+      const result = verifier.verifyDDCVerification(att, { requireMeasurement: false });
       expect(result.valid).toBe(true);
     });
   });
 
   // ── Successful verification result ──────────────────────────────────────
-  describe('verifyTEEAttestation — success result', () => {
+  describe('verifyDDCVerification — success result', () => {
     it('returns platform and measurement on success', () => {
-      const result = verifier.verifyTEEAttestation(makeAttestation(), {
+      const result = verifier.verifyDDCVerification(makeAttestation(), {
         requireMeasurement: false,
       });
       expect(result.valid).toBe(true);
@@ -224,12 +224,12 @@ describe('TEEAttestationVerifier', () => {
   });
 
   // ── Platform constants ──────────────────────────────────────────────────
-  describe('TEEPlatform', () => {
+  describe('DDCPlatform', () => {
     it('exports expected platforms', () => {
-      expect(TEEPlatform.SGX).toBe('sgx');
-      expect(TEEPlatform.SEV).toBe('sev');
-      expect(TEEPlatform.TDX).toBe('tdx');
-      expect(TEEPlatform.NITRO).toBe('nitro');
+      expect(DDCPlatform.SGX).toBe('sgx');
+      expect(DDCPlatform.SEV).toBe('sev');
+      expect(DDCPlatform.TDX).toBe('tdx');
+      expect(DDCPlatform.NITRO).toBe('nitro');
     });
   });
 
