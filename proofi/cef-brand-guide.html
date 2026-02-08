@@ -193,7 +193,18 @@
     .w{padding:0 20px}section{padding:48px 0}.hrow{flex-wrap:wrap;gap:20px}
     .swatches{grid-template-columns:repeat(6,1fr)}.db{grid-template-columns:1fr}.ds{display:none}
   }
-</style>
+/* ═══ MOBILE RESPONSIVE ═══ */
+    @media (max-width: 480px) {
+      .container { padding: 12px; }
+      h1 { font-size: 24px; }
+      h2 { font-size: 20px; }
+      .btn { min-height: 44px; }
+    }
+    @media (max-width: 375px) {
+      h1 { font-size: 20px; }
+    }
+    html, body { overflow-x: hidden; }
+  </style>
 </head>
 <body>
 <a class="skip-to-content" href="#main-content">Skip to content</a>
