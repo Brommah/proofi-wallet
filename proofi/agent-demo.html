@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi — Agent Demo: Watch Agents Pay for Your Data</title>
+  <meta name="description" content="See how AI agents query your encrypted data vault and pay you in real-time. Your data earns while you watch.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='0' fill='%230A0A0F'/%3E%3Cpath d='M16 4L28 16L16 28L4 16Z' fill='none' stroke='%2300E5FF' stroke-width='2'/%3E%3Cpath d='M16 10L22 16L16 22L10 16Z' fill='%2300E5FF' opacity='0.6'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0A0F;
+      --bg-elevated: #101018;
+      --surface: #16161F;
+      --surface-hover: #1C1C28;
+      --border: #252535;
+      --border-strong: #3A3A50;
+      --text: #E4E4F0;
+      --text-dim: #8A8AA0;
+      --text-muted: #555568;
+      --cyan: #00E5FF;
+      --green: #00FF88;
+      --magenta: #FF3366;
+      --purple: #9D4EDD;
+      --yellow: #FFB800;
+      --cyan-glow: rgba(0, 229, 255, 0.15);
+      --cyan-glow-strong: rgba(0, 229, 255, 0.35);
+      --green-glow: rgba(0, 255, 136, 0.15);
+      --magenta-glow: rgba(255, 51, 102, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--cyan);
+      color: var(--bg);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Background Effects */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(150px);
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow-1 {
+      top: -200px;
+      right: -100px;
+      background: radial-gradient(circle, var(--cyan) 0%, transparent 70%);
+    }
+
+    .bg-glow-2 {
+      bottom: -200px;
+      left: -100px;
+      background: radial-gradient(circle, var(--green) 0%, transparent 70%);
+    }
+
+    /* Main Layout */
+    .demo-container {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
+      min-height: 100vh;
+      padding: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1100px) {
+      .demo-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+      }
+    }
+
+    /* Header */
+    .demo-header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+    }
+
+    .demo-title {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    .demo-title span {
+      color: var(--green);
+    }
+
+    .back-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--cyan);
+    }
+
+    /* Left Panel - Agent Chat */
+    .chat-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Agent Selector */
+    .agent-selector {
+      display: flex;
+      gap: 12px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .agent-card {
+      flex: 1;
+      min-width: 160px;
+      padding: 16px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .agent-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+
+    .agent-card.active {
+      border-color: var(--cyan);
+      background: rgba(0, 229, 255, 0.05);
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.15);
+    }
+
+    .agent-card.revoked {
+      opacity: 0.4;
+      border-color: var(--magenta);
+      background: rgba(255, 51, 102, 0.05);
+    }
+
+    .agent-card.revoked:hover {
+      opacity: 0.6;
+    }
+
+    .agent-icon {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    .agent-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .agent-desc {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .agent-status {
+      margin-top: 8px;
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .agent-status.querying {
+      background: rgba(0, 229, 255, 0.2);
+      color: var(--cyan);
+      animation: pulse 1s infinite;
+    }
+
+    .agent-status.idle {
+      background: rgba(138, 138, 160, 0.2);
+      color: var(--text-dim);
+    }
+
+    .agent-status.revoked {
+      background: rgba(255, 51, 102, 0.2);
+      color: var(--magenta);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Chat Area */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 400px;
+      max-height: 600px;
+    }
+
+    .chat-message {
+      max-width: 85%;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chat-message.agent {
+      align-self: flex-start;
+    }
+
+    .chat-message.system {
+      align-self: center;
+      max-width: 90%;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .message-icon {
+      font-size: 1.2rem;
+    }
+
+    .message-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--cyan);
+    }
+
+    .message-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .message-bubble {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .agent .message-bubble {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 16px 4px;
+    }
+
+    .system .message-bubble {
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .system .message-bubble.earning {
+      background: rgba(0, 255, 136, 0.1);
+      border-color: rgba(0, 255, 136, 0.3);
+      color: var(--green);
+      animation: earningPop 0.4s ease-out;
+    }
+
+    @keyframes earningPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .system .message-bubble.error {
+      background: rgba(255, 51, 102, 0.1);
+      border-color: rgba(255, 51, 102, 0.3);
+      color: var(--magenta);
+    }
+
+    .thinking-dots {
+      display: flex;
+      gap: 4px;
+      padding: 8px 0;
+    }
+
+    .thinking-dots span {
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .thinking-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .thinking-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* Controls */
+    .chat-controls {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid;
+    }
+
+    .control-btn.primary {
+      background: var(--cyan);
+      border-color: var(--cyan);
+      color: var(--bg);
+    }
+
+    .control-btn.primary:hover {
+      background: transparent;
+      color: var(--cyan);
+    }
+
+    .control-btn.secondary {
+      background: transparent;
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    .control-btn.secondary:hover {
+      border-color: var(--text-dim);
+    }
+
+    .control-btn.danger {
+      background: transparent;
+      border-color: var(--magenta);
+      color: var(--magenta);
+    }
+
+    .control-btn.danger:hover {
+      background: var(--magenta);
+      color: var(--bg);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .dev-toggle {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .dev-toggle input {
+      accent-color: var(--cyan);
+    }
+
+    /* Developer View */
+    .dev-view {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      display: none;
+    }
+
+    .dev-view.visible {
+      display: block;
+    }
+
+    .dev-view pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    .dev-view .keyword { color: var(--magenta); }
+    .dev-view .string { color: var(--green); }
+    .dev-view .number { color: var(--yellow); }
+    .dev-view .comment { color: var(--text-muted); }
+
+    /* Right Panel - Earnings & Log */
+    .stats-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Earnings Counter */
+    .earnings-card {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 229, 255, 0.1) 100%);
+      border: 2px solid var(--green);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .earnings-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent 40%, rgba(0, 255, 136, 0.1) 50%, transparent 60%);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .earnings-label {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .earnings-amount {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--green);
+      text-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+      transition: transform 0.2s;
+      position: relative;
+    }
+
+    .earnings-amount.pop {
+      animation: pop 0.3s ease-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .earnings-currency {
+      font-size: 1.2rem;
+      color: var(--text-dim);
+      margin-left: 8px;
+    }
+
+    .earnings-sub {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 12px;
+    }
+
+    .earnings-sub strong {
+      color: var(--cyan);
+    }
+
+    /* Cha-ching effect */
+    .cha-ching {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--green);
+      text-shadow: 0 0 60px rgba(0, 255, 136, 0.8);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 100;
+    }
+
+    .cha-ching.show {
+      animation: chaChing 0.8s ease-out;
+    }
+
+    @keyframes chaChing {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1) translateY(-30px);
+      }
+    }
+
+    /* Query Log */
+    .log-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .log-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .log-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .log-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--cyan);
+      background: rgba(0, 229, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .log-list {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 300px;
+    }
+
+    .log-entry {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      display: grid;
+      grid-template-columns: 70px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      animation: logSlide 0.3s ease-out;
+    }
+
+    @keyframes logSlide {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-time {
+      color: var(--text-muted);
+    }
+
+    .log-query {
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .log-query .agent {
+      color: var(--cyan);
+    }
+
+    .log-query .scope {
+      color: var(--purple);
+    }
+
+    .log-amount {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .log-amount.failed {
+      color: var(--magenta);
+      text-decoration: line-through;
+    }
+
+    /* Access Control */
+    .access-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .access-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .access-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .access-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .access-item.revoked {
+      opacity: 0.5;
+      border-color: var(--magenta);
+    }
+
+    .access-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .access-icon {
+      font-size: 1.2rem;
+    }
+
+    .access-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .access-scope {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .access-toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: var(--border-strong);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .access-toggle.active {
+      background: var(--green);
+    }
+
+    .access-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: var(--text);
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .access-toggle.active::after {
+      transform: translateX(20px);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-dim);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    /* Floating coins effect */
+    .floating-coins {
+      position: fixed;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .coin {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: coinFloat 1s ease-out forwards;
+    }
+
+    @keyframes coinFloat {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.5);
+      }
+    }
+
+    /* Session Stats */
+    .session-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--bg);
+      border-radius: 12px;
+      margin: 16px 20px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .demo-container {
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .demo-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .agent-selector {
+        padding: 16px;
+        gap: 8px;
+      }
+
+      .agent-card {
+        min-width: 120px;
+        padding: 12px;
+      }
+
+      .agent-icon {
+        font-size: 2rem;
+      }
+
+      .earnings-amount {
+        font-size: 2.5rem;
+      }
+
+      .session-stats {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <div class="floating-coins" id="floatingCoins"></div>
+  <div class="cha-ching" id="chaChing">+$$$</div>
+
+  <div class="demo-container">
+    <!-- Header -->
+    <header class="demo-header">
+      <a href="index.html" class="logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#0A0A0F"/>
+          <path d="M20 5L35 20L20 35L5 20Z" stroke="#00E5FF" stroke-width="2" fill="none"/>
+          <path d="M20 12L28 20L20 28L12 20Z" fill="#00E5FF" opacity="0.6"/>
+        </svg>
+        <span class="logo-text">PROOFI</span>
+      </a>
+      <div class="demo-title">Agent Demo — <span>Watch Your Data Earn</span></div>
+      <a href="index.html" class="back-link">
+        ← Back to Proofi
+      </a>
+    </header>
+
+    <!-- Left Panel - Chat -->
+    <main class="chat-panel">
+      <!-- Agent Selector -->
+      <div class="agent-selector">
+        <div class="agent-card" data-agent="health" onclick="selectAgent('health')">
+          <div class="agent-icon">🏥</div>
+          <div class="agent-name">Health Assistant</div>
+          <div class="agent-desc">Queries health data</div>
+          <div class="agent-status idle">Idle</div>
+        </div>
+        <div class="agent-card" data-agent="shopping" onclick="selectAgent('shopping')">
+          <div class="agent-icon">🛒</div>
+          <div class="agent-name">Shopping Agent</div>
+          <div class="agent-desc">Queries preferences</div>
+          <div class="agent-status idle">Idle</div>
+        </div>
+        <div class="agent-card" data-agent="career" onclick="selectAgent('career')">
+          <div class="agent-icon">💼</div>
+          <div class="agent-name">Career Coach</div>
+          <div class="agent-desc">Queries work & skills</div>
+          <div class="agent-status idle">Idle</div>
+        </div>
+      </div>
+
+      <!-- Chat Messages -->
+      <div class="chat-area" id="chatArea">
+        <div class="empty-state">
+          <div class="empty-icon">🤖</div>
+          <p>Select an agent above to start the demo</p>
+          <p style="font-size: 0.8rem; margin-top: 8px;">Watch agents query your data and pay you in real-time</p>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="chat-controls">
+        <button class="control-btn primary" id="startBtn" onclick="toggleAutoQuery()">
+          ▶ Start Auto-Query
+        </button>
+        <button class="control-btn secondary" onclick="clearChat()">
+          Clear Chat
+        </button>
+        <button class="control-btn danger" id="revokeBtn" onclick="revokeCurrentAgent()" disabled>
+          Revoke Access
+        </button>
+        <label class="dev-toggle">
+          <input type="checkbox" id="devToggle" onchange="toggleDevView()">
+          Developer View
+        </label>
+      </div>
+
+      <!-- Developer View -->
+      <div class="dev-view" id="devView">
+        <pre id="devCode">
+<span class="comment">// No queries yet - select an agent to begin</span>
+        </pre>
+      </div>
+    </main>
+
+    <!-- Right Panel - Stats -->
+    <aside class="stats-panel">
+      <!-- Earnings Counter -->
+      <div class="earnings-card">
+        <div class="earnings-label">Session Earnings</div>
+        <div class="earnings-amount" id="earningsAmount">
+          0.00<span class="earnings-currency">CERE</span>
+        </div>
+        <div class="earnings-sub">
+          <strong id="queryCount">0</strong> queries processed
+        </div>
+      </div>
+
+      <!-- Session Stats -->
+      <div class="session-stats">
+        <div class="stat-item">
+          <div class="stat-value" id="healthQueries">0</div>
+          <div class="stat-label">Health Queries</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="shoppingQueries">0</div>
+          <div class="stat-label">Shopping Queries</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="careerQueries">0</div>
+          <div class="stat-label">Career Queries</div>
+        </div>
+      </div>
+
+      <!-- Query Log -->
+      <div class="log-card">
+        <div class="log-header">
+          <div class="log-title">📋 Query Log</div>
+          <div class="log-count" id="logCount">0 entries</div>
+        </div>
+        <div class="log-list" id="logList">
+          <div class="empty-state" style="padding: 30px;">
+            <div class="empty-icon">📝</div>
+            <p>No queries yet</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Access Control -->
+      <div class="access-card">
+        <div class="access-header">🔐 Data Access</div>
+        <div class="access-list">
+          <div class="access-item" data-access="health">
+            <div class="access-info">
+              <span class="access-icon">🏥</span>
+              <div>
+                <div class="access-name">Health Assistant</div>
+                <div class="access-scope">health.*</div>
+              </div>
+            </div>
+            <div class="access-toggle active" onclick="toggleAccess('health')"></div>
+          </div>
+          <div class="access-item" data-access="shopping">
+            <div class="access-info">
+              <span class="access-icon">🛒</span>
+              <div>
+                <div class="access-name">Shopping Agent</div>
+                <div class="access-scope">preferences.*</div>
+              </div>
+            </div>
+            <div class="access-toggle active" onclick="toggleAccess('shopping')"></div>
+          </div>
+          <div class="access-item" data-access="career">
+            <div class="access-info">
+              <span class="access-icon">💼</span>
+              <div>
+                <div class="access-name">Career Coach</div>
+                <div class="access-scope">work.*, skills.*</div>
+              </div>
+            </div>
+            <div class="access-toggle active" onclick="toggleAccess('career')"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════
+    // PROOFI AGENT DEMO - Simulated Data Economy
+    // ═══════════════════════════════════════════════════════════════════
+
+    // State
+    const state = {
+      currentAgent: null,
+      isRunning: false,
+      totalEarnings: 0,
+      queryCount: 0,
+      logs: [],
+      access: {
+        health: true,
+        shopping: true,
+        career: true
+      },
+      agentQueries: {
+        health: 0,
+        shopping: 0,
+        career: 0
+      },
+      autoQueryInterval: null
+    };
+
+    // Simulated user data
+    const userData = {
+      userId: '0x7a3F...9c2E',
+      health: {
+        allergies: { value: 'peanuts, shellfish', price: 0.10 },
+        medications: { value: 'vitamin D, omega-3', price: 0.15 },
+        diet: { value: 'vegetarian, low-sodium', price: 0.08 },
+        conditions: { value: 'mild asthma', price: 0.20 },
+        blood_type: { value: 'O positive', price: 0.05 },
+        exercise: { value: 'yoga 3x/week, daily walks', price: 0.07 }
+      },
+      preferences: {
+        food: { value: 'Italian, Japanese, Mexican', price: 0.05 },
+        brands: { value: 'Apple, Nike, Patagonia', price: 0.08 },
+        shopping_habits: { value: 'eco-conscious, quality over quantity', price: 0.12 },
+        sizes: { value: 'M shirt, 32 waist, 10 shoes', price: 0.06 },
+        budget: { value: 'mid-range, splurges on tech', price: 0.10 }
+      },
+      work: {
+        title: { value: 'Senior Software Engineer', price: 0.10 },
+        experience: { value: '8 years in tech', price: 0.08 },
+        company_type: { value: 'startups and scale-ups', price: 0.07 },
+        remote: { value: 'fully remote preferred', price: 0.05 }
+      },
+      skills: {
+        programming: { value: 'TypeScript, Python, Rust, Go', price: 0.12 },
+        soft_skills: { value: 'leadership, mentoring, communication', price: 0.10 },
+        certifications: { value: 'AWS Solutions Architect, K8s', price: 0.15 }
+      }
+    };
+
+    // Agent configurations
+    const agents = {
+      health: {
+        name: 'Health Assistant',
+        icon: '🏥',
+        scopes: ['health.allergies', 'health.medications', 'health.diet', 'health.conditions', 'health.blood_type', 'health.exercise'],
+        responses: [
+          (data) => `Based on your dietary restrictions (${data}), I recommend these meal plans that avoid your allergens.`,
+          (data) => `I see you're taking ${data}. Here are some potential interactions to watch for.`,
+          (data) => `Your ${data} diet is great! Let me suggest some new recipes that fit your preferences.`,
+          (data) => `With your ${data}, I recommend consulting your doctor before starting any new exercise routine.`,
+          (data) => `Your blood type is ${data}. Here are some nutrition tips optimized for your type.`,
+          (data) => `Great that you do ${data}! Here are some complementary activities to enhance your routine.`
+        ]
+      },
+      shopping: {
+        name: 'Shopping Agent',
+        icon: '🛒',
+        scopes: ['preferences.food', 'preferences.brands', 'preferences.shopping_habits', 'preferences.sizes', 'preferences.budget'],
+        responses: [
+          (data) => `I found 5 new ${data} restaurants near you with great reviews!`,
+          (data) => `${data} just dropped new products. Here are some picks matching your style.`,
+          (data) => `Since you prefer ${data}, I've curated a sustainable shopping list for you.`,
+          (data) => `With your sizes (${data}), these items are in stock and on sale!`,
+          (data) => `Based on your ${data} preferences, here are deals that offer great value.`
+        ]
+      },
+      career: {
+        name: 'Career Coach',
+        icon: '💼',
+        scopes: ['work.title', 'work.experience', 'work.company_type', 'work.remote', 'skills.programming', 'skills.soft_skills', 'skills.certifications'],
+        responses: [
+          (data) => `As a ${data}, here are 3 paths to accelerate your career growth.`,
+          (data) => `With ${data}, you're well-positioned for senior leadership roles.`,
+          (data) => `I found ${data} companies actively hiring with great culture fit.`,
+          (data) => `Your ${data} preference matches these high-paying opportunities.`,
+          (data) => `Your ${data} skills are in high demand. Here are salary benchmarks.`,
+          (data) => `Your ${data} make you an ideal candidate for these roles.`,
+          (data) => `With your ${data}, you qualify for advanced positions at top tech companies.`
+        ]
+      }
+    };
+
+    // DOM Elements
+    const chatArea = document.getElementById('chatArea');
+    const earningsEl = document.getElementById('earningsAmount');
+    const queryCountEl = document.getElementById('queryCount');
+    const logList = document.getElementById('logList');
+    const logCount = document.getElementById('logCount');
+    const devView = document.getElementById('devView');
+    const devCode = document.getElementById('devCode');
+    const startBtn = document.getElementById('startBtn');
+    const revokeBtn = document.getElementById('revokeBtn');
+    const chaChing = document.getElementById('chaChing');
+    const floatingCoins = document.getElementById('floatingCoins');
+
+    // Select an agent
+    function selectAgent(agentId) {
+      state.currentAgent = agentId;
+      
+      // Update UI
+      document.querySelectorAll('.agent-card').forEach(card => {
+        card.classList.remove('active');
+        if (card.dataset.agent === agentId) {
+          card.classList.add('active');
+        }
+      });
+
+      revokeBtn.disabled = false;
+
+      // Clear chat and show intro
+      chatArea.innerHTML = '';
+      const agent = agents[agentId];
+      
+      addMessage('system', `${agent.icon} ${agent.name} connected. Ready to query your data.`);
+      
+      setTimeout(() => {
+        if (state.access[agentId]) {
+          addMessage('agent', `Hello! I'm your ${agent.name}. I'll be querying your data to provide personalized assistance. You'll earn CERE for every query I make.`, agentId);
+        } else {
+          addMessage('system', `⚠️ Access revoked for ${agent.name}. Re-enable to start queries.`, 'error');
+        }
+      }, 500);
+    }
+
+    // Add message to chat
+    function addMessage(type, content, agentId = null, isEarning = false) {
+      const div = document.createElement('div');
+      div.className = `chat-message ${type}`;
+
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+      
+      if (type === 'agent' && agentId) {
+        const agent = agents[agentId];
+        div.innerHTML = `
+          <div class="message-header">
+            <span class="message-icon">${agent.icon}</span>
+            <span class="message-name">${agent.name}</span>
+            <span class="message-time">${time}</span>
+          </div>
+          <div class="message-bubble">${content}</div>
+        `;
+      } else if (type === 'system') {
+        div.innerHTML = `
+          <div class="message-bubble ${isEarning ? 'earning' : ''}">${content}</div>
+        `;
+      } else if (type === 'thinking') {
+        div.innerHTML = `
+          <div class="message-header">
+            <span class="message-icon">${agents[agentId].icon}</span>
+            <span class="message-name">${agents[agentId].name}</span>
+          </div>
+          <div class="message-bubble">
+            <div class="thinking-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        `;
+      }
+
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      
+      return div;
+    }
+
+    // Simulate a query
+    async function simulateQuery(agentId) {
+      if (!state.access[agentId]) {
+        addMessage('system', `🚫 Query blocked — access revoked for ${agents[agentId].name}`, 'error');
+        addLogEntry(agentId, 'REVOKED', 0, true);
+        return;
+      }
+
+      const agent = agents[agentId];
+      const scopeIndex = Math.floor(Math.random() * agent.scopes.length);
+      const scope = agent.scopes[scopeIndex];
+      const [category, field] = scope.split('.');
+      const dataEntry = userData[category][field];
+
+      // Show thinking
+      const thinkingEl = addMessage('thinking', '', agentId);
+      
+      // Update developer view
+      updateDevView(scope, dataEntry.price);
+
+      // Update agent status
+      updateAgentStatus(agentId, 'querying');
+
+      await sleep(800);
+      
+      // Remove thinking
+      thinkingEl.remove();
+      
+      // Show query message
+      addMessage('system', `🔍 Querying ${scope.replace('.', ' → ')}...`);
+      
+      await sleep(600);
+      
+      // Show payment
+      addMessage('system', `💰 Paying ${dataEntry.price.toFixed(2)} CERE to user...`, false, true);
+      
+      // Update earnings
+      updateEarnings(dataEntry.price);
+      showChaChing(dataEntry.price);
+      spawnCoins(3);
+      
+      await sleep(800);
+      
+      // Show result and agent response
+      const responseIndex = Math.min(scopeIndex, agent.responses.length - 1);
+      const response = agent.responses[responseIndex](dataEntry.value);
+      addMessage('agent', response, agentId);
+      
+      // Add to log
+      addLogEntry(agentId, scope, dataEntry.price);
+      
+      // Update stats
+      state.agentQueries[agentId]++;
+      document.getElementById(`${agentId}Queries`).textContent = state.agentQueries[agentId];
+      
+      // Reset agent status
+      updateAgentStatus(agentId, 'idle');
+    }
+
+    // Update agent status indicator
+    function updateAgentStatus(agentId, status) {
+      const card = document.querySelector(`.agent-card[data-agent="${agentId}"]`);
+      const statusEl = card.querySelector('.agent-status');
+      
+      statusEl.className = `agent-status ${status}`;
+      statusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    }
+
+    // Update earnings display
+    function updateEarnings(amount) {
+      state.totalEarnings += amount;
+      state.queryCount++;
+      
+      earningsEl.classList.add('pop');
+      setTimeout(() => earningsEl.classList.remove('pop'), 300);
+      
+      earningsEl.innerHTML = `${state.totalEarnings.toFixed(2)}<span class="earnings-currency">CERE</span>`;
+      queryCountEl.textContent = state.queryCount;
+    }
+
+    // Show cha-ching effect
+    function showChaChing(amount) {
+      chaChing.textContent = `+${amount.toFixed(2)} CERE`;
+      chaChing.classList.add('show');
+      setTimeout(() => chaChing.classList.remove('show'), 800);
+    }
+
+    // Spawn floating coins
+    function spawnCoins(count) {
+      for (let i = 0; i < count; i++) {
+        const coin = document.createElement('div');
+        coin.className = 'coin';
+        coin.textContent = '🪙';
+        coin.style.left = `${Math.random() * 100}vw`;
+        coin.style.top = `${Math.random() * 50 + 25}vh`;
+        floatingCoins.appendChild(coin);
+        
+        setTimeout(() => coin.remove(), 1000);
+      }
+    }
+
+    // Add log entry
+    function addLogEntry(agentId, scope, amount, failed = false) {
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+      const agent = agents[agentId];
+      
+      state.logs.unshift({ time, agentId, scope, amount, failed });
+      
+      // Clear empty state if first entry
+      if (state.logs.length === 1) {
+        logList.innerHTML = '';
+      }
+      
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `
+        <span class="log-time">${time}</span>
+        <span class="log-query">
+          <span class="agent">${agent.icon} ${agent.name}</span> → 
+          <span class="scope">${scope}</span>
+        </span>
+        <span class="log-amount ${failed ? 'failed' : ''}">${failed ? 'BLOCKED' : `+${amount.toFixed(2)}`}</span>
+      `;
+      
+      logList.insertBefore(entry, logList.firstChild);
+      logCount.textContent = `${state.logs.length} entries`;
+    }
+
+    // Update developer view
+    function updateDevView(scope, price) {
+      devCode.innerHTML = `
+<span class="comment">// Proofi SDK Query</span>
+<span class="keyword">const</span> response = <span class="keyword">await</span> proofi.query({
+  user: <span class="string">"${userData.userId}"</span>,
+  scope: <span class="string">"${scope}"</span>,
+  payment: <span class="number">${price.toFixed(2)}</span>
+});
+
+<span class="comment">// Response</span>
+{
+  success: <span class="keyword">true</span>,
+  data: <span class="string">"[encrypted payload]"</span>,
+  txHash: <span class="string">"0x8f2a...3b7c"</span>,
+  timestamp: <span class="number">${Date.now()}</span>
+}
+      `;
+    }
+
+    // Toggle developer view
+    function toggleDevView() {
+      devView.classList.toggle('visible', document.getElementById('devToggle').checked);
+    }
+
+    // Toggle access for an agent
+    function toggleAccess(agentId) {
+      state.access[agentId] = !state.access[agentId];
+      
+      const item = document.querySelector(`.access-item[data-access="${agentId}"]`);
+      const toggle = item.querySelector('.access-toggle');
+      const card = document.querySelector(`.agent-card[data-agent="${agentId}"]`);
+      
+      toggle.classList.toggle('active', state.access[agentId]);
+      item.classList.toggle('revoked', !state.access[agentId]);
+      card.classList.toggle('revoked', !state.access[agentId]);
+      
+      if (!state.access[agentId]) {
+        updateAgentStatus(agentId, 'revoked');
+        if (state.currentAgent === agentId) {
+          addMessage('system', `🔒 Access revoked for ${agents[agentId].name}. Queries will be blocked.`, 'error');
+        }
+      } else {
+        updateAgentStatus(agentId, 'idle');
+        if (state.currentAgent === agentId) {
+          addMessage('system', `✅ Access restored for ${agents[agentId].name}. Queries can resume.`);
+        }
+      }
+    }
+
+    // Revoke current agent
+    function revokeCurrentAgent() {
+      if (state.currentAgent && state.access[state.currentAgent]) {
+        toggleAccess(state.currentAgent);
+      }
+    }
+
+    // Toggle auto-query mode
+    function toggleAutoQuery() {
+      state.isRunning = !state.isRunning;
+      
+      if (state.isRunning) {
+        startBtn.innerHTML = '⏸ Pause Auto-Query';
+        startBtn.classList.remove('primary');
+        startBtn.classList.add('secondary');
+        
+        // Start auto-querying
+        runAutoQuery();
+      } else {
+        startBtn.innerHTML = '▶ Start Auto-Query';
+        startBtn.classList.add('primary');
+        startBtn.classList.remove('secondary');
+        
+        if (state.autoQueryInterval) {
+          clearTimeout(state.autoQueryInterval);
+        }
+      }
+    }
+
+    // Run auto-query loop
+    function runAutoQuery() {
+      if (!state.isRunning) return;
+      
+      // Pick a random agent
+      const agentIds = Object.keys(agents);
+      const randomAgent = agentIds[Math.floor(Math.random() * agentIds.length)];
+      
+      // Select and query
+      selectAgent(randomAgent);
+      
+      setTimeout(async () => {
+        await simulateQuery(randomAgent);
+        
+        // Schedule next query (5-10 seconds)
+        const delay = 5000 + Math.random() * 5000;
+        state.autoQueryInterval = setTimeout(runAutoQuery, delay);
+      }, 1000);
+    }
+
+    // Clear chat
+    function clearChat() {
+      chatArea.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🤖</div>
+          <p>Select an agent above to start the demo</p>
+          <p style="font-size: 0.8rem; margin-top: 8px;">Watch agents query your data and pay you in real-time</p>
+        </div>
+      `;
+      state.currentAgent = null;
+      document.querySelectorAll('.agent-card').forEach(card => card.classList.remove('active'));
+      revokeBtn.disabled = true;
+    }
+
+    // Utility
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Initialize
+    console.log('🔐 Proofi Agent Demo initialized');
+    console.log('💡 Tip: Click an agent to start, or use "Start Auto-Query" for the full experience!');
+  </script>
+</body>
+</html>
