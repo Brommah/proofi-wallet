@@ -1255,7 +1255,54 @@
       to { transform: rotate(360deg); }
     }
 
-    /* ═══ RESPONSIVE ═══ */
+    /* ═══ RESPONSIVE - 414px ═══ */
+    @media (max-width: 414px) {
+      .main {
+        padding: 16px 12px 120px;
+      }
+
+      .hero {
+        padding: 32px 0 24px;
+      }
+
+      .hero-title {
+        font-size: 32px;
+      }
+
+      .hero-subtitle {
+        font-size: 15px;
+      }
+
+      .stat-card {
+        padding: 14px 10px;
+      }
+
+      .stat-value {
+        font-size: 18px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .step-item {
+        padding: 14px;
+      }
+
+      .step-name {
+        font-size: 12px;
+      }
+
+      .step-reward {
+        font-size: 12px;
+      }
+
+      .earnings-total {
+        font-size: 40px;
+      }
+    }
+
+    /* ═══ RESPONSIVE - 380px ═══ */
     @media (max-width: 380px) {
       .stats-row {
         grid-template-columns: repeat(2, 1fr);
@@ -1272,6 +1319,144 @@
       .achievements-grid {
         grid-template-columns: repeat(2, 1fr);
       }
+    }
+
+    /* ═══ RESPONSIVE - 375px ═══ */
+    @media (max-width: 375px) {
+      .header {
+        padding: 14px 16px;
+      }
+
+      .header-title {
+        font-size: 16px;
+      }
+
+      .header-balance {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .hero-title {
+        font-size: 28px;
+      }
+
+      .stat-value {
+        font-size: 16px;
+      }
+
+      .stat-label {
+        font-size: 9px;
+      }
+
+      .step-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+
+      .query-item {
+        padding: 12px;
+      }
+
+      .query-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      .earnings-chart {
+        padding: 16px;
+      }
+
+      .chart-bars {
+        height: 80px;
+      }
+    }
+
+    /* ═══ RESPONSIVE - 320px ═══ */
+    @media (max-width: 320px) {
+      .hero-title {
+        font-size: 24px;
+      }
+
+      .hero-subtitle {
+        font-size: 14px;
+      }
+
+      .stat-card {
+        padding: 12px 8px;
+      }
+
+      .stat-value {
+        font-size: 14px;
+      }
+
+      .step-item {
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .step-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        font-size: 12px;
+      }
+
+      .earnings-total {
+        font-size: 32px;
+      }
+
+      .streak-days {
+        font-size: 20px;
+      }
+    }
+
+    /* ═══ TOUCH TARGETS ═══ */
+    @media (hover: none) and (pointer: coarse) {
+      .step-item,
+      .btn,
+      .nav-item,
+      .quiz-option,
+      .permission-toggle,
+      .vault-action {
+        min-height: 44px;
+      }
+
+      .form-input,
+      .form-textarea,
+      .form-select {
+        min-height: 48px;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+
+      .query-item {
+        min-height: 48px;
+      }
+    }
+
+    /* ═══ SAFE AREA ═══ */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      .main {
+        padding-bottom: calc(100px + env(safe-area-inset-bottom));
+      }
+    }
+
+    /* ═══ PREVENT OVERFLOW ═══ */
+    html, body {
+      overflow-x: hidden;
+    }
+
+    .chart-bars {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
   </style>
 </head>
