@@ -1,0 +1,39 @@
+{
+  "name": "proofi-wallet",
+  "version": "1.0.0",
+  "description": "Proofi - Privacy-preserving identity wallet with zero-knowledge proofs",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --ext .js,.mjs",
+    "lint:fix": "eslint . --ext .js,.mjs --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:unit": "echo 'No unit tests configured yet' && exit 0",
+    "test:e2e": "playwright test",
+    "test": "npm run test:unit && npm run test:e2e",
+    "build": "echo 'Static site - no build required' && exit 0",
+    "build:extension": "cd extension && zip -r ../proofi-extension.zip . -x '*.git*' -x '*.DS_Store'",
+    "serve": "npx serve proofi -l 3000",
+    "prepare": "echo 'Ready to develop!'"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.41.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "proofi",
+    "wallet",
+    "identity",
+    "zero-knowledge",
+    "privacy",
+    "zkp",
+    "web3"
+  ],
+  "author": "Proofi Team",
+  "license": "MIT"
+}

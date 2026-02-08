@@ -1,79 +1,128 @@
-# Mart's Clawd Workspace 🤖
+# 🔐 Proofi Wallet
 
-Personal AI assistant workspace powered by Clawdbot + Claude.
+**Your Data. Your Keys. Your Proof.**
 
-## Structure
+Proofi is a decentralized identity wallet that puts you in control of your digital identity and personal data. Built for the Web3 era, Proofi enables secure, privacy-preserving credential management and data monetization.
 
-```
-~/clawd/
-├── AGENTS.md          # How Claudemart operates
-├── SOUL.md            # Personality and guidelines
-├── USER.md            # About Mart
-├── MEMORY.md          # Long-term memory
-├── CLAUDE.md          # Claude Code sync file
-├── TOOLS.md           # Local tool notes
-├── IDENTITY.md        # Who is Claudemart
-├── HEARTBEAT.md       # Periodic check config
-│
-├── agents/            # Automation agents
-│   └── realestate/    # Zwolle rental search agent
-│
-├── automations/       # Cron job scripts
-│
-├── docs/              # Documentation & PRDs
-│   └── *.md           # Various docs
-│
-├── memory/            # Daily logs
-│   └── YYYY-MM-DD.md  # Daily memory files
-│
-├── research/          # Research output from sub-agents
-│
-├── media/             # Audio/video files
-│
-├── skills/            # Custom Clawdbot skills
-│   └── aesthetic-image-gen/
-│
-└── cere-hr-service/   # HR Funnel Monitor (deployed to Railway)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+## ✨ Features
+
+- **🔑 Self-Sovereign Identity** - Own and control your credentials without intermediaries
+- **🛡️ Zero-Knowledge Proofs** - Verify attributes without revealing underlying data
+- **💰 Data Monetization** - Earn from your data on your terms
+- **🔌 Universal SDK** - Easy integration for any web application
+- **🌐 Cross-Platform** - PWA + Browser Extension for maximum accessibility
+- **🔒 End-to-End Encryption** - Your keys never leave your device
+
+## 🚀 Quick Start
+
+### Run the Wallet PWA
+
+```bash
+# Clone the repository
+git clone https://github.com/Brommah/proofi-wallet.git
+cd proofi-wallet
+
+# Install dependencies (optional, for dev tools)
+npm install
+
+# Start local server
+npm run dev
+
+# Open http://localhost:3000
 ```
 
-## Active Automations (Cron Jobs)
+### Install Browser Extension
 
-| Name | Schedule | Description |
-|------|----------|-------------|
-| morning-briefing | 7:30 Mon-Fri | Weather, calendar, email, HR status |
-| zwolle-rentals | 9:00 & 18:00 | Huurwoning search in Zwolle |
-| news-monitor | 12:00 & 20:00 | AI/Tech/Crypto/Gaming/NL news |
-| week-ahead-briefing | 20:00 Sunday | Week overview + calendar + prep |
-| weekly-review | 19:00 Sunday | Week reflection |
-| daily-security-audit | 9:00 daily | Security checks |
-| linkedin-stalker-max | Hourly 8-22 | Profile view (stealth) |
-| heinrich-hidde-voicememo | 9:00 Mon-Fri | Daily voice memo to Hidde |
+1. Navigate to `chrome://extensions` (Chrome) or `about:addons` (Firefox)
+2. Enable "Developer mode"
+3. Click "Load unpacked" and select the `extension/` folder
+4. Pin the Proofi extension for easy access
 
-## Key Integrations
+## 📱 Apps & Demos
 
-- **Telegram** - Primary chat interface
-- **WhatsApp** - Secondary + voice memos
-- **Google Workspace** - Calendar, Gmail, Drive
-- **Notion** - Databases & docs (Cere)
-- **Slack** - Cere team communication
-- **Railway** - HR service hosting
+| App | Description |
+|-----|-------------|
+| [Wallet](https://proofi.vercel.app/) | Main identity wallet PWA |
+| [Earn](https://proofi.vercel.app/earn.html) | Data monetization dashboard |
+| [Landing](https://proofi.vercel.app/landing.html) | Product landing page |
+| [Ecosystem](https://proofi.vercel.app/ecosystem.html) | Partner ecosystem |
+| [Verify](https://proofi.vercel.app/verify.html) | Credential verification |
+| [Portal](https://proofi.vercel.app/portal.html) | Developer portal |
 
-## Commands
+### Demo Apps
 
-Ask Claudemart naturally. Some examples:
-- "Check for new Zwolle rentals"
-- "What's on my calendar this week?"
-- "Send a message to [person] on WhatsApp"
-- "Research [topic]"
-- "Summarize my emails"
+- **TokenGate** - Token-gated content access
+- **ChainChat** - Verified messaging
+- **ChainPoll** - Anonymous verified voting
+- **TrustRate** - Reputation system
+- **ProofStamp** - Document timestamping
+- **SkillBadge** - Verifiable credentials
+- **NFTicket** - Event ticketing
 
-## Memory System
+## 🏗️ Project Structure
 
-- **Daily logs**: `memory/YYYY-MM-DD.md` - Raw notes per day
-- **Long-term**: `MEMORY.md` - Curated important context
-- **Heartbeat state**: `memory/heartbeat-state.json` - Check timestamps
+```
+proofi-wallet/
+├── proofi/              # Main PWA application
+│   ├── index.html       # Wallet interface
+│   ├── app/             # App manifest & icons
+│   └── *.html           # Feature pages
+├── extension/           # Browser extension
+│   ├── manifest.json    # Extension config
+│   ├── popup.html       # Extension UI
+│   └── content.js       # Page integration
+├── packages/            # Shared libraries
+│   ├── core/            # Core wallet logic
+│   ├── sdk/             # Developer SDK
+│   ├── api/             # API client
+│   └── ui/              # UI components
+└── docs/                # Documentation
+```
 
-## Ownership
+## 🔧 Development
 
-Maintained by Claudemart (AI) for Mart (human).
-Last updated: 2026-01-26
+```bash
+# Run tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# E2E tests
+npm run test:e2e
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+
+# Build extension zip
+npm run build:extension
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 🔒 Security
+
+Found a vulnerability? Please report it responsibly. See [SECURITY.md](SECURITY.md) for details.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  <strong>Built with ❤️ for the decentralized future</strong>
+</p>
