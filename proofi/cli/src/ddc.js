@@ -23,8 +23,8 @@ const DDC_CONFIG = {
   }
 };
 
-// Default to testnet
-const NETWORK = process.env.DDC_NETWORK || 'testnet';
+// Default to MAINNET (production)
+const NETWORK = process.env.DDC_NETWORK || 'mainnet';
 const CONFIG = DDC_CONFIG[NETWORK];
 
 // Cache directory for offline fallback
