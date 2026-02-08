@@ -1,0 +1,42 @@
+{
+  "name": "@proofi/openclaw",
+  "version": "0.1.0",
+  "description": "Proofi ↔ OpenClaw integration SDK — agent authentication and TEE-encrypted memory",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@polkadot/keyring": "^12.0.0",
+    "@polkadot/util": "^12.0.0",
+    "@polkadot/util-crypto": "^12.0.0",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0"
+  },
+  "keywords": [
+    "proofi",
+    "openclaw",
+    "near",
+    "tee",
+    "agent",
+    "identity",
+    "sr25519"
+  ],
+  "author": "Proofi",
+  "license": "MIT"
+}
