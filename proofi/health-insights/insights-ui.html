@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofi — Your Health Insights</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAF9F7;
+      --card: #FFFFFF;
+      --text: #1D1D1F;
+      --text-secondary: #6E6E73;
+      --text-muted: #98989D;
+      --border: #E8E8ED;
+      --accent: #7C3AED;
+      --accent-light: #EDE9FE;
+      --success: #22C55E;
+      --success-light: #DCFCE7;
+      --warning: #F59E0B;
+      --warning-light: #FEF3C7;
+      --info: #3B82F6;
+      --info-light: #DBEAFE;
+      --ring-purple: #8B5CF6;
+      --ring-pink: #EC4899;
+      --ring-blue: #3B82F6;
+      --ring-green: #10B981;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+
+    .header-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .header h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Score Section */
+    .score-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .score-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .score-card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .score-ring {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      margin-bottom: 24px;
+    }
+
+    .score-ring svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .score-ring-bg {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 12;
+    }
+
+    .score-ring-progress {
+      fill: none;
+      stroke: url(#scoreGradient);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 628;
+      stroke-dashoffset: 75;
+      animation: scoreProgress 1.5s ease-out forwards;
+    }
+
+    @keyframes scoreProgress {
+      from { stroke-dashoffset: 628; }
+      to { stroke-dashoffset: 75; }
+    }
+
+    .score-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .score-number {
+      font-size: 4.5rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .score-label {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .score-period {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .score-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--success);
+    }
+
+    .score-change.down {
+      color: var(--warning);
+    }
+
+    /* Summary Card */
+    .summary-card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .summary-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .summary-text {
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .summary-text strong {
+      font-weight: 600;
+    }
+
+    .summary-generated {
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .summary-generated::before {
+      content: "🔒";
+    }
+
+    /* Metric Cards Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 900px) {
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .metric-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .metric-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+
+    .metric-icon.activity { background: #FEF3C7; }
+    .metric-icon.sleep { background: #EDE9FE; }
+    .metric-icon.heart { background: #FCE7F3; }
+    .metric-icon.body { background: #D1FAE5; }
+
+    .metric-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .metric-trend {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .metric-trend.up { color: var(--success); }
+    .metric-trend.stable { color: var(--text-muted); }
+    .metric-trend.down { color: var(--warning); }
+
+    /* Trends Section */
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .trends-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .trends-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .trend-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: flex;
+      gap: 20px;
+    }
+
+    .trend-indicator {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .trend-indicator.improving {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .trend-indicator.stable {
+      background: var(--info-light);
+      color: var(--info);
+    }
+
+    .trend-indicator.declining {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+
+    .trend-content {
+      flex: 1;
+    }
+
+    .trend-category {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .trend-description {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .trend-period {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* Recommendations */
+    .recommendations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+
+    .recommendation-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .recommendation-priority {
+      width: 4px;
+      height: 100%;
+      min-height: 60px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .recommendation-priority.high { background: var(--warning); }
+    .recommendation-priority.medium { background: var(--info); }
+    .recommendation-priority.low { background: var(--text-muted); }
+
+    .recommendation-content {
+      flex: 1;
+    }
+
+    .recommendation-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .recommendation-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .recommendation-badge {
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .recommendation-badge.high {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+
+    .recommendation-badge.medium {
+      background: var(--info-light);
+      color: var(--info);
+    }
+
+    .recommendation-badge.low {
+      background: #F3F4F6;
+      color: var(--text-muted);
+    }
+
+    .recommendation-description {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Privacy Footer */
+    .privacy-footer {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .privacy-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .privacy-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem;
+    }
+
+    /* How it works section */
+    .how-section {
+      margin-top: 80px;
+      padding-top: 60px;
+      border-top: 1px solid var(--border);
+    }
+
+    .how-section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .how-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .how-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .how-step {
+      text-align: center;
+    }
+
+    .how-step-number {
+      width: 48px;
+      height: 48px;
+      background: var(--text);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0 auto 16px;
+    }
+
+    .how-step h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .how-step p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    /* Architecture diagram */
+    .architecture {
+      margin-top: 60px;
+      background: var(--card);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .architecture h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .arch-node {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 28px;
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .arch-node.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .arch-node-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .arch-node-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .arch-node-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .arch-arrow {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-badge">Analyzed just now</div>
+      <h1>Your Health,<br>Simplified</h1>
+      <p>All your metrics in one clear view. Private, local, and yours alone.</p>
+    </header>
+
+    <!-- Score + Summary -->
+    <section class="score-section">
+      <div class="score-card">
+        <div class="score-ring">
+          <svg viewBox="0 0 220 220">
+            <defs>
+              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#8B5CF6"/>
+                <stop offset="50%" style="stop-color:#EC4899"/>
+                <stop offset="100%" style="stop-color:#F59E0B"/>
+              </linearGradient>
+            </defs>
+            <circle class="score-ring-bg" cx="110" cy="110" r="100"/>
+            <circle class="score-ring-progress" cx="110" cy="110" r="100"/>
+          </svg>
+          <div class="score-value">
+            <div class="score-number">87</div>
+            <div class="score-label">of 100</div>
+          </div>
+        </div>
+        <div class="score-period">Jan 29 – Feb 5, 2026</div>
+        <div class="score-change">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17l5-5 5 5M7 7l5 5 5-5"/>
+          </svg>
+          +4 pts from last week
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-title">AI Summary</div>
+        <p class="summary-text">
+          <strong>Your sleep quality improved significantly</strong> — you're averaging 7.8 hours with 18% more deep sleep. Activity is trending up with a 3-day step streak. <strong>Consider adding two more workouts</strong> this week to maintain momentum.
+        </p>
+        <div class="summary-generated">
+          Analyzed locally with Ollama • Your data never left your device
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Metrics -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon activity">🚶</div>
+        <div class="metric-label">Activity</div>
+        <div class="metric-value">9,247</div>
+        <div class="metric-trend up">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+          +8% steps/day
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon sleep">😴</div>
+        <div class="metric-label">Sleep</div>
+        <div class="metric-value">7.8h</div>
+        <div class="metric-trend up">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+          +12% quality
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon heart">❤️</div>
+        <div class="metric-label">Heart Rate</div>
+        <div class="metric-value">62</div>
+        <div class="metric-trend stable">
+          → Stable BPM
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon body">🏋️</div>
+        <div class="metric-label">Workouts</div>
+        <div class="metric-value">2</div>
+        <div class="metric-trend down">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+          -2 this week
+        </div>
+      </div>
+    </section>
+
+    <!-- Trends -->
+    <h2 class="section-title">Trends</h2>
+    <section class="trends-grid">
+      <div class="trend-card">
+        <div class="trend-indicator improving">↑</div>
+        <div class="trend-content">
+          <div class="trend-category">Sleep</div>
+          <div class="trend-description">Deep sleep up 18%, REM cycles consistent</div>
+          <div class="trend-period">Past 2 weeks</div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <div class="trend-indicator improving">↑</div>
+        <div class="trend-content">
+          <div class="trend-category">Steps</div>
+          <div class="trend-description">3-day streak over 10k steps achieved</div>
+          <div class="trend-period">Past 7 days</div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <div class="trend-indicator stable">→</div>
+        <div class="trend-content">
+          <div class="trend-category">Heart Rate</div>
+          <div class="trend-description">Resting HR stable at 62 BPM (healthy range)</div>
+          <div class="trend-period">Past 4 weeks</div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <div class="trend-indicator declining">↓</div>
+        <div class="trend-content">
+          <div class="trend-category">Workouts</div>
+          <div class="trend-description">Exercise frequency down from 4 to 2 sessions</div>
+          <div class="trend-period">This week vs last</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recommendations -->
+    <h2 class="section-title">Recommendations</h2>
+    <section class="recommendations-list">
+      <div class="recommendation-card">
+        <div class="recommendation-priority high"></div>
+        <div class="recommendation-content">
+          <div class="recommendation-header">
+            <div class="recommendation-title">Add 2 workouts this week</div>
+            <div class="recommendation-badge high">High Priority</div>
+          </div>
+          <p class="recommendation-description">
+            Your workout frequency dropped. Try scheduling Tuesday and Thursday — even 30 minutes of activity can maintain your momentum and keep your sleep quality high.
+          </p>
+        </div>
+      </div>
+
+      <div class="recommendation-card">
+        <div class="recommendation-priority medium"></div>
+        <div class="recommendation-content">
+          <div class="recommendation-header">
+            <div class="recommendation-title">Maintain your sleep schedule</div>
+            <div class="recommendation-badge medium">Medium</div>
+          </div>
+          <p class="recommendation-description">
+            Your current bedtime (around 11pm) is working well — stick with it. Consistency is key for maintaining your improved deep sleep ratio.
+          </p>
+        </div>
+      </div>
+
+      <div class="recommendation-card">
+        <div class="recommendation-priority low"></div>
+        <div class="recommendation-content">
+          <div class="recommendation-header">
+            <div class="recommendation-title">Consider post-workout stretching</div>
+            <div class="recommendation-badge low">Low</div>
+          </div>
+          <p class="recommendation-description">
+            A 5-minute stretching routine after exercise can improve recovery and reduce next-day soreness, helping you stay consistent.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy Footer -->
+    <section class="privacy-footer">
+      <div class="privacy-item">
+        <div class="privacy-icon">🔐</div>
+        <span>Encrypted at rest</span>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">💻</div>
+        <span>Analyzed locally</span>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">⏱️</div>
+        <span>Time-limited access</span>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">📋</div>
+        <span>Fully auditable</span>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-section">
+      <h2>How Proofi Agents Work</h2>
+      
+      <div class="how-grid">
+        <div class="how-step">
+          <div class="how-step-number">1</div>
+          <h3>Import & Encrypt</h3>
+          <p>Your health data is encrypted with YOUR key. Only you can unlock it.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-step-number">2</div>
+          <h3>Grant Access</h3>
+          <p>Give agents time-limited, scoped permission via capability tokens.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-step-number">3</div>
+          <h3>Local Analysis</h3>
+          <p>Agents decrypt and analyze in-memory. Data never leaves your device.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-step-number">4</div>
+          <h3>Get Insights</h3>
+          <p>Beautiful, actionable insights — with every access logged to an audit chain.</p>
+        </div>
+      </div>
+
+      <div class="architecture">
+        <h3>proofi-agents + proofi-wallet Integration</h3>
+        <div class="arch-flow">
+          <div class="arch-node">
+            <div class="arch-node-icon">📱</div>
+            <div class="arch-node-label">Your Device</div>
+            <div class="arch-node-sub">Health data source</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node">
+            <div class="arch-node-icon">🔐</div>
+            <div class="arch-node-label">Proofi Wallet</div>
+            <div class="arch-node-sub">Encrypt + store</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node active">
+            <div class="arch-node-icon">🤖</div>
+            <div class="arch-node-label">Health Agent</div>
+            <div class="arch-node-sub">proofi-agents</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node">
+            <div class="arch-node-icon">✨</div>
+            <div class="arch-node-label">Insights UI</div>
+            <div class="arch-node-sub">This view</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

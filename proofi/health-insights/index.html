@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proofi Health Insights</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            
+            --gradient-health: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --gradient-sleep: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-steps: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --gradient-heart: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            --gradient-water: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-workout: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-mindful: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            
+            --shadow-glow: 0 0 60px rgba(102, 126, 234, 0.3);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+            
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-orb-1 {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: -200px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-orb-2 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: -150px;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        .bg-orb-3 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(-30px, -20px) scale(1.02); }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 48px;
+            animation: fadeSlideUp 0.8s ease-out;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-health);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient-health);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .date-badge {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .greeting {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .greeting-highlight {
+            background: var(--gradient-health);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subgreeting {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        /* Health Score Hero */
+        .hero-score {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 48px;
+            margin-bottom: 32px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlideUp 0.8s ease-out 0.1s backwards;
+        }
+
+        .hero-score::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+
+        .score-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .score-ring {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .score-ring svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 12;
+        }
+
+        .score-ring-progress {
+            fill: none;
+            stroke: url(#scoreGradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 753;
+            stroke-dashoffset: 753;
+            animation: scoreRingFill 2s ease-out 0.5s forwards;
+        }
+
+        @keyframes scoreRingFill {
+            to { stroke-dashoffset: 98; }
+        }
+
+        .score-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 72px;
+            font-weight: 800;
+            background: var(--gradient-health);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        .score-info {
+            padding-right: 24px;
+        }
+
+        .score-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .score-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .score-breakdown {
+            display: flex;
+            gap: 24px;
+        }
+
+        .breakdown-item {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .breakdown-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .breakdown-value.up {
+            color: #10b981;
+        }
+
+        .breakdown-value.down {
+            color: #ef4444;
+        }
+
+        /* AI Insights Section */
+        .insights-section {
+            margin-bottom: 32px;
+            animation: fadeSlideUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-health);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .insight-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .insight-card.sleep::before { background: var(--gradient-sleep); }
+        .insight-card.steps::before { background: var(--gradient-steps); }
+        .insight-card.heart::before { background: var(--gradient-heart); }
+        .insight-card.workout::before { background: var(--gradient-workout); }
+        .insight-card.mindful::before { background: var(--gradient-mindful); }
+
+        .insight-card:hover {
+            transform: translateY(-4px);
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .insight-card:hover::before {
+            opacity: 1;
+        }
+
+        .insight-emoji {
+            font-size: 32px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .insight-headline {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .insight-detail {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .insight-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #10b981;
+        }
+
+        .insight-trend.down {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .insight-trend.neutral {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        /* Metrics Grid */
+        .metrics-section {
+            margin-bottom: 32px;
+            animation: fadeSlideUp 0.8s ease-out 0.3s backwards;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            background: var(--bg-card-hover);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .metric-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .metric-icon.sleep { background: linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(0, 242, 254, 0.2)); }
+        .metric-icon.steps { background: linear-gradient(135deg, rgba(250, 112, 154, 0.2), rgba(254, 225, 64, 0.2)); }
+        .metric-icon.heart { background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(238, 90, 36, 0.2)); }
+        .metric-icon.water { background: linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(0, 242, 254, 0.2)); }
+
+        .metric-spark {
+            width: 60px;
+            height: 30px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .metric-unit {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .metric-progress {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .metric-progress-bar {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 1.5s ease-out;
+        }
+
+        .metric-progress-bar.sleep { background: var(--gradient-sleep); }
+        .metric-progress-bar.steps { background: var(--gradient-steps); }
+        .metric-progress-bar.heart { background: var(--gradient-heart); }
+        .metric-progress-bar.water { background: var(--gradient-water); }
+
+        /* Activity Rings */
+        .rings-section {
+            margin-bottom: 32px;
+            animation: fadeSlideUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .rings-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .rings-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .rings-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+        }
+
+        .ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+        }
+
+        .ring-progress {
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 2s ease-out;
+        }
+
+        .ring-1 .ring-progress { stroke: url(#ringGradient1); }
+        .ring-2 .ring-progress { stroke: url(#ringGradient2); }
+        .ring-3 .ring-progress { stroke: url(#ringGradient3); }
+
+        .rings-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-md);
+            transition: background 0.3s ease;
+        }
+
+        .legend-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.move { background: var(--gradient-steps); }
+        .legend-dot.exercise { background: var(--gradient-workout); }
+        .legend-dot.stand { background: var(--gradient-sleep); }
+
+        .legend-info {
+            flex: 1;
+        }
+
+        .legend-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .legend-value {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .legend-progress {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Weekly Chart */
+        .chart-section {
+            margin-bottom: 32px;
+            animation: fadeSlideUp 0.8s ease-out 0.5s backwards;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-tab {
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chart-tab.active {
+            background: var(--gradient-health);
+            color: white;
+        }
+
+        .chart-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chart-container {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 0 8px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bar-wrapper {
+            width: 100%;
+            height: 160px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 48px;
+            border-radius: 8px 8px 4px 4px;
+            background: var(--gradient-health);
+            transition: height 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
+        }
+
+        .bar-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .bar-value {
+            font-size: 12px;
+            color: var(--text-muted);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        /* Trends */
+        .trends-section {
+            animation: fadeSlideUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .trends-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .trend-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .trend-chart {
+            width: 120px;
+            height: 60px;
+            position: relative;
+        }
+
+        .trend-line {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .trend-area {
+            opacity: 0.2;
+        }
+
+        .trend-info {
+            flex: 1;
+        }
+
+        .trend-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .trend-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .trend-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .trend-change.up { color: #10b981; }
+        .trend-change.down { color: #ef4444; }
+
+        /* Animations */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .animate-number {
+            animation: countUp 1.5s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero-score {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .score-info {
+                padding-right: 0;
+            }
+            
+            .insights-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .header-top {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .greeting {
+                font-size: 28px;
+            }
+            
+            .hero-score {
+                padding: 32px 24px;
+            }
+            
+            .score-ring {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .score-number {
+                font-size: 48px;
+            }
+            
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .rings-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .trends-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glassmorphism Shine Effect */
+        .glass-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 40%,
+                rgba(255, 255, 255, 0.03) 50%,
+                transparent 60%
+            );
+            animation: shine 8s ease-in-out infinite;
+        }
+
+        @keyframes shine {
+            0%, 100% { transform: translateX(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) rotate(45deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+    </div>
+
+    <!-- SVG Gradients -->
+    <svg width="0" height="0" style="position: absolute;">
+        <defs>
+            <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#667eea" />
+                <stop offset="50%" stop-color="#764ba2" />
+                <stop offset="100%" stop-color="#f093fb" />
+            </linearGradient>
+            <linearGradient id="ringGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fa709a" />
+                <stop offset="100%" stop-color="#fee140" />
+            </linearGradient>
+            <linearGradient id="ringGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f093fb" />
+                <stop offset="100%" stop-color="#f5576c" />
+            </linearGradient>
+            <linearGradient id="ringGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#4facfe" />
+                <stop offset="100%" stop-color="#00f2fe" />
+            </linearGradient>
+            <linearGradient id="trendGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#10b981" />
+                <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="trendGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#f093fb" />
+                <stop offset="100%" stop-color="#f093fb" stop-opacity="0" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">🧬</div>
+                    <span class="logo-text">Proofi</span>
+                </div>
+                <div class="date-badge">
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+            <h1 class="greeting">Good morning, <span class="greeting-highlight">Alex</span></h1>
+            <p class="subgreeting">Here's your health overview for today</p>
+        </header>
+
+        <!-- Health Score Hero -->
+        <section class="hero-score glass-shine">
+            <div class="score-visual">
+                <div class="score-ring">
+                    <svg viewBox="0 0 260 260">
+                        <circle class="score-ring-bg" cx="130" cy="130" r="120" />
+                        <circle class="score-ring-progress" cx="130" cy="130" r="120" />
+                    </svg>
+                    <div class="score-center">
+                        <div class="score-number" data-target="87">0</div>
+                        <div class="score-label">Health Score</div>
+                    </div>
+                </div>
+            </div>
+            <div class="score-info">
+                <h2 class="score-title">You're doing great! 🎉</h2>
+                <p class="score-description">
+                    Your health score is in the top 15% of users your age. Your consistent sleep schedule and increased activity this week are really paying off.
+                </p>
+                <div class="score-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">vs Last Week</div>
+                        <div class="breakdown-value up">+5 pts</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">30-Day Avg</div>
+                        <div class="breakdown-value">84</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Best Score</div>
+                        <div class="breakdown-value">91</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Insights -->
+        <section class="insights-section">
+            <div class="section-header">
+                <div class="section-icon">✨</div>
+                <h2 class="section-title">AI Insights</h2>
+            </div>
+            <div class="insights-grid">
+                <div class="insight-card sleep">
+                    <span class="insight-emoji">😴</span>
+                    <h3 class="insight-headline">Your sleep improved 12% this week</h3>
+                    <p class="insight-detail">You've been hitting your 11pm bedtime more consistently. Your deep sleep increased by 23 minutes on average.</p>
+                    <div class="insight-trend">
+                        <span>↑</span>
+                        <span>+48 min avg</span>
+                    </div>
+                </div>
+                <div class="insight-card steps">
+                    <span class="insight-emoji">🏃</span>
+                    <h3 class="insight-headline">3-day step streak achieved!</h3>
+                    <p class="insight-detail">You've hit 10,000+ steps three days in a row. That's your longest streak this month. Keep it up!</p>
+                    <div class="insight-trend">
+                        <span>🔥</span>
+                        <span>Personal best</span>
+                    </div>
+                </div>
+                <div class="insight-card heart">
+                    <span class="insight-emoji">❤️</span>
+                    <h3 class="insight-headline">Resting heart rate trending down</h3>
+                    <p class="insight-detail">Your morning resting heart rate dropped from 72 to 68 bpm over the last 2 weeks. Great cardiovascular improvement!</p>
+                    <div class="insight-trend">
+                        <span>↓</span>
+                        <span>-4 bpm</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Metrics -->
+        <section class="metrics-section">
+            <div class="section-header">
+                <div class="section-icon">📊</div>
+                <h2 class="section-title">Today's Metrics</h2>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon sleep">🌙</div>
+                        <svg class="metric-spark" viewBox="0 0 60 30">
+                            <path d="M0,20 Q10,25 15,18 T30,15 T45,10 T60,8" fill="none" stroke="url(#ringGradient3)" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="metric-value">7.5<span class="metric-unit">h</span></div>
+                    <div class="metric-label">Sleep Duration</div>
+                    <div class="metric-progress">
+                        <div class="metric-progress-bar sleep" style="width: 0%;" data-width="94%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon steps">👟</div>
+                        <svg class="metric-spark" viewBox="0 0 60 30">
+                            <path d="M0,25 Q10,20 15,22 T30,15 T45,18 T60,5" fill="none" stroke="url(#ringGradient1)" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="metric-value">8,432</div>
+                    <div class="metric-label">Steps Today</div>
+                    <div class="metric-progress">
+                        <div class="metric-progress-bar steps" style="width: 0%;" data-width="84%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon heart">💓</div>
+                        <svg class="metric-spark" viewBox="0 0 60 30">
+                            <path d="M0,15 Q10,10 15,15 T30,12 T45,15 T60,14" fill="none" stroke="url(#scoreGradient)" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="metric-value">68<span class="metric-unit">bpm</span></div>
+                    <div class="metric-label">Resting Heart Rate</div>
+                    <div class="metric-progress">
+                        <div class="metric-progress-bar heart" style="width: 0%;" data-width="72%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon water">💧</div>
+                        <svg class="metric-spark" viewBox="0 0 60 30">
+                            <path d="M0,25 L15,25 L15,20 L30,20 L30,15 L45,15 L45,12 L60,12" fill="none" stroke="url(#ringGradient3)" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="metric-value">6<span class="metric-unit">/8</span></div>
+                    <div class="metric-label">Glasses of Water</div>
+                    <div class="metric-progress">
+                        <div class="metric-progress-bar water" style="width: 0%;" data-width="75%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Rings -->
+        <section class="rings-section">
+            <div class="section-header">
+                <div class="section-icon">🎯</div>
+                <h2 class="section-title">Activity Rings</h2>
+            </div>
+            <div class="rings-card glass-shine">
+                <div class="rings-visual">
+                    <div class="rings-container">
+                        <!-- Outer Ring (Move) -->
+                        <div class="ring ring-1" style="width: 220px; height: 220px;">
+                            <svg width="220" height="220" viewBox="0 0 220 220">
+                                <circle class="ring-bg" cx="110" cy="110" r="100" stroke-width="16" />
+                                <circle class="ring-progress" cx="110" cy="110" r="100" stroke-width="16" 
+                                    stroke-dasharray="628" stroke-dashoffset="628" data-offset="125" />
+                            </svg>
+                        </div>
+                        <!-- Middle Ring (Exercise) -->
+                        <div class="ring ring-2" style="width: 180px; height: 180px;">
+                            <svg width="180" height="180" viewBox="0 0 180 180">
+                                <circle class="ring-bg" cx="90" cy="90" r="80" stroke-width="16" />
+                                <circle class="ring-progress" cx="90" cy="90" r="80" stroke-width="16"
+                                    stroke-dasharray="502" stroke-dashoffset="502" data-offset="176" />
+                            </svg>
+                        </div>
+                        <!-- Inner Ring (Stand) -->
+                        <div class="ring ring-3" style="width: 140px; height: 140px;">
+                            <svg width="140" height="140" viewBox="0 0 140 140">
+                                <circle class="ring-bg" cx="70" cy="70" r="60" stroke-width="16" />
+                                <circle class="ring-progress" cx="70" cy="70" r="60" stroke-width="16"
+                                    stroke-dasharray="377" stroke-dashoffset="377" data-offset="75" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="rings-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot move"></div>
+                        <div class="legend-info">
+                            <div class="legend-label">Move</div>
+                            <div class="legend-value">420 / 500 cal</div>
+                        </div>
+                        <div class="legend-progress">84%</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot exercise"></div>
+                        <div class="legend-info">
+                            <div class="legend-label">Exercise</div>
+                            <div class="legend-value">35 / 45 min</div>
+                        </div>
+                        <div class="legend-progress">78%</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot stand"></div>
+                        <div class="legend-info">
+                            <div class="legend-label">Stand</div>
+                            <div class="legend-value">10 / 12 hrs</div>
+                        </div>
+                        <div class="legend-progress">83%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Weekly Chart -->
+        <section class="chart-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="section-header" style="margin-bottom: 0;">
+                        <div class="section-icon">📈</div>
+                        <h2 class="section-title">Weekly Activity</h2>
+                    </div>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active">Steps</button>
+                        <button class="chart-tab">Calories</button>
+                        <button class="chart-tab">Sleep</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-bar">
+                        <div class="bar-wrapper">
+                            <div class="bar" style="height: 0%;" data-height="65%">
+                                <span class="bar-value">6.5k</span>
+                            </div>
+                        </div>
+                        <span class="bar-label">Mon</span>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="bar-wrapper">
+                            <div class="bar" style="height: 0%;" data-height="82%">
+                                <span class="bar-value">8.2k</span>
+                            </div>
+                        </div>
+                        <span class="bar-label">Tue</span>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="bar-wrapper">
+                            <div class="bar" style="height: 0%;" data-height="95%">
+                                <span class="bar-value">9.5k</span>
+                            </div>
+                        </div>
+                        <span class="bar-label">Wed</span>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="bar-wrapper">
+                            <div class="bar" style="height: 0%;" data-height="78%">
+                                <span class="bar-value">7.8k</span>
+                            </div>
+                        </div>
+                        <span class="bar-label">Thu</span>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="bar-wrapper">
+                            <div class="bar" style="height: 0%;" data-height="100%">
+                                <span class="bar-value">10.2k</span>
+                            </div>
+                        </div>
+                        <span class="bar-label">Fri</span>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="bar-wrapper">
+                            <div class="bar" style="height: 0%;" data-height="110%">
+                                <span class="bar-value">11.1k</span>
+                            </div>
+                        </div>
+                        <span class="bar-label">Sat</span>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="bar-wrapper">
+                            <div class="bar" style="height: 0%;" data-height="84%">
+                                <span class="bar-value">8.4k</span>
+                            </div>
+                        </div>
+                        <span class="bar-label">Today</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trends -->
+        <section class="trends-section">
+            <div class="section-header">
+                <div class="section-icon">📉</div>
+                <h2 class="section-title">30-Day Trends</h2>
+            </div>
+            <div class="trends-grid">
+                <div class="trend-card">
+                    <div class="trend-chart">
+                        <svg width="120" height="60" viewBox="0 0 120 60">
+                            <path class="trend-area" d="M0,50 Q20,45 30,40 T60,35 T90,25 T120,15 L120,60 L0,60 Z" fill="url(#trendGradient1)" />
+                            <path class="trend-line" d="M0,50 Q20,45 30,40 T60,35 T90,25 T120,15" stroke="#10b981" />
+                        </svg>
+                    </div>
+                    <div class="trend-info">
+                        <div class="trend-label">Average Steps</div>
+                        <div class="trend-value">8,847</div>
+                        <div class="trend-change up">↑ 12% vs last month</div>
+                    </div>
+                </div>
+                <div class="trend-card">
+                    <div class="trend-chart">
+                        <svg width="120" height="60" viewBox="0 0 120 60">
+                            <path class="trend-area" d="M0,40 Q20,35 30,38 T60,30 T90,28 T120,20 L120,60 L0,60 Z" fill="url(#trendGradient2)" />
+                            <path class="trend-line" d="M0,40 Q20,35 30,38 T60,30 T90,28 T120,20" stroke="#f093fb" />
+                        </svg>
+                    </div>
+                    <div class="trend-info">
+                        <div class="trend-label">Average Sleep</div>
+                        <div class="trend-value">7.3h</div>
+                        <div class="trend-change up">↑ 8% vs last month</div>
+                    </div>
+                </div>
+                <div class="trend-card">
+                    <div class="trend-chart">
+                        <svg width="120" height="60" viewBox="0 0 120 60">
+                            <path class="trend-area" d="M0,20 Q20,25 30,22 T60,28 T90,30 T120,35 L120,60 L0,60 Z" fill="url(#trendGradient1)" />
+                            <path class="trend-line" d="M0,20 Q20,25 30,22 T60,28 T90,30 T120,35" stroke="#10b981" />
+                        </svg>
+                    </div>
+                    <div class="trend-info">
+                        <div class="trend-label">Resting HR</div>
+                        <div class="trend-value">68 bpm</div>
+                        <div class="trend-change up">↓ 4 bpm improvement</div>
+                    </div>
+                </div>
+                <div class="trend-card">
+                    <div class="trend-chart">
+                        <svg width="120" height="60" viewBox="0 0 120 60">
+                            <path class="trend-area" d="M0,35 Q20,30 30,32 T60,28 T90,22 T120,18 L120,60 L0,60 Z" fill="url(#trendGradient2)" />
+                            <path class="trend-line" d="M0,35 Q20,30 30,32 T60,28 T90,22 T120,18" stroke="#f093fb" />
+                        </svg>
+                    </div>
+                    <div class="trend-info">
+                        <div class="trend-label">Active Days</div>
+                        <div class="trend-value">24 / 30</div>
+                        <div class="trend-change up">↑ 3 more than last month</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Set current date
+        const dateEl = document.getElementById('currentDate');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = new Date().toLocaleDateString('en-US', options);
+
+        // Animate score number
+        function animateNumber(el, target, duration = 1500) {
+            let start = 0;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(start + (target - start) * eased);
+                el.textContent = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        // Animate elements on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate score number
+            const scoreEl = document.querySelector('.score-number');
+            const target = parseInt(scoreEl.dataset.target);
+            setTimeout(() => animateNumber(scoreEl, target), 500);
+
+            // Animate progress bars
+            document.querySelectorAll('.metric-progress-bar').forEach((bar, i) => {
+                setTimeout(() => {
+                    bar.style.width = bar.dataset.width;
+                }, 600 + i * 100);
+            });
+
+            // Animate chart bars
+            document.querySelectorAll('.chart-bar .bar').forEach((bar, i) => {
+                setTimeout(() => {
+                    bar.style.height = bar.dataset.height;
+                }, 800 + i * 100);
+            });
+
+            // Animate activity rings
+            document.querySelectorAll('.ring-progress').forEach((ring, i) => {
+                setTimeout(() => {
+                    ring.style.strokeDashoffset = ring.dataset.offset;
+                    ring.style.transition = 'stroke-dashoffset 2s ease-out';
+                }, 1000 + i * 200);
+            });
+        });
+
+        // Chart tab switching
+        document.querySelectorAll('.chart-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Add hover effects for insight cards
+        document.querySelectorAll('.insight-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px) scale(1.01)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Greeting based on time of day
+        const hour = new Date().getHours();
+        const greetingEl = document.querySelector('.greeting');
+        let greeting = 'Good morning';
+        if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
+        else if (hour >= 17) greeting = 'Good evening';
+        greetingEl.innerHTML = `${greeting}, <span class="greeting-highlight">Alex</span>`;
+    </script>
+</body>
+</html>
