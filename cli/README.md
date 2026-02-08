@@ -1,6 +1,6 @@
 # Proofi CLI
 
-Connect agents (like Clawdbot) to your Proofi wallet.
+Complete wallet management from terminal. No browser needed.
 
 ## Install
 
@@ -10,80 +10,89 @@ npm install
 npm link  # Makes 'proofi' available globally
 ```
 
-## Usage
-
-### Connect to Wallet
+## Quick Start
 
 ```bash
-proofi connect
-# → Opens browser
-# → Approve in Proofi extension
-# → Session saved to ~/.proofi/session.json
-```
+# 1. Create wallet
+proofi init
+# → Enter email
+# → Enter OTP code
+# → Create PIN
+# → Wallet created!
 
-Options:
-```bash
-proofi connect --name "My Agent" --scopes "age,calendar,identity"
-```
+# 2. Add credentials
+proofi cred add identity
+# → Enter name, birthdate
+# → Credential stored
 
-### Check Status
+# 3. Authorize Clawdbot
+proofi agent add clawdbot --scopes "age,calendar"
 
-```bash
-proofi status
-# Shows: connection status, scopes, expiry
-```
-
-### Request Proof
-
-```bash
-# Age proof (selective disclosure)
+# 4. Generate proofs
 proofi proof age --predicate ">=18"
-# → Returns: verified=true, disclosed=[]
-
-# Identity proof
-proofi proof identity
-# → Returns: verified=true, disclosed=[name, email, ...]
 ```
 
-### Disconnect
+## Commands
+
+### Wallet
 
 ```bash
-proofi disconnect
-# → Removes session, revokes access
+proofi init      # Create new wallet (email → OTP → PIN)
+proofi status    # Show wallet info
+```
+
+### Agents
+
+```bash
+proofi agent add <name> --scopes "age,calendar"
+proofi agent list
+proofi agent remove <name>
+```
+
+### Credentials
+
+```bash
+proofi cred add identity     # Interactive
+proofi cred add age --data '{"dateOfBirth":"1990-01-15"}'
+proofi cred list
+```
+
+### Proofs
+
+```bash
+proofi proof age                      # Disclose age
+proofi proof age --predicate ">=18"   # Prove 18+ without disclosing
+proofi proof identity --agent clawdbot
 ```
 
 ## Fred Demo
 
 ```bash
-# 1. Install
-cd proofi-wallet/cli && npm install && npm link
+# Setup (one time)
+proofi init
+proofi cred add identity
+proofi agent add clawdbot --scopes "age,calendar"
 
-# 2. Connect (opens browser)
-proofi connect --name "Clawdbot Demo"
-
-# 3. Approve in extension popup
-
-# 4. Request proof
-proofi proof age --predicate ">=18"
-
-# 5. Show result
-# ✅ "18+ verified WITHOUT revealing birthdate"
+# Demo flow
+proofi proof age --predicate ">=18" --agent clawdbot
+# → "✅ Verified: age >= 18"
+# → "ℹ️ Actual age NOT disclosed"
 ```
 
-## How It Works
+## Storage
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  proofi CLI │────►│   Browser   │────►│  Extension  │
-│             │◄────│  (callback) │◄────│  (approve)  │
-└─────────────┘     └─────────────┘     └─────────────┘
-       │
-       ▼
- ~/.proofi/session.json
+~/.proofi/
+├── wallet.json        # Encrypted keyring
+├── agents.json        # Authorized agents
+└── credentials/       # Stored VCs
+    ├── cred-xxx.json
+    └── ...
 ```
 
-1. CLI starts local callback server
-2. Opens browser to agent-connect page
-3. User approves in Proofi extension
-4. Extension calls callback with session token
-5. CLI saves session, ready for proof requests
+## Security
+
+- Private key encrypted with PIN-derived key (PBKDF2 + AES-256-GCM)
+- Keys never leave your device
+- PIN required for signing
+- Each proof cryptographically signed

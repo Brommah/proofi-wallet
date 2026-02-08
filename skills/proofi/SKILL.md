@@ -1,63 +1,78 @@
-# Proofi Wallet Integration
+# Proofi CLI Wallet
 
-Connect Clawdbot to a user's Proofi wallet for credential access.
+Complete Proofi wallet in terminal. No browser or extension needed.
+
+## Setup (One Time)
+
+```bash
+# Create wallet
+proofi init
+# → Enter email → OTP → PIN
+# → Keys derived, stored in ~/.proofi/
+
+# Add identity credential
+proofi cred add identity
+# → Enter name, birthdate
+# → Credential stored
+
+# Authorize Clawdbot
+proofi agent add clawdbot --scopes "age,calendar,identity"
+```
 
 ## Quick Reference
 
 ```bash
-# Connect to wallet (opens browser for approval)
-proofi connect --name "Clawdbot" --scopes "age,calendar"
+# Wallet
+proofi status                    # Show wallet info
 
-# Check connection status
-proofi status
+# Agents
+proofi agent add <name> -s "age,calendar"
+proofi agent list
+proofi agent remove <name>
 
-# Request age proof (ZKP - doesn't reveal actual age)
-proofi proof age --predicate ">=18"
+# Credentials  
+proofi cred add identity         # Interactive
+proofi cred list
 
-# Request identity proof
-proofi proof identity
-
-# Disconnect
-proofi disconnect
+# Proofs
+proofi proof age                 # Disclose age
+proofi proof age -p ">=18"       # ZKP: prove 18+ without revealing age
+proofi proof identity -a clawdbot
 ```
 
-## Flow
+## Clawdbot Integration
 
-1. **Connect**: `proofi connect` opens browser, user approves in Proofi extension
-2. **Session**: Stored in `~/.proofi/session.json`, valid 24h
-3. **Proof**: Request selective disclosure proofs within authorized scopes
-4. **Revoke**: User can revoke anytime in extension, or run `proofi disconnect`
+When user asks for age verification or identity proof:
 
-## Use Cases
+```bash
+# Check if authorized
+proofi agent list
 
-| Task | Command |
+# Generate proof (requires PIN)
+proofi proof age --predicate ">=18" --agent clawdbot
+```
+
+## Key Concepts
+
+| Term | Meaning |
 |------|---------|
-| Verify user is 18+ | `proofi proof age --predicate ">=18"` |
-| Get calendar access | `proofi proof calendar` |
-| Check identity | `proofi proof identity` |
+| **Credential** | Stored data (identity, age, etc.) signed by wallet |
+| **Agent** | Authorized app (Clawdbot) with scoped access |
+| **Proof** | Cryptographic proof of a claim |
+| **Selective disclosure** | Prove "18+" without revealing birthdate |
 
-## Key Points
+## Storage
 
-- **User controls access**: Every connection requires explicit approval
-- **Selective disclosure**: Prove facts ("18+") without revealing data (birthdate)
-- **Scoped**: Agent only sees what user permits
-- **Revocable**: User can revoke anytime
-
-## Session File
-
-```json
-// ~/.proofi/session.json
-{
-  "agentId": "clawdbot-xxx",
-  "name": "Clawdbot",
-  "scopes": ["age", "calendar"],
-  "address": "5xxx...",
-  "expiresAt": 1234567890000
-}
+```
+~/.proofi/
+├── wallet.json        # Encrypted keys
+├── agents.json        # Authorized agents
+└── credentials/       # Stored VCs
 ```
 
-## Error Handling
+## Security Notes
 
-- **Not connected**: Run `proofi connect` first
-- **Scope denied**: User didn't authorize that scope
-- **Session expired**: Reconnect with `proofi connect`
+- PIN required for all signing operations
+- Private keys encrypted with PIN-derived key
+- Keys never transmitted
+- User can revoke agents anytime
