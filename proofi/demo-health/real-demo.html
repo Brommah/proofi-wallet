@@ -537,6 +537,47 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     
+    /* ===== TOGGLE SWITCH ===== */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 26px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border);
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: var(--accent);
+    }
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(22px);
+    }
+    
     /* ===== SCOPE EDITOR ===== */
     .scope-grid {
       display: grid;
@@ -1593,6 +1634,10 @@
         <span class="wallet-dot" id="walletDot"></span>
         <span class="wallet-addr" id="walletAddr">Not connected</span>
       </div>
+      <div class="ollama-status" id="ollamaStatus" style="margin-left: 16px; display: flex; align-items: center; gap: 6px;">
+        <span class="wallet-dot" id="ollamaDot" style="background: var(--text-tertiary);"></span>
+        <span style="font-size: 12px; color: var(--text-secondary);" id="ollamaStatusText">Ollama: checking...</span>
+      </div>
     </div>
   </nav>
 
@@ -1850,6 +1895,33 @@
                   Select Agent
                 </button>
               </div>
+              
+              <!-- External Device Agent -->
+              <div class="agent-card" data-agent="external-device">
+                <div class="agent-card-header">
+                  <div class="agent-icon">🖥️</div>
+                  <div class="agent-badge" style="background: rgba(175,82,222,0.12); color: #af52de;">Desktop</div>
+                </div>
+                <h5 class="agent-name">External Device</h5>
+                <p class="agent-tagline">Run analysis on your Mac/PC with Ollama</p>
+                <div class="agent-needs">
+                  <span class="needs-label">Needs access to:</span>
+                  <div class="needs-tags">
+                    <span class="need-tag">Your choice</span>
+                  </div>
+                </div>
+                <div class="agent-provides">
+                  <span class="provides-label">You provide:</span>
+                  <ul class="provides-list">
+                    <li>QR code to scan on device</li>
+                    <li>Local Ollama analysis</li>
+                    <li>Full privacy — never leaves your network</li>
+                  </ul>
+                </div>
+                <button class="agent-select-btn" onclick="selectAgent('external-device')">
+                  Select Agent
+                </button>
+              </div>
             </div>
             
             <!-- Selected Agent Info -->
@@ -2053,6 +2125,91 @@
               </div>
             </div>
             
+            <!-- External Device QR Code Section (shown when external-device agent selected) -->
+            <div id="externalDeviceSection" style="display: none;">
+              <div style="background: rgba(175,82,222,0.06); border: 1px solid rgba(175,82,222,0.2); border-radius: var(--radius); padding: 24px; margin-bottom: 24px;">
+                <div style="display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;">
+                  <div style="flex: 1; min-width: 280px;">
+                    <h4 style="font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px;">
+                      🖥️ Run Analysis on External Device
+                    </h4>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                      Scan the QR code with your Mac/PC or copy the token to run local Ollama analysis. 
+                      Your data never leaves your local network.
+                    </p>
+                    
+                    <div style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px;">
+                      <div style="font-size: 12px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 8px;">
+                        On your Mac/PC, run:
+                      </div>
+                      <code style="display: block; font-family: var(--mono); font-size: 13px; color: var(--blue); word-break: break-all;">
+                        node analyze.js --token "$(pbpaste)"
+                      </code>
+                    </div>
+                    
+                    <div class="btn-group" style="gap: 8px;">
+                      <button class="btn btn-primary" onclick="copyExternalToken()" style="padding: 10px 16px; font-size: 13px;">
+                        📋 Copy Token
+                      </button>
+                      <button class="btn btn-secondary" onclick="downloadExternalToken()" style="padding: 10px 16px; font-size: 13px;">
+                        ⬇️ Download Token
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div style="text-align: center;">
+                    <div id="qrCodeContainer" style="background: white; padding: 16px; border-radius: var(--radius-sm); display: inline-block;">
+                      <canvas id="qrCodeCanvas"></canvas>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 8px;">
+                      Scan with camera app
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Waiting for external analysis -->
+                <div id="externalWaitingSection" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(175,82,222,0.2);">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="spinner" style="border-top-color: #af52de;"></div>
+                    <div>
+                      <div style="font-size: 14px; font-weight: 600; color: var(--text);">Waiting for external analysis...</div>
+                      <div style="font-size: 13px; color: var(--text-secondary);">
+                        Results will appear here when your device completes the analysis
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Callback URL input (optional) -->
+                  <div style="margin-top: 16px;">
+                    <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 6px;">
+                      Callback URL (optional — for automatic result delivery)
+                    </label>
+                    <div style="display: flex; gap: 8px;">
+                      <input type="text" id="callbackUrlInput" class="form-input" 
+                             placeholder="https://your-server.com/results" 
+                             style="flex: 1; font-size: 13px; padding: 10px 14px;">
+                      <button class="btn btn-secondary" onclick="updateCallbackUrl()" style="padding: 10px 14px; font-size: 13px;">
+                        Update Token
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <!-- Manual result paste -->
+                  <div style="margin-top: 16px;">
+                    <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 6px;">
+                      Or paste results manually
+                    </label>
+                    <textarea id="externalResultsInput" class="form-input" 
+                              placeholder='{"analysis": {...}, "recommendations": [...]}'
+                              style="font-size: 12px; min-height: 80px; resize: vertical;"></textarea>
+                    <button class="btn btn-primary" onclick="importExternalResults()" style="margin-top: 8px; padding: 10px 16px; font-size: 13px;">
+                      Import Results
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <div class="token-details-grid">
               <div class="token-detail-card">
                 <div class="detail-label">Token ID</div>
@@ -2159,6 +2316,46 @@
             </div>
           </div>
           
+          <!-- Ollama Settings -->
+          <div id="ollamaSettings" style="background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2); border-radius: var(--radius); padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 20px;">🤖</span>
+                <div>
+                  <div style="font-weight: 600; color: var(--text);">Local Ollama Analysis</div>
+                  <div style="font-size: 12px; color: var(--text-secondary);">Run AI analysis on your own hardware</div>
+                </div>
+              </div>
+              <label class="toggle-switch" style="cursor: pointer;">
+                <input type="checkbox" id="useOllamaToggle" onchange="toggleOllamaMode()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div id="ollamaConfig" style="display: none;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                  <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Ollama URL</label>
+                  <input type="text" id="ollamaUrl" class="form-input" value="http://localhost:11434" style="font-size: 13px; padding: 8px 12px;">
+                </div>
+                <div>
+                  <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Model</label>
+                  <select id="ollamaModel" class="form-input" style="font-size: 13px; padding: 8px 12px;">
+                    <option value="llama3.2">llama3.2 (fast)</option>
+                    <option value="llama3.1">llama3.1 (balanced)</option>
+                    <option value="mistral">mistral (good)</option>
+                    <option value="mixtral">mixtral (best)</option>
+                    <option value="qwen2.5">qwen2.5 (multilingual)</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn btn-secondary" onclick="testOllamaConnection()" style="font-size: 12px; padding: 8px 14px;">
+                🔌 Test Connection
+              </button>
+              <span id="ollamaStatus" style="margin-left: 12px; font-size: 12px; color: var(--text-tertiary);"></span>
+            </div>
+          </div>
+          
           <button aria-label="Run analysis" class="btn btn-primary" id="runAgentBtn" onclick="runAgent()" disabled>
             Run Analysis
           </button>
@@ -2249,6 +2446,9 @@
   <!-- TweetNaCl for real crypto -->
   <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script>
+  
+  <!-- QR Code generation for external device sharing -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   
   <!-- Cere DDC SDK for direct uploads -->
   <script type="module">
@@ -3093,6 +3293,11 @@
       'sleep-optimizer': {
         name: 'Sleep Optimizer Agent v1.0',
         defaultScopes: ['sleep', 'heart', 'blood-oxygen']
+      },
+      'external-device': {
+        name: 'External Device (Ollama)',
+        defaultScopes: ['steps', 'sleep', 'heart'],
+        isExternal: true
       }
     };
     
@@ -3162,10 +3367,27 @@
         }
       });
       
+      // For external device, generate a new random agent keypair
+      if (config.isExternal) {
+        const newAgentSeed = randomBytes(32);
+        state.agentKeyPair = nacl.box.keyPair.fromSecretKey(newAgentSeed);
+        state.agentSigningKeyPair = generateSigningKeyPair(newAgentSeed);
+        log('Generated new random keypair for external device', 'crypto');
+      } else {
+        // Use demo agent key for built-in agents
+        const agentSeed = nacl.util.decodeUTF8('proofi-health-agent-v1-demo00000');
+        state.agentKeyPair = nacl.box.keyPair.fromSecretKey(agentSeed);
+        state.agentSigningKeyPair = generateSigningKeyPair(agentSeed);
+      }
+      
+      // Update agent public key display
+      document.getElementById('agentPubKey').textContent = 
+        nacl.util.encodeBase64(state.agentKeyPair.publicKey);
+      
       // Update agent name displays
       document.getElementById('selectedAgentName').textContent = config.name;
-      document.getElementById('selectedAgentNameInline').textContent = config.name.replace(' Agent v1.0', '');
-      document.getElementById('reviewAgentName').textContent = config.name.replace(' Agent v1.0', '');
+      document.getElementById('selectedAgentNameInline').textContent = config.name.replace(' Agent v1.0', '').replace(' (Ollama)', '');
+      document.getElementById('reviewAgentName').textContent = config.name.replace(' Agent v1.0', '').replace(' (Ollama)', '');
       
       // Pre-select default scopes for this agent
       document.querySelectorAll('.scope-item-enhanced').forEach(item => {
@@ -3365,12 +3587,33 @@
         agentKey: nacl.util.encodeBase64(state.agentKeyPair.publicKey).slice(0, 20)
       });
       
-      // Progress
-      updateStep(3, 'completed');
-      updateStep(4, 'active');
-      document.getElementById('runAgentBtn').disabled = false;
+      // Check if this is external device mode
+      const isExternalDevice = agentConfig.isExternal;
       
-      log(`Capability token created for ${agentConfig.name}`, 'success');
+      if (isExternalDevice) {
+        // Show external device section with QR code
+        document.getElementById('externalDeviceSection').style.display = 'block';
+        
+        // Generate QR code with the token
+        await generateExternalQRCode();
+        
+        // Progress - don't auto-activate step 4 for external
+        updateStep(3, 'completed');
+        
+        log(`External device token created!`, 'success');
+        log(`Scan QR code or copy token to run on your Mac/PC`, 'success');
+      } else {
+        // Normal flow - hide external device section
+        document.getElementById('externalDeviceSection').style.display = 'none';
+        
+        // Progress
+        updateStep(3, 'completed');
+        updateStep(4, 'active');
+        document.getElementById('runAgentBtn').disabled = false;
+        
+        log(`Capability token created for ${agentConfig.name}`, 'success');
+      }
+      
       log(`Granted scopes: ${scopeNames}`, 'success');
     }
     
@@ -3418,6 +3661,230 @@
       }, 500);
       
       log('Exported token + agent key for CLI usage', 'success');
+    }
+    
+    // ========================================
+    // EXTERNAL DEVICE FUNCTIONS
+    // ========================================
+    
+    // Generate QR code containing the capability token
+    async function generateExternalQRCode() {
+      if (!state.capabilityToken || !window.QRCode) {
+        log('Cannot generate QR code: missing token or QRCode library', 'error');
+        return;
+      }
+      
+      // Create a compact token for QR code (includes everything needed for CLI)
+      const externalToken = {
+        v: 1,
+        id: state.capabilityToken.id,
+        bucketId: state.capabilityToken.bucketId,
+        cid: state.capabilityToken.resources[0],
+        cdnUrl: state.capabilityToken.cdnUrl,
+        exp: state.capabilityToken.exp,
+        scopes: state.capabilityToken.scopes.map(s => s.path.split('/')[1]),
+        wrappedDEK: state.capabilityToken.wrappedDEK,
+        agentKey: nacl.util.encodeBase64(state.agentKeyPair.secretKey),
+        sig: state.capabilityToken.sig
+      };
+      
+      // Store full token for later
+      state.externalToken = externalToken;
+      
+      // Generate QR code
+      const canvas = document.getElementById('qrCodeCanvas');
+      const tokenString = JSON.stringify(externalToken);
+      
+      try {
+        await QRCode.toCanvas(canvas, tokenString, {
+          width: 200,
+          margin: 2,
+          color: {
+            dark: '#1d1d1f',
+            light: '#ffffff'
+          }
+        });
+        log(`QR code generated (${tokenString.length} bytes)`, 'success');
+      } catch (err) {
+        // Token might be too large for QR code - show a URL instead
+        log(`Token too large for QR code (${tokenString.length} bytes), showing shortened version`, 'warn');
+        
+        // Create a data URL for smaller payload
+        const shortToken = {
+          u: state.capabilityToken.cdnUrl,
+          k: state.externalToken.agentKey.slice(0, 43), // First 32 bytes base64
+          e: state.capabilityToken.exp,
+          n: state.externalToken.wrappedDEK.nonce,
+          c: state.externalToken.wrappedDEK.ciphertext.slice(0, 50) + '...'
+        };
+        
+        const shortString = JSON.stringify(shortToken);
+        
+        try {
+          await QRCode.toCanvas(canvas, shortString, {
+            width: 200,
+            margin: 2,
+            color: {
+              dark: '#1d1d1f',
+              light: '#ffffff'
+            }
+          });
+          log('QR code generated with shortened token - use Copy or Download for full token', 'warn');
+        } catch (e2) {
+          // Show placeholder text
+          const ctx = canvas.getContext('2d');
+          canvas.width = 200;
+          canvas.height = 200;
+          ctx.fillStyle = '#f5f5f7';
+          ctx.fillRect(0, 0, 200, 200);
+          ctx.fillStyle = '#86868b';
+          ctx.font = '14px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText('Token too large', 100, 90);
+          ctx.fillText('for QR code', 100, 110);
+          ctx.fillText('Use Copy/Download', 100, 140);
+          log('Token too large for QR, use Copy or Download buttons', 'warn');
+        }
+      }
+    }
+    
+    // Copy external token to clipboard
+    function copyExternalToken() {
+      if (!state.externalToken) {
+        log('No external token to copy!', 'error');
+        return;
+      }
+      
+      const tokenString = JSON.stringify(state.externalToken);
+      navigator.clipboard.writeText(tokenString);
+      log(`External token copied to clipboard (${tokenString.length} bytes)`, 'success');
+      
+      // Visual feedback
+      event.target.textContent = '✓ Copied!';
+      setTimeout(() => {
+        event.target.textContent = '📋 Copy Token';
+      }, 2000);
+    }
+    
+    // Download external token as file
+    function downloadExternalToken() {
+      if (!state.externalToken) {
+        log('No external token to download!', 'error');
+        return;
+      }
+      
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+      const tokenBlob = new Blob([JSON.stringify(state.externalToken, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(tokenBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `proofi-external-token-${timestamp}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      
+      log('External token downloaded', 'success');
+    }
+    
+    // Update token with callback URL
+    function updateCallbackUrl() {
+      const callbackUrl = document.getElementById('callbackUrlInput').value.trim();
+      
+      if (!callbackUrl) {
+        log('No callback URL provided', 'warn');
+        return;
+      }
+      
+      if (!state.externalToken) {
+        log('No external token to update!', 'error');
+        return;
+      }
+      
+      // Add callback URL to token
+      state.externalToken.callback = callbackUrl;
+      
+      // Regenerate QR code
+      generateExternalQRCode();
+      
+      log(`Callback URL added: ${callbackUrl}`, 'success');
+    }
+    
+    // Import results from external analysis
+    async function importExternalResults() {
+      const resultsInput = document.getElementById('externalResultsInput').value.trim();
+      
+      if (!resultsInput) {
+        log('No results to import!', 'error');
+        return;
+      }
+      
+      try {
+        const results = JSON.parse(resultsInput);
+        
+        log('Importing external analysis results...', 'info');
+        
+        // Validate required fields
+        if (!results.analysis && !results.recommendations) {
+          throw new Error('Results must contain "analysis" or "recommendations" fields');
+        }
+        
+        // Map external results to our format
+        const analysis = {
+          avgSleep: results.analysis?.avgSleep || results.avgSleep || 7.5,
+          avgQuality: results.analysis?.avgQuality || results.avgQuality || 75,
+          avgDeep: results.analysis?.avgDeep || results.avgDeep || 1.5,
+          avgRem: results.analysis?.avgRem || results.avgRem || 1.8,
+          avgHR: results.analysis?.avgHR || results.avgHR || 72,
+          avgRestingHR: results.analysis?.avgRestingHR || results.avgRestingHR || 65,
+          avgHRV: results.analysis?.avgHRV || results.avgHRV || 45,
+          maxHR: results.analysis?.maxHR || results.maxHR || 165,
+          minHR: results.analysis?.minHR || results.minHR || 52,
+          sleepScore: results.analysis?.sleepScore || results.sleepScore || 78,
+          heartScore: results.analysis?.heartScore || results.heartScore || 82,
+          recommendations: results.recommendations || results.analysis?.recommendations || [
+            'Analysis completed by external Ollama instance',
+            'Results imported successfully'
+          ],
+          recordsAnalyzed: results.recordsAnalyzed || results.analysis?.recordsAnalyzed || 130,
+          scopeInfo: { sleepGranted: true, heartGranted: true },
+          source: 'external-ollama',
+          model: results.model || 'unknown'
+        };
+        
+        // Audit
+        await addAuditEntry('EXTERNAL_RESULTS_IMPORTED', {
+          source: analysis.source,
+          model: analysis.model,
+          recordsAnalyzed: analysis.recordsAnalyzed
+        });
+        
+        // Hide waiting section
+        document.getElementById('externalWaitingSection').style.display = 'none';
+        
+        // Show success message in external device section
+        const externalSection = document.getElementById('externalDeviceSection');
+        const successBanner = document.createElement('div');
+        successBanner.style.cssText = 'background: rgba(52,199,89,0.08); border: 1px solid rgba(52,199,89,0.2); border-radius: var(--radius-sm); padding: 16px; margin-top: 16px; display: flex; align-items: center; gap: 12px;';
+        successBanner.innerHTML = `
+          <span style="font-size: 24px;">✅</span>
+          <div>
+            <div style="font-weight: 600; color: var(--success);">External Analysis Complete</div>
+            <div style="font-size: 13px; color: var(--text-secondary);">Results imported from ${analysis.model}</div>
+          </div>
+        `;
+        externalSection.querySelector('div').appendChild(successBanner);
+        
+        // Store results and show step 5
+        state.analysisResults = analysis;
+        await showResults(analysis);
+        
+        updateStep(4, 'completed');
+        updateStep(5, 'active');
+        
+        log('External results imported successfully!', 'success');
+        
+      } catch (err) {
+        log(`Failed to import results: ${err.message}`, 'error');
+      }
     }
     
     // Step 4: Agent Execution
@@ -3563,26 +4030,44 @@
       
       // Step 4.5: Run analysis
       await sleep(700);
-      log('Agent: Running health analysis...', 'info');
       
-      const analysis = analyzeHealthData(filteredData);
-      
-      updateAgentStep(5, true, 'Analysis complete!');
-      log('Agent: Analysis complete!', 'success');
+      let analysis;
+      if (state.useOllama) {
+        log(`Agent: Running analysis via local Ollama (${state.ollamaModel})...`, 'info');
+        updateAgentStep(5, false, `Calling ${state.ollamaModel}...`);
+        try {
+          analysis = await analyzeWithOllama(filteredData);
+          updateAgentStep(5, true, `✓ ${state.ollamaModel} (local)`);
+          log('Agent: Ollama analysis complete!', 'success');
+        } catch (err) {
+          log(`Agent: Ollama failed, falling back to built-in analysis: ${err.message}`, 'warn');
+          analysis = analyzeHealthData(filteredData);
+          updateAgentStep(5, true, 'Fallback: built-in');
+        }
+      } else {
+        log('Agent: Running built-in health analysis...', 'info');
+        analysis = analyzeHealthData(filteredData);
+        updateAgentStep(5, true, 'Analysis complete!');
+        log('Agent: Analysis complete!', 'success');
+      }
       
       // Audit
       await addAuditEntry('AGENT_EXECUTED', {
         tokenId: token.id,
         recordsAnalyzed: healthData.sleep.length + healthData.heartRate.length,
         analysisVersion: '1.0',
-        fetchSource: 'ddc-direct'
+        fetchSource: 'ddc-direct',
+        analyzerType: state.useOllama ? 'ollama-local' : 'built-in',
+        ollamaModel: state.useOllama ? state.ollamaModel : null
       });
       
       await addAuditEntry('ANALYSIS_COMPLETE', {
-        avgSleepHours: analysis.avgSleep.toFixed(2),
-        avgHeartRate: analysis.avgHR,
-        sleepScore: analysis.sleepScore,
-        heartScore: analysis.heartScore
+        avgSleepHours: analysis.avgSleep?.toFixed(2) || 'N/A',
+        avgHeartRate: analysis.avgHR || 'N/A',
+        sleepScore: analysis.sleepScore || 'N/A',
+        heartScore: analysis.heartScore || 'N/A',
+        source: analysis.source || 'built-in',
+        model: analysis.model || null
       });
       
       document.getElementById('agentLoading').style.display = 'none';
@@ -3605,6 +4090,155 @@
     
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    // ========================================
+    // OLLAMA INTEGRATION
+    // ========================================
+    
+    state.useOllama = false;
+    state.ollamaUrl = 'http://localhost:11434';
+    state.ollamaModel = 'llama3.2';
+    
+    function toggleOllamaMode() {
+      const toggle = document.getElementById('useOllamaToggle');
+      const config = document.getElementById('ollamaConfig');
+      state.useOllama = toggle.checked;
+      config.style.display = toggle.checked ? 'block' : 'none';
+      log(`Ollama mode: ${toggle.checked ? 'enabled' : 'disabled'}`, 'info');
+    }
+    
+    async function testOllamaConnection() {
+      const statusEl = document.getElementById('ollamaStatus');
+      const url = document.getElementById('ollamaUrl').value;
+      state.ollamaUrl = url;
+      state.ollamaModel = document.getElementById('ollamaModel').value;
+      
+      statusEl.textContent = 'Testing...';
+      statusEl.style.color = 'var(--text-tertiary)';
+      
+      try {
+        const response = await fetch(`${url}/api/tags`, { 
+          method: 'GET',
+          signal: AbortSignal.timeout(5000)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const models = data.models?.map(m => m.name) || [];
+          statusEl.textContent = `✓ Connected! Models: ${models.slice(0, 3).join(', ')}${models.length > 3 ? '...' : ''}`;
+          statusEl.style.color = 'var(--accent)';
+          log(`Ollama connected at ${url}. Available models: ${models.join(', ')}`, 'success');
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
+      } catch (err) {
+        statusEl.textContent = `✗ Failed: ${err.message}`;
+        statusEl.style.color = 'var(--red)';
+        log(`Ollama connection failed: ${err.message}`, 'error');
+      }
+    }
+    
+    async function analyzeWithOllama(healthData) {
+      const url = state.ollamaUrl;
+      const model = state.ollamaModel;
+      
+      log(`Calling Ollama (${model}) at ${url}...`, 'info');
+      
+      // Build a summary of the health data
+      const sleepSummary = healthData.sleep?.length > 0 
+        ? `Sleep data: ${healthData.sleep.length} nights, avg ${(healthData.sleep.reduce((a,s) => a + s.duration, 0) / healthData.sleep.length).toFixed(1)}h`
+        : 'Sleep data: not available';
+      
+      const hrSummary = healthData.heartRate?.length > 0
+        ? `Heart rate: ${healthData.heartRate.length} readings, avg ${Math.round(healthData.heartRate.reduce((a,h) => a + h.bpm, 0) / healthData.heartRate.length)} BPM`
+        : 'Heart rate: not available';
+      
+      const prompt = `You are a health analysis AI. Analyze this health data and provide insights.
+
+${sleepSummary}
+${hrSummary}
+
+${healthData.sleep?.length > 0 ? `Sleep details (last 7 days): ${JSON.stringify(healthData.sleep.slice(-7))}` : ''}
+${healthData.heartRate?.length > 0 ? `Heart rate details (last 10): ${JSON.stringify(healthData.heartRate.slice(-10))}` : ''}
+
+Provide a brief analysis with:
+1. Overall health assessment (1-2 sentences)
+2. Sleep quality insights (if data available)
+3. Heart health insights (if data available)  
+4. 2-3 actionable recommendations
+
+Keep response under 200 words. Be specific with numbers.`;
+
+      try {
+        const response = await fetch(`${url}/api/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: model,
+            prompt: prompt,
+            stream: false
+          }),
+          signal: AbortSignal.timeout(60000) // 60s timeout
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Ollama returned ${response.status}`);
+        }
+        
+        const result = await response.json();
+        log(`Ollama analysis complete (${result.eval_count || '?'} tokens)`, 'success');
+        
+        // Parse Ollama response and create analysis object
+        const analysis = parseOllamaResponse(result.response, healthData);
+        analysis.model = model;
+        analysis.source = 'ollama-local';
+        analysis.rawResponse = result.response;
+        
+        return analysis;
+      } catch (err) {
+        log(`Ollama analysis failed: ${err.message}`, 'error');
+        throw err;
+      }
+    }
+    
+    function parseOllamaResponse(response, healthData) {
+      // Extract recommendations from response
+      const lines = response.split('\n').filter(l => l.trim());
+      const recommendations = lines.filter(l => 
+        l.match(/^\d+[\.\)]/) || l.startsWith('-') || l.startsWith('•')
+      ).slice(0, 4).map(l => l.replace(/^[\d\.\)\-•\s]+/, '').trim());
+      
+      if (recommendations.length === 0) {
+        recommendations.push(response.slice(0, 150) + '...');
+      }
+      
+      // Calculate basic stats from data
+      const hasSleep = healthData.sleep?.length > 0;
+      const hasHeart = healthData.heartRate?.length > 0;
+      
+      let avgSleep = null, sleepScore = null;
+      if (hasSleep) {
+        avgSleep = healthData.sleep.reduce((a, s) => a + s.duration, 0) / healthData.sleep.length;
+        sleepScore = Math.min(100, Math.round(avgSleep / 8 * 100));
+      }
+      
+      let avgHR = null, heartScore = null;
+      if (hasHeart) {
+        avgHR = Math.round(healthData.heartRate.reduce((a, h) => a + h.bpm, 0) / healthData.heartRate.length);
+        heartScore = Math.max(0, 100 - Math.abs(avgHR - 70));
+      }
+      
+      return {
+        avgSleep,
+        avgHR,
+        sleepScore,
+        heartScore,
+        recommendations,
+        recordsAnalyzed: (healthData.sleep?.length || 0) + (healthData.heartRate?.length || 0),
+        scopeInfo: { sleepGranted: hasSleep, heartGranted: hasHeart },
+        ollamaResponse: response
+      };
     }
     
     // Health Analysis
