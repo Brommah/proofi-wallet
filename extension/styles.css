@@ -752,3 +752,155 @@ body::after {
   pointer-events: none;
   z-index: 9998;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   AGENTS UI
+   ═══════════════════════════════════════════════════════════════════ */
+
+.action-purple {
+  border-color: var(--purple, #9333ea);
+}
+.action-purple:hover {
+  background: rgba(147, 51, 234, 0.1);
+}
+
+.agents-list {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.agent-card {
+  background: var(--black);
+  border: 1px solid var(--steel);
+  padding: 16px;
+}
+
+.agent-card.agent-expired {
+  opacity: 0.6;
+  border-color: var(--ash);
+}
+
+.agent-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.agent-icon {
+  font-size: 1.5rem;
+}
+
+.agent-info {
+  flex: 1;
+}
+
+.agent-scopes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.scope-badge {
+  background: var(--steel);
+  color: var(--white);
+  font-size: 0.65rem;
+  font-family: 'Space Mono', monospace;
+  padding: 2px 8px;
+  text-transform: uppercase;
+}
+
+.agent-meta {
+  margin-bottom: 12px;
+}
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 0.65rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: var(--black);
+  border: 2px solid var(--cyan);
+  padding: 24px;
+  max-width: 320px;
+  width: 100%;
+}
+
+.scopes-request {
+  background: var(--steel);
+  padding: 12px;
+}
+
+.scopes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scope-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scope-icon {
+  font-size: 1.2rem;
+}
+
+.scope-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-actions button {
+  flex: 1;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--cyan);
+  color: var(--black);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  padding: 8px 16px;
+  z-index: 2000;
+}

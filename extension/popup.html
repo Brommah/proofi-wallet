@@ -138,6 +138,10 @@
           <div class="action-icon">🔐</div>
           <div class="text-display text-xs">CREDENTIAL</div>
         </button>
+        <button id="btn-agents" class="action-card action-purple">
+          <div class="action-icon">🤖</div>
+          <div class="text-display text-xs">AGENTS</div>
+        </button>
       </div>
       
       <!-- Stored Items -->
@@ -229,8 +233,21 @@
         <button id="btn-cred-unlock" class="btn-primary btn-full">UNLOCK & ISSUE</button>
       </div>
     </div>
+
+    <!-- Agents Screen -->
+    <div id="screen-agents" class="screen" style="display:none;">
+      <div class="screen-header">
+        <button id="btn-agents-back" class="btn-ghost text-mono text-xs text-muted">← BACK</button>
+        <h1 class="text-display text-display-sm">CONNECTED AGENTS</h1>
+        <p class="text-body-sm text-muted" style="margin-top: 4px;">Apps authorized to access your data</p>
+      </div>
+      <div id="agents-list" class="agents-list">
+        <!-- Populated by agents-ui.js -->
+      </div>
+    </div>
   </div>
 
   <script src="popup.js" type="module"></script>
+  <script src="agents-ui.js"></script>
 </body>
 </html>
