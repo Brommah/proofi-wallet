@@ -7,28 +7,8 @@ import { vi } from 'vitest';
 
 // ═══ Browser API Mocks ═══
 
-// Mock crypto.randomUUID
-if (!globalThis.crypto) {
-  globalThis.crypto = {};
-}
-globalThis.crypto.randomUUID = vi.fn(() => 
-  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  })
-);
-
-// Mock crypto.getRandomValues
-globalThis.crypto.getRandomValues = vi.fn((array) => {
-  for (let i = 0; i < array.length; i++) {
-    array[i] = Math.floor(Math.random() * 256);
-  }
-  return array;
-});
-
-// Mock crypto.subtle (for encryption tests)
-globalThis.crypto.subtle = {
+// Mock crypto - need to create a new object since crypto.subtle is readonly
+const mockSubtle = {
   generateKey: vi.fn().mockResolvedValue({
     publicKey: { type: 'public' },
     privateKey: { type: 'private' }
@@ -42,14 +22,43 @@ globalThis.crypto.subtle = {
   digest: vi.fn().mockImplementation(async (algorithm, data) => {
     // Simple mock hash
     const arr = new Uint8Array(32);
+    const view = new Uint8Array(data);
     for (let i = 0; i < 32; i++) {
-      arr[i] = (data[i % data.length] || 0) ^ i;
+      arr[i] = (view[i % view.length] || 0) ^ i;
     }
     return arr.buffer;
   }),
   sign: vi.fn().mockResolvedValue(new ArrayBuffer(64)),
   verify: vi.fn().mockResolvedValue(true)
 };
+
+// Mock crypto.randomUUID
+const mockRandomUUID = vi.fn(() => 
+  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  })
+);
+
+// Mock crypto.getRandomValues
+const mockGetRandomValues = vi.fn((array) => {
+  for (let i = 0; i < array.length; i++) {
+    array[i] = Math.floor(Math.random() * 256);
+  }
+  return array;
+});
+
+// Replace crypto globally
+Object.defineProperty(globalThis, 'crypto', {
+  value: {
+    subtle: mockSubtle,
+    randomUUID: mockRandomUUID,
+    getRandomValues: mockGetRandomValues
+  },
+  writable: true,
+  configurable: true
+});
 
 // ═══ localStorage Mock ═══
 const localStorageData = {};
