@@ -3,41 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proofi CLI - UX Mockup</title>
+  <title>Proofi CLI - Complete FTUE Flow</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
       min-height: 100vh;
       padding: 40px 20px;
       font-family: 'JetBrains Mono', monospace;
     }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      color: #00e5ff;
-      font-size: 2rem;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .subtitle {
-      color: #888;
-      text-align: center;
-      margin-bottom: 40px;
-      font-size: 0.9rem;
-    }
-
+    .container { max-width: 950px; margin: 0 auto; }
+    h1 { color: #00e5ff; font-size: 2rem; margin-bottom: 10px; text-align: center; }
+    .subtitle { color: #888; text-align: center; margin-bottom: 40px; font-size: 0.9rem; }
     .terminal {
       background: #0d1117;
       border-radius: 12px;
@@ -45,7 +23,6 @@
       margin-bottom: 30px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
     }
-
     .terminal-header {
       background: linear-gradient(180deg, #2d2d2d 0%, #1f1f1f 100%);
       padding: 12px 16px;
@@ -54,86 +31,35 @@
       gap: 8px;
       border-bottom: 1px solid #333;
     }
-
-    .terminal-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-
+    .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
     .terminal-dot.red { background: #ff5f56; }
     .terminal-dot.yellow { background: #ffbd2e; }
     .terminal-dot.green { background: #27ca40; }
-
-    .terminal-title {
-      color: #888;
-      font-size: 0.8rem;
-      margin-left: 10px;
-    }
-
-    .terminal-body {
-      padding: 20px;
-      overflow-x: auto;
-    }
-
-    .section-label {
-      color: #00e5ff;
-      font-size: 0.75rem;
+    .terminal-title { color: #888; font-size: 0.8rem; margin-left: 10px; }
+    .terminal-body { padding: 20px; overflow-x: auto; }
+    .step-label {
+      color: #000;
+      font-size: 0.7rem;
       letter-spacing: 2px;
       margin-bottom: 15px;
-      padding: 4px 8px;
-      background: rgba(0, 229, 255, 0.1);
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #00e5ff 0%, #7ee787 100%);
       border-radius: 4px;
       display: inline-block;
-    }
-
-    pre {
-      color: #e6edf3;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      white-space: pre;
-    }
-
-    .prompt {
-      color: #7ee787;
-    }
-
-    .command {
-      color: #79c0ff;
-    }
-
-    .success {
-      color: #7ee787;
-    }
-
-    .warning {
-      color: #d29922;
-    }
-
-    .error {
-      color: #f85149;
-    }
-
-    .muted {
-      color: #6e7681;
-    }
-
-    .cyan {
-      color: #00e5ff;
-    }
-
-    .purple {
-      color: #d2a8ff;
-    }
-
-    .pink {
-      color: #ff79c6;
-    }
-
-    .bold {
       font-weight: 700;
     }
-
+    pre { color: #e6edf3; font-size: 0.85rem; line-height: 1.6; white-space: pre; }
+    .prompt { color: #7ee787; }
+    .command { color: #79c0ff; }
+    .success { color: #7ee787; }
+    .warning { color: #d29922; }
+    .error { color: #f85149; }
+    .muted { color: #6e7681; }
+    .cyan { color: #00e5ff; }
+    .purple { color: #d2a8ff; }
+    .pink { color: #ff79c6; }
+    .gold { color: #ffd700; }
+    .bold { font-weight: 700; }
     .box {
       border: 1px solid #30363d;
       border-radius: 6px;
@@ -141,318 +67,551 @@
       margin: 10px 0;
       background: rgba(255, 255, 255, 0.02);
     }
-
-    .box-success {
-      border-color: #238636;
-      background: rgba(35, 134, 54, 0.1);
-    }
-
-    .box-warning {
-      border-color: #9e6a03;
-      background: rgba(158, 106, 3, 0.1);
-    }
-
-    .divider {
-      border-top: 1px dashed #30363d;
-      margin: 20px 0;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 40px;
-    }
-
-    .feature-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 20px;
-    }
-
-    .feature-card h3 {
+    .box-success { border-color: #238636; background: rgba(35, 134, 54, 0.1); }
+    .box-warning { border-color: #9e6a03; background: rgba(158, 106, 3, 0.1); }
+    .box-info { border-color: #1f6feb; background: rgba(31, 111, 235, 0.1); }
+    .divider { border-top: 1px dashed #30363d; margin: 20px 0; }
+    .flow-arrow {
+      text-align: center;
       color: #00e5ff;
-      font-size: 1rem;
-      margin-bottom: 8px;
+      font-size: 2rem;
+      margin: 20px 0;
+      opacity: 0.6;
     }
-
-    .feature-card p {
-      color: #888;
-      font-size: 0.85rem;
-      line-height: 1.5;
+    .toc {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px 30px;
+      margin-bottom: 40px;
     }
+    .toc h2 { color: #00e5ff; font-size: 1rem; margin-bottom: 15px; }
+    .toc ol { color: #888; padding-left: 20px; }
+    .toc li { margin: 8px 0; }
+    .toc a { color: #79c0ff; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🔐 Proofi CLI</h1>
-    <p class="subtitle">Privacy-First Health Data Analysis • Improved UX Showcase</p>
+    <h1>🔐 Proofi CLI — Complete User Journey</h1>
+    <p class="subtitle">From zero to privacy-preserving AI analysis with full audit trail</p>
 
-    <!-- INIT Command -->
-    <div class="terminal">
+    <div class="toc">
+      <h2>📋 FTUE Flow — 8 Steps</h2>
+      <ol>
+        <li><a href="#step1">Install Proofi CLI</a></li>
+        <li><a href="#step2">Initialize & Create Wallet</a></li>
+        <li><a href="#step3">Import Health Data</a></li>
+        <li><a href="#step4">Configure Data Scopes</a></li>
+        <li><a href="#step5">Grant Agent Access (Capability Token)</a></li>
+        <li><a href="#step6">Agent Runs Analysis</a></li>
+        <li><a href="#step7">View Audit Chain (DAC Records)</a></li>
+        <li><a href="#step8">View Agent Logs & Insights</a></li>
+      </ol>
+    </div>
+
+    <!-- STEP 1: INSTALL -->
+    <div class="terminal" id="step1">
       <div class="terminal-header">
         <div class="terminal-dot red"></div>
         <div class="terminal-dot yellow"></div>
         <div class="terminal-dot green"></div>
-        <span class="terminal-title">proofi init</span>
+        <span class="terminal-title">Terminal — Install</span>
       </div>
       <div class="terminal-body">
-        <div class="section-label">INITIALIZATION</div>
+        <div class="step-label">STEP 1 — INSTALL</div>
+<pre>
+<span class="prompt">$</span> <span class="command">npm install -g @proofi/cli</span>
+
+<span class="muted">added 47 packages in 3.2s</span>
+
+<span class="prompt">$</span> <span class="command">proofi --version</span>
+<span class="cyan">🔐 Proofi CLI v1.0.0</span>
+<span class="muted">Privacy-preserving health data analysis with local AI</span>
+</pre>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- STEP 2: INIT & WALLET -->
+    <div class="terminal" id="step2">
+      <div class="terminal-header">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <span class="terminal-title">Terminal — Initialize</span>
+      </div>
+      <div class="terminal-body">
+        <div class="step-label">STEP 2 — INITIALIZE & CREATE WALLET</div>
 <pre>
 <span class="prompt">$</span> <span class="command">proofi init</span>
 
 <span class="cyan bold">🔐 Proofi CLI Setup</span>
-<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
 
-<span class="success">✓</span> <span class="bold">Ollama</span> <span class="muted">available with 2 models</span>
-   <span class="muted">├─</span> llama3.2:3b <span class="success">(recommended)</span>
-   <span class="muted">└─</span> mistral:7b
+<span class="muted">[1/4]</span> Checking Ollama...                <span class="success">✓ Found</span>
+       <span class="muted">├─</span> llama3.2:3b <span class="success">(recommended)</span>
+       <span class="muted">└─</span> mistral:7b
 
-<span class="success">✓</span> <span class="bold">Wallet configured</span>
-   <span class="muted">DID:</span> <span class="purple">did:key:zTkIXl229Gsdi6wAiIKBR0cERUyYOZwIjHIp...</span>
-   <span class="muted">Address:</span> <span class="cyan">5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY</span>
+<span class="muted">[2/4]</span> Checking for existing wallet...   <span class="warning">Not found</span>
 
-<span class="success">✓</span> <span class="bold">Config ready</span>
-   <span class="muted">Location:</span> ~/.proofi/config.json
+<span class="muted">[3/4]</span> Creating new wallet...            <span class="success">✓ Created</span>
 
-<div class="box box-success">
-<span class="success bold">✨ All set!</span> Run <span class="command">proofi upload health-export.xml</span> to get started.
+<div class="box box-warning">
+<span class="gold bold">🔑 RECOVERY PHRASE — SAVE THIS SECURELY!</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="bold">apple banana cherry dolphin elephant forest guitar
+horizon island jungle kiwi lemon mango notebook</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="warning">⚠ Write this down! You cannot recover your wallet without it.</span>
 </div>
 
-<span class="muted">⏱  Completed in 1.2s</span>
+<span class="muted">[4/4]</span> Saving configuration...           <span class="success">✓ Saved</span>
+
+<span class="success bold">✓ Wallet Created</span>
+  <span class="muted">DID:</span>     <span class="purple">did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH</span>
+  <span class="muted">Address:</span> <span class="cyan">5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY</span>
+
+<div class="box box-success">
+<span class="success bold">✨ Setup complete!</span>
+Next: Import your health data with <span class="command">proofi import ~/health-export.xml</span>
+</div>
+
+<span class="muted">⏱  Completed in 2.4s</span>
 </pre>
       </div>
     </div>
 
-    <!-- STATUS Command -->
-    <div class="terminal">
+    <div class="flow-arrow">↓</div>
+
+    <!-- STEP 3: IMPORT DATA -->
+    <div class="terminal" id="step3">
       <div class="terminal-header">
         <div class="terminal-dot red"></div>
         <div class="terminal-dot yellow"></div>
         <div class="terminal-dot green"></div>
-        <span class="terminal-title">proofi status</span>
+        <span class="terminal-title">Terminal — Import Health Data</span>
       </div>
       <div class="terminal-body">
-        <div class="section-label">STATUS OVERVIEW</div>
+        <div class="step-label">STEP 3 — IMPORT HEALTH DATA</div>
 <pre>
-<span class="prompt">$</span> <span class="command">proofi status</span>
+<span class="prompt">$</span> <span class="command">proofi import ~/Downloads/apple-health-export.xml</span>
 
-<span class="cyan bold">🔐 Proofi Status</span>
-<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="cyan bold">📥 Importing Health Data</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
 
-┌──────────────────────────────────────────────────────────────────┐
-│  <span class="bold">WALLET</span>                                                         │
-│  <span class="success">●</span> Connected                                                    │
-│  <span class="purple">did:key:zTkIXl229Gsdi6wAiIKBR0cERUyYOZwIjHIp...</span>              │
-│  <span class="cyan">Balance: 142.5 CERE</span>                                           │
-└──────────────────────────────────────────────────────────────────┘
+<span class="muted">[1/5]</span> Parsing Apple Health export...    <span class="success">✓ 847,293 records</span>
+<span class="muted">[2/5]</span> Extracting data types...          <span class="success">✓ 12 types found</span>
+<span class="muted">[3/5]</span> Generating encryption key (DEK)... <span class="success">✓ AES-256-GCM</span>
+<span class="muted">[4/5]</span> Encrypting data locally...        <span class="success">✓ Encrypted</span>
+<span class="muted">[5/5]</span> Uploading to DDC...               <span class="success">✓ Stored</span>
 
-┌──────────────────────────────────────────────────────────────────┐
-│  <span class="bold">HEALTH DATA</span>                                           <span class="success">SYNCED</span>  │
-├──────────────────────────────────────────────────────────────────┤
-│  Records     <span class="bold">2,334</span>                                              │
-│  Scopes      <span class="cyan">steps, heartRate, sleep, workouts</span>                   │
-│  Last sync   <span class="muted">2 hours ago</span>                                        │
-│  CID         <span class="purple">bafy-AxDVsd6Wo6__1f828aeXid9dr7g7jJtl...</span>            │
-└──────────────────────────────────────────────────────────────────┘
+<span class="pink bold">📊 Data Breakdown:</span>
+┌────────────────────┬─────────────┬──────────────────────────────┐
+│ <span class="bold">Type</span>               │ <span class="bold">Records</span>     │ <span class="bold">Date Range</span>                   │
+├────────────────────┼─────────────┼──────────────────────────────┤
+│ <span class="cyan">Steps</span>              │ 142,847     │ Jan 2022 → Feb 2026          │
+│ <span class="cyan">Heart Rate</span>         │ 298,421     │ Jan 2022 → Feb 2026          │
+│ <span class="cyan">Sleep Analysis</span>     │ 1,461       │ Jan 2022 → Feb 2026          │
+│ <span class="cyan">Workouts</span>           │ 847         │ Mar 2022 → Feb 2026          │
+│ <span class="cyan">HRV</span>                │ 52,104      │ Jun 2023 → Feb 2026          │
+│ <span class="cyan">Blood Oxygen</span>       │ 8,293       │ Jan 2024 → Feb 2026          │
+│ <span class="cyan">Resting HR</span>         │ 1,412       │ Jan 2022 → Feb 2026          │
+│ <span class="cyan">Walking Asymmetry</span>  │ 12,847      │ Jan 2023 → Feb 2026          │
+│ <span class="muted">+ 4 more types</span>     │ <span class="muted">329,061</span>     │                              │
+└────────────────────┴─────────────┴──────────────────────────────┘
 
-┌──────────────────────────────────────────────────────────────────┐
-│  <span class="bold">ACTIVE TOKENS</span>                                          <span class="success">1</span>       │
-├──────────────────────────────────────────────────────────────────┤
-│  <span class="cyan">●</span> <span class="bold">health-analyzer</span>                                             │
-│    Scopes: steps, heartRate, sleep                               │
-│    Expires: <span class="warning">23h 14m remaining</span>                                  │
-│    Accesses: 3 <span class="muted">(last: 10 min ago)</span>                              │
-└──────────────────────────────────────────────────────────────────┘
+<div class="box box-success">
+<span class="success bold">✓ Health data imported successfully!</span>
+
+<span class="muted">Storage:</span>    <span class="purple">Cere DDC (decentralized)</span>
+<span class="muted">CID:</span>        <span class="purple">bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi</span>
+<span class="muted">Encrypted:</span>  <span class="success">Yes (AES-256-GCM, local key)</span>
+
+<span class="cyan">Your data is encrypted. Only YOU hold the key.</span>
+</div>
+
+<span class="muted">⏱  Completed in 18.7s</span>
 </pre>
       </div>
     </div>
 
-    <!-- ANALYZE Command -->
-    <div class="terminal">
+    <div class="flow-arrow">↓</div>
+
+    <!-- STEP 4: CONFIGURE SCOPES -->
+    <div class="terminal" id="step4">
       <div class="terminal-header">
         <div class="terminal-dot red"></div>
         <div class="terminal-dot yellow"></div>
         <div class="terminal-dot green"></div>
-        <span class="terminal-title">proofi analyze</span>
+        <span class="terminal-title">Terminal — Configure Scopes</span>
       </div>
       <div class="terminal-body">
-        <div class="section-label">AI ANALYSIS</div>
+        <div class="step-label">STEP 4 — CONFIGURE DATA SCOPES</div>
 <pre>
-<span class="prompt">$</span> <span class="command">proofi analyze --model llama3.2:3b</span>
+<span class="prompt">$</span> <span class="command">proofi scopes</span>
+
+<span class="cyan bold">🎛️  Configure Data Scopes</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="muted">Select which data types agents can request access to.</span>
+
+<span class="bold">Available Scopes:</span>
+
+  <span class="success">◉</span> <span class="bold">steps</span>           <span class="muted">Daily step counts</span>            <span class="success">● Low sensitivity</span>
+  <span class="success">◉</span> <span class="bold">heartRate</span>       <span class="muted">Heart rate measurements</span>      <span class="warning">● Medium sensitivity</span>
+  <span class="success">◉</span> <span class="bold">sleep</span>           <span class="muted">Sleep analysis data</span>          <span class="warning">● Medium sensitivity</span>
+  <span class="success">◉</span> <span class="bold">workouts</span>        <span class="muted">Exercise sessions</span>            <span class="success">● Low sensitivity</span>
+  <span class="muted">○</span> <span class="muted">hrv</span>             <span class="muted">Heart rate variability</span>       <span class="error">● High sensitivity</span>
+  <span class="muted">○</span> <span class="muted">bloodOxygen</span>     <span class="muted">SpO2 levels</span>                  <span class="error">● High sensitivity</span>
+  <span class="muted">○</span> <span class="muted">menstruation</span>    <span class="muted">Cycle tracking</span>               <span class="error">● High sensitivity</span>
+  <span class="muted">○</span> <span class="muted">medications</span>     <span class="muted">Medication logs</span>              <span class="error">● High sensitivity</span>
+
+<span class="muted">Use arrow keys to navigate, space to toggle, enter to confirm</span>
+
+<span class="success">✓</span> Scopes configured: <span class="cyan">steps, heartRate, sleep, workouts</span>
+
+<div class="box box-info">
+<span class="cyan bold">ℹ Scope Protection</span>
+Agents can only request access to scopes you've enabled here.
+You can change this anytime with <span class="command">proofi scopes</span>
+</div>
+
+<span class="muted">⏱  Saved in 0.3s</span>
+</pre>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- STEP 5: GRANT ACCESS -->
+    <div class="terminal" id="step5">
+      <div class="terminal-header">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <span class="terminal-title">Terminal — Grant Agent Access</span>
+      </div>
+      <div class="terminal-body">
+        <div class="step-label">STEP 5 — GRANT AGENT ACCESS (CAPABILITY TOKEN)</div>
+<pre>
+<span class="prompt">$</span> <span class="command">proofi grant health-analyzer --scopes steps,heartRate,sleep --duration 24h</span>
+
+<span class="cyan bold">🎫 Grant Capability Token</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="bold">Agent:</span>        <span class="cyan">health-analyzer</span>
+<span class="bold">Agent DID:</span>    <span class="purple">did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK</span>
+<span class="bold">Scopes:</span>       <span class="pink">steps, heartRate, sleep</span>
+<span class="bold">Duration:</span>     24 hours
+<span class="bold">Expires:</span>      <span class="muted">2026-02-09 20:13:46 CET</span>
+
+<div class="box box-warning">
+<span class="warning bold">⚠ Review Carefully</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+This agent will be able to <span class="bold">decrypt and read</span> your:
+  • <span class="cyan">steps</span> — 142,847 records
+  • <span class="cyan">heartRate</span> — 298,421 records  
+  • <span class="cyan">sleep</span> — 1,461 records
+
+All access is <span class="bold">cryptographically logged</span> to an immutable audit chain.
+You can revoke access anytime.
+</div>
+
+<span class="muted">Proceed? [y/N]</span> <span class="success">y</span>
+
+<span class="muted">[1/4]</span> Creating capability token...          <span class="success">✓</span>
+<span class="muted">[2/4]</span> Wrapping DEK for agent public key...  <span class="success">✓</span>
+<span class="muted">[3/4]</span> Recording consent to DAC...           <span class="success">✓</span>
+<span class="muted">[4/4]</span> Notifying agent...                    <span class="success">✓</span>
+
+<div class="box box-success">
+<span class="success bold">✓ Access Granted</span>
+
+<span class="muted">Token ID:</span>     <span class="purple">proofi_tk_8f3a9c2d1e4b5f6a7890abcd</span>
+<span class="muted">DAC Entry:</span>    <span class="purple">bafybeif...CONSENT_GRANTED</span>
+
+The agent can now access your data. Revoke anytime:
+<span class="command">proofi revoke 8f3a9c2d</span>
+</div>
+
+<span class="muted">⏱  Completed in 3.2s</span>
+</pre>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- STEP 6: AGENT RUNS -->
+    <div class="terminal" id="step6">
+      <div class="terminal-header">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <span class="terminal-title">Terminal — Agent Analysis</span>
+      </div>
+      <div class="terminal-body">
+        <div class="step-label">STEP 6 — AGENT RUNS ANALYSIS</div>
+<pre>
+<span class="prompt">$</span> <span class="command">proofi analyze</span>
 
 <span class="cyan bold">🔬 Running Health Analysis</span>
-<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="muted">Agent: health-analyzer | Model: llama3.2:3b | Running locally</span>
 
-<span class="muted">[1/5]</span> Loading encrypted data...         <span class="success">✓</span>
-<span class="muted">[2/5]</span> Decrypting with local key...      <span class="success">✓</span>
-<span class="muted">[3/5]</span> Preparing analysis context...     <span class="success">✓</span>
-<span class="muted">[4/5]</span> Running Ollama (llama3.2:3b)...   <span class="success">✓</span>
-<span class="muted">[5/5]</span> Generating audit entry...         <span class="success">✓</span>
+<span class="muted">[1/7]</span> Validating capability token...        <span class="success">✓ Valid (23h 58m remaining)</span>
+<span class="muted">[2/7]</span> Fetching encrypted data from DDC...   <span class="success">✓ Retrieved</span>
+<span class="muted">[3/7]</span> Unwrapping DEK with agent key...      <span class="success">✓ Decrypted</span>
+<span class="muted">[4/7]</span> Decrypting health records...          <span class="success">✓ 442,729 records</span>
+<span class="muted">[5/7]</span> Running Ollama analysis...            <span class="success">✓ Complete</span>
+<span class="muted">[6/7]</span> Logging access to DAC...              <span class="success">✓ Recorded</span>
+<span class="muted">[7/7]</span> Generating insights...                <span class="success">✓ Ready</span>
 
 <div class="divider"></div>
 
 <span class="pink bold">📊 ANALYSIS RESULTS</span>
 
-┌──────────────────────────────────────────────────────────────────┐
-│  <span class="bold">Health Score</span>                                      <span class="success bold">87/100</span>      │
-└──────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│  <span class="bold">Overall Health Score</span>                                     <span class="success bold">87/100</span>        │
+│  <span class="muted">Based on 4 weeks of data • Compared to your baseline</span>                  │
+└──────────────────────────────────────────────────────────────────────────┘
 
 <span class="cyan bold">Key Insights:</span>
 
-  <span class="success">▲</span> <span class="bold">Sleep improved 12%</span> this week
-    <span class="muted">Average 7.8h vs 6.9h last week. Keep it up!</span>
+  <span class="success">▲ +12%</span>  <span class="bold">Sleep Quality Improved</span>
+          <span class="muted">Avg 7.8h (up from 6.9h). Deep sleep +18%. REM cycles consistent.</span>
 
-  <span class="success">▲</span> <span class="bold">3-day step streak achieved</span>
-    <span class="muted">You hit 10k+ steps for 3 consecutive days.</span>
+  <span class="success">▲ +8%</span>   <span class="bold">Activity Level Trending Up</span>
+          <span class="muted">Avg 9,247 steps/day. 3-day 10k+ streak achieved!</span>
 
-  <span class="warning">●</span> <span class="bold">Resting heart rate stable</span>
-    <span class="muted">Average 62 BPM, within healthy range.</span>
+  <span class="warning">● ~0%</span>   <span class="bold">Resting Heart Rate Stable</span>
+          <span class="muted">Avg 62 BPM — within healthy range (60-70 BPM).</span>
 
-  <span class="error">▼</span> <span class="bold">Workout frequency down</span>
-    <span class="muted">Only 2 workouts this week vs 4 last week.</span>
+  <span class="error">▼ -15%</span>  <span class="bold">Workout Frequency Down</span>
+          <span class="muted">2 workouts this week vs 4 last week. Consider scheduling more.</span>
 
 <span class="cyan bold">Recommendations:</span>
 
-  <span class="muted">1.</span> Schedule 2 more workouts this week <span class="muted">(priority: high)</span>
-  <span class="muted">2.</span> Maintain current sleep schedule <span class="muted">(priority: medium)</span>
-  <span class="muted">3.</span> Consider adding stretching routine <span class="muted">(priority: low)</span>
+  <span class="bold">1.</span> <span class="muted">[HIGH]</span>   Add 2 workouts this week — try Tuesday & Thursday
+  <span class="bold">2.</span> <span class="muted">[MEDIUM]</span> Maintain sleep schedule — bed by 11pm working well
+  <span class="bold">3.</span> <span class="muted">[LOW]</span>    Consider adding 5-min stretching routine post-workout
 
 <div class="box">
-<span class="muted">🔗 Audit entry:</span> <span class="purple">bafybeif...7g8h</span>
-<span class="muted">   All analysis ran locally. Your data never left this device.</span>
+<span class="muted">🔒 Privacy Guarantee</span>
+All analysis ran <span class="bold">locally on your device</span> using Ollama.
+Your raw health data <span class="bold">never left your machine</span>.
+Access logged to DAC: <span class="purple">bafybeig...DATA_ACCESSED</span>
 </div>
 
-<span class="muted">⏱  Completed in 4.7s</span>
+<span class="muted">⏱  Analysis completed in 12.4s</span>
 </pre>
       </div>
     </div>
 
-    <!-- GRANT Command -->
-    <div class="terminal">
+    <div class="flow-arrow">↓</div>
+
+    <!-- STEP 7: DAC AUDIT CHAIN -->
+    <div class="terminal" id="step7">
       <div class="terminal-header">
         <div class="terminal-dot red"></div>
         <div class="terminal-dot yellow"></div>
         <div class="terminal-dot green"></div>
-        <span class="terminal-title">proofi grant</span>
+        <span class="terminal-title">Terminal — Audit Chain (DAC)</span>
       </div>
       <div class="terminal-body">
-        <div class="section-label">TOKEN GRANT FLOW</div>
+        <div class="step-label">STEP 7 — VIEW AUDIT CHAIN (DAC RECORDS)</div>
 <pre>
-<span class="prompt">$</span> <span class="command">proofi grant health-analyzer --scopes steps,sleep --duration 24h</span>
+<span class="prompt">$</span> <span class="command">proofi audit --limit 10</span>
 
-<span class="cyan bold">🎫 Grant Capability Token</span>
-<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="cyan bold">⛓️  Decentralized Audit Chain (DAC)</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="muted">Immutable record of all data access events</span>
 
-<span class="bold">Agent:</span>      <span class="cyan">health-analyzer</span>
-<span class="bold">Scopes:</span>     <span class="purple">steps, sleep</span>
-<span class="bold">Duration:</span>   24 hours
-<span class="bold">Expires:</span>    <span class="muted">2026-02-09 19:47:34 CET</span>
+<span class="bold">Chain Status:</span> <span class="success">● Verified</span>  <span class="muted">|</span>  <span class="bold">Total Entries:</span> 7  <span class="muted">|</span>  <span class="bold">Hash Chain:</span> <span class="success">✓ Valid</span>
 
-<div class="box box-warning">
-<span class="warning bold">⚠ Review carefully</span>
-This agent will be able to read your <span class="bold">steps</span> and <span class="bold">sleep</span> data.
-All access is logged to an immutable audit chain.
+┌─────┬─────────────────────┬──────────────────────┬───────────────────────┐
+│ <span class="bold">#</span>   │ <span class="bold">Timestamp</span>           │ <span class="bold">Action</span>               │ <span class="bold">Details</span>               │
+├─────┼─────────────────────┼──────────────────────┼───────────────────────┤
+│ <span class="cyan">7</span>   │ Feb 8, 20:14:02     │ <span class="success">ANALYSIS_COMPLETE</span>    │ health-analyzer       │
+│     │                     │                      │ <span class="muted">Score: 87/100</span>         │
+├─────┼─────────────────────┼──────────────────────┼───────────────────────┤
+│ <span class="cyan">6</span>   │ Feb 8, 20:13:58     │ <span class="purple">DATA_ACCESSED</span>        │ health-analyzer       │
+│     │                     │                      │ <span class="muted">442,729 records</span>       │
+├─────┼─────────────────────┼──────────────────────┼───────────────────────┤
+│ <span class="cyan">5</span>   │ Feb 8, 20:13:52     │ <span class="purple">DATA_DECRYPTED</span>       │ health-analyzer       │
+│     │                     │                      │ <span class="muted">DEK unwrapped</span>         │
+├─────┼─────────────────────┼──────────────────────┼───────────────────────┤
+│ <span class="cyan">4</span>   │ Feb 8, 20:13:50     │ <span class="warning">TOKEN_VALIDATED</span>      │ health-analyzer       │
+│     │                     │                      │ <span class="muted">Scopes: 3 granted</span>    │
+├─────┼─────────────────────┼──────────────────────┼───────────────────────┤
+│ <span class="cyan">3</span>   │ Feb 8, 20:13:46     │ <span class="success">CONSENT_GRANTED</span>      │ → health-analyzer     │
+│     │                     │                      │ <span class="muted">steps,heartRate,sleep</span>│
+├─────┼─────────────────────┼──────────────────────┼───────────────────────┤
+│ <span class="cyan">2</span>   │ Feb 8, 19:55:03     │ <span class="cyan">DATA_UPLOADED</span>        │ 847,293 records       │
+│     │                     │                      │ <span class="muted">CID: bafybei...</span>       │
+├─────┼─────────────────────┼──────────────────────┼───────────────────────┤
+│ <span class="cyan">1</span>   │ Feb 8, 19:52:21     │ <span class="pink">WALLET_CREATED</span>       │ Genesis entry         │
+│     │                     │                      │ <span class="muted">DID: did:key:z6Mk...</span> │
+└─────┴─────────────────────┴──────────────────────┴───────────────────────┘
+
+<span class="bold">Hash Verification:</span>
+<span class="muted">Entry 7:</span> <span class="purple">a8f3c2d1...</span> ← hash(<span class="muted">Entry 6</span> + data)
+<span class="muted">Entry 6:</span> <span class="purple">9b4e5f2a...</span> ← hash(<span class="muted">Entry 5</span> + data)
+<span class="muted">Entry 5:</span> <span class="purple">7c3d8e1b...</span> ← hash(<span class="muted">Entry 4</span> + data)
+<span class="muted">...</span>
+<span class="success">✓ Chain integrity verified — no tampering detected</span>
+
+<div class="box box-info">
+<span class="cyan bold">ℹ What is DAC?</span>
+The Decentralized Audit Chain is an <span class="bold">immutable, cryptographically-linked</span>
+record of every action taken on your data. Each entry contains:
+  • Timestamp (when it happened)
+  • Action type (what happened)
+  • Actor (who did it)
+  • Hash link to previous entry (tamper-proof)
+
+You can verify the chain anytime: <span class="command">proofi audit --verify</span>
 </div>
 
-<span class="muted">Proceed? [y/N]</span> <span class="success">y</span>
+<span class="muted">⏱  Retrieved in 0.8s</span>
+</pre>
+      </div>
+    </div>
 
-<span class="muted">[1/3]</span> Creating capability token...      <span class="success">✓</span>
-<span class="muted">[2/3]</span> Wrapping DEK for agent...         <span class="success">✓</span>
-<span class="muted">[3/3]</span> Recording consent on-chain...     <span class="success">✓</span>
+    <div class="flow-arrow">↓</div>
+
+    <!-- STEP 8: AGENT LOGS -->
+    <div class="terminal" id="step8">
+      <div class="terminal-header">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <span class="terminal-title">Terminal — Agent Logs</span>
+      </div>
+      <div class="terminal-body">
+        <div class="step-label">STEP 8 — VIEW AGENT LOGS & INSIGHTS</div>
+<pre>
+<span class="prompt">$</span> <span class="command">proofi logs health-analyzer</span>
+
+<span class="cyan bold">📋 Agent Activity Log</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="muted">Agent: health-analyzer | Status:</span> <span class="success">● Active</span>
+
+<span class="bold">Session: Feb 8, 2026 20:13:46 → 20:14:02</span>
+
+  <span class="muted">20:13:46</span>  <span class="success">●</span>  Token received and validated
+             <span class="muted">Granted scopes: steps, heartRate, sleep</span>
+             <span class="muted">Token expires: Feb 9, 20:13:46</span>
+
+  <span class="muted">20:13:50</span>  <span class="purple">●</span>  Fetching encrypted data from DDC
+             <span class="muted">CID: bafybeigdyrzt5sfp7udm7hu76uh7y26nf3...</span>
+             <span class="muted">Size: 24.7 MB (encrypted)</span>
+
+  <span class="muted">20:13:52</span>  <span class="purple">●</span>  Unwrapping DEK with agent private key
+             <span class="muted">Cipher: X25519-XSalsa20-Poly1305</span>
+
+  <span class="muted">20:13:53</span>  <span class="purple">●</span>  Decrypting health records
+             <span class="muted">Cipher: AES-256-GCM</span>
+             <span class="muted">Records decrypted: 442,729</span>
+
+  <span class="muted">20:13:58</span>  <span class="cyan">●</span>  Starting Ollama analysis
+             <span class="muted">Model: llama3.2:3b</span>
+             <span class="muted">Context: 4 weeks of health data</span>
+
+  <span class="muted">20:14:01</span>  <span class="cyan">●</span>  Analysis complete
+             <span class="muted">Health score: 87/100</span>
+             <span class="muted">Insights generated: 4</span>
+             <span class="muted">Recommendations: 3</span>
+
+  <span class="muted">20:14:02</span>  <span class="success">●</span>  Results delivered, session ended
+             <span class="muted">Total runtime: 16.2s</span>
+             <span class="muted">Data retained: NO (ephemeral processing)</span>
 
 <div class="box box-success">
-<span class="success bold">✓ Token granted successfully</span>
-
-Token ID: <span class="purple">proofi_tk_a8f3bc91d2e4...</span>
-
-<span class="muted">The agent can now access your data. Revoke anytime with:</span>
-<span class="command">proofi revoke a8f3bc91d2e4</span>
+<span class="success bold">✓ Session Summary</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+  Records processed:    <span class="bold">442,729</span>
+  Analysis duration:    <span class="bold">16.2s</span>
+  Data retained:        <span class="error bold">None</span> <span class="muted">(ephemeral)</span>
+  DAC entries created:  <span class="bold">4</span>
+  
+<span class="cyan">All data was processed in-memory and immediately discarded.</span>
+<span class="cyan">The agent has no persistent access to your health data.</span>
 </div>
 
-<span class="muted">⏱  Completed in 2.1s</span>
+<span class="prompt">$</span> <span class="command">proofi insights</span>
+
+<span class="cyan bold">💡 Latest Insights</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│  <span class="gold bold">🏆 Health Score: 87/100</span>                      <span class="muted">Updated: 6 minutes ago</span>  │
+└──────────────────────────────────────────────────────────────────────────┘
+
+<span class="success bold">↑ Improving</span>
+  • Sleep quality up 12% — averaging 7.8h/night
+  • Step count up 8% — 3-day streak over 10k!
+
+<span class="warning bold">→ Stable</span>  
+  • Resting heart rate: 62 BPM (healthy range)
+
+<span class="error bold">↓ Needs Attention</span>
+  • Workout frequency down — only 2 sessions this week
+
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="muted">Run</span> <span class="command">proofi analyze</span> <span class="muted">to refresh • Data source: Apple Health</span>
 </pre>
       </div>
     </div>
 
-    <!-- HELP Command -->
+    <!-- SUMMARY -->
     <div class="terminal">
       <div class="terminal-header">
         <div class="terminal-dot red"></div>
         <div class="terminal-dot yellow"></div>
         <div class="terminal-dot green"></div>
-        <span class="terminal-title">proofi --help</span>
+        <span class="terminal-title">Complete Journey</span>
       </div>
       <div class="terminal-body">
-        <div class="section-label">HELP & COMMANDS</div>
+        <div class="step-label">✅ JOURNEY COMPLETE</div>
 <pre>
-<span class="prompt">$</span> <span class="command">proofi --help</span>
+<span class="cyan bold">🎉 You just completed the full Proofi flow!</span>
+<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
 
-<span class="cyan bold">🔐 Proofi CLI</span> <span class="muted">v1.0.0</span>
-<span class="muted">Privacy-preserving health data analysis with local AI</span>
-<span class="muted">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="bold">What happened:</span>
 
-<span class="bold">USAGE</span>
-  <span class="command">proofi</span> <span class="cyan">&lt;command&gt;</span> [options]
+  <span class="success">1.</span> <span class="bold">Installed</span> the CLI
+  <span class="success">2.</span> <span class="bold">Created</span> a self-sovereign wallet (you own the keys)
+  <span class="success">3.</span> <span class="bold">Imported</span> 847k health records, encrypted with YOUR key
+  <span class="success">4.</span> <span class="bold">Configured</span> which data types agents can access
+  <span class="success">5.</span> <span class="bold">Granted</span> time-limited access via capability token
+  <span class="success">6.</span> <span class="bold">Agent analyzed</span> your data locally (never left your device)
+  <span class="success">7.</span> <span class="bold">Every action</span> was logged to an immutable audit chain
+  <span class="success">8.</span> <span class="bold">Reviewed</span> exactly what the agent did and when
 
-<span class="bold">COMMANDS</span>
-  <span class="cyan">init</span>              Initialize Proofi and check dependencies
-  <span class="cyan">status</span>            Show current status and active tokens
-  <span class="cyan">upload</span> &lt;file&gt;     Upload and encrypt health data
-  <span class="cyan">grant</span> &lt;agent&gt;     Grant agent access via capability token
-  <span class="cyan">revoke</span> &lt;token&gt;    Revoke an active capability token
-  <span class="cyan">analyze</span>           Run local AI analysis on your health data
-  <span class="cyan">audit</span>             View audit chain entries
-  <span class="cyan">wallet</span>            Manage wallet and identity
-  <span class="cyan">demo</span>              Run full demo flow with sample data
+<span class="pink bold">Key Privacy Guarantees:</span>
 
-<span class="bold">OPTIONS</span>
-  <span class="muted">-V, --version</span>     Show version number
-  <span class="muted">-h, --help</span>        Show this help message
-  <span class="muted">--json</span>            Output in JSON format
-  <span class="muted">--quiet</span>           Suppress non-essential output
+  <span class="cyan">●</span>  Your data is <span class="bold">encrypted at rest</span> — only you have the key
+  <span class="cyan">●</span>  Agents get <span class="bold">time-limited, scope-limited</span> access
+  <span class="cyan">●</span>  Analysis runs <span class="bold">locally</span> — raw data never leaves your device
+  <span class="cyan">●</span>  Every access is <span class="bold">cryptographically logged</span> to DAC
+  <span class="cyan">●</span>  You can <span class="bold">revoke access instantly</span> at any time
+  <span class="cyan">●</span>  <span class="bold">No databases</span> — just you, your keys, and math
 
-<span class="bold">EXAMPLES</span>
-  <span class="muted">$</span> proofi init
-  <span class="muted">$</span> proofi upload ~/health-export.xml
-  <span class="muted">$</span> proofi grant health-analyzer --scopes steps,sleep
-  <span class="muted">$</span> proofi analyze --model llama3.2:3b
+<div class="box box-success">
+<span class="success bold">Don't trust us. Verify.</span>
 
-<span class="bold">LEARN MORE</span>
-  Documentation:  <span class="purple">https://proofi.ai/docs</span>
-  Source:         <span class="purple">https://github.com/proofi/cli</span>
+<span class="command">proofi audit --verify</span>    <span class="muted">Check the entire chain</span>
+<span class="command">proofi status</span>            <span class="muted">See what's active</span>
+<span class="command">proofi revoke [token]</span>    <span class="muted">Cut off access instantly</span>
+</div>
+
+<span class="muted">Learn more:</span> <span class="purple">https://proofi.ai/docs</span>
 </pre>
       </div>
     </div>
 
-    <!-- Features -->
-    <div class="features">
-      <div class="feature-card">
-        <h3>✨ Rich Formatting</h3>
-        <p>Color-coded output, progress indicators, and visual hierarchy make complex info scannable.</p>
-      </div>
-      <div class="feature-card">
-        <h3>📊 Step Counters</h3>
-        <p>[1/5], [2/5]... progress through multi-step operations with clear feedback.</p>
-      </div>
-      <div class="feature-card">
-        <h3>✅ Confirmation Boxes</h3>
-        <p>Success, warning, and info boxes draw attention to important outcomes.</p>
-      </div>
-      <div class="feature-card">
-        <h3>⏱ Timing Info</h3>
-        <p>Every command shows completion time so you know what to expect.</p>
-      </div>
-      <div class="feature-card">
-        <h3>🎯 Clear Actions</h3>
-        <p>Next steps and follow-up commands are always suggested inline.</p>
-      </div>
-      <div class="feature-card">
-        <h3>🔒 Trust Signals</h3>
-        <p>"Your data never left this device" — privacy guarantees front and center.</p>
-      </div>
-    </div>
   </div>
 </body>
 </html>
