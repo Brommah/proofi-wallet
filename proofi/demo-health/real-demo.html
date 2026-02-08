@@ -1504,19 +1504,15 @@
         // Try real DDC via Proofi API first
         if (state.authToken) {
           try {
-            log('DDC: Uploading raw encrypted data to Cere DDC Mainnet bucket 1229...', 'ddc');
-            const response = await fetch(`${PROOFI_API}/ddc/store`, {
+            log('DDC: Uploading encrypted data to Cere DDC Mainnet bucket 1229...', 'ddc');
+            const response = await fetch(`${PROOFI_API}/ddc/memo`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${state.authToken}`
               },
               body: JSON.stringify({
-                content: jsonData,
-                tags: [
-                  { key: 'type', value: 'health-data-encrypted-v1' },
-                  { key: 'app', value: 'proofi-health-demo' }
-                ]
+                memo: jsonData
               })
             });
 
@@ -1582,7 +1578,12 @@
           if (response.ok) {
             const text = await response.text();
             log('DDC: Fetched from CDN!', 'success');
-            return JSON.parse(text);
+            let content = JSON.parse(text);
+            // Unwrap memo envelope if present (stored via /ddc/memo)
+            if (content.type === 'memo' && content.content) {
+              content = typeof content.content === 'string' ? JSON.parse(content.content) : content.content;
+            }
+            return content;
           } else {
             throw new Error(`CDN returned ${response.status}`);
           }
