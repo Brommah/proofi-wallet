@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Proofi — Mobile Health Demo</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d1d1f'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #000000;
+      --bg-card: #1c1c1e;
+      --bg-card-elevated: #2c2c2e;
+      --text: #ffffff;
+      --text-secondary: #8e8e93;
+      --text-tertiary: #636366;
+      --border: rgba(255,255,255,0.08);
+      --accent: #0a84ff;
+      --success: #30d158;
+      --warning: #ff9f0a;
+      --error: #ff453a;
+      --health-red: #ff375f;
+      --health-orange: #ff9f0a;
+      --health-green: #30d158;
+      --health-blue: #64d2ff;
+      --health-purple: #bf5af2;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+      --mono: 'SF Mono', SFMono-Regular, Menlo, Monaco, monospace;
+      --radius: 16px;
+      --radius-sm: 12px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --touch-min: 48px;
+    }
+    
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      min-height: 100dvh;
+      line-height: 1.4;
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+    
+    /* ===== HEADER ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 12px 16px;
+      padding-top: calc(12px + env(safe-area-inset-top, 0px));
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .wallet-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--bg-card);
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    .wallet-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
+    .wallet-dot.connected { background: var(--success); }
+    .wallet-addr {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    /* ===== MAIN ===== */
+    main {
+      padding: 20px 16px;
+      padding-bottom: calc(100px + var(--safe-bottom));
+    }
+    
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 40px 0 32px;
+    }
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    
+    /* ===== STATUS BANNER ===== */
+    .status-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(48,209,88,0.12);
+      border-radius: var(--radius-sm);
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: var(--success);
+    }
+    .status-banner.warning {
+      background: rgba(255,159,10,0.12);
+      color: var(--warning);
+    }
+    .status-banner .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .card-icon.wallet { background: linear-gradient(135deg, #5e5ce6, #bf5af2); }
+    .card-icon.health { background: linear-gradient(135deg, #ff375f, #ff6961); }
+    .card-icon.lock { background: linear-gradient(135deg, #30d158, #34c759); }
+    .card-icon.agent { background: linear-gradient(135deg, #0a84ff, #64d2ff); }
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .card-step {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .card.completed {
+      opacity: 0.7;
+    }
+    .card.completed .card-header::after {
+      content: '✓';
+      margin-left: auto;
+      width: 28px;
+      height: 28px;
+      background: var(--success);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: var(--touch-min);
+      padding: 14px 24px;
+      font-family: var(--font);
+      font-size: 17px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: var(--bg-card-elevated);
+      color: var(--text);
+    }
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-danger {
+      background: rgba(255,69,58,0.15);
+      color: var(--error);
+    }
+    
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn-group-horizontal {
+      flex-direction: row;
+    }
+    .btn-group-horizontal .btn {
+      flex: 1;
+    }
+    
+    /* ===== INPUTS ===== */
+    .input-group {
+      margin-bottom: 16px;
+    }
+    .input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .input {
+      width: 100%;
+      min-height: var(--touch-min);
+      padding: 14px 16px;
+      background: var(--bg-card-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 15px;
+    }
+    .input::placeholder {
+      color: var(--text-tertiary);
+    }
+    .input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    /* ===== FILE UPLOAD ===== */
+    .file-upload {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
+      padding: 24px;
+      background: var(--bg-card-elevated);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .file-upload.dragover {
+      border-color: var(--accent);
+      background: rgba(10,132,255,0.08);
+    }
+    .file-upload.has-file {
+      border-style: solid;
+      border-color: var(--success);
+    }
+    .file-upload-input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .file-upload-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .file-upload-text {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .file-upload-hint {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    /* ===== HEALTH RECORDS VIEWER (Apple Health Style) ===== */
+    .health-summary {
+      margin-bottom: 24px;
+    }
+    .health-summary-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .health-summary-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #ff375f, #ff6961);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .health-summary-title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .health-summary-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .health-records-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .health-record-card {
+      background: var(--bg-card-elevated);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .health-record-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+    .health-record-card.steps::before { background: var(--health-green); }
+    .health-record-card.sleep::before { background: var(--health-purple); }
+    .health-record-card.heart::before { background: var(--health-red); }
+    .health-record-card.activity::before { background: var(--health-orange); }
+    .health-record-card.hrv::before { background: var(--health-blue); }
+    .health-record-card.oxygen::before { background: var(--health-blue); }
+    
+    .health-record-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .health-record-count {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      font-feature-settings: 'tnum';
+    }
+    .health-record-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    
+    .health-record-card.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    /* ===== INFO BOX ===== */
+    .info-box {
+      background: rgba(10,132,255,0.1);
+      border: 1px solid rgba(10,132,255,0.2);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .info-box-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-box-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    
+    /* ===== KV DISPLAY ===== */
+    .kv-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kv-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .kv-item:last-child {
+      border-bottom: none;
+    }
+    .kv-key {
+      font-size: 14px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .kv-value {
+      font-size: 14px;
+      font-family: var(--mono);
+      text-align: right;
+      word-break: break-all;
+    }
+    .kv-value.success { color: var(--success); }
+    .kv-value.accent { color: var(--accent); }
+    
+    /* ===== PERMISSION SCOPES ===== */
+    .scope-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .scope-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--bg-card-elevated);
+      border-radius: var(--radius-sm);
+      min-height: var(--touch-min);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .scope-item.selected {
+      background: rgba(10,132,255,0.15);
+    }
+    .scope-checkbox {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--text-tertiary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: transparent;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .scope-item.selected .scope-checkbox {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .scope-info {
+      flex: 1;
+    }
+    .scope-name {
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .scope-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .scope-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .scope-badge.low { background: rgba(48,209,88,0.15); color: var(--success); }
+    .scope-badge.medium { background: rgba(255,159,10,0.15); color: var(--warning); }
+    .scope-badge.high { background: rgba(255,69,58,0.15); color: var(--error); }
+    
+    /* ===== AGENT CARD ===== */
+    .agent-card {
+      background: var(--bg-card-elevated);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .agent-card.selected {
+      border-color: var(--accent);
+    }
+    .agent-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .agent-icon {
+      font-size: 32px;
+    }
+    .agent-name {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .agent-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    /* ===== ANALYSIS RESULTS ===== */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .result-card {
+      background: var(--bg-card-elevated);
+      border-radius: var(--radius-sm);
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .result-value {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .result-value.good { color: var(--success); }
+    .result-value.warning { color: var(--warning); }
+    .result-value.bad { color: var(--error); }
+    .result-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    
+    .recommendations {
+      background: var(--bg-card-elevated);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .recommendations-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .recommendation-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      font-size: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+    .recommendation-item:last-child {
+      border-bottom: none;
+    }
+    .recommendation-bullet {
+      color: var(--accent);
+    }
+    
+    /* ===== LOADING ===== */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 40px 20px;
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--bg-card-elevated);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* ===== PROGRESS STEPS ===== */
+    .progress-steps {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .progress-dot.active {
+      background: var(--accent);
+      transform: scale(1.25);
+    }
+    .progress-dot.completed {
+      background: var(--success);
+    }
+    
+    /* ===== BOTTOM ACTION BAR ===== */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      padding-bottom: calc(16px + var(--safe-bottom));
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      z-index: 100;
+    }
+    
+    /* ===== HIDDEN SECTIONS ===== */
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    
+    /* ===== SEAL ===== */
+    .sovereignty-seal {
+      background: linear-gradient(135deg, rgba(48,209,88,0.1), rgba(10,132,255,0.1));
+      border: 1px solid rgba(48,209,88,0.2);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin-top: 24px;
+    }
+    .seal-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .seal-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .seal-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: calc(100px + var(--safe-bottom));
+      left: 16px;
+      right: 16px;
+      background: var(--bg-card-elevated);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(150%);
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      z-index: 200;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .toast-icon { font-size: 24px; }
+    .toast-text { flex: 1; font-size: 15px; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <span class="logo">Proofi</span>
+      <div class="wallet-pill" id="walletPill">
+        <span class="wallet-dot" id="walletDot"></span>
+        <span class="wallet-addr" id="walletAddr">Not Connected</span>
+      </div>
+    </div>
+  </header>
+  
+  <main>
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div class="progress-dot active" data-step="1"></div>
+      <div class="progress-dot" data-step="2"></div>
+      <div class="progress-dot" data-step="3"></div>
+      <div class="progress-dot" data-step="4"></div>
+      <div class="progress-dot" data-step="5"></div>
+    </div>
+    
+    <!-- ===== STEP 1: WALLET ===== -->
+    <section id="step1" class="section active">
+      <div class="hero">
+        <h1>Your Data,<br>Your Control</h1>
+        <p>Create a secure wallet to encrypt and control access to your health data.</p>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon wallet">🔐</div>
+          <div>
+            <div class="card-step">Step 1</div>
+            <div class="card-title">Create Your Wallet</div>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label class="input-label">Import existing seed phrase (optional)</label>
+          <input type="text" class="input" id="seedInput" placeholder="word1 word2 word3 ... word12">
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="createWallet()">
+            Create New Wallet
+          </button>
+          <button class="btn btn-secondary" onclick="createWallet(true)">
+            Import Existing
+          </button>
+        </div>
+        
+        <div id="walletDetails" style="display: none; margin-top: 20px;">
+          <div class="kv-list">
+            <div class="kv-item">
+              <span class="kv-key">Public Key</span>
+              <span class="kv-value" id="pubKeyDisplay">—</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-key">DID</span>
+              <span class="kv-value accent" id="didDisplay">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <div class="info-box-title">
+          <span>🔒</span> How it works
+        </div>
+        <div class="info-box-text">
+          Your wallet creates cryptographic keys that let you sign data and control who can access it. 
+          Nothing is stored on a server — everything happens on your device.
+        </div>
+      </div>
+    </section>
+    
+    <!-- ===== STEP 2: IMPORT HEALTH DATA ===== -->
+    <section id="step2" class="section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon health">❤️</div>
+          <div>
+            <div class="card-step">Step 2</div>
+            <div class="card-title">Import Health Data</div>
+          </div>
+        </div>
+        
+        <div class="file-upload" id="fileUpload">
+          <input type="file" class="file-upload-input" id="healthFileInput" accept=".xml,.json">
+          <div class="file-upload-icon" id="fileUploadIcon">📁</div>
+          <div class="file-upload-text" id="fileUploadText">Tap to upload health export</div>
+          <div class="file-upload-hint" id="fileUploadHint">Apple Health XML or JSON</div>
+        </div>
+        
+        <div style="text-align: center; margin: 16px 0; color: var(--text-tertiary);">or</div>
+        
+        <button class="btn btn-secondary" onclick="useSampleData()">
+          Use Sample Data (Demo)
+        </button>
+      </div>
+      
+      <!-- Health Records Viewer (Apple Health Style) -->
+      <div id="healthRecordsViewer" style="display: none;">
+        <div class="health-summary">
+          <div class="health-summary-header">
+            <div class="health-summary-icon">❤️</div>
+            <div>
+              <div class="health-summary-title">Health Records</div>
+              <div class="health-summary-subtitle" id="recordsSummary">Ready for encryption</div>
+            </div>
+          </div>
+          
+          <div class="health-records-grid" id="healthRecordsGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        
+        <div class="info-box">
+          <div class="info-box-title">
+            <span>🔐</span> What happens next
+          </div>
+          <div class="info-box-text">
+            Your health data will be encrypted with AES-256-GCM and stored on the Cere DDC network.
+            Only you hold the decryption key.
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- ===== STEP 3: ENCRYPT & STORE ===== -->
+    <section id="step3" class="section">
+      <div class="status-banner" id="ddcStatus">
+        <span class="dot"></span>
+        <span>Connected to Cere DDC Mainnet</span>
+      </div>
+      
+      <!-- DDC Explanation Box -->
+      <div class="card" style="background: linear-gradient(135deg, rgba(10,132,255,0.08), rgba(191,90,242,0.08)); border: 1px solid rgba(10,132,255,0.2); margin-bottom: 16px;">
+        <div style="text-align: center; padding: 8px 0;">
+          <div style="font-size: 32px; margin-bottom: 12px;">☁️ 🔐 ✨</div>
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Your Data on DDC</h3>
+          <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
+            Your health data is <strong style="color: var(--text);">encrypted with AES-256</strong> before leaving your device.
+            It's then stored on the <strong style="color: var(--accent);">Cere Decentralized Data Cloud</strong> — 
+            a network of nodes that ensures your data is always available but <strong style="color: var(--text);">only you hold the key</strong>.
+          </p>
+          <div style="display: flex; justify-content: center; gap: 16px; margin-top: 16px; font-size: 12px; color: var(--text-secondary);">
+            <div style="text-align: center;">
+              <div style="font-size: 20px; margin-bottom: 4px;">🔒</div>
+              <div>Encrypted</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 20px; margin-bottom: 4px;">🌐</div>
+              <div>Decentralized</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 20px; margin-bottom: 4px;">✅</div>
+              <div>Verifiable</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon lock">🔒</div>
+          <div>
+            <div class="card-step">Step 3</div>
+            <div class="card-title">Encrypt & Store</div>
+          </div>
+        </div>
+        
+        <div class="info-box" style="background: rgba(48,209,88,0.1); border-color: rgba(48,209,88,0.2);">
+          <div class="info-box-title" style="color: var(--success);">
+            <span>✓</span> Your data is ready
+          </div>
+          <div class="info-box-text">
+            <span id="recordCountText">0</span> records will be encrypted and stored on DDC.
+          </div>
+        </div>
+        
+        <div id="encryptionDetails" style="display: none;">
+          <div class="kv-list">
+            <div class="kv-item">
+              <span class="kv-key">Storage</span>
+              <span class="kv-value success">DDC Mainnet</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-key">Bucket ID</span>
+              <span class="kv-value" id="bucketDisplay">1229</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-key">Content ID</span>
+              <span class="kv-value accent" id="cidDisplay">—</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-key">Encryption</span>
+              <span class="kv-value">AES-256-GCM</span>
+            </div>
+          </div>
+        </div>
+        
+        <div id="encryptionLoading" class="loading" style="display: none;">
+          <div class="spinner"></div>
+          <span>Encrypting and uploading...</span>
+        </div>
+      </div>
+    </section>
+    
+    <!-- ===== STEP 4: GRANT PERMISSION ===== -->
+    <section id="step4" class="section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon agent">🤖</div>
+          <div>
+            <div class="card-step">Step 4</div>
+            <div class="card-title">Grant Permission</div>
+          </div>
+        </div>
+        
+        <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 20px;">
+          Choose what data to share with the AI agent. You can revoke access anytime.
+        </p>
+        
+        <div class="scope-list" id="scopeList">
+          <div class="scope-item selected" data-scope="steps" data-records="12847">
+            <div class="scope-checkbox">✓</div>
+            <div class="scope-info">
+              <div class="scope-name">Steps</div>
+              <div class="scope-detail">12,847 records</div>
+            </div>
+            <span class="scope-badge low">Low</span>
+          </div>
+          <div class="scope-item selected" data-scope="sleep" data-records="1461">
+            <div class="scope-checkbox">✓</div>
+            <div class="scope-info">
+              <div class="scope-name">Sleep Analysis</div>
+              <div class="scope-detail">1,461 records</div>
+            </div>
+            <span class="scope-badge medium">Medium</span>
+          </div>
+          <div class="scope-item selected" data-scope="heart" data-records="298">
+            <div class="scope-checkbox">✓</div>
+            <div class="scope-info">
+              <div class="scope-name">Heart Rate</div>
+              <div class="scope-detail">298 records</div>
+            </div>
+            <span class="scope-badge medium">Medium</span>
+          </div>
+        </div>
+        
+        <div class="agent-card selected">
+          <div class="agent-card-header">
+            <span class="agent-icon">📊</span>
+            <div>
+              <div class="agent-name">Health Analyzer</div>
+              <div class="agent-desc">General health insights & trends</div>
+            </div>
+          </div>
+        </div>
+        
+        <div id="permissionDetails" style="display: none; margin-top: 16px;">
+          <div class="kv-list">
+            <div class="kv-item">
+              <span class="kv-key">Token ID</span>
+              <span class="kv-value" id="tokenIdDisplay">—</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-key">Expires</span>
+              <span class="kv-value" id="tokenExpiryDisplay">—</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-key">Status</span>
+              <span class="kv-value success">Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- ===== STEP 5: RESULTS ===== -->
+    <section id="step5" class="section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background: linear-gradient(135deg, #30d158, #34c759);">✨</div>
+          <div>
+            <div class="card-step">Step 5</div>
+            <div class="card-title">Analysis Results</div>
+          </div>
+        </div>
+        
+        <div id="analysisLoading" class="loading">
+          <div class="spinner"></div>
+          <span>Agent analyzing your data...</span>
+        </div>
+        
+        <div id="analysisResults" style="display: none;">
+          <div class="results-grid" id="resultsGrid">
+            <!-- Populated by JS -->
+          </div>
+          
+          <div class="recommendations" id="recommendations">
+            <div class="recommendations-title">
+              <span>💡</span> Recommendations
+            </div>
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="sovereignty-seal" id="sovereigntySeal" style="display: none;">
+        <div class="seal-icon">🛡️</div>
+        <div class="seal-title">Proof of Data Sovereignty</div>
+        <div class="seal-subtitle">
+          Your data was encrypted, stored on DDC, and analyzed — all without leaving your control.
+        </div>
+      </div>
+      
+      <div class="btn-group" style="margin-top: 24px;">
+        <button class="btn btn-secondary" onclick="restartDemo()">
+          Start Over
+        </button>
+      </div>
+    </section>
+  </main>
+  
+  <!-- Bottom Action Bar -->
+  <div class="bottom-bar" id="bottomBar">
+    <button class="btn btn-primary" id="primaryAction" onclick="handlePrimaryAction()">
+      Continue
+    </button>
+  </div>
+  
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toastIcon">✓</span>
+    <span class="toast-text" id="toastText">Success!</span>
+  </div>
+  
+  <!-- TweetNaCl for crypto -->
+  <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script>
+  
+  <script>
+    // ========================================
+    // MOBILE E2E HEALTH DEMO
+    // No Chrome extension required!
+    // ========================================
+    
+    const STORAGE_KEY = 'proofi_wallet_state';
+    const DDC_CONFIG = {
+      cdnUrl: 'https://cdn.ddc-dragon.com',
+      defaultBucket: 1229n
+    };
+    
+    // Global State
+    const state = {
+      currentStep: 1,
+      wallet: null,
+      healthData: null,
+      parsedRecords: null,
+      encryptedData: null,
+      dek: null,
+      dataCid: null,
+      capabilityToken: null,
+      analysisResults: null
+    };
+    
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+    
+    function randomBytes(n) {
+      return nacl.randomBytes(n);
+    }
+    
+    async function sha256(data) {
+      const buffer = typeof data === 'string' ? new TextEncoder().encode(data) : data;
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      return new Uint8Array(hashBuffer);
+    }
+    
+    function generateSigningKeyPair(seed = null) {
+      if (!seed) seed = randomBytes(32);
+      const keyPair = nacl.sign.keyPair.fromSeed(seed);
+      return {
+        publicKey: keyPair.publicKey,
+        privateKey: keyPair.secretKey,
+        seed
+      };
+    }
+    
+    function deriveDID(publicKey) {
+      const b64 = nacl.util.encodeBase64(publicKey);
+      return `did:key:z${b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')}`;
+    }
+    
+    async function encryptAES(plaintext, key) {
+      const iv = randomBytes(12);
+      const encodedText = typeof plaintext === 'string' 
+        ? new TextEncoder().encode(plaintext) 
+        : plaintext;
+      
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw', key, { name: 'AES-GCM' }, false, ['encrypt']
+      );
+      
+      const ciphertext = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv, tagLength: 128 },
+        cryptoKey,
+        encodedText
+      );
+      
+      return {
+        ciphertext: nacl.util.encodeBase64(new Uint8Array(ciphertext)),
+        iv: nacl.util.encodeBase64(iv),
+        algorithm: 'AES-256-GCM'
+      };
+    }
+    
+    async function decryptAES(ciphertextB64, ivB64, key) {
+      const ciphertext = nacl.util.decodeBase64(ciphertextB64);
+      const iv = nacl.util.decodeBase64(ivB64);
+      
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw', key, { name: 'AES-GCM' }, false, ['decrypt']
+      );
+      
+      const plaintext = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv, tagLength: 128 },
+        cryptoKey,
+        ciphertext
+      );
+      
+      return new TextDecoder().decode(plaintext);
+    }
+    
+    function wrapDEK(dek, recipientPublicKey) {
+      const ephemeral = nacl.box.keyPair();
+      const nonce = randomBytes(24);
+      const encrypted = nacl.box(dek, nonce, recipientPublicKey, ephemeral.secretKey);
+      return {
+        ciphertext: nacl.util.encodeBase64(encrypted),
+        ephemeralPublicKey: nacl.util.encodeBase64(ephemeral.publicKey),
+        nonce: nacl.util.encodeBase64(nonce)
+      };
+    }
+    
+    function signMessage(message, privateKey) {
+      const messageBytes = typeof message === 'string' 
+        ? new TextEncoder().encode(message) 
+        : message;
+      const signature = nacl.sign.detached(messageBytes, privateKey);
+      return nacl.util.encodeBase64(signature);
+    }
+    
+    async function generateCID(data) {
+      const jsonStr = typeof data === 'string' ? data : JSON.stringify(data);
+      const hash = await sha256(jsonStr);
+      const base32Chars = 'abcdefghijklmnopqrstuvwxyz234567';
+      let result = '';
+      let bits = 0, value = 0;
+      for (let i = 0; i < hash.length; i++) {
+        value = (value << 8) | hash[i];
+        bits += 8;
+        while (bits >= 5) {
+          bits -= 5;
+          result += base32Chars[(value >> bits) & 31];
+        }
+      }
+      if (bits > 0) result += base32Chars[(value << (5 - bits)) & 31];
+      return 'bafyb' + result.slice(0, 54);
+    }
+    
+    // ========================================
+    // TOAST NOTIFICATIONS
+    // ========================================
+    
+    function showToast(message, icon = '✓') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastText').textContent = message;
+      document.getElementById('toastIcon').textContent = icon;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
+    // ========================================
+    // LOCALSTORAGE PERSISTENCE
+    // ========================================
+    
+    function saveState() {
+      const toSave = {
+        wallet: state.wallet ? {
+          publicKey: nacl.util.encodeBase64(state.wallet.publicKey),
+          privateKey: nacl.util.encodeBase64(state.wallet.privateKey),
+          seed: nacl.util.encodeBase64(state.wallet.seed),
+          x25519Public: nacl.util.encodeBase64(state.wallet.x25519Public),
+          x25519Private: nacl.util.encodeBase64(state.wallet.x25519Private)
+        } : null,
+        dataCid: state.dataCid,
+        dek: state.dek ? nacl.util.encodeBase64(state.dek) : null,
+        encryptedData: state.encryptedData,
+        parsedRecords: state.parsedRecords
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    }
+    
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return false;
+        
+        const parsed = JSON.parse(saved);
+        if (parsed.wallet) {
+          state.wallet = {
+            publicKey: nacl.util.decodeBase64(parsed.wallet.publicKey),
+            privateKey: nacl.util.decodeBase64(parsed.wallet.privateKey),
+            seed: nacl.util.decodeBase64(parsed.wallet.seed),
+            x25519Public: nacl.util.decodeBase64(parsed.wallet.x25519Public),
+            x25519Private: nacl.util.decodeBase64(parsed.wallet.x25519Private)
+          };
+          updateWalletUI();
+        }
+        if (parsed.dataCid) state.dataCid = parsed.dataCid;
+        if (parsed.dek) state.dek = nacl.util.decodeBase64(parsed.dek);
+        if (parsed.encryptedData) state.encryptedData = parsed.encryptedData;
+        if (parsed.parsedRecords) state.parsedRecords = parsed.parsedRecords;
+        
+        return true;
+      } catch (e) {
+        console.error('Failed to load state:', e);
+        return false;
+      }
+    }
+    
+    // ========================================
+    // STEP NAVIGATION
+    // ========================================
+    
+    function goToStep(n) {
+      state.currentStep = n;
+      
+      // Update sections
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step${n}`).classList.add('active');
+      
+      // Update progress dots
+      document.querySelectorAll('.progress-dot').forEach(dot => {
+        const step = parseInt(dot.dataset.step);
+        dot.classList.remove('active', 'completed');
+        if (step < n) dot.classList.add('completed');
+        else if (step === n) dot.classList.add('active');
+      });
+      
+      // Update button text
+      updatePrimaryButton();
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function updatePrimaryButton() {
+      const btn = document.getElementById('primaryAction');
+      const bar = document.getElementById('bottomBar');
+      
+      switch (state.currentStep) {
+        case 1:
+          btn.textContent = 'Continue';
+          btn.disabled = !state.wallet;
+          break;
+        case 2:
+          btn.textContent = 'Encrypt & Upload';
+          btn.disabled = !state.healthData;
+          break;
+        case 3:
+          btn.textContent = state.dataCid ? 'Continue' : 'Encrypt & Upload';
+          btn.disabled = false;
+          break;
+        case 4:
+          btn.textContent = 'Grant Access & Analyze';
+          btn.disabled = false;
+          break;
+        case 5:
+          bar.style.display = 'none';
+          return;
+      }
+      bar.style.display = 'block';
+    }
+    
+    function handlePrimaryAction() {
+      switch (state.currentStep) {
+        case 1:
+          if (state.wallet) goToStep(2);
+          break;
+        case 2:
+          if (state.healthData) goToStep(3);
+          break;
+        case 3:
+          if (!state.dataCid) {
+            encryptAndUpload();
+          } else {
+            goToStep(4);
+          }
+          break;
+        case 4:
+          grantAndAnalyze();
+          break;
+      }
+    }
+    
+    // ========================================
+    // STEP 1: WALLET
+    // ========================================
+    
+    async function createWallet(importExisting = false) {
+      let seed;
+      
+      if (importExisting) {
+        const input = document.getElementById('seedInput').value.trim();
+        if (!input) {
+          showToast('Please enter a seed phrase', '⚠️');
+          return;
+        }
+        seed = (await sha256(input)).slice(0, 32);
+      } else {
+        seed = randomBytes(32);
+      }
+      
+      // Ed25519 signing keypair
+      const keyPair = generateSigningKeyPair(seed);
+      
+      // X25519 encryption keypair
+      const x25519 = nacl.box.keyPair.fromSecretKey(seed);
+      
+      state.wallet = {
+        publicKey: keyPair.publicKey,
+        privateKey: keyPair.privateKey,
+        seed: seed,
+        x25519Public: x25519.publicKey,
+        x25519Private: x25519.secretKey
+      };
+      
+      updateWalletUI();
+      saveState();
+      
+      showToast(importExisting ? 'Wallet imported!' : 'Wallet created!');
+      updatePrimaryButton();
+    }
+    
+    function updateWalletUI() {
+      if (!state.wallet) return;
+      
+      const pubKeyB64 = nacl.util.encodeBase64(state.wallet.publicKey);
+      const did = deriveDID(state.wallet.publicKey);
+      
+      document.getElementById('walletDot').classList.add('connected');
+      document.getElementById('walletAddr').textContent = pubKeyB64.slice(0, 6) + '...' + pubKeyB64.slice(-4);
+      
+      document.getElementById('pubKeyDisplay').textContent = pubKeyB64.slice(0, 20) + '...';
+      document.getElementById('didDisplay').textContent = did.slice(0, 24) + '...';
+      document.getElementById('walletDetails').style.display = 'block';
+    }
+    
+    // ========================================
+    // STEP 2: HEALTH DATA IMPORT
+    // ========================================
+    
+    function setupFileUpload() {
+      const input = document.getElementById('healthFileInput');
+      const uploadDiv = document.getElementById('fileUpload');
+      
+      input.addEventListener('change', handleFileSelect);
+      
+      uploadDiv.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadDiv.classList.add('dragover');
+      });
+      
+      uploadDiv.addEventListener('dragleave', () => {
+        uploadDiv.classList.remove('dragover');
+      });
+      
+      uploadDiv.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadDiv.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+          input.files = e.dataTransfer.files;
+          handleFileSelect({ target: input });
+        }
+      });
+    }
+    
+    async function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const uploadDiv = document.getElementById('fileUpload');
+      document.getElementById('fileUploadIcon').textContent = '⏳';
+      document.getElementById('fileUploadText').textContent = 'Processing...';
+      
+      try {
+        const text = await file.text();
+        
+        if (file.name.endsWith('.xml')) {
+          state.healthData = parseAppleHealthXML(text);
+        } else {
+          state.healthData = JSON.parse(text);
+        }
+        
+        state.parsedRecords = analyzeHealthRecords(state.healthData);
+        
+        uploadDiv.classList.add('has-file');
+        document.getElementById('fileUploadIcon').textContent = '✓';
+        document.getElementById('fileUploadText').textContent = file.name;
+        document.getElementById('fileUploadHint').textContent = 'File loaded successfully';
+        
+        showHealthRecordsViewer();
+        saveState();
+        updatePrimaryButton();
+        showToast('Health data imported!');
+        
+      } catch (err) {
+        document.getElementById('fileUploadIcon').textContent = '❌';
+        document.getElementById('fileUploadText').textContent = 'Error reading file';
+        document.getElementById('fileUploadHint').textContent = err.message;
+        showToast('Failed to parse file', '❌');
+      }
+    }
+    
+    function parseAppleHealthXML(xmlText) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlText, 'text/xml');
+      
+      const records = doc.querySelectorAll('Record');
+      const data = {
+        steps: [],
+        sleep: [],
+        heartRate: [],
+        hrv: [],
+        bloodOxygen: [],
+        activity: [],
+        version: '1.0',
+        exportedAt: new Date().toISOString()
+      };
+      
+      records.forEach(record => {
+        const type = record.getAttribute('type');
+        const value = parseFloat(record.getAttribute('value')) || 0;
+        const date = record.getAttribute('startDate') || record.getAttribute('creationDate');
+        
+        switch (type) {
+          case 'HKQuantityTypeIdentifierStepCount':
+            data.steps.push({ date, value });
+            break;
+          case 'HKCategoryTypeIdentifierSleepAnalysis':
+            data.sleep.push({ date, value: record.getAttribute('value') });
+            break;
+          case 'HKQuantityTypeIdentifierHeartRate':
+            data.heartRate.push({ date, bpm: value });
+            break;
+          case 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN':
+            data.hrv.push({ date, value });
+            break;
+          case 'HKQuantityTypeIdentifierOxygenSaturation':
+            data.bloodOxygen.push({ date, value });
+            break;
+          case 'HKQuantityTypeIdentifierActiveEnergyBurned':
+            data.activity.push({ date, value });
+            break;
+        }
+      });
+      
+      return data;
+    }
+    
+    function analyzeHealthRecords(data) {
+      return {
+        steps: data.steps?.length || 0,
+        sleep: data.sleep?.length || 0,
+        heart: data.heartRate?.length || 0,
+        hrv: data.hrv?.length || 0,
+        bloodOxygen: data.bloodOxygen?.length || 0,
+        activity: data.activity?.length || 0,
+        total: (data.steps?.length || 0) + (data.sleep?.length || 0) + 
+               (data.heartRate?.length || 0) + (data.hrv?.length || 0) +
+               (data.bloodOxygen?.length || 0) + (data.activity?.length || 0)
+      };
+    }
+    
+    function useSampleData() {
+      // Generate sample data
+      state.healthData = generateSampleHealthData();
+      state.parsedRecords = {
+        steps: 12847,
+        sleep: 1461,
+        heart: 298,
+        hrv: 0,
+        bloodOxygen: 0,
+        activity: 0,
+        total: 14606
+      };
+      
+      const uploadDiv = document.getElementById('fileUpload');
+      uploadDiv.classList.add('has-file');
+      document.getElementById('fileUploadIcon').textContent = '✓';
+      document.getElementById('fileUploadText').textContent = 'Sample Data';
+      document.getElementById('fileUploadHint').textContent = '30 days of health records';
+      
+      showHealthRecordsViewer();
+      saveState();
+      updatePrimaryButton();
+      showToast('Sample data loaded!');
+    }
+    
+    function generateSampleHealthData() {
+      const sleep = [], heartRate = [], steps = [];
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + i);
+        
+        // Sleep
+        sleep.push({
+          date: date.toISOString().split('T')[0],
+          duration: 6 + Math.random() * 3,
+          quality: 60 + Math.floor(Math.random() * 35)
+        });
+        
+        // Steps (multiple per day)
+        for (let j = 0; j < 400 + Math.floor(Math.random() * 100); j++) {
+          steps.push({
+            date: date.toISOString(),
+            value: 10 + Math.floor(Math.random() * 50)
+          });
+        }
+      }
+      
+      // Heart rate readings
+      for (let i = 0; i < 298; i++) {
+        const date = new Date(startDate);
+        date.setHours(date.getHours() + i * 2.5);
+        heartRate.push({
+          date: date.toISOString(),
+          bpm: 55 + Math.floor(Math.random() * 80)
+        });
+      }
+      
+      return { sleep, heartRate, steps, version: '1.0', exportedAt: new Date().toISOString() };
+    }
+    
+    function showHealthRecordsViewer() {
+      const viewer = document.getElementById('healthRecordsViewer');
+      const grid = document.getElementById('healthRecordsGrid');
+      const records = state.parsedRecords;
+      
+      document.getElementById('recordsSummary').textContent = 
+        `${records.total.toLocaleString()} total records`;
+      
+      grid.innerHTML = '';
+      
+      const categories = [
+        { key: 'steps', icon: '👟', label: 'Step Records', class: 'steps' },
+        { key: 'sleep', icon: '😴', label: 'Sleep Records', class: 'sleep' },
+        { key: 'heart', icon: '❤️', label: 'Heart Rate', class: 'heart' },
+        { key: 'activity', icon: '🔥', label: 'Activity', class: 'activity' },
+        { key: 'hrv', icon: '💓', label: 'HRV', class: 'hrv' },
+        { key: 'bloodOxygen', icon: '🫁', label: 'Blood Oxygen', class: 'oxygen' }
+      ];
+      
+      categories.forEach(cat => {
+        if (records[cat.key] > 0) {
+          grid.innerHTML += `
+            <div class="health-record-card ${cat.class}">
+              <div class="health-record-icon">${cat.icon}</div>
+              <div class="health-record-count">${records[cat.key].toLocaleString()}</div>
+              <div class="health-record-label">${cat.label}</div>
+            </div>
+          `;
+        }
+      });
+      
+      viewer.style.display = 'block';
+      
+      // Update scope list with actual counts
+      updateScopeList(records);
+    }
+    
+    function updateScopeList(records) {
+      const scopeList = document.getElementById('scopeList');
+      scopeList.innerHTML = '';
+      
+      const scopes = [
+        { key: 'steps', name: 'Steps', records: records.steps, sensitivity: 'low' },
+        { key: 'sleep', name: 'Sleep Analysis', records: records.sleep, sensitivity: 'medium' },
+        { key: 'heart', name: 'Heart Rate', records: records.heart, sensitivity: 'medium' }
+      ];
+      
+      scopes.forEach(scope => {
+        if (scope.records > 0) {
+          scopeList.innerHTML += `
+            <div class="scope-item selected" data-scope="${scope.key}" data-records="${scope.records}">
+              <div class="scope-checkbox">✓</div>
+              <div class="scope-info">
+                <div class="scope-name">${scope.name}</div>
+                <div class="scope-detail">${scope.records.toLocaleString()} records</div>
+              </div>
+              <span class="scope-badge ${scope.sensitivity}">${scope.sensitivity}</span>
+            </div>
+          `;
+        }
+      });
+      
+      // Add click handlers
+      scopeList.querySelectorAll('.scope-item').forEach(item => {
+        item.addEventListener('click', () => {
+          item.classList.toggle('selected');
+        });
+      });
+    }
+    
+    // ========================================
+    // STEP 3: ENCRYPT & UPLOAD
+    // ========================================
+    
+    async function encryptAndUpload() {
+      const loading = document.getElementById('encryptionLoading');
+      const details = document.getElementById('encryptionDetails');
+      const btn = document.getElementById('primaryAction');
+      
+      loading.style.display = 'flex';
+      btn.disabled = true;
+      
+      document.getElementById('recordCountText').textContent = 
+        state.parsedRecords.total.toLocaleString();
+      
+      try {
+        // Generate DEK
+        state.dek = randomBytes(32);
+        
+        // Encrypt health data
+        const jsonData = JSON.stringify(state.healthData);
+        state.encryptedData = await encryptAES(jsonData, state.dek);
+        
+        // Generate CID (simulated for demo - real DDC upload would go here)
+        state.dataCid = await generateCID(state.encryptedData);
+        
+        // In a real implementation, we'd upload to DDC here
+        // For demo, we simulate the upload and use localStorage
+        
+        loading.style.display = 'none';
+        details.style.display = 'block';
+        
+        document.getElementById('cidDisplay').textContent = state.dataCid.slice(0, 20) + '...';
+        
+        saveState();
+        showToast('Data encrypted & stored on DDC!');
+        
+        btn.textContent = 'Continue';
+        btn.disabled = false;
+        
+      } catch (err) {
+        loading.innerHTML = `<span style="color: var(--error);">Error: ${err.message}</span>`;
+        btn.disabled = false;
+        showToast('Encryption failed', '❌');
+      }
+    }
+    
+    // ========================================
+    // STEP 4: GRANT PERMISSION & ANALYZE
+    // ========================================
+    
+    async function grantAndAnalyze() {
+      const btn = document.getElementById('primaryAction');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+      
+      // Collect selected scopes
+      const selectedScopes = [];
+      document.querySelectorAll('.scope-item.selected').forEach(item => {
+        selectedScopes.push({
+          path: `/health/${item.dataset.scope}/*`,
+          permissions: ['read'],
+          records: parseInt(item.dataset.records)
+        });
+      });
+      
+      if (selectedScopes.length === 0) {
+        showToast('Select at least one data type', '⚠️');
+        btn.disabled = false;
+        btn.textContent = 'Grant Access & Analyze';
+        return;
+      }
+      
+      // Create agent keypair (deterministic for demo)
+      const agentSeed = nacl.util.decodeUTF8('proofi-health-agent-v1-demo00000');
+      const agentKeyPair = nacl.box.keyPair.fromSecretKey(agentSeed);
+      
+      // Wrap DEK for agent
+      const wrappedDEK = wrapDEK(state.dek, agentKeyPair.publicKey);
+      
+      // Create capability token
+      const tokenId = nacl.util.encodeBase64(randomBytes(16));
+      const expiresAt = Math.floor(Date.now() / 1000) + 86400; // 24 hours
+      
+      const tokenPayload = {
+        v: 1,
+        id: tokenId,
+        iss: deriveDID(state.wallet.publicKey),
+        sub: nacl.util.encodeBase64(agentKeyPair.publicKey),
+        iat: Math.floor(Date.now() / 1000),
+        exp: expiresAt,
+        scopes: selectedScopes,
+        resources: [state.dataCid],
+        wrappedDEK
+      };
+      
+      const signature = signMessage(JSON.stringify(tokenPayload), state.wallet.privateKey);
+      
+      state.capabilityToken = {
+        ...tokenPayload,
+        sig: signature,
+        sigAlg: 'Ed25519'
+      };
+      
+      // Show token details
+      document.getElementById('tokenIdDisplay').textContent = tokenId.slice(0, 12) + '...';
+      document.getElementById('tokenExpiryDisplay').textContent = new Date(expiresAt * 1000).toLocaleString();
+      document.getElementById('permissionDetails').style.display = 'block';
+      
+      goToStep(5);
+      
+      // Run analysis
+      await runAnalysis(agentKeyPair.secretKey);
+    }
+    
+    async function runAnalysis(agentPrivateKey) {
+      const loading = document.getElementById('analysisLoading');
+      const results = document.getElementById('analysisResults');
+      
+      // Simulate agent decryption and analysis
+      await new Promise(r => setTimeout(r, 1500));
+      
+      // Analyze the health data
+      const analysis = analyzeHealthForResults(state.healthData);
+      state.analysisResults = analysis;
+      
+      loading.style.display = 'none';
+      results.style.display = 'block';
+      
+      // Populate results grid
+      const grid = document.getElementById('resultsGrid');
+      grid.innerHTML = `
+        <div class="result-card">
+          <div class="result-value ${analysis.sleepScore >= 75 ? 'good' : analysis.sleepScore >= 50 ? 'warning' : 'bad'}">${analysis.sleepScore}</div>
+          <div class="result-label">Sleep Score</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value ${analysis.heartScore >= 80 ? 'good' : analysis.heartScore >= 60 ? 'warning' : 'bad'}">${analysis.heartScore}</div>
+          <div class="result-label">Heart Score</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value">${analysis.avgSleep}h</div>
+          <div class="result-label">Avg Sleep</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value">${analysis.avgHR}</div>
+          <div class="result-label">Resting BPM</div>
+        </div>
+      `;
+      
+      // Populate recommendations
+      const recsEl = document.getElementById('recommendations');
+      recsEl.innerHTML = `
+        <div class="recommendations-title">
+          <span>💡</span> Recommendations
+        </div>
+        ${analysis.recommendations.map(r => `
+          <div class="recommendation-item">
+            <span class="recommendation-bullet">•</span>
+            <span>${r}</span>
+          </div>
+        `).join('')}
+      `;
+      
+      // Show sovereignty seal
+      document.getElementById('sovereigntySeal').style.display = 'block';
+      
+      showToast('Analysis complete!', '✨');
+    }
+    
+    function analyzeHealthForResults(data) {
+      const sleep = data.sleep || [];
+      const heart = data.heartRate || [];
+      
+      const avgSleep = sleep.length > 0
+        ? (sleep.reduce((sum, s) => sum + (s.duration || 7), 0) / sleep.length).toFixed(1)
+        : 7.2;
+      
+      const avgQuality = sleep.length > 0
+        ? Math.round(sleep.reduce((sum, s) => sum + (s.quality || 75), 0) / sleep.length)
+        : 75;
+      
+      const avgHR = heart.length > 0
+        ? Math.round(heart.reduce((sum, h) => sum + h.bpm, 0) / heart.length)
+        : 68;
+      
+      const sleepScore = Math.min(100, Math.round(avgQuality * 0.7 + (parseFloat(avgSleep) / 8) * 30));
+      const heartScore = Math.min(100, Math.round(100 - Math.abs(avgHR - 65)));
+      
+      const recommendations = [];
+      if (parseFloat(avgSleep) < 7) recommendations.push('Try to get at least 7 hours of sleep');
+      if (avgHR > 75) recommendations.push('Consider more cardio to lower resting heart rate');
+      if (recommendations.length === 0) recommendations.push('Great job — your health metrics look excellent!');
+      
+      return {
+        avgSleep,
+        avgQuality,
+        avgHR,
+        sleepScore,
+        heartScore,
+        recommendations
+      };
+    }
+    
+    // ========================================
+    // MISC
+    // ========================================
+    
+    function restartDemo() {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+    
+    // ========================================
+    // INIT
+    // ========================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      setupFileUpload();
+      
+      // Try to restore state
+      if (loadState()) {
+        if (state.wallet) {
+          updateWalletUI();
+          if (state.parsedRecords) {
+            showHealthRecordsViewer();
+          }
+        }
+      }
+      
+      updatePrimaryButton();
+    });
+  </script>
+</body>
+</html>

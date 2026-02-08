@@ -9,25 +9,25 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :focus-visible {
-          outline: 2px solid #00E5FF;
-          outline-offset: 2px;
-        }
+      outline: 2px solid #00E5FF;
+      outline-offset: 2px;
+    }
     
-        .skip-to-content {
-          position: absolute;
-          top: -100%;
-          left: 16px;
-          z-index: 999;
-          padding: 12px 24px;
-          background: #3B82F6;
-          color: #fff;
-          font-weight: 700;
-          text-decoration: none;
-          border-radius: 0 0 4px 4px;
-        }
-        .skip-to-content:focus {
-          top: 0;
-        }
+    .skip-to-content {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      z-index: 999;
+      padding: 12px 24px;
+      background: #3B82F6;
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 0 0 4px 4px;
+    }
+    .skip-to-content:focus {
+      top: 0;
+    }
     
     :root {
       --bg: #0a0a0a;
@@ -37,6 +37,7 @@
       --text: #ededed;
       --text-secondary: #888;
       --accent: #22c55e;
+      --accent-blue: #3b82f6;
       --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --mono: 'SF Mono', 'Fira Code', monospace;
     }
@@ -69,6 +70,107 @@
       margin-bottom: 32px;
       line-height: 1.6;
     }
+    
+    /* Demo Options */
+    .demo-options {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .demo-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: left;
+      text-decoration: none;
+      color: var(--text);
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .demo-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 30px rgba(34, 197, 94, 0.15);
+    }
+    .demo-card.featured {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(59, 130, 246, 0.05));
+    }
+    .demo-card.featured::before {
+      content: '✨ RECOMMENDED';
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      background: rgba(34, 197, 94, 0.15);
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+    .demo-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .demo-card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .demo-card-icon.mobile {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+    .demo-card-icon.technical {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    }
+    .demo-card-icon.interactive {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    }
+    .demo-card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .demo-card h2 small {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-left: 8px;
+    }
+    .demo-card-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .demo-card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .demo-card-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+    }
+    .demo-card-tag.highlight {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--accent);
+    }
+    
     .features {
       display: grid;
       gap: 16px;
@@ -98,25 +200,7 @@
       margin: 0;
       color: var(--text-secondary);
     }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 16px 32px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #000;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(34, 197, 94, 0.3);
-    }
+    
     .badge {
       display: inline-flex;
       align-items: center;
@@ -141,6 +225,7 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+    
     footer {
       margin-top: 40px;
       font-size: 13px;
@@ -151,16 +236,20 @@
       text-decoration: none;
     }
     footer a:hover { color: var(--text); }
-  /* ═══ MOBILE RESPONSIVE ═══ */
+    
+    /* Mobile responsive */
     @media (max-width: 480px) {
       .container { padding: 12px; }
-      h1 { font-size: 24px; }
-      h2 { font-size: 20px; }
-      .btn { min-height: 44px; }
+      h1 { font-size: 32px; }
+      .demo-card { padding: 20px; }
+      .demo-card h2 { font-size: 18px; }
+      .demo-card.featured::before {
+        position: static;
+        display: inline-block;
+        margin-bottom: 12px;
+      }
     }
-    @media (max-width: 375px) {
-      h1 { font-size: 20px; }
-    }
+    
     html, body { overflow-x: hidden; }
   </style>
 </head>
@@ -170,49 +259,125 @@
   <div id="main-content" class="container">
     <div class="badge">Live Demo • Real Crypto</div>
     <h1>🏥 Health Analyzer</h1>
-    <p>A complete end-to-end demonstration of privacy-preserving health data analysis using real cryptographic operations, capability tokens, and decentralized storage.</p>
+    <p>Privacy-preserving health data analysis using real cryptography, capability tokens, and decentralized storage on Cere DDC.</p>
+    
+    <div class="demo-options">
+      <!-- Mobile E2E Demo (Featured) -->
+      <a href="mobile-e2e.html" class="demo-card featured">
+        <div class="demo-card-header">
+          <div class="demo-card-icon mobile">📱</div>
+          <div>
+            <h2>Mobile E2E Demo</h2>
+          </div>
+        </div>
+        <p class="demo-card-desc">
+          Complete end-to-end flow optimized for mobile. Import your own Apple Health data or use sample data. 
+          No Chrome extension required — works entirely in your browser.
+        </p>
+        <div class="demo-card-features">
+          <span class="demo-card-tag highlight">Touch Optimized</span>
+          <span class="demo-card-tag highlight">Import XML</span>
+          <span class="demo-card-tag">No Extension</span>
+          <span class="demo-card-tag">LocalStorage</span>
+        </div>
+      </a>
+      
+      <!-- Technical Demo -->
+      <a href="real-demo.html" class="demo-card">
+        <div class="demo-card-header">
+          <div class="demo-card-icon technical">🔬</div>
+          <div>
+            <h2>Technical Demo <small>Desktop</small></h2>
+          </div>
+        </div>
+        <p class="demo-card-desc">
+          Full technical demonstration with execution logs, audit trail visualization, and DDC SDK direct uploads.
+          Best on desktop for the complete developer experience.
+        </p>
+        <div class="demo-card-features">
+          <span class="demo-card-tag">DDC Direct</span>
+          <span class="demo-card-tag">Audit Logs</span>
+          <span class="demo-card-tag">Trust Chain</span>
+          <span class="demo-card-tag">CID Verifier</span>
+        </div>
+      </a>
+      
+      <!-- Interactive Demo -->
+      <a href="demo.html" class="demo-card">
+        <div class="demo-card-header">
+          <div class="demo-card-icon interactive">🎮</div>
+          <div>
+            <h2>Interactive Experience</h2>
+          </div>
+        </div>
+        <p class="demo-card-desc">
+          Guided walkthrough with explanations at each step. Great for understanding the concepts before diving into technical details.
+        </p>
+        <div class="demo-card-features">
+          <span class="demo-card-tag">Step-by-step</span>
+          <span class="demo-card-tag">Explanations</span>
+          <span class="demo-card-tag">Sample Data</span>
+        </div>
+      </a>
+    </div>
+    
+    <h3 style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.05em;">
+      What's Happening Under the Hood
+    </h3>
     
     <div class="features">
       <div class="feature">
         <span class="feature-icon">🔐</span>
         <div class="feature-text">
-          <h3>Real X25519 Encryption</h3>
-          <p>All data encrypted with actual elliptic curve cryptography via TweetNaCl</p>
+          <h3>Real X25519 + AES-256 Encryption</h3>
+          <p>All data encrypted with actual elliptic curve cryptography via TweetNaCl. Your health data never leaves your device unencrypted.</p>
         </div>
       </div>
       <div class="feature">
         <span class="feature-icon">🎫</span>
         <div class="feature-text">
           <h3>Capability Tokens</h3>
-          <p>Real Ed25519 signatures, DEK wrapping, and scope-based permissions</p>
+          <p>Ed25519 signed tokens with DEK wrapping. Grant read-only access to specific data types with automatic expiration.</p>
         </div>
       </div>
       <div class="feature">
         <span class="feature-icon">☁️</span>
         <div class="feature-text">
-          <h3>Decentralized Storage</h3>
-          <p>Content-addressed storage with verifiable CIDs and audit trails</p>
+          <h3>Cere DDC Storage</h3>
+          <p>Content-addressed storage on decentralized infrastructure. Encrypted data stored with verifiable CIDs.</p>
         </div>
       </div>
       <div class="feature">
         <span class="feature-icon">🤖</span>
         <div class="feature-text">
-          <h3>AI Agent Analysis</h3>
-          <p>Agent validates token, decrypts data, runs analysis, creates audit log</p>
+          <h3>Agent Analysis</h3>
+          <p>AI agent validates your permission token, decrypts only what you allowed, runs analysis, and returns insights.</p>
         </div>
       </div>
     </div>
-    
-    <a href="demo.html" class="btn" style="margin-right: 12px;">
-      🎮 Interactive Experience →
-    </a>
-    <a href="real-demo.html" class="btn" style="background: var(--surface); color: var(--text); border: 1px solid var(--border);">
-      🔬 Technical Demo
-    </a>
   </div>
   
   <footer role="contentinfo">
-    <a href="/">← Back to Proofi</a> • Built on Cere DDC
+    <a href="https://proofi-virid.vercel.app/">← Back to Proofi</a> • Built on Cere DDC
   </footer>
+
+  <script>
+    // Auto-redirect mobile users to the mobile demo
+    if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && !sessionStorage.getItem('stayOnIndex')) {
+      // Show for 2 seconds then redirect
+      const featuredCard = document.querySelector('.demo-card.featured');
+      if (featuredCard) {
+        featuredCard.style.animation = 'pulse-border 1s infinite';
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+  </script>
 </body>
 </html>

@@ -134,6 +134,41 @@ Working ≠ Done. Need peer review, benchmarking, continuous improvement.
 
 ---
 
+## Proofi Project (2026-02-08)
+
+### What It Is
+Privacy-first health data platform. User encrypts their data, stores on DDC (Cere's decentralized storage), grants time-limited access to AI agents via capability tokens. All access logged to immutable audit chain.
+
+### Core Principle
+**"DDC OR NOTHING"** — Mart is adamant: never fall back to local storage. If DDC fails, fail loudly. The whole point is decentralized storage.
+
+### Key URLs (Vercel only!)
+- `proofi-virid.vercel.app/app` — Mobile wallet
+- `proofi-virid.vercel.app/demo-health/real-demo.html` — Health demo
+- `proofi-virid.vercel.app/cli-mockup.html` — CLI UX mockup
+- Don't use proofi.ai yet — not configured
+
+### Technical Setup
+- **DDC Bucket**: 1229
+- **Wallet**: `5DSxCBjQZ6P9fu2a34Gn9Ae6aJLMaiHJhveMTiMDCVCoazE1`
+- **Network**: Mainnet (not testnet)
+- **Repos**: Brommah/proofi-wallet, Brommah/proofi-agents
+
+### Mart's Design Preferences
+- Apple-style: clean, white, no icons/emojis
+- "Granular permissions with specific agents is the porno"
+- Stunning CLI output with step counters, boxes, colors
+- Mobile-first, touch-friendly
+
+### What Makes Proofi Different
+- User controls their encryption key
+- Capability tokens with time limits and scope restrictions
+- Audit chain logs every access (cryptographically linked)
+- Local AI analysis (Ollama) — data never leaves device
+- "Don't trust us. Verify."
+
+---
+
 ## Zwolle Woningzoektocht (2026-01-26)
 
 ### Gezinssituatie

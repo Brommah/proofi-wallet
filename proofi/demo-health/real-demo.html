@@ -1051,6 +1051,484 @@
       border-top: 1px solid var(--border);
     }
 
+    /* ===== GRANULAR PERMISSIONS UI ===== */
+    .phase-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .phase-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    
+    /* Agent Cards Grid */
+    .agent-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .agent-card {
+      background: var(--bg);
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.2s ease-out;
+      position: relative;
+    }
+    .agent-card:hover {
+      background: rgba(0,0,0,0.02);
+      transform: translateY(-2px);
+    }
+    .agent-card.selected {
+      border-color: var(--blue);
+      background: rgba(0,122,255,0.04);
+    }
+    .agent-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .agent-icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+    .agent-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 980px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .agent-badge.recommended {
+      background: rgba(52,199,89,0.12);
+      color: var(--success);
+    }
+    .agent-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .agent-tagline {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    .agent-needs, .agent-provides {
+      margin-bottom: 12px;
+    }
+    .needs-label, .provides-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .needs-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .need-tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 980px;
+      background: rgba(0,122,255,0.1);
+      color: var(--blue);
+    }
+    .need-tag.high {
+      background: rgba(255,149,0,0.12);
+      color: var(--warning);
+    }
+    .provides-list {
+      list-style: none;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .provides-list li {
+      padding: 2px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+    .provides-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--text-tertiary);
+    }
+    .agent-select-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease-out;
+      margin-top: 12px;
+      background: var(--surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .agent-card.selected .agent-select-btn {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+    .agent-select-btn .check-icon {
+      display: none;
+    }
+    .agent-card.selected .agent-select-btn .check-icon {
+      display: inline;
+    }
+    .selected-agent-info {
+      margin-top: 20px;
+    }
+    
+    /* Enhanced Scope Grid */
+    .scope-grid-enhanced {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .scope-item-enhanced {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--bg);
+      border: 2px solid transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease-out;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .scope-item-enhanced:hover {
+      background: rgba(0,0,0,0.03);
+    }
+    .scope-item-enhanced.selected {
+      border-color: var(--blue);
+      background: rgba(0,122,255,0.04);
+    }
+    .scope-item-enhanced[data-sensitivity="high"]:not(.selected) {
+      background: rgba(255,149,0,0.04);
+    }
+    .scope-checkbox {
+      flex-shrink: 0;
+      position: relative;
+    }
+    .scope-checkbox input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .scope-checkbox label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease-out;
+      background: var(--surface);
+    }
+    .scope-checkbox label::after {
+      content: '✓';
+      font-size: 14px;
+      color: transparent;
+      transition: color 0.2s ease-out;
+    }
+    .scope-item-enhanced.selected .scope-checkbox label {
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+    .scope-item-enhanced.selected .scope-checkbox label::after {
+      color: #fff;
+    }
+    .scope-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .scope-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .scope-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .scope-sensitivity {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 980px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .scope-sensitivity.low {
+      background: rgba(52,199,89,0.12);
+      color: var(--success);
+    }
+    .scope-sensitivity.medium {
+      background: rgba(0,122,255,0.12);
+      color: var(--blue);
+    }
+    .scope-sensitivity.high {
+      background: rgba(255,149,0,0.12);
+      color: var(--warning);
+    }
+    .scope-records {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-family: var(--mono);
+      margin-bottom: 4px;
+    }
+    .scope-detail {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    
+    /* Scope Summary */
+    .scope-summary {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .summary-stats {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .summary-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: var(--mono);
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    
+    /* Expiry Options */
+    .expiry-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .expiry-option {
+      cursor: pointer;
+    }
+    .expiry-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .expiry-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--bg);
+      border: 2px solid transparent;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.2s ease-out;
+      cursor: pointer;
+    }
+    .expiry-option input[type="radio"]:checked + .expiry-btn {
+      border-color: var(--blue);
+      background: rgba(0,122,255,0.08);
+      color: var(--blue);
+    }
+    .expiry-btn:hover {
+      background: rgba(0,0,0,0.04);
+    }
+    
+    /* Permission Review Box */
+    .permission-review-box {
+      background: rgba(255,149,0,0.06);
+      border: 1px solid rgba(255,149,0,0.2);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 20px;
+    }
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .review-icon {
+      font-size: 20px;
+    }
+    .review-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .review-scopes {
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .review-scope-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+    .review-scope-item .scope-bullet {
+      color: var(--blue);
+      font-weight: bold;
+    }
+    .review-scope-item .scope-name {
+      font-weight: 600;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+    .review-scope-item .scope-count {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .review-meta {
+      margin-bottom: 20px;
+    }
+    .review-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding: 4px 0;
+    }
+    .review-meta-item strong {
+      color: var(--text);
+    }
+    .review-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-grant {
+      flex: 1;
+      min-width: 140px;
+    }
+    .btn-deny {
+      min-width: 100px;
+    }
+    
+    /* Token Granted State */
+    .token-granted-banner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: rgba(52,199,89,0.08);
+      border: 1px solid rgba(52,199,89,0.2);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+    .granted-icon {
+      font-size: 28px;
+    }
+    .granted-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .granted-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--success);
+    }
+    .granted-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .token-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .token-detail-card {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+    .detail-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+    .detail-value {
+      font-size: 14px;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .detail-value.mono {
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .token-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .token-actions .btn {
+      padding: 10px 18px;
+      font-size: 13px;
+    }
+    .token-actions .revoke-btn {
+      display: inline-flex;
+      margin-top: 0;
+    }
+    .token-full-details {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       main { padding: 40px 16px 80px; }
@@ -1068,10 +1546,28 @@
       .seal-facts { grid-template-columns: repeat(2, 1fr); }
       .verifier-input-group { flex-direction: column; }
       .verifier-card { padding: 28px; }
+      
+      /* Granular Permissions Mobile */
+      .agent-cards-grid { grid-template-columns: 1fr; }
+      .agent-card { padding: 20px; }
+      .scope-item-enhanced { padding: 16px; }
+      .scope-checkbox label { width: 32px; height: 32px; }
+      .summary-stats { gap: 16px; }
+      .expiry-options { flex-direction: column; }
+      .expiry-btn { width: 100%; text-align: center; }
+      .review-actions { flex-direction: column; }
+      .btn-grant, .btn-deny { width: 100%; }
+      .token-details-grid { grid-template-columns: 1fr; }
+      .token-actions { flex-direction: column; }
+      .token-actions .btn,
+      .token-actions .revoke-btn { width: 100%; justify-content: center; }
     }
     @media (max-width: 480px) {
       .hero h1 { font-size: 32px; }
       .btn { min-height: 50px; }
+      .scope-header-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .agent-card { padding: 16px; }
+      .agent-name { font-size: 16px; }
     }
     html, body { overflow-x: hidden; }
   </style>
@@ -1257,93 +1753,355 @@
           <div class="step-num"><span>3</span></div>
           <div class="step-info">
             <div class="step-title">Choose What to Share</div>
-            <div class="step-desc">Grant the AI agent read-only access to specific data — revoke anytime</div>
+            <div class="step-desc">Grant an AI agent read-only access to specific data — revoke anytime</div>
           </div>
           <span class="step-status">Locked</span>
         </div>
         <div class="step-body">
-          <div class="kv-grid" style="margin-bottom: 24px;">
-            <div class="kv-item">
-              <div class="kv-content">
-                <div class="kv-key">Agent Identity</div>
-                <div class="kv-value">Health Analyzer Agent v1.0</div>
-              </div>
-            </div>
-            <div class="kv-item">
-              <div class="kv-content">
-                <div class="kv-key">Agent Encryption Key (X25519)</div>
-                <div class="kv-value" id="agentPubKey">—</div>
-              </div>
-            </div>
-          </div>
           
-          <h4 style="font-size: 14px; margin-bottom: 14px; font-weight: 600; color: var(--text);">Select Scopes to Grant</h4>
-          <div class="scope-grid" id="scopeGrid">
-            <div class="scope-item selected" data-path="health/sleep" data-perms="read">
-              <div class="scope-check">✓</div>
-              <div class="scope-info">
-                <div class="scope-path">health/sleep/*</div>
-                <div class="scope-perms">read — Sleep duration, quality, REM cycles</div>
+          <!-- Phase 1: Choose an Agent -->
+          <div id="agentSelectionPhase">
+            <h4 class="phase-title">1. Choose an Agent</h4>
+            <p class="phase-desc">Select which AI agent should analyze your health data. Each agent has different capabilities.</p>
+            
+            <div class="agent-cards-grid">
+              <!-- Health Analyzer Agent -->
+              <div class="agent-card selected" data-agent="health-analyzer">
+                <div class="agent-card-header">
+                  <div class="agent-icon">📊</div>
+                  <div class="agent-badge recommended">Recommended</div>
+                </div>
+                <h5 class="agent-name">Health Analyzer</h5>
+                <p class="agent-tagline">General health insights & trends</p>
+                <div class="agent-needs">
+                  <span class="needs-label">Needs access to:</span>
+                  <div class="needs-tags">
+                    <span class="need-tag">Steps</span>
+                    <span class="need-tag">Sleep</span>
+                    <span class="need-tag">Heart Rate</span>
+                  </div>
+                </div>
+                <div class="agent-provides">
+                  <span class="provides-label">Provides:</span>
+                  <ul class="provides-list">
+                    <li>Overall health score</li>
+                    <li>Weekly trend analysis</li>
+                    <li>Personalized recommendations</li>
+                  </ul>
+                </div>
+                <button class="agent-select-btn" onclick="selectAgent('health-analyzer')">
+                  <span class="check-icon">✓</span> Selected
+                </button>
               </div>
-            </div>
-            <div class="scope-item selected" data-path="health/heart" data-perms="read">
-              <div class="scope-check">✓</div>
-              <div class="scope-info">
-                <div class="scope-path">health/heart/*</div>
-                <div class="scope-perms">read — Heart rate, HRV, activity context</div>
+              
+              <!-- Fitness Coach Agent -->
+              <div class="agent-card" data-agent="fitness-coach">
+                <div class="agent-card-header">
+                  <div class="agent-icon">🏃</div>
+                </div>
+                <h5 class="agent-name">Fitness Coach</h5>
+                <p class="agent-tagline">Workout optimization & goals</p>
+                <div class="agent-needs">
+                  <span class="needs-label">Needs access to:</span>
+                  <div class="needs-tags">
+                    <span class="need-tag">Steps</span>
+                    <span class="need-tag">Heart Rate</span>
+                    <span class="need-tag high">HRV</span>
+                  </div>
+                </div>
+                <div class="agent-provides">
+                  <span class="provides-label">Provides:</span>
+                  <ul class="provides-list">
+                    <li>Training load analysis</li>
+                    <li>Recovery recommendations</li>
+                    <li>Activity goals</li>
+                  </ul>
+                </div>
+                <button class="agent-select-btn" onclick="selectAgent('fitness-coach')">
+                  Select Agent
+                </button>
               </div>
-            </div>
-            <div class="scope-item" data-path="health/insights" data-perms="read,write">
-              <div class="scope-check">✓</div>
-              <div class="scope-info">
-                <div class="scope-path">health/insights/*</div>
-                <div class="scope-perms">read, write — Store analysis results</div>
+              
+              <!-- Sleep Optimizer Agent -->
+              <div class="agent-card" data-agent="sleep-optimizer">
+                <div class="agent-card-header">
+                  <div class="agent-icon">🌙</div>
+                </div>
+                <h5 class="agent-name">Sleep Optimizer</h5>
+                <p class="agent-tagline">Sleep quality & bedtime tips</p>
+                <div class="agent-needs">
+                  <span class="needs-label">Needs access to:</span>
+                  <div class="needs-tags">
+                    <span class="need-tag">Sleep</span>
+                    <span class="need-tag">Heart Rate</span>
+                    <span class="need-tag high">Blood Oxygen</span>
+                  </div>
+                </div>
+                <div class="agent-provides">
+                  <span class="provides-label">Provides:</span>
+                  <ul class="provides-list">
+                    <li>Sleep stage analysis</li>
+                    <li>Optimal bedtime</li>
+                    <li>Environment tips</li>
+                  </ul>
+                </div>
+                <button class="agent-select-btn" onclick="selectAgent('sleep-optimizer')">
+                  Select Agent
+                </button>
               </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Token Expiry</label>
-            <select class="form-input" id="tokenExpiry" style="cursor: pointer;">
-              <option value="3600">1 hour</option>
-              <option value="86400" selected>24 hours</option>
-              <option value="604800">7 days</option>
-            </select>
-          </div>
-          
-          <button aria-label="Grant access" class="btn btn-primary" id="grantBtn" onclick="grantPermission()" disabled>
-            Grant Access
-          </button>
-          
-          <div id="tokenResult" style="margin-top: 24px; display: none;">
-            <div class="data-label">
-              <span>Capability Token (signed with Ed25519)</span>
-              <div style="display: flex; gap: 8px;">
-                <button class="copy-btn" onclick="copyToken()">Copy</button>
-                <button class="copy-btn" onclick="exportForCLI()">Export for CLI</button>
-              </div>
-            </div>
-            <div class="data-box scrollable">
-              <pre id="tokenDisplay">—</pre>
             </div>
             
-            <div class="kv-grid">
-              <div class="kv-item">
-                <div class="kv-content">
-                  <div class="kv-key">Token ID</div>
-                  <div class="kv-value" id="tokenId">—</div>
+            <!-- Selected Agent Info -->
+            <div class="selected-agent-info" id="selectedAgentInfo">
+              <div class="kv-grid">
+                <div class="kv-item">
+                  <div class="kv-content">
+                    <div class="kv-key">Selected Agent</div>
+                    <div class="kv-value" id="selectedAgentName">Health Analyzer Agent v1.0</div>
+                  </div>
                 </div>
-              </div>
-              <div class="kv-item">
-                <div class="kv-content">
-                  <div class="kv-key">Wrapped DEK (encrypted for agent)</div>
-                  <div class="kv-value" id="wrappedDek">—</div>
+                <div class="kv-item">
+                  <div class="kv-content">
+                    <div class="kv-key">Agent Encryption Key (X25519)</div>
+                    <div class="kv-value" id="agentPubKey">—</div>
+                  </div>
                 </div>
               </div>
             </div>
-            <button class="revoke-btn" id="revokeBtn" onclick="revokeToken()">
-              Revoke Token
-            </button>
+          </div>
+          
+          <!-- Phase 2: Choose Your Data Scopes -->
+          <div id="scopeSelectionPhase" style="margin-top: 32px;">
+            <h4 class="phase-title">2. Choose What Data to Share</h4>
+            <p class="phase-desc"><span id="selectedAgentNameInline">Health Analyzer</span> requests access to your health data. Toggle exactly what you're comfortable sharing.</p>
+            
+            <div class="scope-grid-enhanced" id="scopeGridEnhanced">
+              <!-- Steps -->
+              <div class="scope-item-enhanced selected" data-scope="steps" data-sensitivity="low">
+                <div class="scope-checkbox">
+                  <input type="checkbox" id="scope-steps" checked>
+                  <label for="scope-steps"></label>
+                </div>
+                <div class="scope-content">
+                  <div class="scope-header-row">
+                    <span class="scope-name">Steps</span>
+                    <span class="scope-sensitivity low">LOW</span>
+                  </div>
+                  <div class="scope-records">142,847 records</div>
+                  <div class="scope-detail">Daily step counts, walking + running distance</div>
+                </div>
+              </div>
+              
+              <!-- Sleep Analysis -->
+              <div class="scope-item-enhanced selected" data-scope="sleep" data-sensitivity="medium">
+                <div class="scope-checkbox">
+                  <input type="checkbox" id="scope-sleep" checked>
+                  <label for="scope-sleep"></label>
+                </div>
+                <div class="scope-content">
+                  <div class="scope-header-row">
+                    <span class="scope-name">Sleep Analysis</span>
+                    <span class="scope-sensitivity medium">MEDIUM</span>
+                  </div>
+                  <div class="scope-records">1,461 records</div>
+                  <div class="scope-detail">Duration, quality, REM cycles, awakenings</div>
+                </div>
+              </div>
+              
+              <!-- Heart Rate -->
+              <div class="scope-item-enhanced selected" data-scope="heart" data-sensitivity="medium">
+                <div class="scope-checkbox">
+                  <input type="checkbox" id="scope-heart" checked>
+                  <label for="scope-heart"></label>
+                </div>
+                <div class="scope-content">
+                  <div class="scope-header-row">
+                    <span class="scope-name">Heart Rate</span>
+                    <span class="scope-sensitivity medium">MEDIUM</span>
+                  </div>
+                  <div class="scope-records">298,421 records</div>
+                  <div class="scope-detail">Continuous BPM, resting, active, recovery</div>
+                </div>
+              </div>
+              
+              <!-- HRV - High Sensitivity -->
+              <div class="scope-item-enhanced" data-scope="hrv" data-sensitivity="high">
+                <div class="scope-checkbox">
+                  <input type="checkbox" id="scope-hrv">
+                  <label for="scope-hrv"></label>
+                </div>
+                <div class="scope-content">
+                  <div class="scope-header-row">
+                    <span class="scope-name">HRV (Heart Rate Variability)</span>
+                    <span class="scope-sensitivity high">HIGH</span>
+                  </div>
+                  <div class="scope-records">52,104 records</div>
+                  <div class="scope-detail">Autonomic nervous system, stress levels, recovery</div>
+                </div>
+              </div>
+              
+              <!-- Blood Oxygen - High Sensitivity -->
+              <div class="scope-item-enhanced" data-scope="blood-oxygen" data-sensitivity="high">
+                <div class="scope-checkbox">
+                  <input type="checkbox" id="scope-blood-oxygen">
+                  <label for="scope-blood-oxygen"></label>
+                </div>
+                <div class="scope-content">
+                  <div class="scope-header-row">
+                    <span class="scope-name">Blood Oxygen (SpO2)</span>
+                    <span class="scope-sensitivity high">HIGH</span>
+                  </div>
+                  <div class="scope-records">8,293 records</div>
+                  <div class="scope-detail">Oxygen saturation, respiratory health indicators</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Scope Summary -->
+            <div class="scope-summary" id="scopeSummary">
+              <div class="summary-stats">
+                <div class="summary-stat">
+                  <span class="stat-value" id="selectedScopesCount">3</span>
+                  <span class="stat-label">data types</span>
+                </div>
+                <div class="summary-stat">
+                  <span class="stat-value" id="selectedRecordsCount">442,729</span>
+                  <span class="stat-label">records</span>
+                </div>
+                <div class="summary-stat">
+                  <span class="stat-value" id="maxSensitivity">MEDIUM</span>
+                  <span class="stat-label">max sensitivity</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Phase 3: Review & Grant -->
+          <div id="reviewPhase" style="margin-top: 32px;">
+            <h4 class="phase-title">3. Review & Grant Access</h4>
+            
+            <div class="form-group">
+              <label class="form-label">Access Duration</label>
+              <div class="expiry-options">
+                <label class="expiry-option">
+                  <input type="radio" name="tokenExpiry" value="3600">
+                  <span class="expiry-btn">1 hour</span>
+                </label>
+                <label class="expiry-option">
+                  <input type="radio" name="tokenExpiry" value="86400" checked>
+                  <span class="expiry-btn selected">24 hours</span>
+                </label>
+                <label class="expiry-option">
+                  <input type="radio" name="tokenExpiry" value="604800">
+                  <span class="expiry-btn">7 days</span>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Permission Review Box -->
+            <div class="permission-review-box" id="permissionReviewBox">
+              <div class="review-header">
+                <span class="review-icon">⚠️</span>
+                <span class="review-title">Review: <span id="reviewAgentName">Health Analyzer</span> will access:</span>
+              </div>
+              <div class="review-scopes" id="reviewScopes">
+                <div class="review-scope-item">
+                  <span class="scope-bullet">•</span>
+                  <span class="scope-name">steps</span>
+                  <span class="scope-count">— 142,847 records</span>
+                </div>
+                <div class="review-scope-item">
+                  <span class="scope-bullet">•</span>
+                  <span class="scope-name">sleep</span>
+                  <span class="scope-count">— 1,461 records</span>
+                </div>
+                <div class="review-scope-item">
+                  <span class="scope-bullet">•</span>
+                  <span class="scope-name">heart</span>
+                  <span class="scope-count">— 298,421 records</span>
+                </div>
+              </div>
+              <div class="review-meta">
+                <div class="review-meta-item">
+                  <span class="meta-icon">⏱️</span>
+                  <span>Access expires: <strong id="reviewExpiry">24 hours</strong></span>
+                </div>
+                <div class="review-meta-item">
+                  <span class="meta-icon">📋</span>
+                  <span>All access logged to audit chain</span>
+                </div>
+              </div>
+              <div class="review-actions">
+                <button aria-label="Grant access" class="btn btn-primary btn-grant" id="grantBtn" onclick="grantPermission()" disabled>
+                  Grant Access
+                </button>
+                <button aria-label="Cancel" class="btn btn-secondary btn-deny" onclick="resetScopeSelection()">
+                  Deny
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Token Result (shown after granting) -->
+          <div id="tokenResult" style="margin-top: 32px; display: none;">
+            <div class="token-granted-banner">
+              <span class="granted-icon">✅</span>
+              <div class="granted-info">
+                <span class="granted-title">Access Granted</span>
+                <span class="granted-subtitle">Token created and signed with Ed25519</span>
+              </div>
+            </div>
+            
+            <div class="token-details-grid">
+              <div class="token-detail-card">
+                <div class="detail-label">Token ID</div>
+                <div class="detail-value mono" id="tokenId">—</div>
+              </div>
+              <div class="token-detail-card">
+                <div class="detail-label">Scopes Granted</div>
+                <div class="detail-value" id="grantedScopes">—</div>
+              </div>
+              <div class="token-detail-card">
+                <div class="detail-label">Expires</div>
+                <div class="detail-value" id="tokenExpiryDisplay">—</div>
+              </div>
+              <div class="token-detail-card">
+                <div class="detail-label">Status</div>
+                <div class="detail-value" id="tokenStatusDisplay">
+                  <span class="revocation-status active">ACTIVE</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="token-actions">
+              <button class="btn btn-secondary" onclick="toggleTokenDetails()">
+                <span id="tokenDetailsToggleText">Show Full Token</span>
+              </button>
+              <button class="btn btn-secondary" onclick="copyToken()">Copy Token</button>
+              <button class="btn btn-secondary" onclick="exportForCLI()">Export for CLI</button>
+              <button class="revoke-btn" id="revokeBtn" onclick="revokeToken()">
+                Revoke Access
+              </button>
+            </div>
+            
+            <div class="token-full-details" id="tokenFullDetails" style="display: none;">
+              <div class="data-label">
+                <span>Full Capability Token (JWT-like structure)</span>
+              </div>
+              <div class="data-box scrollable">
+                <pre id="tokenDisplay">—</pre>
+              </div>
+              
+              <div class="kv-grid" style="margin-top: 16px;">
+                <div class="kv-item">
+                  <div class="kv-content">
+                    <div class="kv-key">Wrapped DEK (encrypted for agent)</div>
+                    <div class="kv-value" id="wrappedDek">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <div id="revocationStatus" style="margin-top: 10px;"></div>
           </div>
         </div>
@@ -2042,12 +2800,12 @@
       document.getElementById('sampleDataPreview').textContent = 
         preview.slice(0, 500) + '\n... (' + preview.length + ' bytes total)';
       
-      // Setup scope toggles
-      document.querySelectorAll('.scope-item').forEach(item => {
-        item.addEventListener('click', () => {
-          item.classList.toggle('selected');
-        });
-      });
+      // Setup scope toggles (enhanced)
+      initScopeToggles();
+      initAgentSelection();
+      initExpiryOptions();
+      updateScopeSummary();
+      updateReviewPanel();
       
       // Initialize ProofiSDK for wallet signing (optional, for extension integration)
       try {
@@ -2308,17 +3066,223 @@
       log(`Health data encrypted and stored directly to DDC`, 'success');
     }
     
+    // ========================================
+    // GRANULAR PERMISSIONS UI
+    // ========================================
+    
+    // Scope configuration with record counts
+    const SCOPE_CONFIG = {
+      'steps': { path: 'health/steps', records: 142847, perms: 'read' },
+      'sleep': { path: 'health/sleep', records: 1461, perms: 'read' },
+      'heart': { path: 'health/heart', records: 298421, perms: 'read' },
+      'hrv': { path: 'health/hrv', records: 52104, perms: 'read' },
+      'blood-oxygen': { path: 'health/blood-oxygen', records: 8293, perms: 'read' }
+    };
+    
+    // Agent configuration
+    const AGENT_CONFIG = {
+      'health-analyzer': {
+        name: 'Health Analyzer Agent v1.0',
+        defaultScopes: ['steps', 'sleep', 'heart']
+      },
+      'fitness-coach': {
+        name: 'Fitness Coach Agent v1.0',
+        defaultScopes: ['steps', 'heart', 'hrv']
+      },
+      'sleep-optimizer': {
+        name: 'Sleep Optimizer Agent v1.0',
+        defaultScopes: ['sleep', 'heart', 'blood-oxygen']
+      }
+    };
+    
+    // Current selected agent
+    state.selectedAgent = 'health-analyzer';
+    
+    // Initialize scope toggles
+    function initScopeToggles() {
+      document.querySelectorAll('.scope-item-enhanced').forEach(item => {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        
+        item.addEventListener('click', (e) => {
+          // Don't toggle if clicking directly on checkbox (it handles itself)
+          if (e.target.type !== 'checkbox') {
+            checkbox.checked = !checkbox.checked;
+          }
+          item.classList.toggle('selected', checkbox.checked);
+          updateScopeSummary();
+          updateReviewPanel();
+        });
+        
+        checkbox.addEventListener('change', () => {
+          item.classList.toggle('selected', checkbox.checked);
+          updateScopeSummary();
+          updateReviewPanel();
+        });
+      });
+    }
+    
+    // Initialize agent selection
+    function initAgentSelection() {
+      document.querySelectorAll('.agent-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          // Don't trigger if clicking the button directly
+          if (e.target.closest('.agent-select-btn')) return;
+          selectAgent(card.dataset.agent);
+        });
+      });
+    }
+    
+    // Initialize expiry options
+    function initExpiryOptions() {
+      document.querySelectorAll('input[name="tokenExpiry"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          // Update button styles
+          document.querySelectorAll('.expiry-btn').forEach(btn => btn.classList.remove('selected'));
+          radio.nextElementSibling.classList.add('selected');
+          updateReviewPanel();
+        });
+      });
+    }
+    
+    // Select an agent
+    function selectAgent(agentId) {
+      state.selectedAgent = agentId;
+      const config = AGENT_CONFIG[agentId];
+      
+      // Update card selection UI
+      document.querySelectorAll('.agent-card').forEach(card => {
+        const isSelected = card.dataset.agent === agentId;
+        card.classList.toggle('selected', isSelected);
+        const btn = card.querySelector('.agent-select-btn');
+        if (isSelected) {
+          btn.innerHTML = '<span class="check-icon">✓</span> Selected';
+        } else {
+          btn.textContent = 'Select Agent';
+        }
+      });
+      
+      // Update agent name displays
+      document.getElementById('selectedAgentName').textContent = config.name;
+      document.getElementById('selectedAgentNameInline').textContent = config.name.replace(' Agent v1.0', '');
+      document.getElementById('reviewAgentName').textContent = config.name.replace(' Agent v1.0', '');
+      
+      // Pre-select default scopes for this agent
+      document.querySelectorAll('.scope-item-enhanced').forEach(item => {
+        const scope = item.dataset.scope;
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        const shouldSelect = config.defaultScopes.includes(scope);
+        checkbox.checked = shouldSelect;
+        item.classList.toggle('selected', shouldSelect);
+      });
+      
+      updateScopeSummary();
+      updateReviewPanel();
+      log(`Selected agent: ${config.name}`, 'info');
+    }
+    
+    // Update scope summary stats
+    function updateScopeSummary() {
+      const selectedScopes = getSelectedScopes();
+      let totalRecords = 0;
+      let maxSensitivity = 'LOW';
+      
+      selectedScopes.forEach(scope => {
+        const config = SCOPE_CONFIG[scope.id];
+        if (config) totalRecords += config.records;
+        
+        if (scope.sensitivity === 'high') maxSensitivity = 'HIGH';
+        else if (scope.sensitivity === 'medium' && maxSensitivity !== 'HIGH') maxSensitivity = 'MEDIUM';
+      });
+      
+      document.getElementById('selectedScopesCount').textContent = selectedScopes.length;
+      document.getElementById('selectedRecordsCount').textContent = totalRecords.toLocaleString();
+      
+      const maxSensEl = document.getElementById('maxSensitivity');
+      maxSensEl.textContent = maxSensitivity;
+      maxSensEl.className = 'stat-value';
+      if (maxSensitivity === 'HIGH') maxSensEl.style.color = 'var(--warning)';
+      else if (maxSensitivity === 'MEDIUM') maxSensEl.style.color = 'var(--blue)';
+      else maxSensEl.style.color = 'var(--success)';
+    }
+    
+    // Get selected scopes
+    function getSelectedScopes() {
+      const scopes = [];
+      document.querySelectorAll('.scope-item-enhanced.selected').forEach(item => {
+        scopes.push({
+          id: item.dataset.scope,
+          sensitivity: item.dataset.sensitivity
+        });
+      });
+      return scopes;
+    }
+    
+    // Update permission review panel
+    function updateReviewPanel() {
+      const selectedScopes = getSelectedScopes();
+      const reviewScopesEl = document.getElementById('reviewScopes');
+      
+      if (selectedScopes.length === 0) {
+        reviewScopesEl.innerHTML = '<div class="review-scope-item"><em>No data selected</em></div>';
+      } else {
+        reviewScopesEl.innerHTML = selectedScopes.map(scope => {
+          const config = SCOPE_CONFIG[scope.id];
+          return `
+            <div class="review-scope-item">
+              <span class="scope-bullet">•</span>
+              <span class="scope-name">${scope.id}</span>
+              <span class="scope-count">— ${config ? config.records.toLocaleString() : '?'} records</span>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      // Update expiry display
+      const selectedExpiry = document.querySelector('input[name="tokenExpiry"]:checked');
+      if (selectedExpiry) {
+        const seconds = parseInt(selectedExpiry.value);
+        let expiryText = '24 hours';
+        if (seconds === 3600) expiryText = '1 hour';
+        else if (seconds === 86400) expiryText = '24 hours';
+        else if (seconds === 604800) expiryText = '7 days';
+        document.getElementById('reviewExpiry').textContent = expiryText;
+      }
+    }
+    
+    // Reset scope selection
+    function resetScopeSelection() {
+      selectAgent(state.selectedAgent); // Reset to agent defaults
+    }
+    
+    // Toggle token details visibility
+    function toggleTokenDetails() {
+      const details = document.getElementById('tokenFullDetails');
+      const toggleText = document.getElementById('tokenDetailsToggleText');
+      if (details.style.display === 'none') {
+        details.style.display = 'block';
+        toggleText.textContent = 'Hide Full Token';
+      } else {
+        details.style.display = 'none';
+        toggleText.textContent = 'Show Full Token';
+      }
+    }
+    
     // Step 3: Grant Permission
     async function grantPermission() {
       log('Creating capability token...', 'crypto');
       
-      // Collect selected scopes
+      // Collect selected scopes from enhanced UI
       const scopes = [];
-      document.querySelectorAll('.scope-item.selected').forEach(item => {
-        scopes.push({
-          path: item.dataset.path + '/*',
-          permissions: item.dataset.perms.split(',').map(p => p.trim())
-        });
+      document.querySelectorAll('.scope-item-enhanced.selected').forEach(item => {
+        const scopeId = item.dataset.scope;
+        const config = SCOPE_CONFIG[scopeId];
+        if (config) {
+          scopes.push({
+            path: config.path + '/*',
+            permissions: config.perms.split(',').map(p => p.trim()),
+            records: config.records
+          });
+        }
       });
       
       if (scopes.length === 0) {
@@ -2326,7 +3290,9 @@
         return;
       }
       
-      const expirySeconds = parseInt(document.getElementById('tokenExpiry').value);
+      // Get expiry from radio buttons
+      const selectedExpiry = document.querySelector('input[name="tokenExpiry"]:checked');
+      const expirySeconds = selectedExpiry ? parseInt(selectedExpiry.value) : 86400;
       const expiresAt = Math.floor(Date.now() / 1000) + expirySeconds;
       
       // Wrap DEK for agent
@@ -2336,11 +3302,13 @@
       
       // Create token payload
       const tokenId = nacl.util.encodeBase64(randomBytes(16));
+      const agentConfig = AGENT_CONFIG[state.selectedAgent];
       const tokenPayload = {
         v: 1,
         id: tokenId,
         iss: deriveDID(state.userKeyPair.publicKey),
         sub: nacl.util.encodeBase64(state.agentKeyPair.publicKey),
+        agentName: agentConfig.name,
         iat: Math.floor(Date.now() / 1000),
         exp: expiresAt,
         scopes,
@@ -2361,24 +3329,36 @@
         sigAlg: 'Ed25519'
       };
       
-      // Update UI
+      // Hide the selection phases, show token result
+      document.getElementById('agentSelectionPhase').style.display = 'none';
+      document.getElementById('scopeSelectionPhase').style.display = 'none';
+      document.getElementById('reviewPhase').style.display = 'none';
+      
+      // Update token result UI
       document.getElementById('tokenDisplay').textContent = 
         JSON.stringify(state.capabilityToken, null, 2);
       document.getElementById('tokenId').textContent = tokenId;
       document.getElementById('wrappedDek').textContent = 
         `${wrappedDEK.ciphertext.slice(0, 30)}... (${wrappedDEK.ciphertext.length} bytes)`;
+      
+      // Update the new token details cards
+      const scopeNames = scopes.map(s => s.path.split('/')[1]).join(', ');
+      document.getElementById('grantedScopes').textContent = scopeNames;
+      document.getElementById('tokenExpiryDisplay').textContent = new Date(expiresAt * 1000).toLocaleString();
+      document.getElementById('tokenStatusDisplay').innerHTML = 
+        '<span class="revocation-status active">ACTIVE</span>';
+      
       document.getElementById('tokenResult').style.display = 'block';
 
       // Show revoke button
       const revokeBtn = document.getElementById('revokeBtn');
       revokeBtn.style.display = 'inline-flex';
       state.tokenRevoked = false;
-      document.getElementById('revocationStatus').innerHTML =
-        '<span class="revocation-status active">ACTIVE</span>';
 
       // Audit
       await addAuditEntry('TOKEN_CREATED', {
         tokenId,
+        agent: agentConfig.name,
         scopes: scopes.map(s => s.path),
         expiresAt: new Date(expiresAt * 1000).toISOString(),
         agentKey: nacl.util.encodeBase64(state.agentKeyPair.publicKey).slice(0, 20)
@@ -2389,7 +3369,8 @@
       updateStep(4, 'active');
       document.getElementById('runAgentBtn').disabled = false;
       
-      log('Capability token created and signed', 'success');
+      log(`Capability token created for ${agentConfig.name}`, 'success');
+      log(`Granted scopes: ${scopeNames}`, 'success');
     }
     
     function copyToken() {
@@ -2947,12 +3928,29 @@
 
       // Update UI
       const btn = document.getElementById('revokeBtn');
-      btn.textContent = 'Token Revoked';
+      btn.textContent = 'Access Revoked';
       btn.classList.add('revoked');
       btn.disabled = true;
 
+      // Update both status displays
       document.getElementById('revocationStatus').innerHTML =
         '<span class="revocation-status revoked">REVOKED</span>';
+      
+      const tokenStatusDisplay = document.getElementById('tokenStatusDisplay');
+      if (tokenStatusDisplay) {
+        tokenStatusDisplay.innerHTML = '<span class="revocation-status revoked">REVOKED</span>';
+      }
+      
+      // Update the granted banner
+      const banner = document.querySelector('.token-granted-banner');
+      if (banner) {
+        banner.style.background = 'rgba(255,59,48,0.08)';
+        banner.style.borderColor = 'rgba(255,59,48,0.2)';
+        banner.querySelector('.granted-icon').textContent = '🚫';
+        banner.querySelector('.granted-title').textContent = 'Access Revoked';
+        banner.querySelector('.granted-title').style.color = 'var(--error)';
+        banner.querySelector('.granted-subtitle').textContent = 'Token has been revoked and is no longer valid';
+      }
 
       // Audit
       await addAuditEntry('TOKEN_REVOKED', {
