@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0A0F"/>
+      <stop offset="50%" style="stop-color:#101018"/>
+      <stop offset="100%" style="stop-color:#0A0A0F"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00E5FF;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#00E5FF;stop-opacity:0"/>
+    </radialGradient>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#00E5FF" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Grid -->
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Glow -->
+  <ellipse cx="600" cy="315" rx="400" ry="300" fill="url(#glow)"/>
+  
+  <!-- Logo Diamond -->
+  <g transform="translate(600, 200)">
+    <path d="M0 -60L60 0L0 60L-60 0Z" fill="none" stroke="#00E5FF" stroke-width="3"/>
+    <path d="M0 -35L35 0L0 35L-35 0Z" fill="#00E5FF" fill-opacity="0.6"/>
+    <path d="M0 -15L15 0L0 15L-15 0Z" fill="#00E5FF"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="340" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" fill="#00E5FF">Proofi</text>
+  
+  <!-- Tagline -->
+  <text x="600" y="400" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#8A8AA0">Your Data. Your Keys. Your Proof.</text>
+  
+  <!-- Badge -->
+  <rect x="940" y="550" width="220" height="44" rx="8" fill="#00E5FF" fill-opacity="0.1" stroke="#00E5FF" stroke-opacity="0.3"/>
+  <text x="1050" y="578" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#00E5FF">Built on Cere Network</text>
+</svg>

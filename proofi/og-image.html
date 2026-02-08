@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #0A0A0F 0%, #101018 50%, #0A0A0F 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0,229,255,0.15) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+    .logo svg {
+      width: 100%;
+      height: 100%;
+    }
+    h1 {
+      font-size: 72px;
+      font-weight: 800;
+      color: #E4E4F0;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    h1 span {
+      color: #00E5FF;
+    }
+    p {
+      font-size: 28px;
+      color: #8A8AA0;
+      position: relative;
+      z-index: 1;
+    }
+    .badge {
+      position: absolute;
+      bottom: 40px;
+      right: 50px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 24px;
+      background: rgba(0,229,255,0.1);
+      border: 1px solid rgba(0,229,255,0.3);
+      border-radius: 8px;
+      z-index: 1;
+    }
+    .badge span {
+      color: #00E5FF;
+      font-size: 16px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="logo">
+    <svg viewBox="0 0 120 120">
+      <path d="M60 10L110 60L60 110L10 60Z" fill="none" stroke="#00E5FF" stroke-width="3"/>
+      <path d="M60 30L90 60L60 90L30 60Z" fill="#00E5FF" opacity="0.6"/>
+      <path d="M60 45L75 60L60 75L45 60Z" fill="#00E5FF"/>
+    </svg>
+  </div>
+  <h1><span>Proofi</span></h1>
+  <p>Your Data. Your Keys. Your Proof.</p>
+  <div class="badge">
+    <span>Built on Cere Network</span>
+  </div>
+</body>
+</html>
