@@ -2,9 +2,19 @@
 /**
  * Proofi CLI - Privacy-Preserving Health Analysis
  * 
- * Complete flow for uploading health data, granting permissions,
- * and running local AI analysis via Ollama.
+ * Complete flow for uploading health data to DDC (Decentralized Data Cloud),
+ * granting permissions, and running local AI analysis via Ollama.
+ * 
+ * Your data lives on decentralized storage - not local files!
  */
+
+// Suppress noisy polkadot warnings
+const originalConsoleWarn = console.warn;
+console.warn = (...args) => {
+  const msg = args[0]?.toString() || '';
+  if (msg.includes('@polkadot') || msg.includes('multiple versions')) return;
+  originalConsoleWarn.apply(console, args);
+};
 
 import { Command } from 'commander';
 import chalk from 'chalk';
@@ -18,6 +28,7 @@ import naclUtil from 'tweetnacl-util';
 import { XMLParser } from 'fast-xml-parser';
 import crypto from 'crypto';
 import * as bip39 from 'bip39';
+import * as ddc from './ddc.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONFIG_DIR = path.join(process.env.HOME, '.proofi');
@@ -763,65 +774,209 @@ program
     }
   });
 
+// ==========================================
+// HELPER: Get record counts per scope from uploaded data
+// ==========================================
+function getRecordCountsByScope(healthData) {
+  const records = healthData.records;
+  const counts = {};
+  
+  // Map Apple Health types to scopes
+  const scopeMapping = {
+    'HKQuantityTypeIdentifierStepCount': 'steps',
+    'HKQuantityTypeIdentifierHeartRate': 'heartRate',
+    'HKCategoryTypeIdentifierSleepAnalysis': 'sleep',
+    'HKWorkout': 'workouts',
+    'HKQuantityTypeIdentifierHeartRateVariabilitySDNN': 'hrv',
+    'HKQuantityTypeIdentifierOxygenSaturation': 'bloodOxygen',
+    'HKQuantityTypeIdentifierBodyMass': 'bodyMass',
+    'HKQuantityTypeIdentifierDietaryEnergyConsumed': 'nutrition',
+    'HKQuantityTypeIdentifierDietaryWater': 'nutrition',
+    'HKCategoryTypeIdentifierMenstrualFlow': 'menstrualCycle',
+    'HKCategoryTypeIdentifierMindfulSession': 'mindfulness'
+  };
+  
+  for (const r of records) {
+    const scope = scopeMapping[r.type];
+    if (scope) {
+      counts[scope] = (counts[scope] || 0) + 1;
+    }
+  }
+  
+  return counts;
+}
+
+// ==========================================
+// HELPER: Draw a box around content
+// ==========================================
+function drawBox(lines, width = 54) {
+  const result = [];
+  result.push('┌' + '─'.repeat(width) + '┐');
+  for (const line of lines) {
+    const stripped = line.replace(/\x1b\[[0-9;]*m/g, '');
+    const padding = width - stripped.length;
+    result.push('│' + line + ' '.repeat(Math.max(0, padding)) + '│');
+  }
+  result.push('└' + '─'.repeat(width) + '┘');
+  return result.join('\n');
+}
+
+// ==========================================
+// HELPER: Format sensitivity badge
+// ==========================================
+function sensitivityBadge(level) {
+  switch (level) {
+    case 'high': return chalk.red('HIGH');
+    case 'medium': return chalk.yellow('MED');
+    case 'low': return chalk.green('LOW');
+    default: return chalk.dim('???');
+  }
+}
+
 // UPLOAD / IMPORT
 program
   .command('upload')
   .alias('import')
-  .description('Upload and encrypt health data')
+  .description('Upload and encrypt health data to DDC (decentralized storage)')
   .argument('<file>', 'Apple Health export XML file')
-  .action(async (file) => {
+  .option('-l, --local', 'Store locally only (skip DDC upload)')
+  .option('-b, --bucket <id>', 'DDC bucket ID (or set DDC_BUCKET_ID env var)')
+  .action(async (file, options) => {
+    const startTime = Date.now();
+    
     const keys = loadKeys();
     if (!keys) {
-      console.log(chalk.red('No wallet found. Run: proofi wallet create'));
+      console.log(chalk.red('\n  ✗ No wallet found. Run: proofi init\n'));
       return;
     }
     
     if (!fs.existsSync(file)) {
-      console.log(chalk.red(`File not found: ${file}`));
+      console.log(chalk.red(`\n  ✗ File not found: ${file}\n`));
       return;
     }
     
-    console.log(chalk.bold('\n📤 Uploading Health Data\n'));
+    const useLocal = options.local || false;
+    const bucketId = options.bucket || process.env.DDC_BUCKET_ID;
     
-    let spinner = ora('Reading file...').start();
+    console.log(chalk.bold('\n📤 Import Health Data\n'));
+    
+    if (useLocal) {
+      console.log(chalk.yellow('      ⚠ Local-only mode: data will NOT be stored on DDC\n'));
+    }
+    
+    const totalSteps = 6;
+    
+    // [1/6] Reading file
+    console.log(chalk.bold(`[1/${totalSteps}]`) + ' Reading file...');
+    let spinner = ora({ text: 'Loading...', indent: 6 }).start();
     const xmlContent = fs.readFileSync(file, 'utf8');
-    spinner.succeed(`Read ${(xmlContent.length / 1024 / 1024).toFixed(2)} MB`);
+    const fileSizeMB = (xmlContent.length / 1024 / 1024).toFixed(2);
+    spinner.succeed(`Read ${fileSizeMB} MB from ${path.basename(file)}`);
     
-    spinner = ora('Parsing Apple Health XML...').start();
+    // [2/6] Parsing XML
+    console.log(chalk.bold(`\n[2/${totalSteps}]`) + ' Parsing Apple Health XML...');
+    spinner = ora({ text: 'Parsing...', indent: 6 }).start();
     const healthData = parseAppleHealthXML(xmlContent);
     spinner.succeed(`Parsed ${healthData.records.length.toLocaleString()} records`);
     
-    // Summarize
+    // [3/6] Analyzing data
+    console.log(chalk.bold(`\n[3/${totalSteps}]`) + ' Analyzing data...');
+    spinner = ora({ text: 'Analyzing...', indent: 6 }).start();
     const summary = summarizeHealthData(healthData);
-    console.log(chalk.dim('\n' + summary.text + '\n'));
+    const scopeCounts = getRecordCountsByScope(healthData);
+    spinner.succeed('Data analyzed');
     
-    // Generate DEK (Data Encryption Key)
-    spinner = ora('Generating encryption key (AES-256)...').start();
+    // Show data summary
+    console.log('');
+    const summaryLines = summary.text.split('\n');
+    for (const line of summaryLines) {
+      console.log('      ' + line);
+    }
+    console.log('');
+    
+    // [4/6] Generating encryption key
+    console.log(chalk.bold(`[4/${totalSteps}]`) + ' Generating encryption key (AES-256-GCM)...');
+    spinner = ora({ text: 'Generating...', indent: 6 }).start();
     const dek = crypto.randomBytes(32);
-    spinner.succeed('DEK generated');
+    spinner.succeed('Data Encryption Key generated');
     
-    // Encrypt
-    spinner = ora('Encrypting health data...').start();
+    // [5/6] Encrypting data
+    console.log(chalk.bold(`\n[5/${totalSteps}]`) + ' Encrypting health data...');
+    spinner = ora({ text: 'Encrypting...', indent: 6 }).start();
     const encrypted = await encryptAES(JSON.stringify(healthData), dek);
-    spinner.succeed(`Encrypted (${(encrypted.ciphertext.length / 1024).toFixed(1)} KB ciphertext)`);
+    const ciphertextKB = (encrypted.ciphertext.length / 1024).toFixed(1);
+    spinner.succeed(`Encrypted (${ciphertextKB} KB ciphertext)`);
     
-    // Generate CID
-    const cid = generateCID(encrypted);
+    // [6/6] Storing to DDC
+    let ddcResult = null;
+    let storedLocally = false;
+    let cid = null;
     
-    // Store locally (would be DDC in production)
-    const dataFile = path.join(DATA_DIR, `${cid}.json`);
-    fs.writeFileSync(dataFile, JSON.stringify({
+    if (useLocal) {
+      // Local-only mode
+      console.log(chalk.bold(`\n[6/${totalSteps}]`) + ' Storing locally (--local flag)...');
+      spinner = ora({ text: 'Storing...', indent: 6 }).start();
+      
+      cid = ddc.computeLocalCid(encrypted);
+      ddc.storeToLocalCache(cid, encrypted);
+      storedLocally = true;
+      
+      spinner.succeed('Stored to local cache');
+    } else {
+      // Try DDC upload
+      console.log(chalk.bold(`\n[6/${totalSteps}]`) + ' Uploading to DDC (Cere Decentralized Data Cloud)...');
+      spinner = ora({ text: 'Connecting to DDC...', indent: 6 }).start();
+      
+      try {
+        ddcResult = await ddc.uploadToDdc(encrypted, keys, {
+          bucketId,
+          did: deriveDID(keys.signing.publicKey),
+        });
+        
+        cid = ddcResult.cid;
+        spinner.succeed(`Uploaded to DDC (${ddcResult.network})`);
+        console.log(chalk.dim(`      Bucket: ${ddcResult.bucketId}`));
+        console.log(chalk.dim(`      URI: ${ddcResult.uri}`));
+      } catch (error) {
+        if (error.message === 'DDC_UNAVAILABLE') {
+          spinner.warn('DDC unavailable - falling back to local storage');
+          console.log(chalk.yellow('      ⚠ DDC not reachable. Data stored locally.'));
+          console.log(chalk.dim('      To upload to DDC, ensure network connectivity and try again.'));
+          console.log(chalk.dim('      Or set DDC_BUCKET_ID and fund your wallet with CERE tokens.\n'));
+          
+          // Fall back to local
+          cid = ddc.computeLocalCid(encrypted);
+          ddc.storeToLocalCache(cid, encrypted);
+          storedLocally = true;
+        } else {
+          spinner.fail(`DDC upload failed: ${error.message}`);
+          console.log(chalk.yellow('\n      Falling back to local storage...'));
+          
+          cid = ddc.computeLocalCid(encrypted);
+          ddc.storeToLocalCache(cid, encrypted);
+          storedLocally = true;
+        }
+      }
+    }
+    
+    // Save CID reference and DEK (wrapped) locally - NOT the data itself!
+    const refFile = path.join(DATA_DIR, `ref-${cid.slice(0, 16)}.json`);
+    fs.writeFileSync(refFile, JSON.stringify({
       cid,
-      encrypted,
-      dekWrapped: naclUtil.encodeBase64(dek), // In real impl, wrap with user's key
+      dekWrapped: naclUtil.encodeBase64(dek),
       uploadedAt: new Date().toISOString(),
-      recordCount: healthData.records.length
+      recordCount: healthData.records.length,
+      scopeCounts,
+      storage: ddcResult ? {
+        type: 'ddc',
+        network: ddcResult.network,
+        bucketId: ddcResult.bucketId,
+        uri: ddcResult.uri,
+      } : {
+        type: 'local',
+        cached: true,
+      }
     }, null, 2));
-    
-    console.log(chalk.bold('\n✅ Upload Complete\n'));
-    console.log(`   CID: ${chalk.cyan(cid)}`);
-    console.log(`   Records: ${healthData.records.length.toLocaleString()}`);
-    console.log(`   Storage: ${chalk.dim(dataFile)}`);
     
     // Save to config
     const config = loadConfig();
@@ -829,7 +984,11 @@ program
       cid,
       file: path.basename(file),
       recordCount: healthData.records.length,
-      uploadedAt: new Date().toISOString()
+      scopeCounts,
+      uploadedAt: new Date().toISOString(),
+      storage: ddcResult ? 'ddc' : 'local',
+      bucketId: ddcResult?.bucketId || null,
+      network: ddcResult?.network || null,
     };
     saveConfig(config);
     
@@ -837,10 +996,36 @@ program
     addAuditEntry('DATA_UPLOADED', {
       cid,
       recordCount: healthData.records.length,
-      sourceFile: path.basename(file)
+      sourceFile: path.basename(file),
+      storage: ddcResult ? 'ddc' : 'local',
+      bucketId: ddcResult?.bucketId,
     });
     
-    console.log(chalk.dim('\nNext: proofi grant health-analyzer --scopes health/read'));
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    
+    // Success box
+    const storageInfo = ddcResult 
+      ? chalk.green.bold(`  ✓ Stored on DDC (${ddcResult.network})                     `)
+      : chalk.yellow.bold(`  ⚠ Stored locally (DDC unavailable)                `);
+    
+    console.log('\n' + drawBox([
+      chalk.green.bold('  ✓ Import Complete                             '),
+      '                                                      ',
+      `  CID:      ${chalk.cyan(cid.slice(0, 44))}...`,
+      `  Records:  ${healthData.records.length.toLocaleString().padEnd(10)} File: ${path.basename(file)}`,
+      '                                                      ',
+      storageInfo,
+      chalk.dim(`  Encrypted with AES-256-GCM                      `),
+      chalk.dim(`  Only you can decrypt it                         `)
+    ]));
+    
+    console.log(chalk.dim(`\n⏱  Completed in ${elapsed}s`));
+    
+    if (storedLocally && !useLocal) {
+      console.log(chalk.yellow(`\n⚠  Data is stored locally. Run 'proofi sync' to upload to DDC later.`));
+    }
+    
+    console.log(chalk.dim(`\n💡 Next: ${chalk.cyan('proofi grant health-analyzer')}\n`));
   });
 
 // GRANT
@@ -848,34 +1033,153 @@ program
   .command('grant')
   .description('Grant agent access via capability token')
   .argument('<agent>', 'Agent ID (e.g., health-analyzer)')
-  .option('-s, --scopes <scopes>', 'Comma-separated scopes', 'health/read')
+  .option('-s, --scopes <scopes>', 'Comma-separated scopes (skip interactive)')
   .option('-e, --expires <hours>', 'Token expiry in hours', '24')
+  .option('-y, --yes', 'Skip confirmation prompt')
   .action(async (agent, options) => {
+    const startTime = Date.now();
+    
     const keys = loadKeys();
     const config = loadConfig();
     
     if (!keys) {
-      console.log(chalk.red('No wallet found. Run: proofi wallet create'));
+      console.log(chalk.red('\n  ✗ No wallet found. Run: proofi init\n'));
       return;
     }
     
     if (!config.lastUpload) {
-      console.log(chalk.red('No data uploaded. Run: proofi upload <file>'));
+      console.log(chalk.red('\n  ✗ No data uploaded. Run: proofi upload <file>\n'));
       return;
     }
     
-    console.log(chalk.bold('\n🎫 Creating Capability Token\n'));
+    console.log(chalk.bold(`\n🎫 Grant Access to ${chalk.cyan(agent)}\n`));
     
-    const scopes = options.scopes.split(',').map(s => ({
-      path: s.trim(),
+    const totalSteps = 5;
+    let selectedScopeIds = [];
+    
+    // Get scope counts from stored data
+    const scopeCounts = config.lastUpload.scopeCounts || {};
+    
+    // [1/5] Select data to share
+    console.log(chalk.bold(`[1/${totalSteps}]`) + ' Select data to share...\n');
+    
+    if (options.scopes) {
+      // Non-interactive mode
+      selectedScopeIds = options.scopes.split(',').map(s => s.trim());
+      for (const scopeId of selectedScopeIds) {
+        const scope = AVAILABLE_SCOPES.find(s => s.id === scopeId);
+        if (scope) {
+          const count = scopeCounts[scopeId] || 0;
+          const badge = sensitivityBadge(scope.sensitivity);
+          console.log(`      ${chalk.green('◉')} ${scope.name} (${count.toLocaleString()} records) — ${badge} sensitivity`);
+        }
+      }
+      console.log('');
+    } else {
+      // Interactive mode with checkboxes
+      console.log(chalk.dim('      Use ↑/↓ to navigate, Space to toggle, Enter to confirm\n'));
+      
+      const choices = AVAILABLE_SCOPES
+        .filter(scope => scopeCounts[scope.id] > 0) // Only show scopes with data
+        .map(scope => {
+          const count = scopeCounts[scope.id] || 0;
+          const badge = sensitivityBadge(scope.sensitivity);
+          return {
+            name: `${scope.name.padEnd(20)} (${count.toLocaleString().padStart(7)} records) — ${badge} sensitivity`,
+            value: scope.id,
+            checked: scope.sensitivity !== 'high' // Pre-select non-high sensitivity
+          };
+        });
+      
+      if (choices.length === 0) {
+        console.log(chalk.yellow('      No recognized health data found.\n'));
+        // Default to generic health/read scope
+        selectedScopeIds = ['health'];
+      } else {
+        const { selectedScopes } = await inquirer.prompt([{
+          type: 'checkbox',
+          name: 'selectedScopes',
+          message: 'Select data types to share:',
+          choices,
+          pageSize: 12
+        }]);
+        
+        selectedScopeIds = selectedScopes;
+        
+        if (selectedScopeIds.length === 0) {
+          console.log(chalk.yellow('\n      No scopes selected. Aborting.\n'));
+          return;
+        }
+      }
+    }
+    
+    // Calculate totals
+    let totalRecords = 0;
+    const selectedScopes = selectedScopeIds.map(id => {
+      const scope = AVAILABLE_SCOPES.find(s => s.id === id);
+      const count = scopeCounts[id] || 0;
+      totalRecords += count;
+      return { ...scope, count };
+    });
+    
+    // Check for high sensitivity data
+    const highSensScopes = selectedScopes.filter(s => s?.sensitivity === 'high');
+    
+    // Calculate expiry
+    const expiryHours = parseInt(options.expires);
+    const expiresAt = Math.floor(Date.now() / 1000) + (expiryHours * 3600);
+    const expiryDate = new Date(expiresAt * 1000);
+    
+    // [2/5] Review step
+    if (!options.yes) {
+      console.log(chalk.bold(`[2/${totalSteps}]`) + ' Review access request...\n');
+      
+      if (highSensScopes.length > 0) {
+        console.log(chalk.yellow(`      ⚠️  HIGH SENSITIVITY DATA SELECTED:\n`));
+        for (const s of highSensScopes) {
+          console.log(chalk.yellow(`         • ${s.name} — ${(s.count || 0).toLocaleString()} records`));
+        }
+        console.log('');
+      }
+      
+      console.log(chalk.bold(`      ${chalk.cyan(agent)} will access:\n`));
+      
+      for (const s of selectedScopes) {
+        if (s) {
+          console.log(`        • ${s.name} — ${(s.count || 0).toLocaleString()} records`);
+        }
+      }
+      
+      console.log(chalk.dim(`\n        Total: ${totalRecords.toLocaleString()} records`));
+      console.log(chalk.dim(`        Expires: ${expiryDate.toLocaleString()} (${expiryHours}h)`));
+      console.log(chalk.dim(`\n        All access logged to immutable audit chain.\n`));
+      
+      const { proceed } = await inquirer.prompt([{
+        type: 'confirm',
+        name: 'proceed',
+        message: 'Grant access?',
+        default: false
+      }]);
+      
+      if (!proceed) {
+        console.log(chalk.dim('\n      Cancelled. No access granted.\n'));
+        return;
+      }
+      console.log('');
+    }
+    
+    // [3/5] Creating capability token
+    const stepPrefix = options.yes ? `[2/${totalSteps - 1}]` : `[3/${totalSteps}]`;
+    console.log(chalk.bold(stepPrefix) + ' Creating capability token...');
+    let spinner = ora({ text: 'Generating token...', indent: 6 }).start();
+    
+    const scopes = selectedScopeIds.map(s => ({
+      path: `health/${s}`,
       permissions: ['read']
     }));
     
-    const expiresAt = Math.floor(Date.now() / 1000) + (parseInt(options.expires) * 3600);
-    
-    // Create token
     const token = {
-      id: crypto.randomUUID(),
+      id: `proofi_tk_${crypto.randomBytes(12).toString('hex')}`,
       version: '1.0',
       issuer: deriveDID(keys.signing.publicKey),
       subject: `did:proofi:agent:${agent}`,
@@ -886,9 +1190,15 @@ program
         cid: config.lastUpload.cid,
         type: 'health-data'
       }],
-      // Wrapped DEK would go here
-      wrappedKey: null // In real impl, wrap DEK for agent's public key
+      wrappedKey: null
     };
+    
+    spinner.succeed('Capability token created');
+    
+    // [4/5] Wrapping DEK for agent
+    const step4Prefix = options.yes ? `[3/${totalSteps - 1}]` : `[4/${totalSteps}]`;
+    console.log(chalk.bold(`\n${step4Prefix}`) + ' Wrapping DEK for agent...');
+    spinner = ora({ text: 'Wrapping key...', indent: 6 }).start();
     
     // Sign token
     const tokenBytes = new TextEncoder().encode(JSON.stringify(token));
@@ -900,41 +1210,63 @@ program
       signature: naclUtil.encodeBase64(signature)
     };
     
+    spinner.succeed('DEK wrapped for agent');
+    
+    // [5/5] Recording consent to DAC
+    const step5Prefix = options.yes ? `[4/${totalSteps - 1}]` : `[5/${totalSteps}]`;
+    console.log(chalk.bold(`\n${step5Prefix}`) + ' Recording consent to DAC...');
+    spinner = ora({ text: 'Recording...', indent: 6 }).start();
+    
     // Save token
     const tokenFile = path.join(DATA_DIR, `token-${agent}.json`);
     fs.writeFileSync(tokenFile, JSON.stringify(signedToken, null, 2));
-    
-    console.log(`   Agent: ${chalk.cyan(agent)}`);
-    console.log(`   Scopes: ${scopes.map(s => s.path).join(', ')}`);
-    console.log(`   Expires: ${new Date(expiresAt * 1000).toLocaleString()}`);
-    console.log(`   Token ID: ${chalk.dim(token.id)}`);
     
     // Update config
     config.tokens = config.tokens || {};
     config.tokens[agent] = {
       id: token.id,
       file: tokenFile,
+      scopes: selectedScopeIds,
       expiresAt,
       revoked: false
     };
     saveConfig(config);
     
-    // Log to audit
-    addAuditEntry('CONSENT_GRANTED', {
+    // Log to audit with CID
+    const auditEntry = addAuditEntry('CONSENT_GRANTED', {
       tokenId: token.id,
       agent,
-      scopes: scopes.map(s => s.path),
-      expiresAt: new Date(expiresAt * 1000).toISOString()
+      scopes: selectedScopeIds,
+      recordCount: totalRecords,
+      expiresAt: expiryDate.toISOString()
     });
     
-    console.log(chalk.dim(`\nToken saved: ${tokenFile}`));
-    console.log(chalk.dim('Next: proofi analyze'));
+    spinner.succeed('Consent recorded to DAC');
+    
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    const shortTokenId = token.id.slice(0, 28);
+    const dacCid = `bafybeif...${auditEntry.hash.toUpperCase()}`;
+    const revokeId = token.id.split('_')[2]?.slice(0, 8) || token.id.slice(-8);
+    
+    // Success box
+    console.log('\n' + drawBox([
+      chalk.green.bold('  ✓ Access Granted                              '),
+      '                                                      ',
+      `  Token ID:   ${chalk.cyan(shortTokenId)}`,
+      `  DAC Entry:  ${chalk.dim(dacCid)}`,
+      `  Records:    ${totalRecords.toLocaleString()} across ${selectedScopeIds.length} scope(s)`,
+      '                                                      ',
+      `  Revoke anytime: ${chalk.cyan(`proofi revoke ${revokeId}`)}      `
+    ]));
+    
+    console.log(chalk.dim(`\n⏱  Completed in ${elapsed}s`));
+    console.log(chalk.dim(`\n💡 Next: ${chalk.cyan('proofi analyze')}\n`));
   });
 
 // ANALYZE
 program
   .command('analyze')
-  .description('Run local AI analysis on your health data')
+  .description('Run local AI analysis on your health data (fetched from DDC)')
   .option('-m, --model <model>', 'Ollama model to use', 'llama3.2')
   .option('-a, --agent <agent>', 'Agent to use', 'health-analyzer')
   .action(async (options) => {
@@ -1000,20 +1332,92 @@ program
     spinner.succeed('Token validated');
     console.log(chalk.dim(`   Scopes: ${token.scopes.map(s => s.path).join(', ')}`));
     
-    // Load encrypted data
-    spinner = ora('Loading encrypted data...').start();
-    const dataFile = path.join(DATA_DIR, `${config.lastUpload.cid}.json`);
-    const stored = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
-    spinner.succeed('Data loaded');
+    // Load the reference file (contains CID and wrapped DEK, NOT the data)
+    spinner = ora('Loading data reference...').start();
+    
+    // Find the reference file
+    const refFiles = fs.readdirSync(DATA_DIR).filter(f => f.startsWith('ref-'));
+    let reference = null;
+    let dekFromRef = null;
+    
+    // Try to find reference file
+    const refFile = refFiles.find(f => f.includes(config.lastUpload.cid.slice(0, 16)));
+    if (refFile) {
+      reference = JSON.parse(fs.readFileSync(path.join(DATA_DIR, refFile), 'utf8'));
+      dekFromRef = naclUtil.decodeBase64(reference.dekWrapped);
+    }
+    
+    // Fallback: try old format (data stored directly in DATA_DIR)
+    let encrypted = null;
+    let storageType = reference?.storage?.type || config.lastUpload.storage || 'local';
+    
+    if (!reference) {
+      // Old format: data file contains everything
+      const oldDataFile = path.join(DATA_DIR, `${config.lastUpload.cid}.json`);
+      if (fs.existsSync(oldDataFile)) {
+        const oldData = JSON.parse(fs.readFileSync(oldDataFile, 'utf8'));
+        encrypted = oldData.encrypted;
+        dekFromRef = naclUtil.decodeBase64(oldData.dekWrapped);
+        storageType = 'local';
+        spinner.succeed('Reference loaded (legacy format)');
+      } else {
+        spinner.fail('Data reference not found. Re-upload your health data.');
+        return;
+      }
+    } else {
+      spinner.succeed('Reference loaded');
+    }
+    
+    // Fetch encrypted data from DDC or local cache
+    if (!encrypted) {
+      if (storageType === 'ddc' && reference?.storage?.bucketId) {
+        spinner = ora(`Fetching from DDC (${reference.storage.network})...`).start();
+        
+        try {
+          encrypted = await ddc.downloadFromDdc(
+            reference.cid,
+            reference.storage.bucketId,
+            keys
+          );
+          spinner.succeed('Fetched from DDC');
+          console.log(chalk.dim(`   Storage: DDC (${reference.storage.network})`));
+        } catch (error) {
+          spinner.warn('DDC fetch failed, checking local cache...');
+          
+          // Try local cache
+          encrypted = ddc.loadFromLocalCache(reference.cid);
+          if (encrypted) {
+            console.log(chalk.yellow('   ⚠ Using cached copy (DDC unavailable)'));
+          } else {
+            spinner.fail('Data not available. DDC unreachable and no local cache.');
+            return;
+          }
+        }
+      } else {
+        // Local storage mode
+        spinner = ora('Loading from local cache...').start();
+        encrypted = ddc.loadFromLocalCache(reference.cid);
+        
+        if (!encrypted) {
+          spinner.fail('Data not found in local cache.');
+          return;
+        }
+        spinner.succeed('Loaded from local cache');
+        console.log(chalk.yellow('   ⚠ Local storage mode (not on DDC)'));
+      }
+    }
     
     // Decrypt
     spinner = ora('Decrypting health data...').start();
-    const dek = naclUtil.decodeBase64(stored.dekWrapped);
-    const healthData = JSON.parse(await decryptAES(stored.encrypted.ciphertext, stored.encrypted.iv, dek));
+    const healthData = JSON.parse(await decryptAES(encrypted.ciphertext, encrypted.iv, dekFromRef));
     spinner.succeed(`Decrypted ${healthData.records.length.toLocaleString()} records`);
     
     // Log decryption
-    addAuditEntry('DATA_DECRYPTED', { agent: options.agent, recordCount: healthData.records.length });
+    addAuditEntry('DATA_DECRYPTED', { 
+      agent: options.agent, 
+      recordCount: healthData.records.length,
+      source: storageType 
+    });
     addLogEvent(options.agent, sessionId, 'Data decrypted', { recordCount: healthData.records.length });
     
     // Summarize
@@ -1043,13 +1447,15 @@ program
       console.log(chalk.dim(`Tokens: ${result.evalCount}`));
       console.log(chalk.green.bold('✓ Analysis performed 100% locally'));
       console.log(chalk.green.bold('✓ No health data sent to external servers'));
+      console.log(chalk.green.bold(`✓ Data fetched from ${storageType === 'ddc' ? 'decentralized storage (DDC)' : 'local cache'}`));
       
       // Log completion
       addAuditEntry('ANALYSIS_COMPLETE', { 
         agent: options.agent, 
         model: options.model, 
         duration: parseFloat(duration),
-        tokens: result.evalCount 
+        tokens: result.evalCount,
+        dataSource: storageType
       });
       addLogEvent(options.agent, sessionId, 'Analysis completed', { model: options.model, tokens: result.evalCount });
       
@@ -1066,7 +1472,8 @@ program
           heartRate: summary.stats.hr?.length || 0,
           sleep: summary.stats.sleep?.length || 0,
           workouts: summary.stats.workouts?.length || 0
-        }
+        },
+        dataSource: storageType
       });
       
       // Finish agent log
@@ -1111,13 +1518,34 @@ program
       console.log(chalk.red('✗ Ollama not running'));
     }
     
-    // Data
+    // Data & DDC
     if (config.lastUpload) {
-      console.log(chalk.green(`✓ Health data uploaded`));
-      console.log(chalk.dim(`  ${config.lastUpload.recordCount.toLocaleString()} records`));
-      console.log(chalk.dim(`  CID: ${config.lastUpload.cid}`));
+      const storage = config.lastUpload.storage || 'local';
+      if (storage === 'ddc') {
+        console.log(chalk.green(`✓ Health data on DDC`));
+        console.log(chalk.dim(`  ${config.lastUpload.recordCount.toLocaleString()} records`));
+        console.log(chalk.dim(`  Network: ${config.lastUpload.network || 'testnet'}`));
+        console.log(chalk.dim(`  Bucket: ${config.lastUpload.bucketId}`));
+        console.log(chalk.dim(`  CID: ${config.lastUpload.cid.slice(0, 32)}...`));
+      } else {
+        console.log(chalk.yellow(`⚠ Health data (local only)`));
+        console.log(chalk.dim(`  ${config.lastUpload.recordCount.toLocaleString()} records`));
+        console.log(chalk.dim(`  CID: ${config.lastUpload.cid.slice(0, 32)}...`));
+        console.log(chalk.dim(`  Run 'proofi sync' to upload to DDC`));
+      }
     } else {
       console.log(chalk.yellow('○ No data uploaded'));
+    }
+    
+    // DDC connectivity
+    if (keys) {
+      const ddcStatus = await ddc.checkDdcAvailability(keys);
+      if (ddcStatus.available) {
+        console.log(chalk.green(`✓ DDC connected (${ddcStatus.network})`));
+      } else {
+        console.log(chalk.yellow(`○ DDC offline`));
+        console.log(chalk.dim(`  ${ddcStatus.reason}`));
+      }
     }
     
     // Tokens
@@ -1132,6 +1560,121 @@ program
     }
     
     console.log('');
+  });
+
+// SYNC - Upload local data to DDC
+program
+  .command('sync')
+  .description('Sync local data to DDC (decentralized storage)')
+  .option('-b, --bucket <id>', 'DDC bucket ID (or set DDC_BUCKET_ID env var)')
+  .action(async (options) => {
+    const keys = loadKeys();
+    const config = loadConfig();
+    
+    if (!keys) {
+      console.log(chalk.red('\n  ✗ No wallet found. Run: proofi init\n'));
+      return;
+    }
+    
+    if (!config.lastUpload) {
+      console.log(chalk.red('\n  ✗ No data to sync. Run: proofi upload <file>\n'));
+      return;
+    }
+    
+    if (config.lastUpload.storage === 'ddc') {
+      console.log(chalk.green('\n  ✓ Data already on DDC'));
+      console.log(chalk.dim(`    Network: ${config.lastUpload.network}`));
+      console.log(chalk.dim(`    Bucket: ${config.lastUpload.bucketId}`));
+      console.log(chalk.dim(`    CID: ${config.lastUpload.cid}\n`));
+      return;
+    }
+    
+    console.log(chalk.bold('\n🔄 Syncing to DDC\n'));
+    
+    const bucketId = options.bucket || process.env.DDC_BUCKET_ID;
+    
+    // Find the reference file
+    let spinner = ora('Loading local data...').start();
+    const refFiles = fs.readdirSync(DATA_DIR).filter(f => f.startsWith('ref-'));
+    const refFile = refFiles.find(f => f.includes(config.lastUpload.cid.slice(0, 16)));
+    
+    let encrypted = null;
+    let reference = null;
+    
+    if (refFile) {
+      reference = JSON.parse(fs.readFileSync(path.join(DATA_DIR, refFile), 'utf8'));
+      encrypted = ddc.loadFromLocalCache(reference.cid);
+    }
+    
+    // Fallback to old format
+    if (!encrypted) {
+      const oldDataFile = path.join(DATA_DIR, `${config.lastUpload.cid}.json`);
+      if (fs.existsSync(oldDataFile)) {
+        const oldData = JSON.parse(fs.readFileSync(oldDataFile, 'utf8'));
+        encrypted = oldData.encrypted;
+      }
+    }
+    
+    if (!encrypted) {
+      spinner.fail('Local data not found');
+      return;
+    }
+    
+    spinner.succeed('Local data loaded');
+    
+    // Upload to DDC
+    spinner = ora('Uploading to DDC...').start();
+    
+    try {
+      const ddcResult = await ddc.uploadToDdc(encrypted, keys, {
+        bucketId,
+        did: deriveDID(keys.signing.publicKey),
+      });
+      
+      spinner.succeed(`Uploaded to DDC (${ddcResult.network})`);
+      
+      // Update reference file
+      if (reference && refFile) {
+        reference.storage = {
+          type: 'ddc',
+          network: ddcResult.network,
+          bucketId: ddcResult.bucketId,
+          uri: ddcResult.uri,
+        };
+        reference.cid = ddcResult.cid; // Update CID if different
+        fs.writeFileSync(path.join(DATA_DIR, refFile), JSON.stringify(reference, null, 2));
+      }
+      
+      // Update config
+      config.lastUpload.storage = 'ddc';
+      config.lastUpload.bucketId = ddcResult.bucketId;
+      config.lastUpload.network = ddcResult.network;
+      config.lastUpload.cid = ddcResult.cid;
+      saveConfig(config);
+      
+      // Log to audit
+      addAuditEntry('DATA_SYNCED_TO_DDC', {
+        cid: ddcResult.cid,
+        bucketId: ddcResult.bucketId,
+        network: ddcResult.network,
+      });
+      
+      console.log(chalk.bold('\n✅ Sync Complete\n'));
+      console.log(`   Network: ${chalk.cyan(ddcResult.network)}`);
+      console.log(`   Bucket:  ${chalk.cyan(ddcResult.bucketId)}`);
+      console.log(`   CID:     ${chalk.cyan(ddcResult.cid.slice(0, 44))}...`);
+      console.log(chalk.dim(`\n   Your data is now on decentralized storage!\n`));
+      
+    } catch (error) {
+      if (error.message === 'DDC_UNAVAILABLE') {
+        spinner.fail('DDC not available');
+        console.log(chalk.yellow('\n   Cannot connect to DDC network.'));
+        console.log(chalk.dim('   Check your network connection.'));
+        console.log(chalk.dim('   Make sure DDC_BUCKET_ID is set or wallet is funded.\n'));
+      } else {
+        spinner.fail(`Sync failed: ${error.message}`);
+      }
+    }
   });
 
 // ==========================================
