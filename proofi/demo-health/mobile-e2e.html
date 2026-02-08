@@ -947,6 +947,19 @@
     
     <!-- ===== STEP 4: GRANT PERMISSION ===== -->
     <section id="step4" class="section">
+      <!-- Agent Permission Explanation -->
+      <div class="card" style="background: linear-gradient(135deg, rgba(255,159,10,0.08), rgba(255,55,95,0.08)); border: 1px solid rgba(255,159,10,0.2); margin-bottom: 16px;">
+        <div style="text-align: center; padding: 8px 0;">
+          <div style="font-size: 32px; margin-bottom: 12px;">🔑 🤖 📊</div>
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">How Agent Access Works</h3>
+          <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
+            When you grant access, you create a <strong style="color: var(--text);">capability token</strong> — 
+            a signed permission that lets the agent decrypt <strong style="color: var(--warning);">only the data you select</strong>.
+            The token expires automatically, and you can revoke it anytime.
+          </p>
+        </div>
+      </div>
+      
       <div class="card">
         <div class="card-header">
           <div class="card-icon agent">🤖</div>
@@ -1049,9 +1062,32 @@
       <div class="sovereignty-seal" id="sovereigntySeal" style="display: none;">
         <div class="seal-icon">🛡️</div>
         <div class="seal-title">Proof of Data Sovereignty</div>
-        <div class="seal-subtitle">
+        <div class="seal-subtitle" style="margin-bottom: 20px;">
           Your data was encrypted, stored on DDC, and analyzed — all without leaving your control.
         </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; text-align: center; font-size: 12px;">
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 18px; font-weight: 700; color: var(--success);">AES-256</div>
+            <div style="color: var(--text-secondary);">Encryption</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 18px; font-weight: 700; color: var(--accent);">Ed25519</div>
+            <div style="color: var(--text-secondary);">Signatures</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 18px; font-weight: 700;">DDC</div>
+            <div style="color: var(--text-secondary);">Cere Mainnet</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 18px; font-weight: 700; color: var(--success);">✓</div>
+            <div style="color: var(--text-secondary);">Zero Trust</div>
+          </div>
+        </div>
+        
+        <p style="font-size: 13px; color: var(--text-tertiary); margin-top: 16px; line-height: 1.5;">
+          No server ever saw your unencrypted data. The AI agent received only a time-limited, scope-restricted capability token — and you can revoke it anytime.
+        </p>
       </div>
       
       <div class="btn-group" style="margin-top: 24px;">
