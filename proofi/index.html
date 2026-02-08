@@ -2033,7 +2033,7 @@
     </div>
     <div class="nav-cta">
       <a href="portal.html" class="btn">Launch Wallet</a>
-      <button class="mobile-menu-btn" aria-label="Menu">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false">
         <span></span>
         <span></span>
         <span></span>
@@ -2041,6 +2041,16 @@
     </div>
   </div>
 </nav>
+
+<!-- Mobile Navigation Overlay -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay">
+  <a href="#platform" class="mobile-nav-link">Platform</a>
+  <a href="#extension" class="mobile-nav-link">Extension</a>
+  <a href="#ecosystem" class="mobile-nav-link">Apps</a>
+  <a href="#developers" class="mobile-nav-link">Developers</a>
+  <a href="#security" class="mobile-nav-link">Security</a>
+  <a href="portal.html" class="btn btn-primary">Launch Wallet</a>
+</div>
 
 <!-- Hero Section -->
 <section class="hero" id="main-content">
@@ -3077,6 +3087,31 @@
     }
   });
 
+  // Mobile menu functionality
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+  
+  function toggleMobileMenu() {
+    const isOpen = mobileMenuBtn.classList.toggle('active');
+    mobileNavOverlay.classList.toggle('active');
+    document.body.classList.toggle('nav-open');
+    mobileMenuBtn.setAttribute('aria-expanded', isOpen);
+    mobileMenuBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+  }
+  
+  mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+  
+  // Close mobile menu when clicking a link
+  document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenuBtn.classList.remove('active');
+      mobileNavOverlay.classList.remove('active');
+      document.body.classList.remove('nav-open');
+      mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      mobileMenuBtn.setAttribute('aria-label', 'Open menu');
+    });
+  });
+
   // Smooth scroll for anchor links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
@@ -3086,6 +3121,15 @@
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     });
+  });
+
+  // Close mobile menu on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      mobileMenuBtn.classList.remove('active');
+      mobileNavOverlay.classList.remove('active');
+      document.body.classList.remove('nav-open');
+    }
   });
 </script>
 </body>
