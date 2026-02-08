@@ -1,0 +1,299 @@
+{
+  "config": {
+    "users": 1000,
+    "agents": 50,
+    "simulationDays": 30,
+    "queryRates": {
+      "min": 0,
+      "max": 5,
+      "avgPerUser": 1.5
+    },
+    "pricing": {
+      "baseQueryPrice": 0.1,
+      "premiumDataMultiplier": 2,
+      "platformFeePercent": 15,
+      "userSharePercent": 85
+    },
+    "dataTypes": [
+      {
+        "name": "basic_identity",
+        "frequency": 0.4,
+        "premium": false
+      },
+      {
+        "name": "age_verification",
+        "frequency": 0.25,
+        "premium": false
+      },
+      {
+        "name": "credit_score",
+        "frequency": 0.15,
+        "premium": true
+      },
+      {
+        "name": "income_verification",
+        "frequency": 0.1,
+        "premium": true
+      },
+      {
+        "name": "full_kyc",
+        "frequency": 0.1,
+        "premium": true
+      }
+    ]
+  },
+  "summary": {
+    "simulationPeriod": "30 days",
+    "totalQueries": 81484,
+    "totalRevenue": 10970.6,
+    "platformRevenue": 1645.59,
+    "userEarnings": 9325.01,
+    "averageQueriesPerDay": 2716.13,
+    "averageRevenuePerDay": 365.69
+  },
+  "userMetrics": {
+    "totalUsers": 1000,
+    "averageEarningsPerUser": 9.325,
+    "medianEarningsPerUser": 9.52,
+    "top10PercentThreshold": 12.835,
+    "earningsDistribution": {
+      "top10Percent": 1394.51,
+      "middle40Percent": 4414.05,
+      "bottom50Percent": 3516.45
+    }
+  },
+  "agentMetrics": {
+    "totalAgents": 50,
+    "topAgentQueries": 10544,
+    "medianAgentQueries": 374,
+    "queryDistribution": {
+      "top5Agents": 39744,
+      "rest": 41740
+    }
+  },
+  "queryTypeBreakdown": {
+    "basic_identity": 33096,
+    "age_verification": 20166,
+    "credit_score": 11859,
+    "income_verification": 8110,
+    "full_kyc": 8253
+  },
+  "projections": {
+    "monthlyRevenue": 10970.6,
+    "yearlyRevenue": 131647.2,
+    "yearlyUserEarnings": 111900.12,
+    "yearlyPlatformRevenue": 19747.08
+  },
+  "dailyStats": [
+    {
+      "day": 1,
+      "queries": 2756,
+      "revenue": 372.1,
+      "platformRevenue": 55.82,
+      "userEarnings": 316.28
+    },
+    {
+      "day": 2,
+      "queries": 2711,
+      "revenue": 363.3,
+      "platformRevenue": 54.5,
+      "userEarnings": 308.8
+    },
+    {
+      "day": 3,
+      "queries": 2667,
+      "revenue": 356.3,
+      "platformRevenue": 53.45,
+      "userEarnings": 302.85
+    },
+    {
+      "day": 4,
+      "queries": 2790,
+      "revenue": 374.9,
+      "platformRevenue": 56.24,
+      "userEarnings": 318.66
+    },
+    {
+      "day": 5,
+      "queries": 2603,
+      "revenue": 350.2,
+      "platformRevenue": 52.53,
+      "userEarnings": 297.67
+    },
+    {
+      "day": 6,
+      "queries": 2790,
+      "revenue": 375.8,
+      "platformRevenue": 56.37,
+      "userEarnings": 319.43
+    },
+    {
+      "day": 7,
+      "queries": 2973,
+      "revenue": 401.9,
+      "platformRevenue": 60.29,
+      "userEarnings": 341.61
+    },
+    {
+      "day": 8,
+      "queries": 2611,
+      "revenue": 351.7,
+      "platformRevenue": 52.76,
+      "userEarnings": 298.94
+    },
+    {
+      "day": 9,
+      "queries": 2562,
+      "revenue": 344.4,
+      "platformRevenue": 51.66,
+      "userEarnings": 292.74
+    },
+    {
+      "day": 10,
+      "queries": 2703,
+      "revenue": 364.3,
+      "platformRevenue": 54.65,
+      "userEarnings": 309.65
+    },
+    {
+      "day": 11,
+      "queries": 2577,
+      "revenue": 345.6,
+      "platformRevenue": 51.84,
+      "userEarnings": 293.76
+    },
+    {
+      "day": 12,
+      "queries": 2862,
+      "revenue": 383.7,
+      "platformRevenue": 57.56,
+      "userEarnings": 326.14
+    },
+    {
+      "day": 13,
+      "queries": 2694,
+      "revenue": 360.1,
+      "platformRevenue": 54.02,
+      "userEarnings": 306.08
+    },
+    {
+      "day": 14,
+      "queries": 2593,
+      "revenue": 352.9,
+      "platformRevenue": 52.94,
+      "userEarnings": 299.96
+    },
+    {
+      "day": 15,
+      "queries": 2706,
+      "revenue": 363.6,
+      "platformRevenue": 54.54,
+      "userEarnings": 309.06
+    },
+    {
+      "day": 16,
+      "queries": 2732,
+      "revenue": 365.3,
+      "platformRevenue": 54.8,
+      "userEarnings": 310.5
+    },
+    {
+      "day": 17,
+      "queries": 2649,
+      "revenue": 356.9,
+      "platformRevenue": 53.54,
+      "userEarnings": 303.36
+    },
+    {
+      "day": 18,
+      "queries": 2614,
+      "revenue": 352.4,
+      "platformRevenue": 52.86,
+      "userEarnings": 299.54
+    },
+    {
+      "day": 19,
+      "queries": 2788,
+      "revenue": 377.4,
+      "platformRevenue": 56.61,
+      "userEarnings": 320.79
+    },
+    {
+      "day": 20,
+      "queries": 2886,
+      "revenue": 391.7,
+      "platformRevenue": 58.76,
+      "userEarnings": 332.94
+    },
+    {
+      "day": 21,
+      "queries": 2814,
+      "revenue": 377.7,
+      "platformRevenue": 56.66,
+      "userEarnings": 321.04
+    },
+    {
+      "day": 22,
+      "queries": 2734,
+      "revenue": 372.2,
+      "platformRevenue": 55.83,
+      "userEarnings": 316.37
+    },
+    {
+      "day": 23,
+      "queries": 2699,
+      "revenue": 360.7,
+      "platformRevenue": 54.11,
+      "userEarnings": 306.59
+    },
+    {
+      "day": 24,
+      "queries": 2740,
+      "revenue": 368.6,
+      "platformRevenue": 55.29,
+      "userEarnings": 313.31
+    },
+    {
+      "day": 25,
+      "queries": 2712,
+      "revenue": 361.7,
+      "platformRevenue": 54.26,
+      "userEarnings": 307.44
+    },
+    {
+      "day": 26,
+      "queries": 2813,
+      "revenue": 377.3,
+      "platformRevenue": 56.6,
+      "userEarnings": 320.7
+    },
+    {
+      "day": 27,
+      "queries": 2911,
+      "revenue": 394,
+      "platformRevenue": 59.1,
+      "userEarnings": 334.9
+    },
+    {
+      "day": 28,
+      "queries": 2538,
+      "revenue": 342.8,
+      "platformRevenue": 51.42,
+      "userEarnings": 291.38
+    },
+    {
+      "day": 29,
+      "queries": 2597,
+      "revenue": 351.8,
+      "platformRevenue": 52.77,
+      "userEarnings": 299.03
+    },
+    {
+      "day": 30,
+      "queries": 2659,
+      "revenue": 359.3,
+      "platformRevenue": 53.9,
+      "userEarnings": 305.4
+    }
+  ]
+}

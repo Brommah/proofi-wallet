@@ -1,0 +1,211 @@
+{
+  "timestamp": "2026-02-08T01:46:03.595Z",
+  "systemLimits": {
+    "cereNetwork": {
+      "maxTps": 10000,
+      "avgLatencyMs": 50,
+      "peakLatencyMs": 200
+    },
+    "agentProcessing": {
+      "zkProofGenerationMs": 150,
+      "signatureVerificationMs": 5,
+      "dataRetrievalMs": 20
+    },
+    "network": {
+      "avgRttMs": 30,
+      "bandwidthMbps": 100,
+      "avgPayloadKb": 2
+    }
+  },
+  "theoreticalCapacity": {
+    "networkBound": 6250,
+    "cereBound": 10000,
+    "agentBound": 571,
+    "theoretical": 571.4285714285714
+  },
+  "scenarios": [
+    {
+      "scenario": "baseline",
+      "config": {
+        "queriesPerSecond": 10,
+        "durationSeconds": 60,
+        "totalQueries": 600
+      },
+      "metrics": {
+        "successfulQueries": 600,
+        "failedQueries": 0,
+        "bottlenecks": []
+      },
+      "summary": {
+        "totalQueries": 600,
+        "successfulQueries": 600,
+        "failedQueries": 0,
+        "successRate": 100,
+        "avgThroughput": 10,
+        "latencyMs": {
+          "avg": 204.61,
+          "p50": 205.22,
+          "p95": 242.36,
+          "p99": 244.88
+        },
+        "bottlenecks": []
+      }
+    },
+    {
+      "scenario": "moderate",
+      "config": {
+        "queriesPerSecond": 100,
+        "durationSeconds": 60,
+        "totalQueries": 6000
+      },
+      "metrics": {
+        "successfulQueries": 6000,
+        "failedQueries": 0,
+        "bottlenecks": []
+      },
+      "summary": {
+        "totalQueries": 6000,
+        "successfulQueries": 6000,
+        "failedQueries": 0,
+        "successRate": 100,
+        "avgThroughput": 100,
+        "latencyMs": {
+          "avg": 205.27,
+          "p50": 205.41,
+          "p95": 241.92,
+          "p99": 245.28
+        },
+        "bottlenecks": []
+      }
+    },
+    {
+      "scenario": "high",
+      "config": {
+        "queriesPerSecond": 500,
+        "durationSeconds": 60,
+        "totalQueries": 30000
+      },
+      "metrics": {
+        "successfulQueries": 30000,
+        "failedQueries": 0,
+        "bottlenecks": [
+          {
+            "type": "agent_processing",
+            "description": "Agent ZK proof generation becoming bottleneck",
+            "limit": 571
+          }
+        ]
+      },
+      "summary": {
+        "totalQueries": 30000,
+        "successfulQueries": 30000,
+        "failedQueries": 0,
+        "successRate": 100,
+        "avgThroughput": 500,
+        "latencyMs": {
+          "avg": 205.12,
+          "p50": 205.23,
+          "p95": 241.93,
+          "p99": 245.21
+        },
+        "bottlenecks": [
+          {
+            "type": "agent_processing",
+            "description": "Agent ZK proof generation becoming bottleneck",
+            "limit": 571
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "peak",
+      "config": {
+        "queriesPerSecond": 1000,
+        "durationSeconds": 30,
+        "totalQueries": 30000
+      },
+      "metrics": {
+        "successfulQueries": 30000,
+        "failedQueries": 0,
+        "bottlenecks": [
+          {
+            "type": "agent_processing",
+            "description": "Agent ZK proof generation becoming bottleneck",
+            "limit": 571
+          }
+        ]
+      },
+      "summary": {
+        "totalQueries": 30000,
+        "successfulQueries": 30000,
+        "failedQueries": 0,
+        "successRate": 100,
+        "avgThroughput": 1000,
+        "latencyMs": {
+          "avg": 204.96,
+          "p50": 204.79,
+          "p95": 241.84,
+          "p99": 245.11
+        },
+        "bottlenecks": [
+          {
+            "type": "agent_processing",
+            "description": "Agent ZK proof generation becoming bottleneck",
+            "limit": 571
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "stress",
+      "config": {
+        "queriesPerSecond": 5000,
+        "durationSeconds": 10,
+        "totalQueries": 50000
+      },
+      "metrics": {
+        "successfulQueries": 50000,
+        "failedQueries": 0,
+        "bottlenecks": [
+          {
+            "type": "agent_processing",
+            "description": "Agent ZK proof generation becoming bottleneck",
+            "limit": 571
+          }
+        ]
+      },
+      "summary": {
+        "totalQueries": 50000,
+        "successfulQueries": 50000,
+        "failedQueries": 0,
+        "successRate": 100,
+        "avgThroughput": 5000,
+        "latencyMs": {
+          "avg": 205.11,
+          "p50": 205.19,
+          "p95": 241.95,
+          "p99": 245.16
+        },
+        "bottlenecks": [
+          {
+            "type": "agent_processing",
+            "description": "Agent ZK proof generation becoming bottleneck",
+            "limit": 571
+          }
+        ]
+      }
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "low",
+      "area": "monitoring",
+      "recommendation": "Implement real-time monitoring for QPS, latency, and error rates"
+    },
+    {
+      "priority": "medium",
+      "area": "zk_proofs",
+      "recommendation": "ZK proof generation is the primary bottleneck - consider proof batching or pre-computation"
+    }
+  ]
+}

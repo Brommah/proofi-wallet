@@ -1,0 +1,843 @@
+{
+  "timestamp": "2026-02-08T01:46:06.415Z",
+  "config": {
+    "initial": {
+      "treasury": 10000000,
+      "tokenPrice": 0.1,
+      "platformUsers": 100,
+      "activeAgents": 5
+    },
+    "rewards": {
+      "signupBonus": 10,
+      "dataUploadReward": 5,
+      "referralBonus": 15,
+      "dailyActiveBonus": 0.5,
+      "agentStakeRequired": 1000
+    },
+    "revenue": {
+      "queryPriceTokens": 0.1,
+      "platformFeePercent": 15,
+      "tokenBurnPercent": 5
+    },
+    "scenarios": {
+      "conservative": {
+        "name": "Conservative",
+        "monthlyUserGrowthRate": 0.1,
+        "monthlyAgentGrowthRate": 0.08,
+        "queriesPerUserPerMonth": 20,
+        "churnRate": 0.05,
+        "tokenPriceGrowth": 0.02
+      },
+      "moderate": {
+        "name": "Moderate",
+        "monthlyUserGrowthRate": 0.25,
+        "monthlyAgentGrowthRate": 0.2,
+        "queriesPerUserPerMonth": 35,
+        "churnRate": 0.03,
+        "tokenPriceGrowth": 0.05
+      },
+      "aggressive": {
+        "name": "Aggressive",
+        "monthlyUserGrowthRate": 0.5,
+        "monthlyAgentGrowthRate": 0.4,
+        "queriesPerUserPerMonth": 50,
+        "churnRate": 0.02,
+        "tokenPriceGrowth": 0.1
+      }
+    },
+    "simulationMonths": 12
+  },
+  "scenarios": {
+    "conservative": {
+      "scenario": "Conservative",
+      "scenarioKey": "conservative",
+      "config": {
+        "name": "Conservative",
+        "monthlyUserGrowthRate": 0.1,
+        "monthlyAgentGrowthRate": 0.08,
+        "queriesPerUserPerMonth": 20,
+        "churnRate": 0.05,
+        "tokenPriceGrowth": 0.02
+      },
+      "initialState": {
+        "users": 100,
+        "agents": 5,
+        "treasury": 10000000,
+        "tokenPrice": 0.1
+      },
+      "finalState": {
+        "users": 180,
+        "agents": 5,
+        "treasury": 9987648.81,
+        "tokenPrice": 0.1268,
+        "stakedTokens": 5000,
+        "totalBurned": 25.1
+      },
+      "summary": {
+        "userGrowth": "100 → 180 (80%)",
+        "agentGrowth": "5 → 5 (0%)",
+        "treasuryChange": -12351.19,
+        "treasuryRemaining": 99.9,
+        "totalRevenue": 501.9,
+        "totalRewards": 12828,
+        "totalQueries": 33460,
+        "totalBurned": 25.1,
+        "breakEvenMonth": "Not reached",
+        "tokenPriceChange": "$0.1 → $0.1268 (27%)"
+      },
+      "monthlyData": [
+        {
+          "month": 1,
+          "users": 105,
+          "agents": 5,
+          "treasury": 9999219.93,
+          "tokenPrice": 0.102,
+          "queries": 2100,
+          "revenue": 31.5,
+          "rewards": 810,
+          "netFlow": -780.08
+        },
+        {
+          "month": 2,
+          "users": 110,
+          "agents": 5,
+          "treasury": 9998411.28,
+          "tokenPrice": 0.104,
+          "queries": 2200,
+          "revenue": 33,
+          "rewards": 840,
+          "netFlow": -808.65
+        },
+        {
+          "month": 3,
+          "users": 116,
+          "agents": 5,
+          "treasury": 9997550.34,
+          "tokenPrice": 0.1061,
+          "queries": 2320,
+          "revenue": 34.8,
+          "rewards": 894,
+          "netFlow": -860.94
+        },
+        {
+          "month": 4,
+          "users": 122,
+          "agents": 5,
+          "treasury": 9996655.11,
+          "tokenPrice": 0.1082,
+          "queries": 2440,
+          "revenue": 36.6,
+          "rewards": 930,
+          "netFlow": -895.23
+        },
+        {
+          "month": 5,
+          "users": 128,
+          "agents": 5,
+          "treasury": 9995707.59,
+          "tokenPrice": 0.1104,
+          "queries": 2560,
+          "revenue": 38.4,
+          "rewards": 984,
+          "netFlow": -947.52
+        },
+        {
+          "month": 6,
+          "users": 134,
+          "agents": 5,
+          "treasury": 9994725.78,
+          "tokenPrice": 0.1126,
+          "queries": 2680,
+          "revenue": 40.2,
+          "rewards": 1020,
+          "netFlow": -981.81
+        },
+        {
+          "month": 7,
+          "users": 141,
+          "agents": 5,
+          "treasury": 9993685.96,
+          "tokenPrice": 0.1149,
+          "queries": 2820,
+          "revenue": 42.3,
+          "rewards": 1080,
+          "netFlow": -1039.82
+        },
+        {
+          "month": 8,
+          "users": 148,
+          "agents": 5,
+          "treasury": 9992588.14,
+          "tokenPrice": 0.1172,
+          "queries": 2960,
+          "revenue": 44.4,
+          "rewards": 1140,
+          "netFlow": -1097.82
+        },
+        {
+          "month": 9,
+          "users": 155,
+          "agents": 5,
+          "treasury": 9991450.32,
+          "tokenPrice": 0.1195,
+          "queries": 3100,
+          "revenue": 46.5,
+          "rewards": 1182,
+          "netFlow": -1137.83
+        },
+        {
+          "month": 10,
+          "users": 163,
+          "agents": 5,
+          "treasury": 9990248.77,
+          "tokenPrice": 0.1219,
+          "queries": 3260,
+          "revenue": 48.9,
+          "rewards": 1248,
+          "netFlow": -1201.55
+        },
+        {
+          "month": 11,
+          "users": 171,
+          "agents": 5,
+          "treasury": 9988983.51,
+          "tokenPrice": 0.1243,
+          "queries": 3420,
+          "revenue": 51.3,
+          "rewards": 1314,
+          "netFlow": -1265.27
+        },
+        {
+          "month": 12,
+          "users": 180,
+          "agents": 5,
+          "treasury": 9987648.81,
+          "tokenPrice": 0.1268,
+          "queries": 3600,
+          "revenue": 54,
+          "rewards": 1386,
+          "netFlow": -1334.7
+        }
+      ],
+      "chartData": {
+        "labels": [
+          "Month 1",
+          "Month 2",
+          "Month 3",
+          "Month 4",
+          "Month 5",
+          "Month 6",
+          "Month 7",
+          "Month 8",
+          "Month 9",
+          "Month 10",
+          "Month 11",
+          "Month 12"
+        ],
+        "users": [
+          105,
+          110,
+          116,
+          122,
+          128,
+          134,
+          141,
+          148,
+          155,
+          163,
+          171,
+          180
+        ],
+        "agents": [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        "treasury": [
+          9999219.93,
+          9998411.28,
+          9997550.34,
+          9996655.11,
+          9995707.59,
+          9994725.78,
+          9993685.96,
+          9992588.14,
+          9991450.32,
+          9990248.77,
+          9988983.51,
+          9987648.81
+        ],
+        "revenue": [
+          31.5,
+          33,
+          34.8,
+          36.6,
+          38.4,
+          40.2,
+          42.3,
+          44.4,
+          46.5,
+          48.9,
+          51.3,
+          54
+        ],
+        "rewards": [
+          810,
+          840,
+          894,
+          930,
+          984,
+          1020,
+          1080,
+          1140,
+          1182,
+          1248,
+          1314,
+          1386
+        ]
+      }
+    },
+    "moderate": {
+      "scenario": "Moderate",
+      "scenarioKey": "moderate",
+      "config": {
+        "name": "Moderate",
+        "monthlyUserGrowthRate": 0.25,
+        "monthlyAgentGrowthRate": 0.2,
+        "queriesPerUserPerMonth": 35,
+        "churnRate": 0.03,
+        "tokenPriceGrowth": 0.05
+      },
+      "initialState": {
+        "users": 100,
+        "agents": 5,
+        "treasury": 10000000,
+        "tokenPrice": 0.1
+      },
+      "finalState": {
+        "users": 1089,
+        "agents": 31,
+        "treasury": 9949741.65,
+        "tokenPrice": 0.1796,
+        "stakedTokens": 31000,
+        "totalBurned": 143.88
+      },
+      "summary": {
+        "userGrowth": "100 → 1089 (989%)",
+        "agentGrowth": "5 → 31 (520%)",
+        "treasuryChange": -50258.35,
+        "treasuryRemaining": 99.5,
+        "totalRevenue": 2877.51,
+        "totalRewards": 52992,
+        "totalQueries": 191835,
+        "totalBurned": 143.88,
+        "breakEvenMonth": "Not reached",
+        "tokenPriceChange": "$0.1 → $0.1796 (80%)"
+      },
+      "monthlyData": [
+        {
+          "month": 1,
+          "users": 122,
+          "agents": 6,
+          "treasury": 9998878.85,
+          "tokenPrice": 0.105,
+          "queries": 4270,
+          "revenue": 64.05,
+          "rewards": 1182,
+          "netFlow": -1121.15
+        },
+        {
+          "month": 2,
+          "users": 149,
+          "agents": 7,
+          "treasury": 9997519.16,
+          "tokenPrice": 0.1103,
+          "queries": 5215,
+          "revenue": 78.22,
+          "rewards": 1434,
+          "netFlow": -1359.69
+        },
+        {
+          "month": 3,
+          "users": 182,
+          "agents": 8,
+          "treasury": 9995851.93,
+          "tokenPrice": 0.1158,
+          "queries": 6370,
+          "revenue": 95.55,
+          "rewards": 1758,
+          "netFlow": -1667.23
+        },
+        {
+          "month": 4,
+          "users": 222,
+          "agents": 9,
+          "treasury": 9993820.66,
+          "tokenPrice": 0.1216,
+          "queries": 7770,
+          "revenue": 116.55,
+          "rewards": 2142,
+          "netFlow": -2031.28
+        },
+        {
+          "month": 5,
+          "users": 271,
+          "agents": 10,
+          "treasury": 9991339.82,
+          "tokenPrice": 0.1276,
+          "queries": 9485,
+          "revenue": 142.28,
+          "rewards": 2616,
+          "netFlow": -2480.84
+        },
+        {
+          "month": 6,
+          "users": 330,
+          "agents": 12,
+          "treasury": 9988318.41,
+          "tokenPrice": 0.134,
+          "queries": 11550,
+          "revenue": 173.25,
+          "rewards": 3186,
+          "netFlow": -3021.41
+        },
+        {
+          "month": 7,
+          "users": 403,
+          "agents": 14,
+          "treasury": 9984625.4,
+          "tokenPrice": 0.1407,
+          "queries": 14105,
+          "revenue": 211.57,
+          "rewards": 3894,
+          "netFlow": -3693
+        },
+        {
+          "month": 8,
+          "users": 491,
+          "agents": 16,
+          "treasury": 9980124.29,
+          "tokenPrice": 0.1477,
+          "queries": 17185,
+          "revenue": 257.77,
+          "rewards": 4746,
+          "netFlow": -4501.11
+        },
+        {
+          "month": 9,
+          "users": 599,
+          "agents": 19,
+          "treasury": 9974633.04,
+          "tokenPrice": 0.1551,
+          "queries": 20965,
+          "revenue": 314.47,
+          "rewards": 5790,
+          "netFlow": -5491.25
+        },
+        {
+          "month": 10,
+          "users": 731,
+          "agents": 22,
+          "treasury": 9967929.63,
+          "tokenPrice": 0.1629,
+          "queries": 25585,
+          "revenue": 383.77,
+          "rewards": 7068,
+          "netFlow": -6703.41
+        },
+        {
+          "month": 11,
+          "users": 892,
+          "agents": 26,
+          "treasury": 9959746.51,
+          "tokenPrice": 0.171,
+          "queries": 31220,
+          "revenue": 468.3,
+          "rewards": 8628,
+          "netFlow": -8183.11
+        },
+        {
+          "month": 12,
+          "users": 1089,
+          "agents": 31,
+          "treasury": 9949741.65,
+          "tokenPrice": 0.1796,
+          "queries": 38115,
+          "revenue": 571.73,
+          "rewards": 10548,
+          "netFlow": -10004.86
+        }
+      ],
+      "chartData": {
+        "labels": [
+          "Month 1",
+          "Month 2",
+          "Month 3",
+          "Month 4",
+          "Month 5",
+          "Month 6",
+          "Month 7",
+          "Month 8",
+          "Month 9",
+          "Month 10",
+          "Month 11",
+          "Month 12"
+        ],
+        "users": [
+          122,
+          149,
+          182,
+          222,
+          271,
+          330,
+          403,
+          491,
+          599,
+          731,
+          892,
+          1089
+        ],
+        "agents": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          12,
+          14,
+          16,
+          19,
+          22,
+          26,
+          31
+        ],
+        "treasury": [
+          9998878.85,
+          9997519.16,
+          9995851.93,
+          9993820.66,
+          9991339.82,
+          9988318.41,
+          9984625.4,
+          9980124.29,
+          9974633.04,
+          9967929.63,
+          9959746.51,
+          9949741.65
+        ],
+        "revenue": [
+          64.05,
+          78.22,
+          95.55,
+          116.55,
+          142.28,
+          173.25,
+          211.57,
+          257.77,
+          314.47,
+          383.77,
+          468.3,
+          571.73
+        ],
+        "rewards": [
+          1182,
+          1434,
+          1758,
+          2142,
+          2616,
+          3186,
+          3894,
+          4746,
+          5790,
+          7068,
+          8628,
+          10548
+        ]
+      }
+    },
+    "aggressive": {
+      "scenario": "Aggressive",
+      "scenarioKey": "aggressive",
+      "config": {
+        "name": "Aggressive",
+        "monthlyUserGrowthRate": 0.5,
+        "monthlyAgentGrowthRate": 0.4,
+        "queriesPerUserPerMonth": 50,
+        "churnRate": 0.02,
+        "tokenPriceGrowth": 0.1
+      },
+      "initialState": {
+        "users": 100,
+        "agents": 5,
+        "treasury": 10000000,
+        "tokenPrice": 0.1
+      },
+      "finalState": {
+        "users": 11124,
+        "agents": 221,
+        "treasury": 9613710.89,
+        "tokenPrice": 0.3138,
+        "stakedTokens": 221000,
+        "totalBurned": 1274.36
+      },
+      "summary": {
+        "userGrowth": "100 → 11124 (11024%)",
+        "agentGrowth": "5 → 221 (4320%)",
+        "treasuryChange": -386289.11,
+        "treasuryRemaining": 96.1,
+        "totalRevenue": 25487.25,
+        "totalRewards": 410502,
+        "totalQueries": 1699150,
+        "totalBurned": 1274.36,
+        "breakEvenMonth": "Not reached",
+        "tokenPriceChange": "$0.1 → $0.3138 (214%)"
+      },
+      "monthlyData": [
+        {
+          "month": 1,
+          "users": 148,
+          "agents": 7,
+          "treasury": 9998317.45,
+          "tokenPrice": 0.11,
+          "queries": 7400,
+          "revenue": 111,
+          "rewards": 1788,
+          "netFlow": -1682.55
+        },
+        {
+          "month": 2,
+          "users": 220,
+          "agents": 9,
+          "treasury": 9995822.2,
+          "tokenPrice": 0.121,
+          "queries": 11000,
+          "revenue": 165,
+          "rewards": 2652,
+          "netFlow": -2495.25
+        },
+        {
+          "month": 3,
+          "users": 326,
+          "agents": 12,
+          "treasury": 9992118.47,
+          "tokenPrice": 0.1331,
+          "queries": 16300,
+          "revenue": 244.5,
+          "rewards": 3936,
+          "netFlow": -3703.72
+        },
+        {
+          "month": 4,
+          "users": 483,
+          "agents": 16,
+          "treasury": 9986630.61,
+          "tokenPrice": 0.1464,
+          "queries": 24150,
+          "revenue": 362.25,
+          "rewards": 5832,
+          "netFlow": -5487.86
+        },
+        {
+          "month": 5,
+          "users": 715,
+          "agents": 22,
+          "treasury": 9978512.05,
+          "tokenPrice": 0.1611,
+          "queries": 35750,
+          "revenue": 536.25,
+          "rewards": 8628,
+          "netFlow": -8118.56
+        },
+        {
+          "month": 6,
+          "users": 1058,
+          "agents": 30,
+          "treasury": 9966491.87,
+          "tokenPrice": 0.1772,
+          "queries": 52900,
+          "revenue": 793.5,
+          "rewards": 12774,
+          "netFlow": -12020.17
+        },
+        {
+          "month": 7,
+          "users": 1566,
+          "agents": 42,
+          "treasury": 9948689.65,
+          "tokenPrice": 0.1949,
+          "queries": 78300,
+          "revenue": 1174.5,
+          "rewards": 18918,
+          "netFlow": -17802.22
+        },
+        {
+          "month": 8,
+          "users": 2318,
+          "agents": 58,
+          "treasury": 9922339.22,
+          "tokenPrice": 0.2144,
+          "queries": 115900,
+          "revenue": 1738.5,
+          "rewards": 28002,
+          "netFlow": -26350.42
+        },
+        {
+          "month": 9,
+          "users": 3431,
+          "agents": 81,
+          "treasury": 9883335.81,
+          "tokenPrice": 0.2358,
+          "queries": 171550,
+          "revenue": 2573.25,
+          "rewards": 41448,
+          "netFlow": -39003.41
+        },
+        {
+          "month": 10,
+          "users": 5078,
+          "agents": 113,
+          "treasury": 9825615.89,
+          "tokenPrice": 0.2594,
+          "queries": 253900,
+          "revenue": 3808.5,
+          "rewards": 61338,
+          "netFlow": -57719.93
+        },
+        {
+          "month": 11,
+          "users": 7516,
+          "agents": 158,
+          "treasury": 9740173.04,
+          "tokenPrice": 0.2853,
+          "queries": 375800,
+          "revenue": 5637,
+          "rewards": 90798,
+          "netFlow": -85442.85
+        },
+        {
+          "month": 12,
+          "users": 11124,
+          "agents": 221,
+          "treasury": 9613710.89,
+          "tokenPrice": 0.3138,
+          "queries": 556200,
+          "revenue": 8343,
+          "rewards": 134388,
+          "netFlow": -126462.15
+        }
+      ],
+      "chartData": {
+        "labels": [
+          "Month 1",
+          "Month 2",
+          "Month 3",
+          "Month 4",
+          "Month 5",
+          "Month 6",
+          "Month 7",
+          "Month 8",
+          "Month 9",
+          "Month 10",
+          "Month 11",
+          "Month 12"
+        ],
+        "users": [
+          148,
+          220,
+          326,
+          483,
+          715,
+          1058,
+          1566,
+          2318,
+          3431,
+          5078,
+          7516,
+          11124
+        ],
+        "agents": [
+          7,
+          9,
+          12,
+          16,
+          22,
+          30,
+          42,
+          58,
+          81,
+          113,
+          158,
+          221
+        ],
+        "treasury": [
+          9998317.45,
+          9995822.2,
+          9992118.47,
+          9986630.61,
+          9978512.05,
+          9966491.87,
+          9948689.65,
+          9922339.22,
+          9883335.81,
+          9825615.89,
+          9740173.04,
+          9613710.89
+        ],
+        "revenue": [
+          111,
+          165,
+          244.5,
+          362.25,
+          536.25,
+          793.5,
+          1174.5,
+          1738.5,
+          2573.25,
+          3808.5,
+          5637,
+          8343
+        ],
+        "rewards": [
+          1788,
+          2652,
+          3936,
+          5832,
+          8628,
+          12774,
+          18918,
+          28002,
+          41448,
+          61338,
+          90798,
+          134388
+        ]
+      }
+    }
+  },
+  "analysis": {
+    "breakEvenAnalysis": {
+      "conservative": "Not reached",
+      "moderate": "Not reached",
+      "aggressive": "Not reached"
+    },
+    "treasuryHealth": {
+      "conservative": "99.9% remaining",
+      "moderate": "99.5% remaining",
+      "aggressive": "96.1% remaining"
+    },
+    "recommendations": [
+      "Consider reducing signup bonus or increasing query fees to reach break-even faster",
+      "Treasury runway is healthy for conservative growth",
+      "Monitor actual vs projected user growth monthly and adjust accordingly"
+    ]
+  }
+}
