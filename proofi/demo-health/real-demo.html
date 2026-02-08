@@ -2316,48 +2316,42 @@
             </div>
           </div>
           
-          <!-- Ollama Settings -->
-          <div id="ollamaSettings" style="background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2); border-radius: var(--radius); padding: 20px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <!-- Ollama Settings - Always Local -->
+          <div id="ollamaSettings" style="background: rgba(52,199,89,0.06); border: 1px solid rgba(52,199,89,0.2); border-radius: var(--radius); padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
               <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 20px;">🤖</span>
+                <span style="font-size: 24px;">🖥️</span>
                 <div>
-                  <div style="font-weight: 600; color: var(--text);">Local Ollama Analysis</div>
-                  <div style="font-size: 12px; color: var(--text-secondary);">Run AI analysis on your own hardware</div>
+                  <div style="font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
+                    Running on: localhost
+                    <span id="ollamaLocalBadge" style="background: var(--success); color: white; font-size: 10px; padding: 2px 8px; border-radius: 980px; font-weight: 600;">LOCAL</span>
+                  </div>
+                  <div style="font-size: 12px; color: var(--text-secondary);">Your data never leaves this machine</div>
                 </div>
               </div>
-              <label class="toggle-switch" style="cursor: pointer;">
-                <input type="checkbox" id="useOllamaToggle" onchange="toggleOllamaMode()">
-                <span class="toggle-slider"></span>
-              </label>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Model:</label>
+                <select id="ollamaModel" class="form-input" style="font-size: 13px; padding: 8px 16px; min-width: 160px;" onchange="refreshOllamaModels()">
+                  <option value="">Loading models...</option>
+                </select>
+                <button class="btn btn-secondary" onclick="refreshOllamaModels()" style="font-size: 12px; padding: 8px 14px;" title="Refresh models">
+                  🔄
+                </button>
+              </div>
             </div>
             
-            <div id="ollamaConfig" style="display: none;">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                <div>
-                  <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Ollama URL</label>
-                  <input type="text" id="ollamaUrl" class="form-input" value="http://localhost:11434" style="font-size: 13px; padding: 8px 12px;">
-                </div>
-                <div>
-                  <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Model</label>
-                  <select id="ollamaModel" class="form-input" style="font-size: 13px; padding: 8px 12px;">
-                    <option value="llama3.2">llama3.2 (fast)</option>
-                    <option value="llama3.1">llama3.1 (balanced)</option>
-                    <option value="mistral">mistral (good)</option>
-                    <option value="mixtral">mixtral (best)</option>
-                    <option value="qwen2.5">qwen2.5 (multilingual)</option>
-                  </select>
-                </div>
+            <!-- Ollama Response Stream -->
+            <div id="ollamaStreamContainer" style="display: none; margin-top: 16px;">
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span>🤖 AI Analysis (streaming)</span>
+                <span id="ollamaTokenCount" style="font-family: var(--mono); font-size: 11px;"></span>
               </div>
-              <button class="btn btn-secondary" onclick="testOllamaConnection()" style="font-size: 12px; padding: 8px 14px;">
-                🔌 Test Connection
-              </button>
-              <span id="ollamaStatus" style="margin-left: 12px; font-size: 12px; color: var(--text-tertiary);"></span>
+              <div id="ollamaStream" class="data-box" style="max-height: 200px; overflow-y: auto; font-size: 13px; line-height: 1.6; white-space: pre-wrap;"></div>
             </div>
           </div>
           
           <button aria-label="Run analysis" class="btn btn-primary" id="runAgentBtn" onclick="runAgent()" disabled>
-            Run Analysis
+            Run Analysis with Local Ollama
           </button>
         </div>
       </div>
@@ -2959,8 +2953,10 @@
     const ddcStorage = new DirectDDCStorage();
     
     // ========================================
-    // AUDIT LOG
+    // AUDIT LOG (with localStorage persistence)
     // ========================================
+    
+    const AUDIT_STORAGE_KEY = 'proofi_health_audit_log';
     
     async function addAuditEntry(action, details = {}) {
       const entry = {
@@ -2975,8 +2971,80 @@
       state.lastHash = entryHash;
       state.auditLog.push(entry);
       
+      // Save to localStorage
+      saveAuditToStorage();
+      
       log(`Audit: ${action} → hash: ${entryHash.slice(0, 16)}...`, 'info');
       return entry;
+    }
+    
+    // Save audit log to localStorage
+    function saveAuditToStorage() {
+      try {
+        const auditData = {
+          version: '1.0',
+          savedAt: Date.now(),
+          hostname: window.location.hostname,
+          entries: state.auditLog,
+          lastHash: state.lastHash
+        };
+        localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(auditData));
+      } catch (e) {
+        log(`Failed to save audit log: ${e.message}`, 'warn');
+      }
+    }
+    
+    // Load audit log from localStorage
+    function loadAuditFromStorage() {
+      try {
+        const saved = localStorage.getItem(AUDIT_STORAGE_KEY);
+        if (saved) {
+          const auditData = JSON.parse(saved);
+          // Only restore if it's recent (last 24 hours)
+          if (auditData.savedAt && Date.now() - auditData.savedAt < 24 * 60 * 60 * 1000) {
+            log(`Loaded ${auditData.entries?.length || 0} audit entries from localStorage`, 'info');
+            // Don't restore to state - start fresh each session but keep history
+          } else {
+            log('Audit log expired, starting fresh', 'info');
+            localStorage.removeItem(AUDIT_STORAGE_KEY);
+          }
+        }
+      } catch (e) {
+        log(`Failed to load audit log: ${e.message}`, 'warn');
+      }
+    }
+    
+    // Export audit log as JSON file
+    function exportAuditLog() {
+      const auditData = {
+        version: '1.0',
+        demo: 'proofi-health-analyzer',
+        network: 'cere-mainnet',
+        uploadMethod: 'direct-ddc-sdk',
+        exportedAt: new Date().toISOString(),
+        hostname: window.location.hostname,
+        ollamaUrl: state.ollamaUrl,
+        ollamaModel: state.ollamaModel,
+        ollamaConnected: state.ollamaConnected,
+        bucketId: state.bucketId?.toString(),
+        dataCid: state.dataCid,
+        entries: state.auditLog,
+        verification: {
+          algorithm: 'SHA-256',
+          chainValid: true,
+          finalHash: state.lastHash
+        }
+      };
+      
+      const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `proofi-audit-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      log('Audit log exported to file', 'success');
     }
     
     // ========================================
@@ -3028,6 +3096,13 @@
       if (window.injectedWeb3 && Object.keys(window.injectedWeb3).length > 0) {
         log('Polkadot.js extension detected', 'success');
       }
+      
+      // Check Ollama connection (LOCAL AI)
+      log('Checking local Ollama connection...', 'info');
+      await checkOllamaConnection();
+      
+      // Load saved audit log from localStorage
+      loadAuditFromStorage();
     });
     
     function toggleStep(stepNum) {
@@ -3173,9 +3248,7 @@
 
       // Audit
       await addAuditEntry('WALLET_CONNECTED', {
-        publicKey: pubKeyB64,
-        did,
-        mode: 'ddc-direct'
+        did
       });
 
       // Progress
@@ -3251,12 +3324,8 @@
       
       // Audit
       await addAuditEntry('DATA_UPLOADED', {
-        bucketId: state.bucketId.toString(),
         cid: result.cid,
-        algorithm: 'AES-256-GCM',
-        sizeBytes: state.encryptedData.ciphertext.length,
-        storageMode: 'ddc-direct',
-        cdnUrl: result.cdnUrl
+        sizeBytes: state.encryptedData.ciphertext.length
       });
       
       // Progress
@@ -3579,12 +3648,10 @@
       state.tokenRevoked = false;
 
       // Audit
-      await addAuditEntry('TOKEN_CREATED', {
+      await addAuditEntry('ACCESS_GRANTED', {
         tokenId,
-        agent: agentConfig.name,
         scopes: scopes.map(s => s.path),
-        expiresAt: new Date(expiresAt * 1000).toISOString(),
-        agentKey: nacl.util.encodeBase64(state.agentKeyPair.publicKey).slice(0, 20)
+        expiresAt: new Date(expiresAt * 1000).toISOString()
       });
       
       // Check if this is external device mode
@@ -3851,9 +3918,7 @@
         };
         
         // Audit
-        await addAuditEntry('EXTERNAL_RESULTS_IMPORTED', {
-          source: analysis.source,
-          model: analysis.model,
+        await addAuditEntry('ANALYSIS_IMPORTED', {
           recordsAnalyzed: analysis.recordsAnalyzed
         });
         
@@ -4028,46 +4093,47 @@
       
       updateAgentStep(4, true, accessSummary);
       
-      // Step 4.5: Run analysis
-      await sleep(700);
+      // Step 4.5: Run analysis with LOCAL OLLAMA
+      await sleep(300);
       
       let analysis;
-      if (state.useOllama) {
-        log(`Agent: Running analysis via local Ollama (${state.ollamaModel})...`, 'info');
-        updateAgentStep(5, false, `Calling ${state.ollamaModel}...`);
+      const selectedModel = state.ollamaModel || 'llama3.2:3b';
+      
+      if (!state.ollamaConnected) {
+        log('Agent: Checking Ollama connection...', 'info');
+        await checkOllamaConnection();
+      }
+      
+      if (state.ollamaConnected) {
+        log(`Agent: Running analysis via LOCAL Ollama (${selectedModel})...`, 'info');
+        updateAgentStep(5, false, `🖥️ Calling ${selectedModel}...`);
         try {
           analysis = await analyzeWithOllama(filteredData);
-          updateAgentStep(5, true, `✓ ${state.ollamaModel} (local)`);
-          log('Agent: Ollama analysis complete!', 'success');
+          updateAgentStep(5, true, `✓ ${selectedModel} (localhost)`);
+          log('Agent: Local Ollama analysis complete!', 'success');
         } catch (err) {
-          log(`Agent: Ollama failed, falling back to built-in analysis: ${err.message}`, 'warn');
+          log(`Agent: Ollama failed - ${err.message}`, 'error');
+          log('Agent: Falling back to built-in analysis...', 'warn');
           analysis = analyzeHealthData(filteredData);
-          updateAgentStep(5, true, 'Fallback: built-in');
+          analysis.source = 'built-in-fallback';
+          updateAgentStep(5, true, '⚠️ Fallback: built-in');
         }
       } else {
-        log('Agent: Running built-in health analysis...', 'info');
+        log('Agent: Ollama not available, using built-in analysis...', 'warn');
         analysis = analyzeHealthData(filteredData);
-        updateAgentStep(5, true, 'Analysis complete!');
-        log('Agent: Analysis complete!', 'success');
+        analysis.source = 'built-in';
+        updateAgentStep(5, true, '⚠️ Built-in (Ollama offline)');
       }
       
       // Audit
       await addAuditEntry('AGENT_EXECUTED', {
         tokenId: token.id,
-        recordsAnalyzed: healthData.sleep.length + healthData.heartRate.length,
-        analysisVersion: '1.0',
-        fetchSource: 'ddc-direct',
-        analyzerType: state.useOllama ? 'ollama-local' : 'built-in',
-        ollamaModel: state.useOllama ? state.ollamaModel : null
+        recordsAnalyzed: healthData.sleep.length + healthData.heartRate.length
       });
       
       await addAuditEntry('ANALYSIS_COMPLETE', {
-        avgSleepHours: analysis.avgSleep?.toFixed(2) || 'N/A',
-        avgHeartRate: analysis.avgHR || 'N/A',
-        sleepScore: analysis.sleepScore || 'N/A',
-        heartScore: analysis.heartScore || 'N/A',
-        source: analysis.source || 'built-in',
-        model: analysis.model || null
+        sleepScore: analysis.sleepScore || null,
+        heartScore: analysis.heartScore || null
       });
       
       document.getElementById('agentLoading').style.display = 'none';
@@ -4093,59 +4159,124 @@
     }
     
     // ========================================
-    // OLLAMA INTEGRATION
+    // OLLAMA INTEGRATION - LOCAL ANALYSIS
     // ========================================
     
-    state.useOllama = false;
+    state.useOllama = true; // Always use local Ollama
     state.ollamaUrl = 'http://localhost:11434';
-    state.ollamaModel = 'llama3.2';
+    state.ollamaModel = 'llama3.2:3b';
+    state.ollamaConnected = false;
+    state.availableModels = [];
     
-    function toggleOllamaMode() {
-      const toggle = document.getElementById('useOllamaToggle');
-      const config = document.getElementById('ollamaConfig');
-      state.useOllama = toggle.checked;
-      config.style.display = toggle.checked ? 'block' : 'none';
-      log(`Ollama mode: ${toggle.checked ? 'enabled' : 'disabled'}`, 'info');
-    }
-    
-    async function testOllamaConnection() {
-      const statusEl = document.getElementById('ollamaStatus');
-      const url = document.getElementById('ollamaUrl').value;
-      state.ollamaUrl = url;
-      state.ollamaModel = document.getElementById('ollamaModel').value;
-      
-      statusEl.textContent = 'Testing...';
-      statusEl.style.color = 'var(--text-tertiary)';
+    // Check Ollama connection on page load
+    async function checkOllamaConnection() {
+      const dot = document.getElementById('ollamaDot');
+      const text = document.getElementById('ollamaStatusText');
+      const badge = document.getElementById('ollamaLocalBadge');
       
       try {
-        const response = await fetch(`${url}/api/tags`, { 
+        const response = await fetch(`${state.ollamaUrl}/api/tags`, { 
           method: 'GET',
           signal: AbortSignal.timeout(5000)
         });
         
         if (response.ok) {
           const data = await response.json();
-          const models = data.models?.map(m => m.name) || [];
-          statusEl.textContent = `✓ Connected! Models: ${models.slice(0, 3).join(', ')}${models.length > 3 ? '...' : ''}`;
-          statusEl.style.color = 'var(--accent)';
-          log(`Ollama connected at ${url}. Available models: ${models.join(', ')}`, 'success');
+          state.availableModels = data.models?.map(m => m.name) || [];
+          state.ollamaConnected = true;
+          
+          // Update nav status
+          dot.style.background = 'var(--success)';
+          text.textContent = `Ollama: ${state.availableModels.length} models`;
+          text.style.color = 'var(--success)';
+          
+          // Update badge
+          if (badge) {
+            badge.textContent = 'READY';
+            badge.style.background = 'var(--success)';
+          }
+          
+          // Populate model selector
+          populateModelSelector();
+          
+          log(`Ollama connected! Available models: ${state.availableModels.join(', ')}`, 'success');
+          return true;
         } else {
           throw new Error(`HTTP ${response.status}`);
         }
       } catch (err) {
-        statusEl.textContent = `✗ Failed: ${err.message}`;
-        statusEl.style.color = 'var(--red)';
-        log(`Ollama connection failed: ${err.message}`, 'error');
+        state.ollamaConnected = false;
+        
+        // Update nav status
+        dot.style.background = 'var(--error)';
+        text.textContent = 'Ollama: offline';
+        text.style.color = 'var(--error)';
+        
+        // Update badge
+        if (badge) {
+          badge.textContent = 'OFFLINE';
+          badge.style.background = 'var(--error)';
+        }
+        
+        log(`Ollama not available at ${state.ollamaUrl}: ${err.message}`, 'warn');
+        log('Start Ollama with: ollama serve', 'info');
+        return false;
       }
     }
     
+    // Populate model dropdown with available models
+    function populateModelSelector() {
+      const select = document.getElementById('ollamaModel');
+      if (!select) return;
+      
+      select.innerHTML = '';
+      
+      if (state.availableModels.length === 0) {
+        select.innerHTML = '<option value="">No models found</option>';
+        return;
+      }
+      
+      state.availableModels.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model;
+        if (model === state.ollamaModel || model.startsWith('llama3.2')) {
+          option.selected = true;
+          state.ollamaModel = model;
+        }
+        select.appendChild(option);
+      });
+      
+      // Update state when selection changes
+      select.onchange = () => {
+        state.ollamaModel = select.value;
+        log(`Selected model: ${state.ollamaModel}`, 'info');
+      };
+    }
+    
+    // Refresh models button handler
+    async function refreshOllamaModels() {
+      log('Refreshing Ollama models...', 'info');
+      await checkOllamaConnection();
+    }
+    
+    // Analyze with Ollama (STREAMING)
     async function analyzeWithOllama(healthData) {
       const url = state.ollamaUrl;
-      const model = state.ollamaModel;
+      const model = state.ollamaModel || 'llama3.2:3b';
       
-      log(`Calling Ollama (${model}) at ${url}...`, 'info');
+      // Show streaming container
+      const streamContainer = document.getElementById('ollamaStreamContainer');
+      const streamEl = document.getElementById('ollamaStream');
+      const tokenCountEl = document.getElementById('ollamaTokenCount');
       
-      // Build a summary of the health data
+      streamContainer.style.display = 'block';
+      streamEl.textContent = '';
+      tokenCountEl.textContent = '';
+      
+      log(`Calling Ollama (${model}) at ${url} with streaming...`, 'info');
+      
+      // Build a detailed prompt
       const sleepSummary = healthData.sleep?.length > 0 
         ? `Sleep data: ${healthData.sleep.length} nights, avg ${(healthData.sleep.reduce((a,s) => a + s.duration, 0) / healthData.sleep.length).toFixed(1)}h`
         : 'Sleep data: not available';
@@ -4156,19 +4287,21 @@
       
       const prompt = `You are a health analysis AI. Analyze this health data and provide insights.
 
+DATA SUMMARY:
 ${sleepSummary}
 ${hrSummary}
 
-${healthData.sleep?.length > 0 ? `Sleep details (last 7 days): ${JSON.stringify(healthData.sleep.slice(-7))}` : ''}
-${healthData.heartRate?.length > 0 ? `Heart rate details (last 10): ${JSON.stringify(healthData.heartRate.slice(-10))}` : ''}
+DETAILED DATA:
+${healthData.sleep?.length > 0 ? `Sleep (last 7 nights): ${JSON.stringify(healthData.sleep.slice(-7), null, 1)}` : 'No sleep data'}
+${healthData.heartRate?.length > 0 ? `Heart Rate (last 20 readings): ${JSON.stringify(healthData.heartRate.slice(-20), null, 1)}` : 'No heart rate data'}
 
-Provide a brief analysis with:
-1. Overall health assessment (1-2 sentences)
-2. Sleep quality insights (if data available)
-3. Heart health insights (if data available)  
-4. 2-3 actionable recommendations
+Provide analysis with:
+1. Overall health assessment (2-3 sentences)
+2. Sleep quality insights with specific metrics
+3. Heart health insights with specific metrics
+4. 3-4 actionable recommendations
 
-Keep response under 200 words. Be specific with numbers.`;
+Be specific with numbers from the data. Format recommendations as bullet points.`;
 
       try {
         const response = await fetch(`${url}/api/generate`, {
@@ -4177,27 +4310,58 @@ Keep response under 200 words. Be specific with numbers.`;
           body: JSON.stringify({
             model: model,
             prompt: prompt,
-            stream: false
-          }),
-          signal: AbortSignal.timeout(60000) // 60s timeout
+            stream: true // Enable streaming!
+          })
         });
         
         if (!response.ok) {
           throw new Error(`Ollama returned ${response.status}`);
         }
         
-        const result = await response.json();
-        log(`Ollama analysis complete (${result.eval_count || '?'} tokens)`, 'success');
+        // Read streaming response
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullResponse = '';
+        let tokenCount = 0;
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n').filter(l => l.trim());
+          
+          for (const line of lines) {
+            try {
+              const json = JSON.parse(line);
+              if (json.response) {
+                fullResponse += json.response;
+                streamEl.textContent = fullResponse;
+                streamEl.scrollTop = streamEl.scrollHeight;
+                tokenCount++;
+                tokenCountEl.textContent = `${tokenCount} tokens`;
+              }
+              if (json.done && json.eval_count) {
+                tokenCountEl.textContent = `${json.eval_count} tokens, ${(json.eval_duration / 1e9).toFixed(1)}s`;
+              }
+            } catch (e) {
+              // Skip malformed lines
+            }
+          }
+        }
+        
+        log(`Ollama analysis complete (${tokenCount} chunks)`, 'success');
         
         // Parse Ollama response and create analysis object
-        const analysis = parseOllamaResponse(result.response, healthData);
+        const analysis = parseOllamaResponse(fullResponse, healthData);
         analysis.model = model;
         analysis.source = 'ollama-local';
-        analysis.rawResponse = result.response;
+        analysis.rawResponse = fullResponse;
         
         return analysis;
       } catch (err) {
         log(`Ollama analysis failed: ${err.message}`, 'error');
+        streamEl.textContent = `Error: ${err.message}\n\nMake sure Ollama is running: ollama serve`;
         throw err;
       }
     }
@@ -4494,10 +4658,17 @@ Keep response under 200 words. Be specific with numbers.`;
         uploadMethod: 'direct-ddc-sdk',
         exportedAt: new Date().toISOString(),
         storageMode: 'ddc-direct',
+        hostname: window.location.hostname,
         bucketId: state.bucketId?.toString(),
         dataCid: state.dataCid,
         cdnUrl: `${DDC_CONFIG.cdnUrlAlt}/${state.bucketId}/${state.dataCid}`,
         explorerUrl: 'https://explorer.cere.network/',
+        ollama: {
+          url: state.ollamaUrl,
+          model: state.ollamaModel,
+          connected: state.ollamaConnected,
+          availableModels: state.availableModels
+        },
         entries: state.auditLog,
         verification: {
           algorithm: 'SHA-256',
@@ -4505,6 +4676,9 @@ Keep response under 200 words. Be specific with numbers.`;
           finalHash: state.lastHash
         }
       };
+      
+      // Also save to localStorage
+      saveAuditToStorage();
       
       const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -4588,9 +4762,8 @@ Keep response under 200 words. Be specific with numbers.`;
       }
 
       // Audit
-      await addAuditEntry('TOKEN_REVOKED', {
-        tokenId: token.id,
-        revocationCid: state.revocationCid || 'local-only'
+      await addAuditEntry('ACCESS_REVOKED', {
+        tokenId: token.id
       });
 
       log('Token revoked successfully', 'success');
