@@ -18,7 +18,9 @@ export class OtpService {
                 return { sent: false, message: 'OTP already sent. Wait before requesting again.' };
             }
         }
-        const code = generateCode(env.OTP_LENGTH);
+        // Use store-computed code (for HmacOtpStore) or generate random (for MemoryOtpStore)
+        const storeRecord = await this.store.get(normalized);
+        const code = storeRecord?.code || generateCode(env.OTP_LENGTH);
         const record = {
             code,
             email: normalized,
