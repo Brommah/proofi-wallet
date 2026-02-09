@@ -35,7 +35,7 @@ export class JwtService {
         const pkcs8 = new Uint8Array(pkcs8Prefix.length + seed.length);
         pkcs8.set(pkcs8Prefix);
         pkcs8.set(seed, pkcs8Prefix.length);
-        this.privateKey = await crypto.subtle.importKey('pkcs8', pkcs8, { name: 'Ed25519' }, false, ['sign']);
+        this.privateKey = await crypto.subtle.importKey('pkcs8', pkcs8, { name: 'Ed25519' }, true, ['sign']);
         // Derive public key by exporting private as JWK then importing public portion
         // We need to export the private key as JWK to get the public 'x' component
         const privateJwk = await crypto.subtle.exportKey('jwk', this.privateKey);
