@@ -1,0 +1,36 @@
+# Large non-essential directories
+proofi/
+legal-backup/
+assets/
+cere-docs/
+research/
+proofi-mobile/
+media/
+reports/
+projects/
+drafts/
+simulations/
+tests/
+extension/
+proofi-chrome-extension/
+ddc-wallet-ui/
+.git/
+memory/
+docs/
+scripts/
+tools/
+templates/
+runbooks/
+prompts/
+cli/
+agents/
+audit-logs/
+.claude/
+.cursor/
+.agents/
+.secrets/
+skills/
+car-search/
+
+# Node modules get installed during build
+node_modules/
