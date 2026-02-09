@@ -4,6 +4,7 @@
   "description": "Proofi - Privacy-preserving identity wallet with tokenized data sharing",
   "private": true,
   "scripts": {
+    "start": "node packages/api/dist/main.js",
     "lint": "eslint . --ext .js,.ts,.tsx --ignore-pattern node_modules --ignore-pattern dist",
     "format:check": "prettier --check .",
     "test:unit": "vitest run --reporter=verbose",
