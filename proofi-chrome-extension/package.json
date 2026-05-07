@@ -12,9 +12,13 @@
     "package": "npm run icons && npm run build && cd dist && zip -r ../proofi-wallet.zip ."
   },
   "dependencies": {
+    "@cef-ai/vault-sdk": "^0.3.0",
+    "@polkadot/api": "^14.3.1",
     "@polkadot/keyring": "^14.0.1",
     "@polkadot/util": "^14.0.1",
-    "@polkadot/util-crypto": "^14.0.1"
+    "@polkadot/util-crypto": "^14.0.1",
+    "@toruslabs/openlogin-ed25519": "^8.1.0",
+    "bip39": "^3.1.0"
   },
   "devDependencies": {
     "esbuild": "^0.25.0"

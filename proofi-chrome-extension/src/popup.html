@@ -56,6 +56,7 @@
           <div class="spinner"></div>
           <span class="text-mono text-sm" style="color: var(--cyan);">VERIFYING</span>
         </div>
+        <button id="btn-resend-otp" class="btn-primary" type="button">SEND NEW CODE</button>
         <button id="btn-back-email" class="btn-secondary">← DIFFERENT EMAIL</button>
       </div>
       
@@ -73,6 +74,14 @@
           <div class="pin-dot"></div>
           <div class="pin-dot"></div>
           <div class="pin-dot"></div>
+        </div>
+        <button id="btn-toggle-import" class="btn-secondary" type="button">IMPORT CERE WALLET</button>
+        <div id="import-wallet-fields" class="import-wallet-fields" style="display:none;">
+          <label class="text-label">Cere Recovery Phrase or Network Key</label>
+          <textarea id="input-recovery-phrase" placeholder="24-word phrase or exported Cere Network 0x key" rows="3" class="input-brutal input-textarea recovery-input" autocomplete="off" spellcheck="false"></textarea>
+          <p class="text-body-sm text-muted">
+            Uses the same Cere Wallet ed25519 derivation and encrypts the import with the PIN above.
+          </p>
         </div>
         <div id="error-pin" class="error-box" style="display:none;"></div>
         <div id="loading-pin" class="loading-indicator" style="display:none;">
@@ -126,6 +135,72 @@
           </div>
           <div id="dash-address" class="text-mono text-xs text-muted" style="word-break: break-all;"></div>
         </div>
+
+        <div class="cere-token-card" id="token-balance-card">
+          <div class="address-card-header">
+            <div>
+              <div class="text-label">CERE DEVNET BALANCE</div>
+              <div id="token-status-row" class="token-status-row">
+                <span id="token-status-dot" class="sync-dot offline"></span>
+                <span id="token-status-text" class="text-mono text-xs">SYNCING</span>
+              </div>
+            </div>
+            <button id="btn-refresh-balance" class="btn-ghost text-mono text-xs">↻</button>
+          </div>
+          <div id="token-balance-free" class="token-balance-value">0 CERE</div>
+          <div class="token-balance-grid">
+            <div>
+              <div class="text-label">TRANSFERABLE</div>
+              <div id="token-balance-transferable" class="text-mono text-xs">0 CERE</div>
+            </div>
+            <div>
+              <div class="text-label">RESERVED</div>
+              <div id="token-balance-reserved" class="text-mono text-xs">0 CERE</div>
+            </div>
+          </div>
+          <div id="token-error" class="text-mono text-xs" style="display:none;"></div>
+          <button id="btn-open-send-cere" class="btn-primary btn-full" style="margin-top: 10px;">
+            SEND CERE
+          </button>
+        </div>
+
+        <div class="cubby-card" id="cubby-card">
+          <div class="address-card-header">
+            <div class="text-label">WALLET CUBBY</div>
+            <button id="btn-copy-cubby" class="btn-ghost text-mono text-xs">COPY</button>
+          </div>
+          <div id="dash-cubby" class="text-mono text-xs"></div>
+          <div id="vault-status-row" class="vault-status-row">
+            <span id="vault-status-dot" class="sync-dot offline"></span>
+            <span id="vault-status-text" class="text-mono text-xs">UNLOCK TO MAP DEVNET VAULT</span>
+          </div>
+          <p class="text-body-sm text-muted" style="margin-top: 8px;">
+            This cubby follows your decentralized Cere keyring address. A site can change what you see, but it cannot
+            move the cubby or grants away from this wallet.
+          </p>
+          <button id="btn-claim-vault" class="btn-secondary btn-full" style="margin-top: 10px; display:none;">
+            CLAIM DEVNET VAULT
+          </button>
+        </div>
+      </div>
+
+      <!-- Cubby stats -->
+      <div class="cubby-stats-grid">
+        <div class="cubby-stat">
+          <div class="text-label">CUBBIES</div>
+          <div class="cubby-stat-value" id="stat-cubbies">0</div>
+          <div class="text-body-sm text-muted">wallet-owned scopes</div>
+        </div>
+        <div class="cubby-stat">
+          <div class="text-label">ACTIVE GRANTS</div>
+          <div class="cubby-stat-value" id="stat-grants">0</div>
+          <div class="text-body-sm text-muted">agent permissions</div>
+        </div>
+        <div class="cubby-stat">
+          <div class="text-label">EVENTS</div>
+          <div class="cubby-stat-value" id="stat-events">0</div>
+          <div class="text-body-sm text-muted">reads, writes, grants</div>
+        </div>
       </div>
       
       <!-- Quick Actions -->
@@ -161,6 +236,20 @@
           </div>
         </div>
       </div>
+
+      <!-- Cubby Activity -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="text-display" style="font-size: 1rem;">CUBBY ACTIVITY</h2>
+          <button id="btn-refresh-cubby" class="btn-ghost text-mono text-xs" style="color: var(--ash);">↻ REFRESH</button>
+        </div>
+        <div id="cubby-activity-list" class="cubby-activity-list">
+          <div class="empty-state">
+            <div class="text-display" style="font-size: 2rem; color: var(--steel);">∅</div>
+            <p class="text-body-sm text-muted">No cubby activity yet</p>
+          </div>
+        </div>
+      </div>
       
       <!-- Wallet Lock / Settings -->
       <div class="dash-footer">
@@ -174,12 +263,72 @@
           </div>
           <div class="dash-status-item">
             <div class="text-label">NETWORK</div>
-            <div class="text-mono text-sm" style="color: var(--cyan);">MAINNET</div>
+            <div class="text-mono text-sm" style="color: var(--cyan);">CERE DEVNET</div>
           </div>
         </div>
         
         <button id="btn-unlock" class="btn-secondary btn-full" style="display:none;">🔓 UNLOCK WITH PIN</button>
         <button id="btn-disconnect" class="btn-danger btn-full">DISCONNECT</button>
+      </div>
+    </div>
+
+    <!-- Send CERE Screen -->
+    <div id="screen-send" class="screen" style="display:none;">
+      <div class="screen-header">
+        <button id="btn-send-back" class="btn-ghost text-mono text-xs text-muted">← BACK</button>
+        <h1 class="text-display text-display-sm">SEND CERE</h1>
+        <p class="text-body-sm text-muted" style="margin-top: 4px;">Signed locally with your Proofi Cere key on devnet.</p>
+      </div>
+      <div class="form-section">
+        <div class="token-send-balance">
+          <div class="text-label">AVAILABLE</div>
+          <div id="send-balance" class="token-balance-value">0 CERE</div>
+        </div>
+        <label class="text-label">Recipient Address</label>
+        <input type="text" id="input-send-to" placeholder="Cere devnet address" class="input-brutal text-mono" autocomplete="off" spellcheck="false">
+        <label class="text-label">Amount</label>
+        <input type="text" id="input-send-amount" placeholder="0.0" class="input-brutal text-mono" inputmode="decimal" autocomplete="off">
+        <div id="error-send" class="error-box" style="display:none;"></div>
+        <div id="success-send" class="success-box" style="display:none;"></div>
+        <div id="loading-send" class="loading-indicator" style="display:none;">
+          <div class="spinner"></div>
+          <span class="text-mono text-sm" style="color: var(--cyan);">SUBMITTING TX</span>
+        </div>
+        <button id="btn-submit-send" class="btn-primary" disabled>SEND CERE</button>
+      </div>
+    </div>
+
+    <!-- Raw Signature Approval Screen -->
+    <div id="screen-sign" class="screen" style="display:none;">
+      <div class="screen-header">
+        <button id="btn-sign-back" class="btn-ghost text-mono text-xs text-muted">← BACK</button>
+        <h1 class="text-display text-display-sm">SIGN VAULT REQUEST</h1>
+        <p class="text-body-sm text-muted" style="margin-top: 4px;">Approve raw ed25519 signing for a trusted Proofi/Cere app.</p>
+      </div>
+      <div class="form-section">
+        <div class="sign-request-card">
+          <div class="text-label">ORIGIN</div>
+          <div id="sign-origin" class="text-mono text-xs text-white"></div>
+          <div class="text-label" style="margin-top: 12px;">PURPOSE</div>
+          <div id="sign-purpose" class="text-mono text-xs text-white"></div>
+          <div class="text-label" style="margin-top: 12px;">RAW BYTES</div>
+          <div id="sign-bytes" class="text-mono text-xs text-muted sign-bytes"></div>
+          <div class="text-label" style="margin-top: 12px;">VAULT</div>
+          <div id="sign-vault" class="text-mono text-xs text-muted"></div>
+        </div>
+
+        <div id="sign-pin-unlock" class="pin-unlock-section" style="display:none;">
+          <div class="text-label" style="margin-bottom: 8px;">Enter PIN to unlock signing</div>
+          <input type="password" id="sign-pin" placeholder="••••••" maxlength="8" inputmode="numeric" class="input-brutal input-pin" autocomplete="off">
+          <button id="btn-sign-unlock" class="btn-primary btn-full" style="display:none;">UNLOCK</button>
+        </div>
+
+        <div id="error-sign" class="error-box" style="display:none;"></div>
+        <div id="success-sign" class="success-box" style="display:none;"></div>
+        <div class="request-actions" style="display:flex; gap:8px;">
+          <button id="btn-reject-sign" class="btn-secondary" style="flex:1;">REJECT</button>
+          <button id="btn-approve-sign" class="btn-primary" style="flex:1;">SIGN</button>
+        </div>
       </div>
     </div>
 
@@ -402,6 +551,5 @@
   </div>
 
   <script src="popup.js" type="module"></script>
-  <script src="agents-ui.js"></script>
 </body>
 </html>

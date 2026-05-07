@@ -6,17 +6,28 @@
  */
 
 (function () {
+  const PAGE_SOURCE = 'proofi-page';
+  const CONTENT_SOURCE = 'proofi-content';
+  const BRIDGE_TYPES = new Set([
+    'GET_WALLET_STATE',
+    'SIGN_RAW_BYTES',
+    'AGENT_CONNECT',
+    'AGENT_AUTH_REQUEST',
+    'GET_HEALTH_DATA_ACCESS',
+  ]);
+
   // Request wallet state from the background service worker
-  chrome.runtime.sendMessage({ type: 'GET_WALLET_STATE' }, (response) => {
+  requestWalletState((response) => {
     if (chrome.runtime.lastError) {
       console.log('[Proofi Extension] Could not get wallet state:', chrome.runtime.lastError.message);
       showConnectBanner();
       return;
     }
 
+    injectWalletData(response || { connected: false, status: 'not_connected' });
+
     if (response && response.connected && response.address) {
       console.log('[Proofi Extension] Wallet connected, injecting data for', response.address.slice(0, 8) + '...');
-      injectWalletData(response);
     } else {
       console.log('[Proofi Extension] No connected wallet, showing connect banner');
       showConnectBanner();
@@ -26,31 +37,82 @@
   // Listen for wallet state changes (user logs in via popup window)
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
-    if (changes.proofi_connected?.newValue === true && changes.proofi_address?.newValue) {
-      console.log('[Proofi Extension] Wallet state changed — auto-connecting');
-      removeConnectBanner();
-      injectWalletData({
-        address: changes.proofi_address.newValue,
-        email: changes.proofi_email?.newValue || '',
-        connected: true,
-      });
-    }
-    // Handle disconnect
-    if (changes.proofi_connected?.newValue === false || 
-        (changes.proofi_connected && !changes.proofi_connected.newValue)) {
-      console.log('[Proofi Extension] Wallet disconnected');
-      removeWalletData();
-      showConnectBanner();
-    }
+    const relevant = [
+      'proofi_connected',
+      'proofi_address',
+      'proofi_email',
+      'proofi_unlocked',
+      'proofi_vault_record',
+      'proofi_vault_identity',
+      'proofi_pending_sign',
+      'proofi_sign_result',
+    ].some((key) => changes[key]);
+    if (!relevant) return;
+
+    requestWalletState((state) => {
+      window.postMessage({ source: CONTENT_SOURCE, type: 'WALLET_STATE_CHANGED', state }, window.location.origin);
+      if (changes.proofi_pending_sign?.newValue) {
+        window.postMessage({
+          source: CONTENT_SOURCE,
+          type: 'SIGN_REQUEST_PENDING',
+          request: changes.proofi_pending_sign.newValue,
+        }, window.location.origin);
+      }
+      if (changes.proofi_sign_result?.newValue) {
+        const result = changes.proofi_sign_result.newValue;
+        window.postMessage({
+          source: CONTENT_SOURCE,
+          type: 'SIGN_RAW_BYTES_RESPONSE',
+          requestId: result.requestId,
+          response: result.response,
+        }, window.location.origin);
+        chrome.storage.local.remove('proofi_sign_result');
+      }
+      if (state?.connected) {
+        removeConnectBanner();
+      } else {
+        showConnectBanner();
+      }
+    });
   });
 
+  window.addEventListener('message', (event) => {
+    if (event.source !== window || event.origin !== window.location.origin) return;
+    const data = event.data || {};
+    if (data.source !== PAGE_SOURCE || !BRIDGE_TYPES.has(data.type)) return;
+
+    chrome.runtime.sendMessage({
+      ...data,
+      source: undefined,
+      origin: window.location.origin,
+    }, (response) => {
+      const error = chrome.runtime.lastError;
+      window.postMessage({
+        source: CONTENT_SOURCE,
+        type: `${data.type}_RESPONSE`,
+        requestId: data.requestId,
+        response: error ? { ok: false, error: error.message, code: 'EXTENSION_ERROR' } : response,
+      }, window.location.origin);
+    });
+  });
+
+  function requestWalletState(callback) {
+    chrome.runtime.sendMessage({ type: 'GET_WALLET_STATE', origin: window.location.origin }, callback);
+  }
+
   function injectWalletData(data) {
+    if (document.documentElement.dataset.proofiBridgeInjected === 'true') {
+      window.postMessage({ source: CONTENT_SOURCE, type: 'WALLET_STATE_CHANGED', state: data }, window.location.origin);
+      return;
+    }
+    document.documentElement.dataset.proofiBridgeInjected = 'true';
+
     const script = document.createElement('script');
     script.src = chrome.runtime.getURL('inject.js');
-    script.dataset.proofiAddress = data.address;
+    script.dataset.proofiState = JSON.stringify(data || {});
+    script.dataset.proofiAddress = data.address || '';
     script.dataset.proofiEmail = data.email || '';
-    script.dataset.proofiToken = data.token || '';
-    script.dataset.proofiConnected = 'true';
+    script.dataset.proofiConnected = data.connected ? 'true' : 'false';
     (document.head || document.documentElement).appendChild(script);
     script.addEventListener('load', () => script.remove());
   }
@@ -59,8 +121,11 @@
     // Inject a script that clears the extension state and fires disconnect event
     const script = document.createElement('script');
     script.textContent = `
-      window.__proofi_extension__ = { connected: false, address: null, email: null };
-      window.dispatchEvent(new CustomEvent('proofi-extension-disconnected'));
+      window.postMessage({
+        source: 'proofi-content',
+        type: 'WALLET_STATE_CHANGED',
+        state: { connected: false, address: null, email: null, status: 'not_connected' }
+      }, window.location.origin);
     `;
     (document.head || document.documentElement).appendChild(script);
     script.remove();
@@ -110,21 +175,13 @@
     document.body.appendChild(banner);
 
     document.getElementById('proofi-ext-connect-btn').addEventListener('click', () => {
-      // Tell background to open the extension popup (native dropdown)
       chrome.runtime.sendMessage({ type: 'OPEN_LOGIN_POPUP' }, (response) => {
-        if (response?.method === 'popup') {
-          // Native popup opened — show waiting state
-          const btn = document.getElementById('proofi-ext-connect-btn');
-          btn.textContent = '⏳ WAITING FOR LOGIN...';
-          btn.style.animation = 'none';
-          btn.style.opacity = '0.7';
-        } else {
-          // Fallback window opened — still show waiting
-          const btn = document.getElementById('proofi-ext-connect-btn');
-          btn.textContent = '⏳ WAITING FOR LOGIN...';
-          btn.style.animation = 'none';
-          btn.style.opacity = '0.7';
-        }
+        const btn = document.getElementById('proofi-ext-connect-btn');
+        btn.textContent = response?.method === 'toolbar'
+          ? 'CLICK PROOFI ICON'
+          : 'WAITING FOR PROOFI...';
+        btn.style.animation = 'none';
+        btn.style.opacity = '0.85';
       });
     });
 

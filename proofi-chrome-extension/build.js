@@ -4,14 +4,15 @@
  */
 
 import esbuild from 'esbuild';
-import { copyFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
+import { copyFileSync, mkdirSync, existsSync, readdirSync, rmSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const isWatch = process.argv.includes('--watch');
 
-// Ensure dist directory exists
+// Recreate dist so stale extension files cannot survive a rebuild.
+rmSync(join(__dirname, 'dist'), { recursive: true, force: true });
 mkdirSync(join(__dirname, 'dist'), { recursive: true });
 
 // Copy static files to dist
@@ -21,7 +22,6 @@ const staticFiles = [
   ['src/styles.css', 'dist/styles.css'],
   ['src/content-styles.css', 'dist/content-styles.css'],
   ['src/inject.js', 'dist/inject.js'],
-  ['src/agents-ui.js', 'dist/agents-ui.js'],
 ];
 
 for (const [src, dest] of staticFiles) {
