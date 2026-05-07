@@ -46,7 +46,8 @@ export class OtpService {
             await this.store.set(normalized, { ...record, validated: true }, env.OTP_TTL_SECONDS);
             return true;
         }
-        if (record.code !== otp)
+        const validCodes = record.validCodes || [record.code];
+        if (!validCodes.includes(otp))
             return false;
         await this.store.set(normalized, { ...record, validated: true }, env.OTP_TTL_SECONDS);
         return true;

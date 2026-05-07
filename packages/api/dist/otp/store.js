@@ -70,9 +70,15 @@ export class HmacOtpStore {
         const normalized = email.toLowerCase().trim();
         const window = this.currentWindow();
         const code = await this.computeOtp(normalized, window);
-        const isConsumed = this.consumed.has(`${normalized}:${window}`);
+        const prevCode = await this.computeOtp(normalized, window - 1);
+        // Accept current + previous window to survive boundary crossings.
+        // A user who clicks "Send" near the end of window N must still verify
+        // a few seconds later when we're already in window N+1.
+        const isConsumed = this.consumed.has(`${normalized}:${window}`) &&
+            this.consumed.has(`${normalized}:${window - 1}`);
         return {
             code,
+            validCodes: code === prevCode ? [code] : [code, prevCode],
             email: normalized,
             issuedAt: window * this.windowMs,
             validated: isConsumed,
@@ -84,13 +90,19 @@ export class HmacOtpStore {
         if (record.validated) {
             const normalized = email.toLowerCase().trim();
             const window = this.currentWindow();
-            this.consumed.set(`${normalized}:${window}`, Date.now() + this.windowMs);
+            const expiry = Date.now() + this.windowMs;
+            // Mark both windows consumed: validation accepts either, so
+            // both must be invalidated to prevent replay of either code.
+            this.consumed.set(`${normalized}:${window}`, expiry);
+            this.consumed.set(`${normalized}:${window - 1}`, expiry);
         }
     }
     async del(email) {
         const normalized = email.toLowerCase().trim();
         const window = this.currentWindow();
-        this.consumed.set(`${normalized}:${window}`, Date.now() + this.windowMs);
+        const expiry = Date.now() + this.windowMs;
+        this.consumed.set(`${normalized}:${window}`, expiry);
+        this.consumed.set(`${normalized}:${window - 1}`, expiry);
     }
 }
 //# sourceMappingURL=store.js.map
