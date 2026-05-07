@@ -172,6 +172,7 @@ export async function unwrapDEKSimple(wrappedDEK, secretKey) {
 export async function generateCapabilityToken({
   issuerAddress,
   issuerDID,
+  cubbyId,
   agentId,
   agentName,
   scopes,
@@ -191,6 +192,7 @@ export async function generateCapabilityToken({
     id: tokenId,
     iss: issuerDID || issuerAddress,
     sub: agentId,
+    cubbyId,
     agentName,
     iat: now,
     exp,

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://proofi-api-production.up.railway.app https://*.cere.network wss://*.cere.network https://cdn.ddc-dragon.com https://cdn.cere.network http://localhost:*; img-src 'self' data: blob:;">
+  <!-- CSP removed for DDC SDK compatibility - SDK requires dynamic script loading -->
   <title>Proofi — Health Data Analysis</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d1d1f'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2834,9 +2834,56 @@
         log(`DDC Direct: Preparing ${(jsonData.length / 1024).toFixed(2)}KB for upload...`, 'ddc');
         log(`DDC Direct: Predicted CID = ${cid}`, 'ddc');
 
-        // Check if DDC SDK is available
+        // Check if DDC SDK is available - fall back to API if not
         if (!window.CereDdcSdk) {
-          throw new Error('DDC SDK not loaded. Cannot upload directly.');
+          log('DDC SDK not available, falling back to Proofi API...', 'warn');
+          
+          // Use Proofi API as fallback
+          try {
+            const response = await fetch('https://proofi-api-production.up.railway.app/ddc/memo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content: data, bucketId: bucketId.toString() })
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              log(`API fallback: Stored with CID ${result.cid}`, 'success');
+              return {
+                cid: result.cid || cid,
+                bucket: bucketId.toString(),
+                mode: 'api-fallback',
+                cdnUrl: result.cdnUrl || `https://cdn.ddc-dragon.com/${bucketId}/${result.cid || cid}`
+              };
+            }
+          } catch (apiErr) {
+            log(`API fallback also failed: ${apiErr.message}`, 'warn');
+          }
+          
+          // Final fallback: IndexedDB local storage
+          log('Using IndexedDB for local demo...', 'warn');
+          const dbName = 'ProofiHealthDemo';
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.open(dbName, 1);
+            request.onerror = () => reject(new Error('IndexedDB failed'));
+            request.onupgradeneeded = (e) => {
+              e.target.result.createObjectStore('data', { keyPath: 'cid' });
+            };
+            request.onsuccess = (e) => {
+              const db = e.target.result;
+              const tx = db.transaction(['data'], 'readwrite');
+              tx.objectStore('data').put({ cid, data: jsonData, timestamp: Date.now() });
+              tx.oncomplete = () => {
+                log(`IndexedDB: Stored locally with CID ${cid}`, 'success');
+                resolve({
+                  cid,
+                  bucket: bucketId.toString(),
+                  mode: 'indexeddb-local',
+                  cdnUrl: `local://${cid}`
+                });
+              };
+            };
+          });
         }
 
         // Check if we have a wallet mnemonic for signing
@@ -2944,6 +2991,36 @@
           } catch (err) {
             log(`DDC Direct: SDK fetch failed: ${err.message}`, 'warn');
           }
+        }
+
+        // Final fallback: try IndexedDB local storage
+        try {
+          log('DDC Direct: Trying IndexedDB fallback...', 'warn');
+          const dbName = 'ProofiHealthDemo';
+          const content = await new Promise((resolve, reject) => {
+            const request = indexedDB.open(dbName, 1);
+            request.onerror = () => reject(new Error('IndexedDB failed'));
+            request.onsuccess = (e) => {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains('data')) {
+                reject(new Error('No data store'));
+                return;
+              }
+              const tx = db.transaction(['data'], 'readonly');
+              const getReq = tx.objectStore('data').get(cid);
+              getReq.onsuccess = () => {
+                if (getReq.result) {
+                  resolve(JSON.parse(getReq.result.data));
+                } else {
+                  reject(new Error('CID not found in IndexedDB'));
+                }
+              };
+            };
+          });
+          log('DDC Direct: Fetched from IndexedDB!', 'success');
+          return content;
+        } catch (idbErr) {
+          log(`DDC Direct: IndexedDB fetch failed: ${idbErr.message}`, 'warn');
         }
 
         throw new Error(`DDC fetch failed for CID ${cid.slice(0, 20)}. Content not found.`);

@@ -4,7 +4,8 @@
  */
 
 import { deriveSeedFromPin, encryptSeed, decryptSeed } from './lib/crypto.js';
-import { createKeypair, createAuthHeaders, initCrypto } from './lib/keyring.js';
+import { createKeypair, createAuthHeaders, initCrypto, normalizeWalletSecret } from './lib/keyring.js';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { sendOtp, verifyOtp, registerAddress, storeMemo, storeCredential, listItems } from './lib/api.js';
 import { getWalletState, saveWalletState, clearWalletState } from './lib/storage.js';
 import { 
@@ -21,6 +22,20 @@ import {
   base64ToUint8,
   generateCapabilityToken
 } from './lib/health-crypto.js';
+import {
+  claimVault,
+  getVaultIdentity,
+  isNotFound,
+  loadVaultSnapshot,
+  publishVaultEvent
+} from './lib/vault.js';
+import {
+  CERE_TOKEN_SYMBOL,
+  formatTokenAmount,
+  getCereBalance,
+  parseTokenAmount,
+  sendCereTokens
+} from './lib/tokens.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -35,6 +50,7 @@ let state = {
   // Wallet
   address: null,
   keypair: null, // In-memory only, never persisted
+  seedHex: null, // In-memory wallet secret, used to derive the CEF devnet vault identity
   encryptedSeed: null,
   isUnlocked: false,
   // Data
@@ -49,7 +65,156 @@ let state = {
   // Agents
   connectedAgents: [],
   pendingAgentRequest: null,
+  // Wallet-bound cubby
+  cubbyId: null,
+  cubbyScopes: [],
+  cubbyActivity: [],
+  vaultIdentity: null,
+  vaultRecord: null,
+  vaultScopes: [],
+  vaultAgents: [],
+  vaultEvents: [],
+  vaultStatus: 'locked',
+  vaultError: null,
+  cereBalance: null,
+  cereBalanceStatus: 'idle',
+  cereBalanceError: null,
+  pendingSignRequest: null,
+  isVerifyingOtp: false,
 };
+
+const CUBBY_ACTIVITY_KEY = 'proofi_cubby_activity';
+const CUBBY_SCOPE_PREFIX = 'cubby:';
+
+function getCubbyId(address = state.address) {
+  if (state.vaultRecord?.vaultId) return `proofi-cubby:${state.vaultRecord.vaultId}`;
+  if (!address) return null;
+  return `proofi-cubby:${address}`;
+}
+
+function shortId(value, head = 14, tail = 8) {
+  if (!value) return '';
+  if (value.length <= head + tail + 1) return value;
+  return `${value.slice(0, head)}…${value.slice(-tail)}`;
+}
+
+function normalizeScope(scope) {
+  return String(scope || '').replace(/^cubby:/, '').replace(/^health\//, '');
+}
+
+function getKnownCubbyScopes() {
+  const scopes = new Set();
+  for (const scope of state.vaultScopes || []) {
+    const name = scope.name || scope.scope;
+    if (name) scopes.add(name);
+  }
+  if (state.storedItems.length) scopes.add('credentials');
+  if (state.healthDataSummary) scopes.add('health');
+  if (state.healthDataSynced) scopes.add('health/ddc');
+  for (const agent of state.connectedAgents) {
+    for (const scope of agent.scopes || []) scopes.add(normalizeScope(scope));
+  }
+  return Array.from(scopes).map((name) => ({
+    id: `${CUBBY_SCOPE_PREFIX}${name}`,
+    name,
+    cubbyId: state.cubbyId,
+  }));
+}
+
+async function loadCubbyState() {
+  state.cubbyId = getCubbyId();
+  const result = await chrome.storage.local.get({ [CUBBY_ACTIVITY_KEY]: [] });
+  const localEvents = (result[CUBBY_ACTIVITY_KEY] || []).filter((event) => event.cubbyId === state.cubbyId);
+  const vaultEvents = (state.vaultEvents || []).map(vaultEventToActivity);
+  state.cubbyActivity = [...vaultEvents, ...localEvents]
+    .filter(Boolean)
+    .sort((a, b) => b.at - a.at)
+    .slice(0, 80);
+  state.cubbyScopes = getKnownCubbyScopes();
+  renderCubbySummary();
+}
+
+async function recordCubbyEvent(kind, detail = {}) {
+  if (!state.address) return;
+  const cubbyId = getCubbyId();
+  const event = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    kind,
+    cubbyId,
+    address: state.address,
+    at: Date.now(),
+    ...detail,
+  };
+  const result = await chrome.storage.local.get({ [CUBBY_ACTIVITY_KEY]: [] });
+  const next = [event, ...(result[CUBBY_ACTIVITY_KEY] || [])].slice(0, 80);
+  await chrome.storage.local.set({ [CUBBY_ACTIVITY_KEY]: next });
+  state.cubbyActivity = next.filter((entry) => entry.cubbyId === cubbyId);
+  state.cubbyScopes = getKnownCubbyScopes();
+  renderCubbySummary();
+}
+
+function vaultEventToActivity(event) {
+  const at = new Date(event.timestamp || event.at || Date.now()).getTime();
+  return {
+    id: event.id || `${event.scope}:${event.context}:${at}`,
+    kind: event.type || event.kind || 'vault-event',
+    cubbyId: getCubbyId(),
+    at: Number.isFinite(at) ? at : Date.now(),
+    scope: event.scope,
+    agentName: event.agentName || event.payload?.agentName,
+    cid: event.payload?.cid,
+  };
+}
+
+async function refreshVaultState({ silent = false } = {}) {
+  if (!state.seedHex) {
+    state.vaultStatus = state.encryptedSeed ? 'locked' : 'missing';
+    renderCubbySummary();
+    return;
+  }
+
+  state.vaultStatus = 'loading';
+  state.vaultError = null;
+  renderCubbySummary();
+
+  try {
+    state.vaultIdentity = await getVaultIdentity(state.seedHex);
+    await chrome.storage.local.set({ proofi_vault_identity: state.vaultIdentity });
+    const snapshot = await loadVaultSnapshot(state.seedHex);
+    state.vaultRecord = snapshot.record;
+    state.vaultScopes = snapshot.scopes || [];
+    state.vaultAgents = snapshot.agents || [];
+    state.vaultEvents = snapshot.events || [];
+    state.vaultStatus = 'live';
+    state.vaultError = null;
+    await chrome.storage.local.set({
+      proofi_vault_record: state.vaultRecord,
+      proofi_vault_identity: state.vaultIdentity,
+    });
+    await loadCubbyState();
+  } catch (err) {
+    if (isNotFound(err)) {
+      state.vaultStatus = 'not-found';
+    } else {
+      state.vaultStatus = 'error';
+      state.vaultError = err;
+      if (!silent) console.warn('[Proofi] Vault refresh failed:', err);
+    }
+    renderCubbySummary();
+  }
+}
+
+async function publishToVault(scope, event) {
+  if (!state.seedHex || state.vaultStatus !== 'live') return null;
+  try {
+    const result = await publishVaultEvent(state.seedHex, scope, event);
+    await refreshVaultState({ silent: true });
+    return result;
+  } catch (err) {
+    console.warn('[Proofi] Vault publish failed:', err.message);
+    return null;
+  }
+}
 
 // ── DOM Helpers ────────────────────────────────────────────────────────────
 
@@ -106,12 +271,43 @@ function showToast(text) {
 function setLoading(btn, loading, text) {
   if (loading) {
     btn.dataset.originalText = btn.textContent;
+    btn.dataset.loading = 'true';
     btn.textContent = text || 'LOADING...';
     btn.disabled = true;
   } else {
+    delete btn.dataset.loading;
     btn.textContent = btn.dataset.originalText || btn.textContent;
     btn.disabled = false;
+    updatePinActionState();
   }
+}
+
+function isImportWalletMode() {
+  const fields = $('#import-wallet-fields');
+  return !!fields && fields.style.display !== 'none';
+}
+
+function getPinActionLabel() {
+  return isImportWalletMode()
+    ? 'IMPORT CERE WALLET'
+    : state.hasExistingWallet
+      ? 'RESTORE WALLET'
+      : 'CREATE WALLET';
+}
+
+function updatePinActionState() {
+  const btn = $('#btn-setup-pin');
+  const pinInput = $('#input-pin');
+  if (!btn || !pinInput || btn.dataset.loading === 'true') return;
+
+  const pinReady = pinInput.value.replace(/\D/g, '').length >= 4;
+  const importedSecret = normalizeWalletSecret($('#input-recovery-phrase')?.value || '');
+  const isHexImport = /^0x[0-9a-fA-F]{64,128}$/.test(importedSecret);
+  const isPhraseImport = importedSecret.split(/\s+/).filter(Boolean).length >= 12;
+  const importReady = !isImportWalletMode() || isHexImport || isPhraseImport;
+
+  btn.textContent = getPinActionLabel();
+  btn.disabled = !(pinReady && importReady);
 }
 
 // ── Initialization ─────────────────────────────────────────────────────────
@@ -129,6 +325,12 @@ async function init() {
       state.email = stored.email;
       state.token = stored.token;
       state.encryptedSeed = stored.encryptedSeed;
+      const vaultStored = await chrome.storage.local.get(['proofi_vault_record', 'proofi_vault_identity']);
+      state.vaultRecord = vaultStored.proofi_vault_record || null;
+      state.vaultIdentity = vaultStored.proofi_vault_identity || null;
+      state.vaultStatus = state.vaultRecord ? 'locked' : 'locked';
+      state.isUnlocked = false;
+      await chrome.storage.local.set({ proofi_unlocked: false });
       
       // Update badge
       updateBadge(true);
@@ -138,7 +340,8 @@ async function init() {
       showScreen('dashboard');
       
       // Load stored data immediately (no PIN needed for viewing)
-      loadItems();
+      await Promise.all([loadItems(), loadHealthDataFromStorage(), loadAgents(), refreshCereBalance()]);
+      await loadCubbyState();
     } else {
       showScreen('login');
     }
@@ -153,9 +356,13 @@ async function init() {
 function setupAuthHandlers() {
   const emailInput = $('#input-email');
   const btnSendOtp = $('#btn-send-otp');
+  const btnResendOtp = $('#btn-resend-otp');
   const btnBackEmail = $('#btn-back-email');
   const pinInput = $('#input-pin');
   const btnSetupPin = $('#btn-setup-pin');
+  const btnToggleImport = $('#btn-toggle-import');
+  const importFields = $('#import-wallet-fields');
+  const recoveryInput = $('#input-recovery-phrase');
   
   // Email validation
   emailInput.addEventListener('input', () => {
@@ -181,6 +388,7 @@ function setupAuthHandlers() {
     try {
       await sendOtp(email);
       state.email = email;
+      clearOtpInputs();
       
       // Show OTP step
       $('#step-email').style.display = 'none';
@@ -197,14 +405,31 @@ function setupAuthHandlers() {
       setLoading(btnSendOtp, false);
     }
   });
+
+  btnResendOtp.addEventListener('click', async () => {
+    if (!state.email) return;
+
+    setLoading(btnResendOtp, true, 'SENDING...');
+    hideError('otp');
+
+    try {
+      await sendOtp(state.email);
+      clearOtpInputs();
+      showError('otp', 'New code sent. Use the newest email only; older codes are invalid.');
+      document.querySelector('.otp-digit')?.focus();
+    } catch (err) {
+      showError('otp', normalizeOtpError(err));
+    } finally {
+      setLoading(btnResendOtp, false);
+    }
+  });
   
   // Back to email
   btnBackEmail.addEventListener('click', () => {
     $('#step-otp').style.display = 'none';
     $('#step-email').style.display = 'flex';
     hideError('otp');
-    // Clear OTP digits
-    $$('.otp-digit').forEach(d => { d.value = ''; d.classList.remove('filled'); });
+    clearOtpInputs();
   });
   
   // OTP digit inputs
@@ -220,7 +445,7 @@ function setupAuthHandlers() {
       dot.classList.toggle('active', i < pin.length);
     });
     
-    btnSetupPin.disabled = pin.length < 4;
+    updatePinActionState();
     hideError('pin');
   });
   
@@ -229,9 +454,35 @@ function setupAuthHandlers() {
       btnSetupPin.click();
     }
   });
+
+  btnToggleImport.addEventListener('click', () => {
+    const isOpen = importFields.style.display !== 'none';
+    importFields.style.display = isOpen ? 'none' : 'flex';
+    btnToggleImport.textContent = isOpen ? 'IMPORT CERE WALLET' : 'USE PIN-DERIVED WALLET';
+    if (!isOpen) recoveryInput.focus();
+    updatePinActionState();
+    hideError('pin');
+  });
+
+  recoveryInput.addEventListener('input', () => {
+    updatePinActionState();
+    hideError('pin');
+  });
   
   // Setup PIN
   btnSetupPin.addEventListener('click', handleSetupPin);
+}
+
+function clearOtpInputs() {
+  $$('.otp-digit').forEach(d => { d.value = ''; d.classList.remove('filled'); });
+}
+
+function normalizeOtpError(err) {
+  const message = err?.message || String(err || '');
+  if (/outdated|expired|invalid|code/i.test(message)) {
+    return new Error('That code is expired or was replaced. Click SEND NEW CODE and use the newest email.');
+  }
+  return err instanceof Error ? err : new Error(message);
 }
 
 function setupOtpInputs() {
@@ -282,6 +533,8 @@ function setupOtpInputs() {
 }
 
 async function handleVerifyOtp(code) {
+  if (state.isVerifyingOtp) return;
+  state.isVerifyingOtp = true;
   hideError('otp');
   $('#loading-otp').style.display = 'flex';
   
@@ -301,43 +554,55 @@ async function handleVerifyOtp(code) {
     // Update PIN UI for restore vs create
     if (state.hasExistingWallet) {
       $('#pin-title').textContent = 'Enter Your PIN';
-      $('#pin-subtitle').textContent = 'Enter your PIN to restore your wallet.';
-      $('#btn-setup-pin').textContent = 'RESTORE WALLET';
+      $('#pin-subtitle').textContent = 'Enter your PIN to restore your wallet, or import your Cere Wallet identity.';
     } else {
       $('#pin-title').textContent = 'Create Your PIN';
       $('#pin-subtitle').textContent = 'This PIN derives your wallet keys. Remember it — it cannot be recovered.';
-      $('#btn-setup-pin').textContent = 'CREATE WALLET';
     }
+    updatePinActionState();
     
     $('#input-pin').focus();
   } catch (err) {
-    showError('otp', err.message);
-    // Clear OTP digits
-    $$('.otp-digit').forEach(d => { d.value = ''; d.classList.remove('filled'); });
+    const normalized = normalizeOtpError(err);
+    showError('otp', normalized.message);
+    clearOtpInputs();
     document.querySelector('.otp-digit')?.focus();
   } finally {
     $('#loading-otp').style.display = 'none';
+    state.isVerifyingOtp = false;
   }
 }
 
 async function handleSetupPin() {
   const pin = $('#input-pin').value;
-  if (pin.length < 4) return;
+  if (pin.length < 4) {
+    showError('pin', 'Enter a PIN first. It encrypts the imported wallet on this device.');
+    return;
+  }
+  const importedSecret = normalizeWalletSecret($('#input-recovery-phrase')?.value || '');
+  const hasImportedSecret = importedSecret.length > 0;
+  if (isImportWalletMode() && !hasImportedSecret) {
+    showError('pin', 'Paste your Cere recovery phrase to import that wallet.');
+    return;
+  }
   
   const btn = $('#btn-setup-pin');
-  setLoading(btn, true, 'DERIVING KEYS...');
+  setLoading(btn, true, hasImportedSecret ? 'IMPORTING WALLET...' : 'DERIVING KEYS...');
   $('#loading-pin').style.display = 'flex';
   hideError('pin');
   
   try {
-    // Derive seed from PIN + salt
-    const seed = await deriveSeedFromPin(pin, state.derivationSalt);
+    // Use an imported Cere Wallet identity when present; otherwise derive a Proofi-local root key from PIN + salt.
+    const seed = hasImportedSecret
+      ? importedSecret
+      : await deriveSeedFromPin(pin, state.derivationSalt);
     
-    // Create sr25519 keypair
+    // Create Cere ed25519 keypair
     const keypair = await createKeypair(seed);
     
-    // For existing users: verify address matches
-    if (state.hasExistingWallet && state.existingAddress) {
+    // For generated restore, verify the PIN recreates the existing Proofi wallet.
+    // Imported Cere wallets intentionally replace the Proofi-derived local address.
+    if (!hasImportedSecret && state.hasExistingWallet && state.existingAddress) {
       if (keypair.address !== state.existingAddress) {
         showError('pin', 'Wrong PIN. The PIN you entered doesn\'t match your wallet.');
         setLoading(btn, false);
@@ -363,8 +628,10 @@ async function handleSetupPin() {
     // Update state
     state.address = keypair.address;
     state.keypair = keypair;
+    state.seedHex = seed;
     state.encryptedSeed = encryptedSeed;
     state.isUnlocked = true;
+    await chrome.storage.local.set({ proofi_unlocked: true });
     
     // Update badge
     updateBadge(true);
@@ -373,8 +640,10 @@ async function handleSetupPin() {
     renderDashboard();
     showScreen('dashboard');
     
-    // Load items
-    loadItems();
+    // Load wallet + devnet vault state
+    await Promise.all([loadItems(), loadAgents(), loadHealthDataFromStorage(), refreshCereBalance()]);
+    await refreshVaultState({ silent: true });
+    await loadCubbyState();
     
   } catch (err) {
     console.error('[Proofi] Setup PIN error:', err);
@@ -390,6 +659,9 @@ async function handleSetupPin() {
 function renderDashboard() {
   $('#dash-email').textContent = state.email || '';
   $('#dash-address').textContent = state.address || '';
+  state.cubbyId = getCubbyId();
+  const cubbyEl = $('#dash-cubby');
+  if (cubbyEl) cubbyEl.textContent = state.cubbyId || 'connect wallet first';
   
   // Lock status
   if (state.isUnlocked && state.keypair) {
@@ -401,6 +673,149 @@ function renderDashboard() {
     $('#lock-status').textContent = 'LOCKED';
     $('#btn-unlock').style.display = 'block';
   }
+
+  renderCubbySummary();
+  renderTokenSummary();
+}
+
+function renderCubbySummary() {
+  state.cubbyScopes = getKnownCubbyScopes();
+  const activeGrants =
+    (state.vaultAgents?.length || 0) ||
+    state.connectedAgents.filter((a) => a.active && a.expiresAt > Date.now()).length;
+  const statCubbies = $('#stat-cubbies');
+  const statGrants = $('#stat-grants');
+  const statEvents = $('#stat-events');
+  if (statCubbies) statCubbies.textContent = String(Math.max(state.cubbyScopes.length, state.address ? 1 : 0));
+  if (statGrants) statGrants.textContent = String(activeGrants);
+  if (statEvents) statEvents.textContent = String(state.cubbyActivity.length);
+
+  const statusDot = $('#vault-status-dot');
+  const statusText = $('#vault-status-text');
+  const claimBtn = $('#btn-claim-vault');
+  if (statusDot && statusText && claimBtn) {
+    statusDot.className = `sync-dot ${state.vaultStatus === 'live' ? 'synced' : 'offline'}`;
+    const labels = {
+      live: `DEVNET VAULT LIVE ${shortId(state.vaultRecord?.vaultId || '')}`,
+      loading: 'LOADING DEVNET VAULT',
+      locked: 'UNLOCK TO MAP DEVNET VAULT',
+      'not-found': 'NO DEVNET VAULT CLAIMED',
+      error: `VAULT ERROR ${state.vaultError?.message || ''}`.trim(),
+      missing: 'CONNECT WALLET FIRST',
+    };
+    statusText.textContent = labels[state.vaultStatus] || 'DEVNET VAULT UNKNOWN';
+    claimBtn.style.display = state.vaultStatus === 'not-found' || state.vaultStatus === 'error' ? 'block' : 'none';
+    claimBtn.disabled = !state.seedHex || state.vaultStatus === 'loading';
+  }
+
+  const list = $('#cubby-activity-list');
+  if (!list) return;
+  if (!state.cubbyActivity.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="text-display" style="font-size: 2rem; color: var(--steel);">∅</div>
+        <p class="text-body-sm text-muted">No cubby activity yet</p>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = state.cubbyActivity.slice(0, 6).map((event) => {
+    const at = new Date(event.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const target = event.agentName || event.scope || event.cid || shortId(event.cubbyId);
+    return `
+      <div class="cubby-activity-item">
+        <div>
+          <div class="text-mono text-sm">${escapeHtml(event.kind.replace(/-/g, ' '))}</div>
+          <div class="text-body-sm text-muted">${escapeHtml(target || '')}</div>
+        </div>
+        <div class="text-mono text-xs text-muted">${at}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function balanceDisplay(field = 'free', precision = 4) {
+  if (!state.cereBalance) return `0 ${CERE_TOKEN_SYMBOL}`;
+  const symbol = state.cereBalance.symbol || CERE_TOKEN_SYMBOL;
+  return `${formatTokenAmount(state.cereBalance[field] || '0', state.cereBalance.decimals, precision)} ${symbol}`;
+}
+
+function renderTokenSummary() {
+  const freeEl = $('#token-balance-free');
+  const transferableEl = $('#token-balance-transferable');
+  const reservedEl = $('#token-balance-reserved');
+  const sendBalanceEl = $('#send-balance');
+  const statusDot = $('#token-status-dot');
+  const statusText = $('#token-status-text');
+  const errorEl = $('#token-error');
+  const sendBtn = $('#btn-open-send-cere');
+  const refreshBtn = $('#btn-refresh-balance');
+
+  if (freeEl) freeEl.textContent = balanceDisplay('free');
+  if (transferableEl) transferableEl.textContent = balanceDisplay('transferable');
+  if (reservedEl) reservedEl.textContent = balanceDisplay('reserved');
+  if (sendBalanceEl) sendBalanceEl.textContent = balanceDisplay('transferable');
+
+  const isLive = state.cereBalanceStatus === 'live';
+  const isLoading = state.cereBalanceStatus === 'loading';
+  const isError = state.cereBalanceStatus === 'error';
+  if (statusDot) statusDot.className = `sync-dot ${isLive ? 'synced' : 'offline'}`;
+  if (statusText) {
+    statusText.textContent = isLive
+      ? 'LIVE'
+      : isLoading
+        ? 'SYNCING'
+        : isError
+          ? 'BALANCE ERROR'
+          : 'READY';
+  }
+  if (errorEl) {
+    errorEl.style.display = isError ? 'block' : 'none';
+    errorEl.textContent = state.cereBalanceError?.message || '';
+  }
+  if (sendBtn) sendBtn.disabled = !state.address || isLoading;
+  if (refreshBtn) refreshBtn.disabled = isLoading;
+  updateSendActionState();
+}
+
+async function refreshCereBalance({ silent = false } = {}) {
+  if (!state.address) return;
+  if (!silent) {
+    state.cereBalanceStatus = 'loading';
+    state.cereBalanceError = null;
+    renderTokenSummary();
+  }
+
+  try {
+    state.cereBalance = await getCereBalance(state.address);
+    state.cereBalanceStatus = 'live';
+    state.cereBalanceError = null;
+  } catch (err) {
+    state.cereBalanceStatus = 'error';
+    state.cereBalanceError = err;
+    console.warn('[Proofi] CERE balance refresh failed:', err.message);
+  } finally {
+    renderTokenSummary();
+  }
+}
+
+function updateSendActionState() {
+  const btn = $('#btn-submit-send');
+  const toInput = $('#input-send-to');
+  const amountInput = $('#input-send-amount');
+  if (!btn || btn.dataset.loading === 'true') return;
+
+  let amountReady = false;
+  try {
+    amountReady =
+      !!state.cereBalance &&
+      parseTokenAmount(amountInput?.value || '', state.cereBalance.decimals) > 0n;
+  } catch {
+    amountReady = false;
+  }
+
+  btn.disabled = !((toInput?.value || '').trim().length >= 12 && amountReady);
 }
 
 function setupDashboardHandlers() {
@@ -417,6 +832,27 @@ function setupDashboardHandlers() {
       navigator.clipboard.writeText(state.address);
       showToast('ADDRESS COPIED');
     }
+  });
+
+  $('#btn-copy-cubby').addEventListener('click', () => {
+    const cubbyId = getCubbyId();
+    if (cubbyId) {
+      navigator.clipboard.writeText(cubbyId);
+      showToast('CUBBY COPIED');
+    }
+  });
+
+  $('#btn-claim-vault').addEventListener('click', claimDevnetVault);
+  $('#btn-refresh-balance').addEventListener('click', () => refreshCereBalance());
+  $('#btn-open-send-cere').addEventListener('click', async () => {
+    hideError('send');
+    hideSuccess('send');
+    $('#input-send-to').value = '';
+    $('#input-send-amount').value = '';
+    renderTokenSummary();
+    showScreen('send');
+    await refreshCereBalance({ silent: true });
+    $('#input-send-to').focus();
   });
   
   // Store memo
@@ -445,7 +881,11 @@ function setupDashboardHandlers() {
   });
   
   // Refresh
-  $('#btn-refresh').addEventListener('click', loadItems);
+  $('#btn-refresh').addEventListener('click', async () => {
+    await loadItems();
+    await loadCubbyState();
+  });
+  $('#btn-refresh-cubby').addEventListener('click', loadCubbyState);
   
   // Unlock
   $('#btn-unlock').addEventListener('click', () => {
@@ -454,6 +894,295 @@ function setupDashboardHandlers() {
   
   // Disconnect
   $('#btn-disconnect').addEventListener('click', handleDisconnect);
+}
+
+async function claimDevnetVault() {
+  if (!state.seedHex) {
+    showUnlockUI('dashboard');
+    return;
+  }
+
+  const btn = $('#btn-claim-vault');
+  setLoading(btn, true, 'CLAIMING...');
+  state.vaultStatus = 'loading';
+  renderCubbySummary();
+
+  try {
+    const record = await claimVault(state.seedHex, 'Proofi Wallet Cubby', (event) => {
+      $('#vault-status-text').textContent = event.kind.replace(/-/g, ' ').toUpperCase();
+    });
+    state.vaultRecord = record;
+    state.vaultStatus = 'live';
+    await chrome.storage.local.set({ proofi_vault_record: record });
+    await recordCubbyEvent('claim-vault', { scope: record.vaultId });
+    await refreshVaultState();
+    showToast('DEVNET VAULT CLAIMED');
+  } catch (err) {
+    state.vaultStatus = 'error';
+    state.vaultError = err;
+    renderCubbySummary();
+    showToast('VAULT CLAIM FAILED');
+    console.error('[Proofi] Vault claim failed:', err);
+  } finally {
+    setLoading(btn, false);
+  }
+}
+
+// ── CERE Transfer ──────────────────────────────────────────────────────────
+
+function setupSendHandlers() {
+  const toInput = $('#input-send-to');
+  const amountInput = $('#input-send-amount');
+  const btnSubmit = $('#btn-submit-send');
+
+  $('#btn-send-back').addEventListener('click', () => {
+    showScreen('dashboard');
+  });
+
+  [toInput, amountInput].forEach((input) => {
+    input.addEventListener('input', () => {
+      hideError('send');
+      hideSuccess('send');
+      updateSendActionState();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !btnSubmit.disabled) btnSubmit.click();
+    });
+  });
+
+  btnSubmit.addEventListener('click', doSendCere);
+}
+
+async function doSendCere() {
+  const btn = $('#btn-submit-send');
+  const to = $('#input-send-to').value.trim();
+  const amount = $('#input-send-amount').value.trim();
+
+  hideError('send');
+  hideSuccess('send');
+
+  if (!state.seedHex) {
+    showError('send', 'Unlock Proofi first so it can sign the devnet transfer.');
+    showUnlockUI('send');
+    return;
+  }
+
+  setLoading(btn, true, 'SENDING...');
+  $('#loading-send').style.display = 'flex';
+
+  try {
+    const result = await sendCereTokens({
+      walletSecret: state.seedHex,
+      to,
+      amount,
+    });
+
+    await recordCubbyEvent('send-cere-devnet', {
+      scope: 'tokens',
+      txHash: result.hash,
+      amountPlanck: result.amountPlanck,
+    });
+    await publishToVault('tokens', {
+      type: 'proofi.cere.sent',
+      context: result.hash,
+      target: to,
+      payload: {
+        txHash: result.hash,
+        to,
+        amountPlanck: result.amountPlanck,
+        feePlanck: result.feePlanck,
+        cubbyId: getCubbyId(),
+      },
+    });
+
+    $('#input-send-amount').value = '';
+    showSuccess('send', `Sent ${escapeHtml(amount)} ${escapeHtml(result.symbol)} — tx ${shortId(result.hash, 10, 8)}`);
+    await refreshCereBalance();
+    await loadCubbyState();
+  } catch (err) {
+    showError('send', err.message || 'Transfer failed');
+  } finally {
+    $('#loading-send').style.display = 'none';
+    setLoading(btn, false);
+    updateSendActionState();
+  }
+}
+
+// ── Raw Vault Signing ──────────────────────────────────────────────────────
+
+function isValidRawBytesHex(bytesHex) {
+  return typeof bytesHex === 'string' && /^0x([0-9a-fA-F]{2})*$/.test(bytesHex);
+}
+
+function signError(code, error) {
+  return { requestId: state.pendingSignRequest?.requestId, code, error };
+}
+
+function setupSignHandlers() {
+  $('#btn-sign-back').addEventListener('click', () => {
+    showScreen('dashboard');
+  });
+
+  $('#btn-reject-sign').addEventListener('click', () => {
+    rejectPendingSign('USER_REJECTED', 'User rejected signing');
+  });
+
+  $('#btn-approve-sign').addEventListener('click', approvePendingSign);
+
+  const unlock = async () => {
+    const pin = $('#sign-pin').value;
+    if (pin.length < 4) return;
+    hideError('sign');
+    try {
+      await unlockWallet(pin);
+      $('#sign-pin').value = '';
+      $('#sign-pin-unlock').style.display = 'none';
+      renderSignRequest();
+      showToast('WALLET UNLOCKED');
+    } catch (err) {
+      showError('sign', 'Wrong PIN: ' + err.message);
+    }
+  };
+  $('#btn-sign-unlock').addEventListener('click', unlock);
+  $('#sign-pin').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') unlock();
+  });
+}
+
+async function loadPendingSignRequest() {
+  const result = await chrome.storage.local.get('proofi_pending_sign');
+  state.pendingSignRequest = result.proofi_pending_sign || null;
+  renderSignRequest();
+  showScreen('sign');
+}
+
+function renderSignRequest() {
+  const req = state.pendingSignRequest;
+  hideError('sign');
+  hideSuccess('sign');
+
+  $('#sign-origin').textContent = req?.origin || 'No pending request';
+  $('#sign-purpose').textContent = req?.purpose || 'vault-sdk';
+  $('#sign-bytes').textContent = req?.bytesHex ? shortId(req.bytesHex, 80, 40) : '';
+  $('#sign-vault').textContent = req?.vaultId || state.vaultRecord?.vaultId || 'No devnet vault claimed';
+
+  const canAttempt = !!req && !!state.vaultRecord?.vaultId && isValidRawBytesHex(req.bytesHex);
+  const approveBtn = $('#btn-approve-sign');
+  approveBtn.disabled = !canAttempt;
+  if (approveBtn.dataset.loading !== 'true') {
+    approveBtn.textContent = state.seedHex ? 'SIGN' : 'UNLOCK & SIGN';
+  }
+  $('#btn-reject-sign').disabled = !req;
+  $('#sign-pin-unlock').style.display = canAttempt && !state.seedHex ? 'block' : 'none';
+
+  if (!req) {
+    showError('sign', 'No pending Proofi signature request.');
+    return;
+  }
+  if (!isValidRawBytesHex(req.bytesHex)) {
+    showError('sign', 'Invalid raw bytes payload.');
+    return;
+  }
+  if (!state.vaultRecord?.vaultId) {
+    showError('sign', 'Claim your devnet vault/cubby before signing.');
+  }
+}
+
+function rejectPendingSign(code, error) {
+  const req = state.pendingSignRequest;
+  if (!req?.requestId) {
+    showScreen('dashboard');
+    return;
+  }
+
+  chrome.runtime.sendMessage({
+    type: 'SIGN_RAW_BYTES_REJECTED',
+    requestId: req.requestId,
+    code,
+    error,
+  }, () => {
+    state.pendingSignRequest = null;
+    chrome.storage.local.remove('proofi_pending_sign');
+    showScreen('dashboard');
+  });
+}
+
+async function approvePendingSign() {
+  const req = state.pendingSignRequest;
+  if (!req) {
+    showError('sign', 'No pending signature request.');
+    return;
+  }
+  if (!isValidRawBytesHex(req.bytesHex)) {
+    rejectPendingSign('INVALID_PAYLOAD', 'Invalid raw bytes payload');
+    return;
+  }
+  if (!state.vaultRecord?.vaultId) {
+    rejectPendingSign('PROOFI_UNCLAIMED', 'Claim your devnet vault/cubby before signing');
+    return;
+  }
+  if (!state.seedHex || !state.keypair) {
+    const pin = $('#sign-pin').value;
+    if (pin.length < 4) {
+      $('#sign-pin-unlock').style.display = 'block';
+      $('#sign-pin').focus();
+      showError('sign', 'Enter your PIN, then click UNLOCK & SIGN.');
+      return;
+    }
+
+    const btn = $('#btn-approve-sign');
+    setLoading(btn, true, 'UNLOCKING...');
+    try {
+      await unlockWallet(pin);
+      $('#sign-pin').value = '';
+      $('#sign-pin-unlock').style.display = 'none';
+      setLoading(btn, false);
+      renderSignRequest();
+    } catch (err) {
+      showError('sign', 'Wrong PIN: ' + err.message);
+      setLoading(btn, false);
+      renderSignRequest();
+      return;
+    }
+  }
+  if (req.address && state.address !== req.address) {
+    rejectPendingSign('KEY_MISMATCH', 'Current wallet address does not match the requested signer');
+    return;
+  }
+  const currentPublicKey = (state.keypair.publicKey || '').toLowerCase();
+  if (req.publicKeyHex && currentPublicKey !== req.publicKeyHex.toLowerCase()) {
+    rejectPendingSign('KEY_MISMATCH', 'Current wallet public key does not match the requested signer');
+    return;
+  }
+
+  const btn = $('#btn-approve-sign');
+  setLoading(btn, true, 'SIGNING...');
+
+  try {
+    const bytes = hexToU8a(req.bytesHex);
+    const signatureHex = u8aToHex(state.keypair.sign(bytes));
+    const response = {
+      requestId: req.requestId,
+      signatureHex,
+      publicKeyHex: state.keypair.publicKey,
+      address: state.address,
+    };
+
+    chrome.runtime.sendMessage({
+      type: 'SIGN_RAW_BYTES_RESULT',
+      requestId: req.requestId,
+      response,
+    }, () => {
+      state.pendingSignRequest = null;
+      chrome.storage.local.remove('proofi_pending_sign');
+      showSuccess('sign', 'Signed raw bytes for vault request.');
+      setTimeout(() => window.close(), 700);
+    });
+  } catch (err) {
+    rejectPendingSign('INVALID_PAYLOAD', err.message || 'Failed to sign raw bytes');
+  } finally {
+    setLoading(btn, false);
+  }
 }
 
 // ── Store Memo ─────────────────────────────────────────────────────────────
@@ -523,6 +1252,15 @@ async function doStoreMemo() {
     showSuccess('memo', `Stored on DDC — CID: ${(result.cid || '').slice(0, 16)}...`);
     memoInput.value = '';
     btnSubmit.disabled = true;
+    await recordCubbyEvent('write-memo', {
+      scope: 'credentials',
+      cid: result.cid,
+    });
+    await publishToVault('credentials', {
+      type: 'proofi.memo.stored',
+      context: 'proofi-extension',
+      payload: { cid: result.cid, cubbyId: getCubbyId() },
+    });
     
     // Refresh items list
     loadItems();
@@ -605,6 +1343,16 @@ async function doStoreCredential() {
     showSuccess('cred', `Credential issued — CID: ${(result.cid || '').slice(0, 16)}...`);
     credData.value = '';
     btnSubmit.disabled = true;
+    await recordCubbyEvent('write-credential', {
+      scope: 'credentials',
+      cid: result.cid,
+      credentialType: credType,
+    });
+    await publishToVault('credentials', {
+      type: 'proofi.credential.issued',
+      context: 'proofi-extension',
+      payload: { cid: result.cid, credentialType: credType, cubbyId: getCubbyId() },
+    });
     
     loadItems();
   } catch (err) {
@@ -630,8 +1378,13 @@ async function unlockWallet(pin) {
   }
   
   state.keypair = keypair;
+  state.seedHex = seed;
   state.isUnlocked = true;
+  await chrome.storage.local.set({ proofi_unlocked: true });
   renderDashboard();
+  await refreshVaultState({ silent: true });
+  await refreshCereBalance({ silent: true });
+  await loadCubbyState();
 }
 
 function showUnlockUI(returnScreen) {
@@ -639,9 +1392,10 @@ function showUnlockUI(returnScreen) {
   const pin = prompt('Enter your PIN to unlock signing:');
   if (!pin) return;
   
-  unlockWallet(pin).then(() => {
+  unlockWallet(pin).then(async () => {
     showToast('WALLET UNLOCKED');
-    loadItems();
+    await Promise.all([loadItems(), loadAgents(), loadHealthDataFromStorage(), refreshCereBalance({ silent: true })]);
+    await refreshVaultState({ silent: true });
   }).catch((err) => {
     alert('Unlock failed: ' + err.message);
   });
@@ -678,6 +1432,7 @@ async function loadItems() {
     if (result.ok && result.items) {
       state.storedItems = result.items;
       renderItems();
+      renderCubbySummary();
     }
   } catch (err) {
     console.warn('[Proofi] Failed to load items:', err.message);
@@ -749,6 +1504,13 @@ function renderItems() {
 
 async function handleDisconnect() {
   await clearWalletState();
+  await chrome.storage.local.remove([
+    'proofi_vault_record',
+    'proofi_vault_identity',
+    'proofi_unlocked',
+    'proofi_pending_sign',
+    'proofi_sign_result',
+  ]);
   
   state = {
     screen: 'login',
@@ -759,9 +1521,33 @@ async function handleDisconnect() {
     existingAddress: null,
     address: null,
     keypair: null,
+    seedHex: null,
     encryptedSeed: null,
     isUnlocked: false,
     storedItems: [],
+    healthData: null,
+    healthDataSummary: null,
+    healthDEK: null,
+    healthDataCID: null,
+    healthDataBucket: null,
+    healthDataSynced: false,
+    connectedAgents: [],
+    pendingAgentRequest: null,
+    cubbyId: null,
+    cubbyScopes: [],
+    cubbyActivity: [],
+    vaultIdentity: null,
+    vaultRecord: null,
+    vaultScopes: [],
+    vaultAgents: [],
+    vaultEvents: [],
+    vaultStatus: 'locked',
+    vaultError: null,
+    cereBalance: null,
+    cereBalanceStatus: 'idle',
+    cereBalanceError: null,
+    pendingSignRequest: null,
+    isVerifyingOtp: false,
   };
   
   updateBadge(false);
@@ -769,6 +1555,9 @@ async function handleDisconnect() {
   // Reset login form
   $('#input-email').value = '';
   $('#input-pin').value = '';
+  $('#input-recovery-phrase').value = '';
+  $('#import-wallet-fields').style.display = 'none';
+  $('#btn-toggle-import').textContent = 'IMPORT CERE WALLET';
   $$('.otp-digit').forEach(d => { d.value = ''; d.classList.remove('filled'); });
   $$('#pin-dots .pin-dot').forEach(d => d.classList.remove('active'));
   $('#step-email').style.display = 'flex';
@@ -1041,6 +1830,21 @@ async function doSyncToDDC() {
       proofi_health_bucket: state.healthDataBucket,
       proofi_health_synced: true
     });
+    await recordCubbyEvent('write-health-ddc', {
+      scope: 'health/ddc',
+      cid: state.healthDataCID,
+      bucket: state.healthDataBucket,
+    });
+    await publishToVault('health', {
+      type: 'proofi.health.synced',
+      context: 'proofi-extension',
+      payload: {
+        cid: state.healthDataCID,
+        bucket: state.healthDataBucket,
+        cubbyId: getCubbyId(),
+        summary: state.healthDataSummary,
+      },
+    });
     
     renderHealthSummary();
     showSuccess('health', 'Health data encrypted and synced to DDC!');
@@ -1087,13 +1891,16 @@ async function loadAgents() {
   state.connectedAgents = result.proofi_agents.filter(a => 
     a.active && a.expiresAt > Date.now()
   );
+  state.cubbyScopes = getKnownCubbyScopes();
   renderAgentsList();
+  renderCubbySummary();
 }
 
 function renderAgentsList() {
   const container = $('#agents-list');
+  const agents = getAgentDisplayList();
   
-  if (state.connectedAgents.length === 0) {
+  if (agents.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
         <div class="text-display" style="font-size: 2rem; color: var(--steel);">🤖</div>
@@ -1103,7 +1910,7 @@ function renderAgentsList() {
     return;
   }
   
-  container.innerHTML = state.connectedAgents.map(agent => `
+  container.innerHTML = agents.map(agent => `
     <div class="agent-card ${agent.active ? '' : 'agent-expired'}">
       <div class="agent-header">
         <div class="agent-icon">🤖</div>
@@ -1125,6 +1932,23 @@ function renderAgentsList() {
       </button>
     </div>
   `).join('');
+}
+
+function getAgentDisplayList() {
+  const local = state.connectedAgents || [];
+  const localIds = new Set(local.map((agent) => agent.agentId));
+  const live = (state.vaultAgents || [])
+    .filter((agent) => !localIds.has(agent.agentId))
+    .map((agent) => ({
+      agentId: agent.agentId,
+      name: agent.manifest?.name || agent.agentId,
+      scopes: [agent.scope].filter(Boolean),
+      createdAt: new Date(agent.createdAt || Date.now()).getTime(),
+      expiresAt: Date.now() + 86400000,
+      active: agent.status === 'active' || agent.status === 'provisioning',
+      cubbyId: getCubbyId(),
+    }));
+  return [...local, ...live];
 }
 
 function getScopeIcon(scope) {
@@ -1224,6 +2048,7 @@ async function approveAgentRequest() {
   const token = await generateCapabilityToken({
     issuerAddress: state.address,
     issuerDID: `did:proofi:${state.address}`,
+    cubbyId: state.cubbyId || getCubbyId(),
     agentId: req.agentId,
     agentName: req.name,
     scopes: req.scopes || req.dataTypes || [],
@@ -1239,6 +2064,7 @@ async function approveAgentRequest() {
     name: req.name,
     scopes: req.scopes || req.dataTypes || [],
     origin: req.origin,
+    cubbyId: state.cubbyId || getCubbyId(),
     createdAt: Date.now(),
     expiresAt: Date.now() + (expirySeconds * 1000),
     active: true,
@@ -1253,6 +2079,23 @@ async function approveAgentRequest() {
     proofi_agents: agents,
     proofi_pending_agent: null
   });
+  await recordCubbyEvent('grant-agent', {
+    agentId: req.agentId,
+    agentName: req.name,
+    scope: (req.scopes || req.dataTypes || []).join(', '),
+  });
+  await publishToVault('agents', {
+    type: 'proofi.agent.granted',
+    context: req.agentId,
+    target: req.agentId,
+    payload: {
+      agentId: req.agentId,
+      agentName: req.name,
+      scopes: req.scopes || req.dataTypes || [],
+      expiresAt: agentSession.expiresAt,
+      cubbyId: getCubbyId(),
+    },
+  });
   
   state.pendingAgentRequest = null;
   
@@ -1262,6 +2105,7 @@ async function approveAgentRequest() {
     payload: {
       agentId: req.agentId,
       token: token,
+      cubbyId: state.cubbyId || getCubbyId(),
       healthDataCID: state.healthDataCID,
       bucketId: state.healthDataBucket
     }
@@ -1293,9 +2137,26 @@ window.revokeAgent = async function(agentId) {
   if (!confirm('Revoke access for this agent?')) return;
   
   const result = await chrome.storage.local.get({ proofi_agents: [] });
+  const revoked = result.proofi_agents.find(a => a.agentId === agentId);
   const agents = result.proofi_agents.filter(a => a.agentId !== agentId);
   
   await chrome.storage.local.set({ proofi_agents: agents });
+  await recordCubbyEvent('revoke-agent', {
+    agentId,
+    agentName: revoked?.name,
+    scope: (revoked?.scopes || []).join(', '),
+  });
+  await publishToVault('agents', {
+    type: 'proofi.agent.revoked',
+    context: agentId,
+    target: agentId,
+    payload: {
+      agentId,
+      agentName: revoked?.name,
+      scopes: revoked?.scopes || [],
+      cubbyId: getCubbyId(),
+    },
+  });
   loadAgents();
   showToast('ACCESS REVOKED');
 };
@@ -1305,20 +2166,31 @@ window.revokeAgent = async function(agentId) {
 document.addEventListener('DOMContentLoaded', () => {
   setupAuthHandlers();
   setupDashboardHandlers();
+  setupSendHandlers();
+  setupSignHandlers();
   setupMemoHandlers();
   setupCredentialHandlers();
   setupHealthHandlers();
   setupAgentHandlers();
-  init();
+  init().then(async () => {
+    const params = new URLSearchParams(window.location.search);
+    const storedView = await chrome.storage.local.get(['proofi_popup_view', 'proofi_pending_sign']);
+    const view = params.get('view') || storedView.proofi_popup_view;
+    if (view) await chrome.storage.local.remove('proofi_popup_view');
+
+    if (view === 'sign-approve' || storedView.proofi_pending_sign) {
+      loadPendingSignRequest();
+      return;
+    }
+    if (view === 'agent-approve') {
+      checkPendingAgentRequest().then(() => {
+        if (state.pendingAgentRequest) {
+          showScreen('agents');
+          showApprovalModal();
+        }
+      });
+    }
+  });
   
   // Check for agent approval view
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('view') === 'agent-approve') {
-    checkPendingAgentRequest().then(() => {
-      if (state.pendingAgentRequest) {
-        showScreen('agents');
-        showApprovalModal();
-      }
-    });
-  }
 });

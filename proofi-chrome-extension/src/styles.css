@@ -254,6 +254,16 @@ body::before {
   line-height: 1.5;
 }
 
+.recovery-input {
+  min-height: 96px;
+  letter-spacing: 0;
+}
+
+.import-wallet-fields {
+  flex-direction: column;
+  gap: 8px;
+}
+
 .input-select {
   appearance: none;
   cursor: pointer;
@@ -462,6 +472,105 @@ body::before {
   margin-bottom: 6px;
 }
 
+.cubby-card {
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid rgba(0, 229, 255, 0.28);
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.08), rgba(0, 255, 136, 0.04));
+}
+
+.cere-token-card {
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid rgba(0, 255, 136, 0.32);
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.08), rgba(0, 229, 255, 0.04));
+}
+
+.token-status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.token-balance-value {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--success);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.token-balance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.token-balance-grid > div,
+.token-send-balance {
+  padding: 10px;
+  border: 1px solid var(--smoke);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+#token-error {
+  margin-top: 8px;
+  color: var(--error);
+  word-break: break-word;
+}
+
+.sign-request-card {
+  padding: 14px;
+  border: 1px solid rgba(0, 229, 255, 0.32);
+  background: var(--obsidian);
+}
+
+.sign-bytes {
+  max-height: 88px;
+  overflow-y: auto;
+  word-break: break-all;
+}
+
+#dash-cubby {
+  color: var(--cyan);
+  word-break: break-all;
+}
+
+.vault-status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cubby-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.cubby-stat {
+  min-height: 86px;
+  padding: 12px;
+  border: 1px solid var(--smoke);
+  background: var(--graphite);
+}
+
+.cubby-stat-value {
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--cyan);
+}
+
 /* Quick Actions */
 .action-grid {
   display: grid;
@@ -536,6 +645,23 @@ body::before {
 
 .items-list::-webkit-scrollbar-thumb {
   background: var(--smoke);
+}
+
+.cubby-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 168px;
+  overflow-y: auto;
+}
+
+.cubby-activity-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--smoke);
+  background: var(--obsidian);
 }
 
 .item-card {

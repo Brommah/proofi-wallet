@@ -10,6 +10,11 @@ const API_URL = 'https://proofi-api-production.up.railway.app';
  */
 async function apiRequest(path, options = {}, authHeaders = null) {
   return new Promise((resolve, reject) => {
+    if (!globalThis.chrome?.runtime?.sendMessage) {
+      reject(new Error('Open Proofi from the Chrome extension popup, not the file:// preview.'));
+      return;
+    }
+
     chrome.runtime.sendMessage({
       type: 'API_REQUEST',
       path,
